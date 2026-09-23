@@ -35,3 +35,9 @@ duration, container, file size, overall bitrate, and nested video/audio stream
 details such as FPS, resolution, codecs, frame count, sample rate, and channels.
 The first upload also downloads and loads the `base` faster-whisper model, then
 returns full transcript text and timestamped segments under `audio`.
+It also uses PySceneDetect content detection to return scene boundaries and cut
+timestamps under `scenes`.
+Sampled frames are analysed by RapidOCR; `on_screen_text` lists recognized text,
+quadrilateral bounding boxes, confidence, and appearance/disappearance timestamps.
+Dense optical flow also returns timestamped `motion_events`, distinguishing
+whole-frame pan/zoom/shake patterns from local and general movement.

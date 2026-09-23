@@ -6,6 +6,9 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from app.video_processing import (
     SUPPORTED_EXTENSIONS,
     VideoProcessingError,
+    detect_motion_events,
+    detect_on_screen_text,
+    detect_scenes,
     extract_wav_audio,
     inspect_video,
     normalise_video,
@@ -57,6 +60,9 @@ async def upload_video(video: UploadFile = File(...)) -> dict[str, object]:
             metadata = inspect_video(source_path)
             normalised_path = Path(directory, "normalised.mp4")
             normalise_video(source_path, normalised_path)
+            scenes = detect_scenes(normalised_path)
+            on_screen_text = detect_on_screen_text(normalised_path)
+            motion_events = detect_motion_events(normalised_path)
             audio_path = Path(directory, "audio.wav")
             extract_wav_audio(normalised_path, audio_path)
             transcription = transcribe_audio(audio_path)
@@ -66,4 +72,7 @@ async def upload_video(video: UploadFile = File(...)) -> dict[str, object]:
     return {
         "metadata": metadata.as_dict(),
         "audio": transcription,
+        "scenes": scenes,
+        "on_screen_text": on_screen_text,
+        "motion_events": motion_events,
     }
