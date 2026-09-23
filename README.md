@@ -29,3 +29,9 @@ supported video in the frontend and submit the form to send it to
 MP4/H.264/AAC (maximum 1,920 pixels per dimension), then have mono 16 kHz PCM
 WAV audio extracted during the request. Processed files are temporary and are
 not retained yet.
+
+Successful video uploads include a `metadata` hash map containing the source
+duration, container, file size, overall bitrate, and nested video/audio stream
+details such as FPS, resolution, codecs, frame count, sample rate, and channels.
+The first upload also downloads and loads the `base` faster-whisper model, then
+returns full transcript text and timestamped segments under `audio`.

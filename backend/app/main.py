@@ -9,6 +9,7 @@ from app.video_processing import (
     extract_wav_audio,
     inspect_video,
     normalise_video,
+    transcribe_audio,
 )
 
 app = FastAPI(title="Video Analyzer API")
@@ -35,7 +36,7 @@ async def upload_photo(photo: UploadFile = File(...)) -> dict[str, str]:
 
 
 @app.post("/api/videos")
-async def upload_video(video: UploadFile = File(...)) -> dict[str, str | float]:
+async def upload_video(video: UploadFile = File(...)) -> dict[str, object]:
     """Validate, normalise, and extract PCM WAV audio from a video upload."""
     filename = video.filename or "upload"
     suffix = Path(filename).suffix.lower()
@@ -56,16 +57,13 @@ async def upload_video(video: UploadFile = File(...)) -> dict[str, str | float]:
             metadata = inspect_video(source_path)
             normalised_path = Path(directory, "normalised.mp4")
             normalise_video(source_path, normalised_path)
-            extract_wav_audio(normalised_path, Path(directory, "audio.wav"))
+            audio_path = Path(directory, "audio.wav")
+            extract_wav_audio(normalised_path, audio_path)
+            transcription = transcribe_audio(audio_path)
         except VideoProcessingError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
     return {
-        "filename": filename,
-        "duration_seconds": round(metadata.duration_seconds, 2),
-        "normalised_container": "mp4",
-        "video_codec": "h264",
-        "audio_codec": "aac",
-        "extracted_audio": "wav (PCM s16le, mono, 16 kHz)",
-        "status": "processed",
+        "metadata": metadata.as_dict(),
+        "audio": transcription,
     }

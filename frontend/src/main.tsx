@@ -24,8 +24,15 @@ function App() {
       const result = (await response.json()) as {
         detail?: string;
         filename?: string;
-        duration_seconds?: number;
-        status?: string;
+        metadata?: {
+          duration_seconds?: number;
+          video?: {
+            fps?: number | null;
+          };
+        };
+        audio?: {
+          text?: string;
+        };
       };
 
       if (!response.ok) {
@@ -33,7 +40,7 @@ function App() {
       }
 
       setMessage(
-        `Backend ${result.status}: ${result.filename} (${result.duration_seconds}s)`,
+        `Processed ${result.metadata?.duration_seconds}s video at ${result.metadata?.video?.fps} FPS. Transcript: ${result.audio?.text ?? ""}`,
       );
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "The upload failed.");
