@@ -172,8 +172,11 @@ class VideoAccessTests(unittest.TestCase):
     def test_client_sends_analysis_and_returns_text(self, client: MagicMock) -> None:
         sdk = client.return_value.__enter__.return_value
         sdk.responses.create.return_value.output_text = "Try a short follow-up."
+        analysis = {**ANALYSIS, "performance_metrics": {
+            "view_count": 120, "like_count": 12, "comment_count": None, "share_count": 2,
+        }}
 
-        self.assertEqual(recommend_videos(ANALYSIS),
+        self.assertEqual(recommend_videos(analysis),
                          {"model": "gpt-6-sol", "response": "Try a short follow-up."})
         client.assert_called_once_with(api_key="test-key", timeout=60.0)
         request = sdk.responses.create.call_args.kwargs
@@ -181,6 +184,8 @@ class VideoAccessTests(unittest.TestCase):
         self.assertEqual(request["instructions"], SYSTEM_PROMPT)
         self.assertIn("Hello world", request["input"])
         self.assertIn("camera_pan", request["input"])
+        self.assertEqual(json.loads(request["input"].split("\n", 1)[1])["performance_metrics"],
+                         analysis["performance_metrics"])
         self.assertFalse(request["store"])
 
     @patch.dict(os.environ, {"OPENAI_API_KEY": "default-test-key", "OPENAI_MODEL": "gpt-6-sol"})
@@ -248,6 +253,10 @@ class VideoAccessTests(unittest.TestCase):
             "one original video idea",
             "Do not copy or lightly rewrite",
             "Use only the supplied",
+            "performance_metrics contains TikTok view_count, like_count, comment_count, and share_count",
+            "A missing or null count is unknown, not zero",
+            "not a time series",
+            "posting age is unknown",
         ):
             self.assertIn(phrase, SYSTEM_PROMPT)
         self.assertNotIn("backend", SYSTEM_PROMPT.casefold())

@@ -63,12 +63,17 @@ Install backend requirements into `.venv` first if needed with
 is unavailable.
 
 The frontend entry point is `frontend/src/main.tsx`. The API entry point is
-`backend/app/main.py`; `GET /health` returns a liveness response. Select a
-supported video in the frontend and submit the form to send it to
-`POST /api/videos`. Videos are capped at 500 MiB and 10 minutes, normalised to
-MP4/H.264/AAC (maximum 1,920 pixels per dimension), then have mono 16 kHz PCM
-WAV audio extracted during the request. Processed files are temporary and are
-not retained yet.
+`backend/app/main.py`; `GET /health` returns a liveness response. In the
+frontend, connect TikTok, then provide a video file, its matching full TikTok
+video URL, and an OpenAI API key. The form uploads to `POST /api/videos`, reads
+the saved result through `GET /api/videos/{video_id}/analysis`, and requests the
+idea and script through `POST /api/videos/{video_id}/recommendations`. The
+runtime key is sent only with the recommendation request and is not persisted
+by the frontend. Run `npm run test:e2e` from `frontend` for the browser flow
+test, which uses mocked API responses. Videos are capped at 500 MiB and 10
+minutes, normalised to MP4/H.264/AAC (maximum 1,920 pixels per dimension), then
+have mono 16 kHz PCM WAV audio extracted during the request. Processed files
+are temporary and are not retained yet.
 
 Successful video uploads include a `metadata` hash map containing the source
 duration, container, file size, overall bitrate, and nested video/audio stream
