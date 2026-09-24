@@ -1,6 +1,8 @@
+import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
+import psycopg
 from fastapi import FastAPI, File, HTTPException, UploadFile
 
 from app.video_processing import (
@@ -22,6 +24,24 @@ MAX_UPLOAD_SIZE_BYTES = 500 * 1024 * 1024
 @app.get("/health")
 async def health_check() -> dict[str, str]:
     """Return a minimal liveness response for local development."""
+    return {"status": "ok"}
+
+
+@app.get("/health/db")
+def database_health_check() -> dict[str, str]:
+    """Check that the configured PostgreSQL database answers a simple query."""
+    database_url = os.environ.get("DATABASE_URL")
+    if not database_url:
+        raise HTTPException(status_code=503, detail="Database is not configured.")
+
+    try:
+        with psycopg.connect(database_url, connect_timeout=3) as connection:
+            with connection.cursor() as cursor:
+                cursor.execute("SELECT 1")
+                cursor.fetchone()
+    except psycopg.Error as error:
+        raise HTTPException(status_code=503, detail="Database is unavailable.") from error
+
     return {"status": "ok"}
 
 

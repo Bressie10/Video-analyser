@@ -1,5 +1,6 @@
 fastapi>=0.115,<1.0
 faster-whisper>=1.1,<2.0
+psycopg[binary]>=3.2,<4.0
 python-multipart>=0.0.20,<1.0
 scenedetect>=0.6,<1.0
 rapidocr>=3.0,<4.0

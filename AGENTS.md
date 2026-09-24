@@ -5,6 +5,7 @@ Build a TikTok video analyser that analyses video content and performance, retur
 ## Project structure
 
 - `backend/app/main.py` — FastAPI application entry point.
+- `backend/app/video_processing.py` — Video validation, conversion, transcription, and visual analysis helpers.
 - `backend/requirements.txt` — Python dependencies.
 - `frontend/src/main.tsx` — React application entry point.
 - `frontend/index.html` — Frontend HTML entry point.
