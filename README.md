@@ -25,6 +25,7 @@ set -a
 source .env
 set +a
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/001_create_video_analysis.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/002_create_tiktok_video_performance.sql
 ```
 
 To check that the schema can round-trip representative processing output,
@@ -94,5 +95,30 @@ plain text `response`. No output schema is defined yet.
 The model instructions compare all supplied videos, cite evidence for patterns,
 state uncertainty, and generate an original idea and script. The current
 recommendation route supplies one stored video, so it cannot yet compare across
-videos or evaluate performance metrics that are not present in that record.
+videos. It can use performance metrics when they were fetched with the upload.
 Send runtime keys over HTTPS and exclude this header from proxy request logs.
+
+## TikTok connection
+
+Add `TIKTOK_CLIENT_KEY`, `TIKTOK_CLIENT_SECRET`, and `TIKTOK_REDIRECT_URI` to the
+private `.env`. Register the redirect URI in TikTok Login Kit as an HTTPS URL
+ending in `/api/tiktok/callback`, and obtain approval for Login Kit and Display
+API `video.list` access. Open `GET /api/tiktok/connect` in a browser to authorize;
+TikTok returns to the callback, which sets an HTTP-only session cookie. Then
+call `GET /api/tiktok/videos` to receive one page of public videos with the
+available view, like, comment, and share counts. Pass `cursor` to fetch the next
+page when `has_more` is true. Only `video.list` is requested. TikTok requires
+the public client key in the authorization redirect; the client secret and
+user tokens stay on the backend.
+
+Tokens are kept in backend process memory and refreshed when needed. A backend
+restart or a different worker requires the user to authorize again. When
+uploading a video, optionally provide its full TikTok video URL after connecting
+the account. The backend uses TikTok's video query API to fetch available view,
+like, comment, and share counts, then saves them with the processed video under
+the same internal UUID. The URL and TikTok video ID are used only for the lookup;
+they are not stored. Only canonical HTTPS video URLs are accepted, and the
+authorized TikTok account must own the public video. The uploaded file is not
+automatically matched against TikTok's video content.
+For a real OAuth flow, serve the frontend and `/api` under the same HTTPS origin
+so the secure session cookie reaches the upload request.

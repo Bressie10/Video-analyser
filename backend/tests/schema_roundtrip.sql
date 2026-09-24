@@ -38,6 +38,10 @@ BEGIN
         video_id, event_index, start_seconds, end_seconds, type, confidence
     ) VALUES (test_video_id, 0, 2.000, 4.250, 'camera_pan', 0.875);
 
+    INSERT INTO tiktok_video_performance
+        (video_id, view_count, like_count, comment_count, share_count)
+    VALUES (test_video_id, 120, 12, 3, 2);
+
     IF NOT EXISTS (
         SELECT 1 FROM videos
         WHERE id = test_video_id
@@ -93,6 +97,14 @@ BEGIN
              AND cut_timestamp_seconds IS NULL
        ) THEN
         RAISE EXCEPTION 'scene order or first-scene cut was lost';
+    END IF;
+
+    IF NOT EXISTS (
+        SELECT 1 FROM tiktok_video_performance
+        WHERE video_id = test_video_id AND view_count = 120
+          AND like_count = 12 AND comment_count = 3 AND share_count = 2
+    ) THEN
+        RAISE EXCEPTION 'TikTok performance data did not round-trip';
     END IF;
 END $$;
 

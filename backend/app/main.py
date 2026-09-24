@@ -1,14 +1,18 @@
 import os
+import hmac
+import secrets
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from uuid import UUID
 
 import psycopg
-from fastapi import FastAPI, File, Header, HTTPException, UploadFile
+from fastapi import FastAPI, File, Form, Header, HTTPException, Query, Request, Response, UploadFile
+from fastapi.responses import JSONResponse, RedirectResponse
 from openai import OpenAIError
 from dotenv import load_dotenv
 
 from app.recommendations import MissingAPIKeyError, recommend_videos
+from app import tiktok
 from app.video_repository import get_analysis, save_analysis
 
 from app.video_processing import (
@@ -33,6 +37,66 @@ MAX_UPLOAD_SIZE_BYTES = 500 * 1024 * 1024
 async def health_check() -> dict[str, str]:
     """Return a minimal liveness response for local development."""
     return {"status": "ok"}
+
+
+@app.get("/api/tiktok/connect")
+def connect_tiktok() -> RedirectResponse:
+    """Start web OAuth with a browser-bound anti-forgery state."""
+    try:
+        config = tiktok.settings()
+    except tiktok.TikTokConfigurationError:
+        raise HTTPException(status_code=503, detail="TikTok is not configured.") from None
+    state = secrets.token_urlsafe(32)
+    response = RedirectResponse(tiktok.authorization_url(config, state), status_code=302)
+    response.set_cookie(
+        tiktok.STATE_COOKIE, state, max_age=tiktok.STATE_MAX_AGE,
+        secure=True, httponly=True, samesite="lax", path="/api/tiktok/callback",
+    )
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
+@app.get("/api/tiktok/callback")
+def tiktok_callback(request: Request) -> JSONResponse:
+    """Exchange TikTok's authorization code without exposing tokens."""
+    state = request.query_params.get("state")
+    stored_state = request.cookies.get(tiktok.STATE_COOKIE)
+    if not state or not stored_state or not hmac.compare_digest(state, stored_state):
+        response = JSONResponse({"detail": "Invalid TikTok authorization state."}, status_code=400)
+    elif request.query_params.get("error") or not request.query_params.get("code"):
+        response = JSONResponse({"detail": "TikTok authorization was not completed."}, status_code=400)
+    else:
+        try:
+            tokens = tiktok.exchange_code(tiktok.settings(), request.query_params["code"])
+        except tiktok.TikTokError:
+            response = JSONResponse({"detail": "TikTok authorization failed."}, status_code=502)
+        else:
+            session_id = tiktok.create_session(tokens)
+            response = JSONResponse({"connected": True})
+            response.set_cookie(
+                tiktok.SESSION_COOKIE, session_id, max_age=tiktok.SESSION_MAX_AGE,
+                secure=True, httponly=True, samesite="lax", path="/api",
+            )
+    response.delete_cookie(tiktok.STATE_COOKIE, path="/api/tiktok/callback", secure=True, httponly=True, samesite="lax")
+    response.headers["Cache-Control"] = "no-store"
+    return response
+
+
+@app.get("/api/tiktok/videos")
+def tiktok_videos(request: Request, response: Response, cursor: int | None = Query(default=None, ge=0)) -> dict:
+    """Return one page of the authorized user's public videos and counts."""
+    try:
+        config = tiktok.settings()
+        access_token = tiktok.access_token_for_session(request.cookies.get(tiktok.SESSION_COOKIE), config)
+        videos = tiktok.list_videos(access_token, cursor)
+    except tiktok.TikTokConfigurationError:
+        raise HTTPException(status_code=503, detail="TikTok is not configured.") from None
+    except tiktok.TikTokNotConnected:
+        raise HTTPException(status_code=401, detail="TikTok account is not connected.") from None
+    except tiktok.TikTokError:
+        raise HTTPException(status_code=502, detail="TikTok request failed.") from None
+    response.headers["Cache-Control"] = "no-store"
+    return videos
 
 
 @app.get("/health/db")
@@ -67,12 +131,37 @@ async def upload_photo(photo: UploadFile = File(...)) -> dict[str, str]:
 
 
 @app.post("/api/videos")
-async def upload_video(video: UploadFile = File(...)) -> dict[str, object]:
+async def upload_video(
+    request: Request,
+    video: UploadFile = File(...),
+    tiktok_url: str | None = Form(default=None),
+) -> dict[str, object]:
     """Validate, normalise, and extract PCM WAV audio from a video upload."""
     filename = video.filename or "upload"
     suffix = Path(filename).suffix.lower()
     if suffix not in SUPPORTED_EXTENSIONS:
         raise HTTPException(status_code=415, detail="Unsupported video format.")
+
+    performance_metrics = None
+    if tiktok_url and tiktok_url.strip():
+        if not os.environ.get("DATABASE_URL"):
+            raise HTTPException(status_code=503, detail="Database is not configured.")
+        try:
+            tiktok_video_id = tiktok.video_id_from_url(tiktok_url)
+        except tiktok.TikTokError:
+            raise HTTPException(status_code=422, detail="Enter a full TikTok video URL.") from None
+        try:
+            config = tiktok.settings()
+            access_token = tiktok.access_token_for_session(request.cookies.get(tiktok.SESSION_COOKIE), config)
+            performance_metrics = tiktok.video_performance(access_token, tiktok_video_id)
+        except tiktok.TikTokConfigurationError:
+            raise HTTPException(status_code=503, detail="TikTok is not configured.") from None
+        except tiktok.TikTokNotConnected:
+            raise HTTPException(status_code=401, detail="TikTok account is not connected.") from None
+        except tiktok.TikTokVideoNotFound:
+            raise HTTPException(status_code=404, detail="TikTok video was not found for this account.") from None
+        except tiktok.TikTokError:
+            raise HTTPException(status_code=502, detail="TikTok performance request failed.") from None
 
     with TemporaryDirectory(prefix="video-analyzer-") as directory:
         source_path = Path(directory, f"source{suffix}")
@@ -104,6 +193,8 @@ async def upload_video(video: UploadFile = File(...)) -> dict[str, object]:
         "on_screen_text": on_screen_text,
         "motion_events": motion_events,
     }
+    if performance_metrics is not None:
+        analysis["performance_metrics"] = performance_metrics
     if os.environ.get("DATABASE_URL"):
         try:
             video_id = save_analysis(analysis)

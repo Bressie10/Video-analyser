@@ -50,6 +50,19 @@ class VideoAccessTests(unittest.TestCase):
 
     @patch.dict(os.environ, {"DATABASE_URL": "postgresql://test"})
     @patch("app.video_repository.psycopg.connect")
+    def test_save_links_performance_to_same_internal_uuid(self, connect: MagicMock) -> None:
+        cursor = connect.return_value.__enter__.return_value.cursor.return_value.__enter__.return_value
+        cursor.fetchone.return_value = (VIDEO_ID,)
+        counts = {"view_count": 120, "like_count": 12, "comment_count": 3, "share_count": 2}
+
+        self.assertEqual(save_analysis({**ANALYSIS, "performance_metrics": counts}), str(VIDEO_ID))
+
+        statement, values = cursor.execute.call_args.args
+        self.assertIn("INSERT INTO tiktok_video_performance", statement)
+        self.assertEqual(values, (VIDEO_ID, 120, 12, 3, 2))
+
+    @patch.dict(os.environ, {"DATABASE_URL": "postgresql://test"})
+    @patch("app.video_repository.psycopg.connect")
     def test_get_reconstructs_analysis(self, connect: MagicMock) -> None:
         cursor = connect.return_value.__enter__.return_value.cursor.return_value.__enter__.return_value
         row = {
@@ -60,7 +73,7 @@ class VideoAccessTests(unittest.TestCase):
             "audio_codec_long_name": "AAC", "audio_sample_rate": 48000, "audio_channels": 2,
             "audio_channel_layout": "stereo", "audio_bit_rate": 96000, "transcript_text": "Hello world",
         }
-        cursor.fetchone.return_value = row
+        cursor.fetchone.side_effect = [row, None]
         cursor.fetchall.side_effect = [
             [{"video_id": VIDEO_ID, "segment_index": 0, "start_seconds": 0.1,
               "end_seconds": 1.25, "text": "Hello world"}],
@@ -70,7 +83,7 @@ class VideoAccessTests(unittest.TestCase):
         ]
 
         self.assertEqual(get_analysis(VIDEO_ID), {"video_id": str(VIDEO_ID), **ANALYSIS})
-        self.assertEqual(cursor.execute.call_count, 5)
+        self.assertEqual(cursor.execute.call_count, 6)
 
     @patch("app.main.get_analysis", return_value={"video_id": str(VIDEO_ID), **ANALYSIS})
     @patch("app.main.recommend_videos", return_value={"model": "gpt-6-sol", "response": "Idea one"})

@@ -79,6 +79,15 @@ def save_analysis(analysis: dict) -> str:
                     (video_id, index, event["start_seconds"], event["end_seconds"],
                      event["type"], event["confidence"]),
                 )
+            performance = analysis.get("performance_metrics")
+            if performance is not None:
+                cursor.execute(
+                    """INSERT INTO tiktok_video_performance
+                    (video_id, view_count, like_count, comment_count, share_count)
+                    VALUES (%s, %s, %s, %s, %s)""",
+                    (video_id, performance["view_count"], performance["like_count"],
+                     performance["comment_count"], performance["share_count"]),
+                )
     return str(video_id)
 
 
@@ -102,6 +111,12 @@ def get_analysis(video_id: UUID) -> dict | None:
             scenes = children("scenes", "scene_number")
             detections = children("on_screen_text", "detection_index")
             events = children("motion_events", "event_index")
+            cursor.execute(
+                """SELECT view_count, like_count, comment_count, share_count
+                FROM tiktok_video_performance WHERE video_id = %s""",
+                (video_id,),
+            )
+            performance = cursor.fetchone()
 
     def number(value):
         return float(value) if value is not None else None
@@ -139,4 +154,5 @@ def get_analysis(video_id: UUID) -> dict | None:
         "motion_events": [{key: number(value) if key == "confidence" or key.endswith("seconds") else value
                            for key, value in item.items() if key not in ("video_id", "event_index")}
                           for item in events],
+        **({"performance_metrics": performance} if performance is not None else {}),
     }
