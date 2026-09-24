@@ -6,8 +6,8 @@ It creates five tables. Each processed video has one UUID in `videos.id`; all
 analysis rows refer to it through `video_id`. Deleting a video cascades to its
 analysis rows.
 
-The schema is ready to store the current `POST /api/videos` output, but the API
-does not insert results yet. The examples below describe possible rows; they
+When `DATABASE_URL` is configured, `POST /api/videos` stores its result in these
+tables and returns `video_id`. The examples below describe possible rows; they
 are not seed data and are not present in the database by default.
 
 ## Local setup

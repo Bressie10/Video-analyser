@@ -31,10 +31,11 @@ To check that the schema can round-trip representative processing output,
 run `psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/tests/schema_roundtrip.sql`.
 The check rolls back its sample rows.
 
-The schema gives each video a UUID and stores metadata, transcript segments,
-scenes, on-screen text, and motion events. It does not automatically store
-upload results; the current API response and temporary-file behaviour are
-unchanged. Keep `.env` private.
+When `DATABASE_URL` is set, successful uploads store metadata, transcript
+segments, scenes, on-screen text (which may include popup text), and motion events. The
+response includes `video_id`. Without a configured database, uploads still
+return analysis but do not provide an ID for later recommendations. Keep
+`.env` private.
 
 Frontend:
 
@@ -79,3 +80,19 @@ Sampled frames are analysed by RapidOCR; `on_screen_text` lists recognized text,
 quadrilateral bounding boxes, confidence, and appearance/disappearance timestamps.
 Dense optical flow also returns timestamped `motion_events`, distinguishing
 whole-frame pan/zoom/shake patterns from local and general movement.
+
+## Model access
+
+Set `OPENAI_API_KEY` in your private `.env` for a backend default key; the
+backend loads it at startup. `OPENAI_MODEL` defaults to `gpt-6-sol`. With
+PostgreSQL configured, `GET /api/videos/{video_id}/analysis` returns the saved
+result and `POST /api/videos/{video_id}/recommendations` sends it to the OpenAI
+Responses API. A caller can supply `X-OpenAI-API-Key` on that POST request to
+use their own key for that request. The header takes precedence over the
+backend default and is never stored. The response contains only `model` and
+plain text `response`. No output schema is defined yet.
+The model instructions compare all supplied videos, cite evidence for patterns,
+state uncertainty, and generate an original idea and script. The current
+recommendation route supplies one stored video, so it cannot yet compare across
+videos or evaluate performance metrics that are not present in that record.
+Send runtime keys over HTTPS and exclude this header from proxy request logs.

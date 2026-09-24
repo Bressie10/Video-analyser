@@ -1,9 +1,15 @@
 import os
 from pathlib import Path
 from tempfile import TemporaryDirectory
+from uuid import UUID
 
 import psycopg
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import FastAPI, File, Header, HTTPException, UploadFile
+from openai import OpenAIError
+from dotenv import load_dotenv
+
+from app.recommendations import MissingAPIKeyError, recommend_videos
+from app.video_repository import get_analysis, save_analysis
 
 from app.video_processing import (
     SUPPORTED_EXTENSIONS,
@@ -16,6 +22,8 @@ from app.video_processing import (
     normalise_video,
     transcribe_audio,
 )
+
+load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=False)
 
 app = FastAPI(title="Video Analyzer API")
 MAX_UPLOAD_SIZE_BYTES = 500 * 1024 * 1024
@@ -89,10 +97,50 @@ async def upload_video(video: UploadFile = File(...)) -> dict[str, object]:
         except VideoProcessingError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
-    return {
+    analysis = {
         "metadata": metadata.as_dict(),
         "audio": transcription,
         "scenes": scenes,
         "on_screen_text": on_screen_text,
         "motion_events": motion_events,
     }
+    if os.environ.get("DATABASE_URL"):
+        try:
+            video_id = save_analysis(analysis)
+        except psycopg.Error as error:
+            raise HTTPException(status_code=503, detail="Database is unavailable.") from error
+        return {"video_id": video_id, **analysis}
+    return analysis
+
+
+def _stored_analysis(video_id: UUID) -> dict:
+    try:
+        analysis = get_analysis(video_id)
+    except ValueError as error:
+        raise HTTPException(status_code=503, detail=str(error)) from error
+    except psycopg.Error as error:
+        raise HTTPException(status_code=503, detail="Database is unavailable.") from error
+    if analysis is None:
+        raise HTTPException(status_code=404, detail="Video analysis not found.")
+    return analysis
+
+
+@app.get("/api/videos/{video_id}/analysis")
+def read_video_analysis(video_id: UUID) -> dict:
+    """Expose stored metadata and analysis to API clients."""
+    return _stored_analysis(video_id)
+
+
+@app.post("/api/videos/{video_id}/recommendations")
+def create_video_recommendations(
+    video_id: UUID,
+    runtime_api_key: str | None = Header(default=None, alias="X-OpenAI-API-Key"),
+) -> dict[str, str]:
+    """Ask GPT-6 Sol to recommend future videos from stored analysis."""
+    analysis = _stored_analysis(video_id)
+    try:
+        return recommend_videos(analysis, api_key=runtime_api_key)
+    except MissingAPIKeyError as error:
+        raise HTTPException(status_code=503, detail="OpenAI API key is not configured.") from error
+    except OpenAIError:
+        raise HTTPException(status_code=502, detail="OpenAI request failed.") from None
