@@ -1,0 +1,232 @@
+"""V4 API with real sessions, ownership and migrations 001-010."""
+import json
+import os
+import unittest
+from concurrent.futures import ThreadPoolExecutor
+from unittest.mock import patch
+from uuid import uuid4
+
+import psycopg
+from fastapi.testclient import TestClient
+
+from app import company_ownership_repository as repo
+from app import meta, meta_library_repository as library
+from app.main import app
+import test_company_ownership as ownership_tests
+
+
+@unittest.skipUnless(os.environ.get('TEST_DATABASE_URL'), 'requires disposable PostgreSQL')
+class CompanyAPITests(unittest.TestCase):
+    def setUp(self):
+        self.f = ownership_tests.CompanyOwnershipTests('test_two_companies_and_exclusive_organic_accounts')
+        self.addCleanup(self.f.doCleanups)
+        self.f.setUp()
+        env = patch.dict(os.environ, {'DATABASE_URL': self.f.url,
+                                     'COMPANY_PROFILE_WORKER_ENABLED': 'false', 'META_WORKER_ENABLED': 'false'})
+        env.start()
+        self.addCleanup(env.stop)
+        self.client = TestClient(app, base_url='https://testserver')
+        self.addCleanup(self.client.close)
+        self.f.db.execute("INSERT INTO meta_sessions VALUES (%s,%s,now()+interval '1 day')",
+                          (library.token_hash('company-api-session'), self.f.connection))
+        self.client.cookies.set(meta.SESSION_COOKIE, 'company-api-session', path='/api')
+        self.base = f'/api/companies/{self.f.a}'
+
+    def request(self, method, path, status=200, **kwargs):
+        response = self.client.request(method, path, **kwargs)
+        self.assertEqual(response.status_code, status, response.text)
+        self.assertEqual(response.headers['cache-control'], 'private, no-store')
+        return response.json()
+
+    def account(self, account, company=None):
+        return f'/api/companies/{company or self.f.a}/accounts/{account}'
+
+    def ad(self, ad, company=None):
+        return f'/api/companies/{company or self.f.a}/ads/{ad}'
+
+    def test_name_only_lifecycle(self):
+        created = self.request('POST', '/api/companies', 201, json={'name': '  New company  '})
+        self.assertEqual(created, {'company_id': created['company_id'], 'name': 'New company',
+                                   'archived': False, 'accounts': []})
+        path = '/api/companies/' + created['company_id']
+        self.assertIn(created, self.request('GET', '/api/companies')['companies'])
+        self.assertEqual(self.request('PATCH', path, json={'name': 'Renamed'})['name'], 'Renamed')
+        self.assertTrue(self.request('POST', path + '/archive')['archived'])
+        self.assertNotIn(created['company_id'], [r['company_id'] for r in self.request('GET', '/api/companies')['companies']])
+        self.assertIn(created['company_id'], [r['company_id'] for r in self.request('GET', '/api/companies?include_archived=true')['companies']])
+        self.assertTrue(self.request('GET', path)['archived'])
+        self.request('PATCH', path, 404, json={'name': 'Cannot rename'})
+        self.assertFalse(self.request('POST', path + '/restore')['archived'])
+        self.request('PATCH', path, json={'name': 'Restored'})
+        for body in ({'name': ''}, {'name': '  '}, {'name': 'x' * 201}, {'name': 'X', 'connection_id': str(self.f.foreign_connection)}):
+            self.assertEqual(self.client.post('/api/companies', json=body).status_code, 422)
+
+    def test_organic_exclusive_ownership_and_archived_owner(self):
+        for account in (self.f.fb, self.f.ig):
+            self.request('PUT', self.account(account))
+            self.request('PUT', self.account(account))
+            self.request('PUT', self.account(account, self.f.b), 409)
+            self.request('PUT', self.account(account, self.f.foreign_company), 404)
+        accounts = self.request('GET', '/api/meta/accounts')['accounts']
+        fb = next(r for r in accounts if r['account_id'] == str(self.f.fb))
+        self.assertEqual(fb['organic_owner'], {'company_id': str(self.f.a), 'name': 'A', 'archived': False})
+        self.request('POST', self.base + '/archive')
+        fb = next(r for r in self.request('GET', '/api/meta/accounts')['accounts'] if r['account_id'] == str(self.f.fb))
+        self.assertTrue(fb['organic_owner']['archived'])
+        self.request('PUT', self.account(self.f.fb, self.f.b), 409)
+        self.request('POST', self.base + '/restore')
+        for account in (self.f.fb, self.f.ig):
+            self.request('DELETE', self.account(account))
+            self.request('PUT', self.account(account, self.f.b))
+
+    def test_shared_ads_assignment_unlink_and_atomic_reassignment(self):
+        picker = self.account(self.f.ads) + '/ads'
+        self.request('GET', picker, 404)
+        self.request('PUT', self.account(self.f.ads))
+        self.assertEqual(self.f.ids(self.f.a), set())
+        self.assertEqual(len(self.request('GET', picker)['ads']), 3)
+        self.request('PUT', self.ad(self.f.ad_a))
+        self.request('PUT', self.ad(self.f.ad_a))
+        self.request('DELETE', self.account(self.f.ads), 409)
+        self.request('POST', self.ad(self.f.ad_a) + '/reassign', 409, json={'target_company_id': str(self.f.b)})
+        self.assertIn(self.f.ad_a, self.f.ids(self.f.a))
+        self.request('PUT', self.account(self.f.ads, self.f.b))
+        self.request('PUT', self.ad(self.f.ad_a, self.f.b), 409)
+        self.request('DELETE', self.ad(self.f.ad_a, self.f.b))
+        self.assertIn(self.f.ad_a, self.f.ids(self.f.a))
+        self.request('POST', self.ad(self.f.ad_a) + '/reassign', json={'target_company_id': str(self.f.b)})
+        self.assertNotIn(self.f.ad_a, self.f.ids(self.f.a))
+        self.assertIn(self.f.ad_a, self.f.ids(self.f.b))
+        self.request('DELETE', self.account(self.f.ads))
+        self.request('DELETE', self.account(self.f.ads, self.f.b), 409)
+        self.request('DELETE', self.ad(self.f.ad_a, self.f.b))
+        self.request('DELETE', self.account(self.f.ads, self.f.b))
+        self.assertEqual(self.f.ids(self.f.b), set())
+
+    def test_shared_creative_and_picker_do_not_leak_sibling_metadata(self):
+        self.f.shared_setup()
+        self.f.db.execute("UPDATE meta_library_items SET label='SIBLING PRIVATE',analysis_error='SIBLING PRIVATE' WHERE id=%s", (self.f.creative,))
+        for company, own, other in ((self.f.a, self.f.ad_a, self.f.ad_b), (self.f.b, self.f.ad_b, self.f.ad_a)):
+            ads = self.request('GET', self.account(self.f.ads, company) + '/ads')['ads']
+            self.assertEqual({r['ad_item_id'] for r in ads}, {str(own), str(self.f.unassigned)})
+            self.assertTrue(next(r['assigned'] for r in ads if r['ad_item_id'] == str(own)))
+            for row in ads:
+                self.assertEqual(set(row), {'ad_item_id', 'display_name', 'assigned'})
+            for value in (str(other), str(self.f.creative), 'SIBLING PRIVATE', 'impressions', 'snapshot'):
+                self.assertNotIn(value, json.dumps(ads))
+            self.assertEqual([r['item_id'] for r in repo.performance(self.f.db, self.f.connection, company, self.f.creative)], [own])
+            self.assertNotIn('SIBLING PRIVATE', str(repo.ad_assets(self.f.db, self.f.connection, company, own)))
+
+    def test_archived_ownership_frozen_until_restore(self):
+        self.f.shared_setup()
+        self.request('POST', self.base + '/archive')
+        for method, path, body in (
+            ('PUT', self.account(self.f.fb), None), ('DELETE', self.account(self.f.ads), None),
+            ('PUT', self.ad(self.f.unassigned), None), ('DELETE', self.ad(self.f.ad_a), None),
+            ('GET', self.account(self.f.ads) + '/ads', None),
+            ('POST', self.ad(self.f.ad_a) + '/reassign', {'target_company_id': str(self.f.b)}),
+            ('POST', self.ad(self.f.ad_b, self.f.b) + '/reassign', {'target_company_id': str(self.f.a)}),
+        ):
+            self.request(method, path, 404, **({'json': body} if body else {}))
+        self.request('POST', self.base + '/restore')
+        self.request('PUT', self.account(self.f.fb))
+        self.request('DELETE', self.ad(self.f.ad_a))
+        self.request('DELETE', self.account(self.f.ads))
+
+    def test_foreign_unknown_companies_and_resources_fail_closed(self):
+        self.f.shared_setup()
+        for company in (self.f.foreign_company, uuid4()):
+            path = f'/api/companies/{company}'
+            for method, suffix, body in (
+                ('GET', '', None), ('PATCH', '', {'name': 'Hacked'}),
+                ('POST', '/archive', None), ('POST', '/restore', None),
+                ('PUT', f'/accounts/{self.f.fb}', None), ('DELETE', f'/accounts/{self.f.ads}', None),
+                ('GET', f'/accounts/{self.f.ads}/ads', None),
+                ('PUT', f'/ads/{self.f.ad_a}', None), ('DELETE', f'/ads/{self.f.ad_a}', None),
+                ('POST', f'/ads/{self.f.ad_a}/reassign', {'target_company_id': str(self.f.b)}),
+            ):
+                self.request(method, path + suffix, 404, **({'json': body} if body else {}))
+            self.request('POST', self.ad(self.f.ad_a) + '/reassign', 404, json={'target_company_id': str(company)})
+        for account in (self.f.foreign_ads, uuid4()):
+            for method, suffix in (('PUT', ''), ('DELETE', ''), ('GET', '/ads')):
+                self.request(method, self.account(account) + suffix, 404)
+        for ad in (self.f.foreign_ad, self.f.creative, uuid4()):
+            for method in ('PUT', 'DELETE'):
+                self.request(method, self.ad(ad), 404)
+        self.assertIn(self.f.ad_a, self.f.ids(self.f.a))
+
+    def test_authentication_and_session_fenced_through_commit(self):
+        original = repo.create_company
+        def create(db, *args):
+            with self.assertRaises(psycopg.errors.LockNotAvailable), library.database() as other:
+                other.execute("SET LOCAL lock_timeout='50ms'")
+                other.execute('DELETE FROM meta_sessions')
+            return original(db, *args)
+        with patch('app.company_routes.repo.create_company', side_effect=create):
+            self.request('POST', '/api/companies', 201, json={'name': 'Locked'})
+        for statement in (
+            "UPDATE meta_sessions SET expires_at=now()-interval '1 day'",
+            "UPDATE meta_connections SET status='disconnected'",
+            "UPDATE meta_connections SET expires_at=now()-interval '1 day'",
+            'DELETE FROM meta_sessions',
+        ):
+            self.f.db.execute("UPDATE meta_sessions SET expires_at=now()+interval '1 day'")
+            self.f.db.execute("UPDATE meta_connections SET status='connected',expires_at=now()+interval '1 day'")
+            self.f.db.execute(statement)
+            for method, path, body in (
+                ('GET', '/api/companies', None), ('GET', '/api/meta/accounts', None),
+                ('POST', '/api/companies', {'name': 'No'}), ('POST', self.base + '/restore', None),
+                ('PUT', self.account(self.f.ads), None), ('PUT', self.ad(self.f.ad_a), None),
+            ):
+                self.request(method, path, 401, **({'json': body} if body else {}))
+        self.client.cookies.clear()
+        self.request('GET', '/api/companies', 401)
+
+    def test_ownership_api_invalidates_profiles_and_conflicts_roll_back(self):
+        def versions(company):
+            return {r['scope']: (r['input_revision'], r['suppressed']) for r in
+                    self.f.db.execute('SELECT * FROM company_profiles WHERE company_id=%s', (company,)).fetchall()}
+        self.request('PUT', self.account(self.f.ads))
+        before = versions(self.f.a)
+        self.assertEqual(len(before), 4)
+        self.request('PUT', self.ad(self.f.ad_a))
+        after = versions(self.f.a)
+        self.assertTrue(all(after[scope][0] == before[scope][0] + 1 for scope in before))
+        self.request('DELETE', self.account(self.f.ads), 409)
+        self.assertEqual(versions(self.f.a), after)
+        self.request('DELETE', self.ad(self.f.ad_a))
+        removed = versions(self.f.a)
+        self.assertTrue(all(removed[scope][0] == after[scope][0] + 1 and removed[scope][1] for scope in after))
+
+    def test_storage_errors_are_generic(self):
+        with patch('app.company_routes.repo.list_company_summaries',
+                   side_effect=psycopg.OperationalError('provider-secret database detail')):
+            response = self.request('GET', '/api/companies', 503)
+        self.assertEqual(response, {'detail': 'Company management is unavailable.'})
+
+    def test_concurrent_api_mutations_do_not_deadlock(self):
+        def create(index):
+            return self.client.post('/api/companies', json={'name': f'Concurrent {index}'}).status_code
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            self.assertEqual(list(pool.map(create, range(2))), [201, 201])
+
+    def test_public_projection_uses_internal_ids_and_friendly_names(self):
+        self.f.db.execute("UPDATE meta_accounts SET label='Friendly account' WHERE id=%s", (self.f.fb,))
+        self.f.db.execute("UPDATE meta_accounts SET label='https://provider.invalid/private' WHERE id=%s", (self.f.ads,))
+        self.request('PUT', self.account(self.f.fb))
+        self.request('PUT', self.account(self.f.ads))
+        payloads = [self.request('GET', '/api/companies?include_archived=true'),
+                    self.request('GET', '/api/meta/accounts'), self.request('GET', self.base),
+                    self.request('GET', self.account(self.f.ads) + '/ads')]
+        encoded = json.dumps(payloads)
+        for forbidden in ('external_id', 'connection_id', 'token', 'encrypted', 'https://',
+                          'a-secret', 'b-secret', 'unassigned-secret', 'foreign-ads', str(self.f.foreign_company)):
+            self.assertNotIn(forbidden, encoded)
+        self.assertIn('Friendly account', encoded)
+        self.assertIn('Meta Ads account', encoded)
+        for account in payloads[1]['accounts']:
+            self.assertEqual(set(account), {'account_id', 'platform', 'display_name', 'organic_owner'})
+
+
+if __name__ == '__main__':
+    unittest.main()

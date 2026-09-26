@@ -397,3 +397,80 @@ def analysis(db, connection_id, company_id, item_id):
             (item['video_id'],),
         ).fetchall()
     return result
+
+
+@_transaction
+def rename_company(db, connection_id, company_id, name):
+    _company(db, connection_id, company_id, write=True)
+    if not isinstance(name, str) or not name.strip():
+        raise ValueError('Company name is required.')
+    return db.execute('UPDATE companies SET name=%s WHERE id=%s RETURNING *',
+                      (name.strip(), company_id)).fetchone()
+
+
+def _display_name(row, fallback):
+    # Legacy labels may contain a provider ID or URL; never use those as a
+    # fallback display name. Only the friendly label is part of this contract.
+    label = (row['label'] or '').strip()
+    if not label or row['external_id'] in label or '://' in label or 'www.' in label:
+        return fallback
+    return label
+
+
+def _account_summary(row):
+    return {'account_id': row['id'], 'platform': row['platform'],
+            'display_name': _display_name(row, {
+                'facebook': 'Facebook account', 'instagram': 'Instagram account',
+                'meta_ads': 'Meta Ads account',
+            }[row['platform']])}
+
+
+@_transaction
+def company_summary(db, connection_id, company_id):
+    company = _company(db, connection_id, company_id, active=False)
+    accounts = db.execute('''SELECT a.* FROM company_accounts ca
+        JOIN meta_accounts a ON a.id=ca.account_id AND a.connection_id=ca.connection_id
+        WHERE ca.company_id=%s AND ca.connection_id=%s ORDER BY a.platform,a.id''',
+        (company_id, connection_id)).fetchall()
+    return {'company_id': company['id'], 'name': company['name'],
+            'archived': company['archived_at'] is not None,
+            'accounts': [_account_summary(row) for row in accounts]}
+
+
+@_transaction
+def list_company_summaries(db, connection_id, *, include_archived=False):
+    return [company_summary(db, connection_id, row['id']) for row in
+            list_companies(db, connection_id, include_archived=include_archived)]
+
+
+@_transaction
+def list_available_accounts(db, connection_id):
+    _lock(db, connection_id)
+    rows = db.execute('''SELECT a.*, c.id AS owner_company_id, c.name AS owner_name,
+        c.archived_at AS owner_archived_at FROM meta_accounts a
+        LEFT JOIN company_accounts ca ON ca.account_id=a.id AND ca.connection_id=a.connection_id
+            AND ca.account_platform IN ('facebook','instagram')
+        LEFT JOIN companies c ON c.id=ca.company_id AND c.connection_id=a.connection_id
+        WHERE a.connection_id=%s ORDER BY a.platform,a.id''', (connection_id,)).fetchall()
+    return [dict(_account_summary(row), organic_owner={
+        'company_id': row['owner_company_id'], 'name': row['owner_name'],
+        'archived': row['owner_archived_at'] is not None,
+    } if row['owner_company_id'] else None) for row in rows]
+
+
+@_transaction
+def list_assignable_ads(db, connection_id, company_id, account_id):
+    """Selection metadata only; a linked account never grants content/metrics."""
+    _company(db, connection_id, company_id)
+    account = _account(db, connection_id, account_id)
+    if account['platform'] != 'meta_ads' or not db.execute('''SELECT 1 FROM company_accounts
+        WHERE company_id=%s AND connection_id=%s AND account_id=%s''',
+        (company_id, connection_id, account_id)).fetchone():
+        raise OwnershipNotFound('Linked Ads account was not found.')
+    rows = db.execute('''SELECT i.id,i.label,i.external_id,x.company_id FROM meta_library_items i
+        LEFT JOIN company_ad_assignments x ON x.ad_item_id=i.id
+        WHERE i.connection_id=%s AND i.account_id=%s AND i.content_type='ad'
+        AND (x.ad_item_id IS NULL OR x.company_id=%s) ORDER BY i.id''',
+        (connection_id, account_id, company_id)).fetchall()
+    return [{'ad_item_id': row['id'], 'display_name': _display_name(row, 'Meta ad'),
+             'assigned': row['company_id'] is not None} for row in rows]
