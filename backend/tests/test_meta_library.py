@@ -206,7 +206,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         self.env.start()
         with repo.database() as db:
             for migration in sorted(
-                (Path(__file__).resolve().parents[1] / "migrations").glob("*.sql")
+                (Path(__file__).resolve().parents[1] / "migrations").glob("00[1-5]_*.sql")
             ):
                 db.execute(migration.read_text())
         self.graph = GraphFixture()

@@ -32,10 +32,14 @@ def recent(published_at, at=None):
 
 @contextmanager
 def database():
-    with psycopg.connect(
-        _database_url(), connect_timeout=3, row_factory=dict_row
-    ) as db:
-        yield db
+    db = psycopg.connect(_database_url(), connect_timeout=3, row_factory=dict_row)
+    try:
+        with db:
+            yield db
+    finally:
+        # Some psycopg versions do not close when COMMIT itself raises (e.g.
+        # deferred evidence constraints). Always release the connection.
+        db.close()
 
 
 def cipher():

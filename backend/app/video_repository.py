@@ -108,31 +108,36 @@ def save_analysis(analysis: dict, *, connection=None, video_id=None, analysis_ve
 def get_analysis(video_id: UUID, *, connection_id=None) -> dict | None:
     """Load a complete result in the same shape as the upload response."""
     with psycopg.connect(_database_url(), connect_timeout=3, row_factory=dict_row) as connection:
-        with connection.cursor() as cursor:
-            cursor.execute("SELECT * FROM videos WHERE id = %s", (video_id,))
-            row = cursor.fetchone()
-            if row is None:
-                return None
-            if row.get('meta_connection_id') is not None and row['meta_connection_id'] != connection_id:
-                return None
-            def children(table: str, order_column: str) -> list[dict]:
-                # Only fixed, local identifiers are passed to this helper.
-                cursor.execute(
-                    f"SELECT * FROM {table} WHERE video_id = %s ORDER BY {order_column}",
-                    (video_id,),
-                )
-                return cursor.fetchall()
+        return read_analysis(connection, video_id, connection_id=connection_id)
 
-            segments = children("transcript_segments", "segment_index")
-            scenes = children("scenes", "scene_number")
-            detections = children("on_screen_text", "detection_index")
-            events = children("motion_events", "event_index")
+
+def read_analysis(connection, video_id, *, connection_id=None, company_authorized=False):
+    """Internal reader. Company callers MUST authorize this item on this transaction first."""
+    with connection.cursor() as cursor:
+        cursor.execute("SELECT * FROM videos WHERE id = %s", (video_id,))
+        row = cursor.fetchone()
+        if row is None:
+            return None
+        if not company_authorized and row.get('meta_connection_id') is not None and row['meta_connection_id'] != connection_id:
+            return None
+        def children(table: str, order_column: str) -> list[dict]:
+            # Only fixed, local identifiers are passed to this helper.
             cursor.execute(
-                """SELECT source, view_count, like_count, comment_count, share_count, meta_ads
-                FROM video_performance WHERE video_id = %s""",
+                f"SELECT * FROM {table} WHERE video_id = %s ORDER BY {order_column}",
                 (video_id,),
             )
-            performance = cursor.fetchone()
+            return cursor.fetchall()
+
+        segments = children("transcript_segments", "segment_index")
+        scenes = children("scenes", "scene_number")
+        detections = children("on_screen_text", "detection_index")
+        events = children("motion_events", "event_index")
+        cursor.execute(
+            """SELECT source, view_count, like_count, comment_count, share_count, meta_ads
+            FROM video_performance WHERE video_id = %s""",
+            (video_id,),
+        )
+        performance = cursor.fetchone()
 
     def number(value):
         return float(value) if value is not None else None

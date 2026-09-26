@@ -282,3 +282,10 @@ SELECT * FROM motion_events WHERE video_id = '8db7e284-353b-4f3e-9bf0-44d78d8887
 The numeric timestamp columns preserve the three decimal places emitted by
 the processing code. The schema also checks nonnegative durations and ordered
 intervals, and restricts confidence scores to the range 0–1.
+
+## V3 persistent ideas
+
+Migration [008](backend/migrations/008_persistent_ideas.sql) requires the separate
+006 company and 007 profile-revision integrations, absent from this branch. Apply
+those first; do not substitute the test fixtures. See [persistent ideas](backend/PERSISTENT_IDEAS.md)
+for its six tables, immutable evidence constraints, API and adapter requirements.

@@ -17,6 +17,7 @@ assets**, including assets linked to ads. No customer upload, provider ID, media
 URL, or OpenAI key entry is required. Unavailable media and missing metrics remain
 visible limitations, not invented data.
 
+- [V3 persistent ideas](backend/PERSISTENT_IDEAS.md): backend API, frozen evidence and required 006/007 integration.
 - [Database and migrations](DATABASE.md): installation, upgrades, schema and metric storage.
 - [Backend architecture and APIs](backend/META_LIBRARY.md): synchronization, caching, policies and compatibility routes.
 - [Frontend behavior](frontend/LIBRARY_CONTRACT.md): account filters, preparation, selection and results.
