@@ -230,3 +230,92 @@ The backend suite includes mocked Graph responses plus a real PostgreSQL
 API-to-repository round trip when `TEST_DATABASE_URL` is set. Live Reel access
 still requires configured Meta credentials, browser authorization, and an
 accessible Reel; mocked Graph tests do not establish live provider access.
+
+## Meta authentication (backend only)
+
+Meta login uses **Facebook Login for Business**, with a **User access token**
+configuration. It currently checks authorization and reads only the authorized
+user's app-scoped ID. No Page, Instagram, Reel, video, or ad metrics are fetched
+or stored.
+
+Set these variables privately in the root `.env` (never `VITE_*` variables):
+
+| Variable | Value |
+| --- | --- |
+| `META_APP_ID` | Your Meta business app ID |
+| `META_APP_SECRET` | Your app secret |
+| `META_REDIRECT_URI` | Exact HTTPS URL ending in `/api/meta/callback` |
+| `META_LOGIN_CONFIG_ID` | Facebook Login for Business configuration ID |
+| `META_GRAPH_API_VERSION` | `v26.0` (current version verified 2026-09-26) |
+
+In the Meta app dashboard, enable Facebook Login for Business and the relevant
+Instagram/Marketing API use cases. Register `META_REDIRECT_URI` as a Valid OAuth
+Redirect URI. Create a login configuration with **User access token** as the
+token type, selecting only these business permissions:
+
+| Permission | Purpose for the planned read-only integration |
+| --- | --- |
+| `pages_show_list` | Discover Pages the authorizing user manages |
+| `pages_read_engagement` | Read Page-owned organic content; dependency of insights |
+| `pages_read_user_content` | Listed dependency of `instagram_basic` in Meta's current permission reference |
+| `instagram_basic` | Read linked professional Instagram profile/media |
+| `read_insights` | Future Facebook Page insights |
+| `instagram_manage_insights` | Future linked Instagram insights |
+| `ads_read` | Future ads reporting for authorized ad accounts |
+
+The URL uses `config_id`, rather than a separate scope override, as Meta
+recommends. Configure the exact list above in the dashboard; `public_profile`
+and `email` may be automatically granted by Meta. The backend verifies
+`/me/permissions`, rejects missing or unexpected business permissions, and
+never requests email data. No publishing, ads management, messaging, or
+Business Manager management permission is requested. A linked Facebook Page
+and a Business/Creator Instagram account are assumed for future Instagram
+access; consumer Instagram accounts are outside this login route.
+
+For development, authorize with an app-role user who has access to the intended
+assets. Serving other businesses requires the appropriate Advanced Access/App
+Review. This authentication-only implementation does not demonstrate the future
+metrics features for App Review.
+
+### Connect and prove the authenticated request
+
+1. Restart the backend with the environment configured. Use one backend worker
+   and expose `/api/meta` at the registered HTTPS origin.
+2. In a browser, open `https://YOUR_HOST/api/meta/connect` and complete Meta's
+   login and consent.
+3. The callback exchanges the code server-side, verifies the granted permissions,
+   and calls `GET https://graph.facebook.com/v26.0/me?fields=id`. Success returns
+   `{"connected": true, "user_id": "..."}` and sets an opaque session cookie.
+4. In that same browser, visit `https://YOUR_HOST/api/meta/test`. It repeats the
+   authenticated identity request and returns the same safe response.
+
+The test proves a user token can make a Graph request, not that every selected
+Page/ad account or future metrics endpoint is accessible. Asset-specific access
+will need checking when those integrations are implemented.
+
+Tokens and OAuth state stay in process memory. Cookies are Secure, HttpOnly,
+and SameSite=Lax and contain only opaque identifiers. State expires after ten
+minutes and can be consumed once. Sessions expire with the returned user token;
+expiration, revocation, backend restart, or another worker requires reconnecting.
+Long-lived token exchange and persistent/shared token storage are not included.
+
+The client fixes the Graph host, rejects arbitrary URLs and redirects, uses a
+Bearer header and `appsecret_proof` for authenticated reads, and exposes only
+allowlisted identity fields. Provider error payloads are not returned or logged.
+The documented token exchange uses GET; the backend redacts Graph query strings
+from HTTPX logs and OAuth callback query strings from Uvicorn access logs.
+Configure any external proxy/APM to omit callback query strings, outbound token
+exchange URLs, authorization headers, and response bodies too.
+
+Run `cd backend && .venv/bin/python -m unittest discover -s tests -p test_meta_api.py`
+for the mocked OAuth/client checks. A real successful callback and `/api/meta/test`
+are required for live verification; passing mocked tests does not establish this.
+
+References checked against Meta's documentation on 2026-09-26:
+
+- [Facebook Login for Business](https://developers.facebook.com/docs/facebook-login/facebook-login-for-business/)
+- [Manual code exchange and permission checks](https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow/)
+- [Permissions and their dependencies](https://developers.facebook.com/docs/permissions/)
+- [Instagram with Facebook Login setup](https://developers.facebook.com/docs/instagram-platform/instagram-api-with-facebook-login/get-started)
+- [Securing Graph requests](https://developers.facebook.com/docs/graph-api/securing-requests/)
+- [Graph API version changelog](https://developers.facebook.com/docs/graph-api/changelog/)
