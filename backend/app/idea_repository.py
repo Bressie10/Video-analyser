@@ -17,6 +17,8 @@ def idea(db, company_id, idea_id):
     row['target_platforms'] = [r['platform'] for r in db.execute(
         'SELECT platform FROM idea_target_platforms WHERE idea_id=%s ORDER BY platform',
         (idea_id,)).fetchall()]
+    row['publications'] = db.execute('''SELECT library_item_id,created_at FROM idea_publications
+        WHERE idea_id=%s ORDER BY created_at,library_item_id''', (idea_id,)).fetchall()
     return row
 
 
@@ -27,7 +29,7 @@ def history(db, company_id, limit, after=None):
                             (company_id, after)).fetchone()
         if cursor is None:
             raise HTTPException(404, 'History cursor was not found.')
-    rows = db.execute('''SELECT id,title,concept,created_at,updated_at FROM ideas
+    rows = db.execute('''SELECT id,title,concept,status,feedback,feedback_reason,created_at,updated_at FROM ideas
         WHERE company_id=%s AND (%s::timestamptz IS NULL OR (created_at,id)<(%s,%s))
         ORDER BY created_at DESC,id DESC LIMIT %s''',
         (company_id, cursor['created_at'] if cursor else None,
@@ -124,10 +126,37 @@ def frozen_evidence(db, company_id, idea_id):
 
 def edit(db, company_id, idea_id, changes):
     # Names are strictly from IdeaEdit, never interpolated from arbitrary input.
-    fields = [field for field in ('title', 'concept', 'script') if field in changes]
+    fields = [field for field in ('title', 'concept', 'script', 'status') if field in changes]
     assignments = ','.join(f'{field}=%s' for field in fields)
     row = db.execute(f'UPDATE ideas SET {assignments} WHERE company_id=%s AND id=%s RETURNING id',
                      (*[changes[field] for field in fields], company_id, idea_id)).fetchone()
     if row is None:
         raise HTTPException(404, 'Idea was not found.')
+    return idea(db, company_id, idea_id)
+
+
+def set_feedback(db, company_id, idea_id, feedback, reason):
+    row = db.execute('''UPDATE ideas SET feedback=%s,feedback_reason=%s
+        WHERE company_id=%s AND id=%s RETURNING id''',
+        (feedback, reason, company_id, idea_id)).fetchone()
+    if row is None:
+        raise HTTPException(404, 'Idea was not found.')
+    return idea(db, company_id, idea_id)
+
+
+def add_publication(db, company_id, idea_id, item_id):
+    """Caller holds live company/item authorization locks in this transaction."""
+    db.execute('''INSERT INTO idea_publications(idea_id,library_item_id)
+        SELECT id,%s FROM ideas WHERE company_id=%s AND id=%s
+        ON CONFLICT DO NOTHING''', (item_id, company_id, idea_id))
+    # The scoped read also distinguishes duplicate links from missing/foreign ideas.
+    return idea(db, company_id, idea_id)
+
+
+def remove_publication(db, company_id, idea_id, item_id):
+    # No current item authorization is needed to remove one's historical link.
+    # Company authorization (including the archive check) is still mandatory.
+    db.execute('''DELETE FROM idea_publications p USING ideas i
+        WHERE p.idea_id=i.id AND i.company_id=%s AND i.id=%s AND p.library_item_id=%s''',
+        (company_id, idea_id, item_id))
     return idea(db, company_id, idea_id)

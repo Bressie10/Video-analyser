@@ -17,6 +17,7 @@ scheduling and API behavior, and [README.md](README.md) for stack setup.
 | 006 | [company_ownership](backend/migrations/006_company_ownership.sql) | Adds explicit companies, organic/account links and ad assignments; preserves unassigned V2 data |
 | 007 | [company_profiles](backend/migrations/007_company_profiles.sql) | Adds immutable profile revisions, scoped cache state, refresh jobs and invalidation records |
 | 008 | [persistent_ideas](backend/migrations/008_persistent_ideas.sql) | Adds company ideas, immutable generation evidence, targets and idempotency claims |
+| 009 | [idea_feedback_publications](backend/migrations/009_idea_feedback_publications.sql) | Extends lifecycle, adds current feedback and manual publication associations |
 
 Start PostgreSQL and configure root `.env` as described in README. For a **new,
 empty database only**, run from the repository root:
@@ -33,12 +34,13 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/005_meta_library.s
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/006_company_ownership.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/007_company_profiles.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/008_persistent_ideas.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/009_idea_feedback_publications.sql
 ```
 
 For an **existing installation**, back up the database, establish which migrations
 have already been applied, and run only the remaining files in numerical order.
-For the integrated V3 backend, a database at 005 needs 006, 007 then 008; one at 004
-needs 005–008. These scripts are transactional,
+For the integrated V3 backend, a database at 005 needs 006–009; one at 008 needs only
+009. These scripts are transactional,
 not idempotent; there is no migration runner/history table or automatic startup
 migration. Do not rerun the full sequence on an existing database. Inspect
 `\dt`, `\d videos`, and `\d video_performance` in `psql` against the migration
@@ -291,3 +293,7 @@ Migration [008](backend/migrations/008_persistent_ideas.sql) requires the
 006 company and 007 profile-revision integrations included in this branch. Apply
 those first; do not substitute the test fixtures. See [persistent ideas](backend/PERSISTENT_IDEAS.md)
 for its six tables, immutable evidence constraints, API and default ownership/profile adapter.
+Migration [009](backend/migrations/009_idea_feedback_publications.sql) extends idea lifecycle
+and current feedback, and adds `idea_publications` with restrictive idea/item foreign
+keys and a composite primary key. Publication links persist through ownership changes
+and confer no live library access. See the [exact 009 schema](backend/PERSISTENT_IDEAS.md#migration-009-schema).

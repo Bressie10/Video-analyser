@@ -40,6 +40,7 @@ class IdeaEdit(BaseModel):
     title: str | None = Field(default=None, min_length=1, max_length=300)
     concept: str | None = Field(default=None, min_length=1, max_length=10000)
     script: str | None = Field(default=None, min_length=1, max_length=30000)
+    status: Literal['draft', 'used', 'published', 'discarded'] | None = None
 
     @model_validator(mode='after')
     def valid_edit(self):
@@ -47,5 +48,19 @@ class IdeaEdit(BaseModel):
             getattr(self, key) is None or not getattr(self, key).strip()
             for key in self.model_fields_set
         ):
-            raise ValueError('Supply at least one nonblank title, concept or script.')
+            raise ValueError('Supply at least one nonblank title, concept, script or valid status.')
+        return self
+
+
+class IdeaFeedback(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    feedback: Literal['none', 'liked', 'disliked']
+    reason: str | None = Field(default=None, max_length=2000)
+
+    @model_validator(mode='after')
+    def valid_reason(self):
+        if self.reason is not None:
+            self.reason = self.reason.strip() or None
+        if self.feedback != 'disliked' and self.reason is not None:
+            raise ValueError('A reason is supported only for disliked feedback.')
         return self

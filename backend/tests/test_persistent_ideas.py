@@ -90,6 +90,7 @@ class PersistentIdeasTests(unittest.TestCase):
                 db.execute(path.read_text())
             db.execute((ROOT / 'tests/fixtures/idea_company_contract.sql').read_text())
             db.execute((ROOT / 'migrations/008_persistent_ideas.sql').read_text())
+            db.execute((ROOT / 'migrations/009_idea_feedback_publications.sql').read_text())
             db.execute('INSERT INTO companies VALUES (%s),(%s)', (self.company, self.other_company))
             db.execute('''INSERT INTO meta_connections(id,external_user_id,expires_at)
                 VALUES (%s,'provider-user-secret',now()+interval '1 day')''', (self.connection,))
@@ -152,8 +153,8 @@ class PersistentIdeasTests(unittest.TestCase):
             result = self.generated()
         self.assertEqual(result['status'], 'draft')
         self.assertEqual(result['model'], 'test-model')
-        self.assertEqual(result['recommendation_version'], 3)
-        self.assertEqual(result['evidence_schema_version'], 2)
+        self.assertEqual(result['recommendation_version'], 4)
+        self.assertEqual(result['evidence_schema_version'], 3)
         self.assertEqual(result['profile_revision_id'], str(self.profile_id))
         evidence = self.evidence(result['id'])
         self.assertEqual(evidence, self.model.call_args.args[0])
@@ -240,7 +241,7 @@ class PersistentIdeasTests(unittest.TestCase):
         self.assertEqual(response.json()['script'], 'New script')
         self.assertGreater(response.json()['updated_at'], result['updated_at'])
         self.assertEqual(self.evidence(result['id']), frozen)
-        for invalid in ({}, {'title': None}, {'script': '  '}, {'status':'published'}, {'model':'x'}, {'target_platforms':[]}):
+        for invalid in ({}, {'title': None}, {'script': '  '}, {'status':'invalid'}, {'model':'x'}, {'target_platforms':[]}):
             self.assertEqual(self.api.patch(endpoint, json=invalid).status_code, 422)
         with library.database() as db:
             self.assertEqual(db.execute('SELECT count(*) AS n FROM ideas').fetchone()['n'], 1)

@@ -12,7 +12,7 @@ from app import idea_repository as ideas, idea_service, meta
 from app import meta_library_repository as library
 from app.idea_company_access import company_access
 from app.idea_generation import InvalidGeneration
-from app.idea_models import GenerationRequest, IdeaEdit
+from app.idea_models import GenerationRequest, IdeaEdit, IdeaFeedback
 from app.meta_routes import _private
 from app.recommendations import MissingAPIKeyError
 
@@ -70,3 +70,27 @@ def evidence(request: Request, company_id: UUID, idea_id: UUID, access=Depends(c
 def edit(request: Request, company_id: UUID, idea_id: UUID, body: IdeaEdit, access=Depends(company_access)):
     return read_or_edit(request, access, company_id,
                         lambda db: ideas.edit(db, company_id, idea_id, body.model_dump(exclude_unset=True)), write=True)
+
+
+@router.put('/ideas/{idea_id}/feedback')
+def feedback(request: Request, company_id: UUID, idea_id: UUID, body: IdeaFeedback,
+             access=Depends(company_access)):
+    return read_or_edit(request, access, company_id,
+                        lambda db: ideas.set_feedback(db, company_id, idea_id, body.feedback, body.reason), write=True)
+
+
+@router.put('/ideas/{idea_id}/publications/{library_item_id}')
+def add_publication(request: Request, company_id: UUID, idea_id: UUID, library_item_id: UUID,
+                    access=Depends(company_access)):
+    def link(db):
+        ideas.idea(db, company_id, idea_id)
+        access.authorize(db, request.cookies.get(meta.SESSION_COOKIE), company_id, [library_item_id], write=True)
+        return ideas.add_publication(db, company_id, idea_id, library_item_id)
+    return read_or_edit(request, access, company_id, link, write=True)
+
+
+@router.delete('/ideas/{idea_id}/publications/{library_item_id}')
+def remove_publication(request: Request, company_id: UUID, idea_id: UUID, library_item_id: UUID,
+                       access=Depends(company_access)):
+    return read_or_edit(request, access, company_id,
+                        lambda db: ideas.remove_publication(db, company_id, idea_id, library_item_id), write=True)

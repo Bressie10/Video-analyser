@@ -17,7 +17,7 @@ assets**, including assets linked to ads. No customer upload, provider ID, media
 URL, or OpenAI key entry is required. Unavailable media and missing metrics remain
 visible limitations, not invented data.
 
-- [V3 persistent ideas](backend/PERSISTENT_IDEAS.md): backend API, frozen evidence and integrated 006 ownership/007 profiles.
+- [V3 persistent ideas](backend/PERSISTENT_IDEAS.md): backend API, frozen evidence, lifecycle/feedback and manual publication links.
 - [Database and migrations](DATABASE.md): installation, upgrades, schema and metric storage.
 - [Backend architecture and APIs](backend/META_LIBRARY.md): synchronization, caching, policies and compatibility routes.
 - [Frontend behavior](frontend/LIBRARY_CONTRACT.md): account filters, preparation, selection and results.
@@ -60,7 +60,7 @@ docker compose exec postgres pg_isready
 Wait for PostgreSQL to accept connections, then follow the
 [ordered migration instructions](DATABASE.md#migrations-and-local-setup).
 V2 requires migrations **001–005**; integrated company ownership, profiles and ideas
-require **001–008**. Existing installations apply only missing
+require **001–009**. Existing installations apply only missing
 migrations. The backend does not apply migrations automatically.
 
 Start the backend in a terminal from the repository root:

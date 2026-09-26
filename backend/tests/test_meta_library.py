@@ -818,7 +818,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         with repo.database() as db:
             # This callback check crosses into V3; the remaining V2 fixtures
             # deliberately keep testing the original 001-005 schema.
-            for path in sorted((Path(__file__).resolve().parents[1] / 'migrations').glob('00[6-8]_*.sql')):
+            for path in sorted((Path(__file__).resolve().parents[1] / 'migrations').glob('00[6-9]_*.sql')):
                 db.execute(path.read_text())
             company = ownership.create_company(db, self.connection_id, 'OAuth company')['id']
         # The cookie obtained from the real callback reaches company routes too.

@@ -89,7 +89,9 @@ def capture_evidence(db, access, session, company_id, body):
     profile = access.profile(db, company_id)
     prior = ideas.history(db, company_id, body.history_limit)['items'] if body.history_limit else []
     # Bound duplicate-avoidance context and freeze these exact excerpts.
-    prior = [{'id': row['id'], 'title': row['title'][:300], 'concept': row['concept'][:2000]} for row in prior]
+    prior = [{'id': row['id'], 'title': row['title'][:300], 'concept': row['concept'][:2000],
+              'status': row['status'], 'feedback': row['feedback'],
+              'feedback_reason': row['feedback_reason']} for row in prior]
     payload = jsonable_encoder({
         'videos': videos, 'performance_snapshots': [performance[key] for key in sorted(performance)],
         'company_profile': profile.payload if profile else None,
