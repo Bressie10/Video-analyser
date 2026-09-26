@@ -142,7 +142,7 @@ async def upload_video(
     if suffix not in SUPPORTED_EXTENSIONS:
         raise HTTPException(status_code=415, detail="Unsupported video format.")
 
-    performance_metrics = None
+    performance = None
     if tiktok_url and tiktok_url.strip():
         if not os.environ.get("DATABASE_URL"):
             raise HTTPException(status_code=503, detail="Database is not configured.")
@@ -153,7 +153,7 @@ async def upload_video(
         try:
             config = tiktok.settings()
             access_token = tiktok.access_token_for_session(request.cookies.get(tiktok.SESSION_COOKIE), config)
-            performance_metrics = tiktok.video_performance(access_token, tiktok_video_id)
+            performance = tiktok.video_performance(access_token, tiktok_video_id)
         except tiktok.TikTokConfigurationError:
             raise HTTPException(status_code=503, detail="TikTok is not configured.") from None
         except tiktok.TikTokNotConnected:
@@ -193,8 +193,8 @@ async def upload_video(
         "on_screen_text": on_screen_text,
         "motion_events": motion_events,
     }
-    if performance_metrics is not None:
-        analysis["performance_metrics"] = performance_metrics
+    if performance is not None:
+        analysis.update(performance)
     if os.environ.get("DATABASE_URL"):
         try:
             video_id = save_analysis(analysis)

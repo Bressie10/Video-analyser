@@ -8,7 +8,10 @@ analysis rows.
 
 [`backend/migrations/002_create_tiktok_video_performance.sql`](backend/migrations/002_create_tiktok_video_performance.sql)
 adds a sixth table for optional TikTok performance counts linked to the same
-internal video UUID. Apply it after the first migration.
+internal video UUID. Migration
+[`003_platform_agnostic_performance.sql`](backend/migrations/003_platform_agnostic_performance.sql)
+renames it to `video_performance` and backfills existing rows with source `tiktok`,
+preserving counts and timestamps. Apply migrations in numerical order.
 
 When `DATABASE_URL` is configured, `POST /api/videos` stores its result in these
 tables and returns `video_id`. The examples below describe possible rows; they
@@ -26,6 +29,7 @@ source .env
 set +a
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/001_create_video_analysis.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/002_create_tiktok_video_performance.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/003_platform_agnostic_performance.sql
 ```
 
 The migration is applied once to a new database. Change the credentials and
@@ -46,9 +50,9 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/tests/schema_roundtrip.sql
 | `scenes` | One detected scene and its cut boundary | `(video_id, scene_number)` | `video_id` → `videos.id` |
 | `on_screen_text` | One interval when detected text is visible | `(video_id, detection_index)` | `video_id` → `videos.id` |
 | `motion_events` | One classified motion interval | `(video_id, event_index)` | `video_id` → `videos.id` |
-| `tiktok_video_performance` | Available video engagement counts | `video_id` | `video_id` → `videos.id` |
+| `video_performance` | Available video engagement counts | `video_id` | `video_id` → `videos.id` |
 
-The performance table stores a count snapshot and `fetched_at`. It stores
+The performance table stores a count snapshot, a required `source`, and `fetched_at`. It stores
 neither the TikTok URL nor TikTok's video ID; the internal UUID is the only
 database link.
 

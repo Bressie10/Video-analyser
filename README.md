@@ -26,6 +26,7 @@ source .env
 set +a
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/001_create_video_analysis.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/002_create_tiktok_video_performance.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/003_platform_agnostic_performance.sql
 ```
 
 To check that the schema can round-trip representative processing output,
@@ -127,3 +128,20 @@ authorized TikTok account must own the public video. The uploaded file is not
 automatically matched against TikTok's video content.
 For a real OAuth flow, serve the frontend and `/api` under the same HTTPS origin
 so the secure session cookie reaches the upload request.
+
+## Common performance metrics
+
+Analysis responses keep counts in `performance_metrics` (view_count, like_count,
+comment_count, share_count) and provenance separately in `performance_source`.
+Supported source identifiers are `tiktok`, `instagram`, `facebook`, and `meta_ads`;
+only TikTok has an API integration. Missing counts are null, never assumed zero.
+Uploads without performance data omit both fields. Each analyzed video still has
+one count snapshot. Source IDs and URLs are not persisted.
+
+Apply migration 003 before running the updated backend, including on existing
+databases. It preserves existing TikTok snapshots and their retrieval timestamps.
+
+To run backend checks, use `cd backend && .venv/bin/python -m unittest discover -s tests`.
+Set `TEST_DATABASE_URL` to a disposable PostgreSQL database to include the
+migration/repository/API test; it creates and removes an isolated test schema.
+Without that variable, the database integration test is skipped.

@@ -10,6 +10,8 @@ from urllib.parse import urlencode, urlsplit
 
 import httpx
 
+from app.performance import VideoPerformance, performance_snapshot
+
 AUTHORIZE_URL = "https://www.tiktok.com/v2/auth/authorize/"
 TOKEN_URL = "https://open.tiktokapis.com/v2/oauth/token/"
 VIDEO_LIST_URL = "https://open.tiktokapis.com/v2/video/list/"
@@ -209,7 +211,7 @@ def video_id_from_url(url: str) -> str:
         raise TikTokError("Enter a full TikTok video URL.") from None
 
 
-def video_performance(access_token: str, video_id: str) -> dict[str, int | None]:
+def video_performance(access_token: str, video_id: str) -> VideoPerformance:
     """Query one of the authorized user's videos for available counts."""
     try:
         with httpx.Client(timeout=10.0) as client:
@@ -232,9 +234,7 @@ def video_performance(access_token: str, video_id: str) -> dict[str, int | None]
         counts = {field: match.get(field) for field in PERFORMANCE_FIELDS}
         if all(value is None for value in counts.values()):
             raise TikTokError("TikTok returned no performance counts.")
-        if any(value is not None and (type(value) is not int or value < 0) for value in counts.values()):
-            raise ValueError("Invalid performance counts")
-        return counts
+        return performance_snapshot("tiktok", counts)
     except TikTokError:
         raise
     except (httpx.HTTPError, ValueError, KeyError, TypeError, AttributeError):
