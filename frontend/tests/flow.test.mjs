@@ -3,10 +3,11 @@ import assert from "node:assert/strict";
 import { test as nodeTest, before, after } from "node:test";
 import { chromium } from "playwright";
 const test = (name, run) => nodeTest(name, { timeout: 30000 }, run);
-const origin = "http://127.0.0.1:5179";
+const port = process.env.FLOW_TEST_PORT ?? "5179";
+const origin = `http://127.0.0.1:${port}`;
 let server, browser;
 before(async () => {
-  server = spawn("./node_modules/.bin/vite", ["--host", "127.0.0.1", "--port", "5179", "--strictPort"], { stdio: "inherit" });
+  server = spawn("./node_modules/.bin/vite", ["--host", "127.0.0.1", "--port", port, "--strictPort"], { stdio: "inherit" });
   for (let i = 0; i < 70; i++) { try { if ((await fetch(origin)).ok) break; } catch {} await new Promise((resolve) => setTimeout(resolve, 100)); }
   browser = await chromium.launch({ headless: true });
 });
@@ -34,6 +35,7 @@ async function withApp(options, run) {
     const request = route.request(), url = new URL(request.url()), path = url.pathname;
     calls.push({ path, method: request.method(), body: request.postDataJSON(), headers: request.headers(), url });
     if (options.route && await options.route(route, url, calls)) return;
+    if (path === "/api/companies") return route.fulfill({ json: { items: [], next_cursor: null } });
     if (path === "/api/meta/test") return route.fulfill({ status: 200, json: { connected } });
     if (path === "/api/meta/connect") return route.fulfill({ contentType: "text/html", body: '<script>location.href="https://meta-provider.test/authorize"</script>' });
     if (path === "/api/meta/callback") { connected = true; return route.fulfill({ json: { connected: true, job_id: jobId } }); }

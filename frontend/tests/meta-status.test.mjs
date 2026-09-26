@@ -3,10 +3,11 @@ import assert from "node:assert/strict";
 import { test, before, after } from "node:test";
 import { chromium } from "playwright";
 
-const origin = "http://127.0.0.1:5181";
+const port = process.env.META_STATUS_TEST_PORT ?? "5181";
+const origin = `http://127.0.0.1:${port}`;
 let server, browser;
 before(async () => {
-  server = spawn("./node_modules/.bin/vite", ["--host", "127.0.0.1", "--port", "5181", "--strictPort"], { stdio: "inherit" });
+  server = spawn("./node_modules/.bin/vite", ["--host", "127.0.0.1", "--port", port, "--strictPort"], { stdio: "inherit" });
   for (let i = 0; i < 70; i++) {
     try { if ((await fetch(origin)).ok) break; } catch {}
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -49,6 +50,7 @@ for (const connected of [false, true]) {
 for (const status of [401, 403, 502, 503]) {
   test(`status probe ${status} remains an error instead of disconnected`, async () => {
     const context = await browser.newContext();
+    await context.route("**/api/companies", (route) => route.fulfill({ json: { items: [], next_cursor: null } }));
     await context.route("**/api/meta/test", (route) => route.fulfill({ status, json: { detail: "Failure" } }));
     const page = await context.newPage();
     try {

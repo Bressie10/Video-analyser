@@ -4,6 +4,7 @@ import { MetaConnection } from "./MetaConnection";
 import { VideoLibrary } from "./VideoLibrary";
 import type { Idea } from "./metaLibrary";
 import "./style.css";
+import { CompanyProvider } from "./company/CompanyProvider";
 
 function App() {
   const [connected, setConnected] = useState(false);
@@ -40,4 +41,4 @@ function App() {
 }
 const root = document.getElementById("root");
 if (!root) throw new Error("Application root element is missing.");
-createRoot(root).render(<StrictMode><App /></StrictMode>);
+createRoot(root).render(<StrictMode><CompanyProvider><App /></CompanyProvider></StrictMode>);
