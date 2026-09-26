@@ -21,7 +21,8 @@ from app.meta_ads_routes import router as meta_ads_router
 from app.video_repository import get_analysis, save_analysis
 from app.analysis_pipeline import analyze_file
 from app.meta_library_routes import router as meta_library_router
-from app.meta_library_worker import lifespan
+from app.company_profile_worker import lifespan
+from app.company_profile_routes import router as company_profile_router
 
 from app.video_processing import (
     SUPPORTED_EXTENSIONS,
@@ -38,6 +39,7 @@ from app.video_processing import (
 load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=False)
 
 app = FastAPI(title="Video Analyzer API", lifespan=lifespan)
+app.include_router(company_profile_router)
 app.include_router(meta_library_router)
 app.include_router(meta_router)
 app.include_router(meta_discovery_router)

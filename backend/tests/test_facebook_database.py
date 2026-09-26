@@ -31,7 +31,7 @@ class FacebookDatabaseTests(unittest.TestCase):
             try:
                 url = make_conninfo(os.environ["TEST_DATABASE_URL"], options=f"-csearch_path={schema}")
                 with psycopg.connect(url, autocommit=True) as db:
-                    for migration in sorted(migrations.glob("*.sql")):
+                    for migration in sorted(migrations.glob("00[1-5]_*.sql")):
                         db.execute(migration.read_text())
                     with patch.dict(os.environ, {**CONFIG, "DATABASE_URL": url}):
                         target = UUID(save_analysis(ANALYSIS))

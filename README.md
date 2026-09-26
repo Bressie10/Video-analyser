@@ -245,3 +245,9 @@ Live verification remains separate: complete real OAuth, confirm access to each
 intended source and downloadable media/insights, and generate with an authorized
 OpenAI key. Automated fixtures do not prove provider permissions, model access,
 or output quality on real business footage.
+
+## V3 company profile subsystem
+
+See [Company profiles](COMPANY_PROFILES.md) for migration 007, the migration 006 adapter
+contract, asynchronous refresh APIs, evidence limits, invalidation hooks and tests.
+The subsystem is isolated and disabled until the company integration is bound.
