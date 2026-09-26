@@ -12,7 +12,7 @@ from app import meta_ads, meta
 from app.meta_routes import _private
 from app.video_repository import PerformanceSourceConflict, get_analysis, save_performance
 
-router = APIRouter(prefix="/api/meta/ads")
+router = APIRouter(deprecated=True, prefix="/api/meta/ads")
 
 
 class AdMetricsRequest(BaseModel):

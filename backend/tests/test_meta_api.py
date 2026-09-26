@@ -17,6 +17,7 @@ CONFIG = {
     "META_APP_ID": "123456", "META_APP_SECRET": "private-app-secret",
     "META_REDIRECT_URI": "https://testserver/api/meta/callback",
     "META_LOGIN_CONFIG_ID": "654321", "META_GRAPH_API_VERSION": "v26.0",
+    "META_TOKEN_ENCRYPTION_KEY": "",  # These tests use the in-memory session fixture.
 }
 TOKEN = "private-user-token"
 CODE = "private-oauth-code"
@@ -165,20 +166,39 @@ class MetaAPITests(unittest.TestCase):
                 self.assertNotIn(CONFIG["META_APP_SECRET"], response.text)
                 self.assertEqual(meta._sessions, {})
 
-    def test_unauthorized_expired_and_revoked_sessions(self):
+    def test_disconnected_expired_and_revoked_status_is_normal(self):
         with patch("app.meta._get") as request:
-            self.assertEqual(self.api.get("/api/meta/test").status_code, 401)
+            self.assertEqual(self.api.get("/api/meta/test").status_code, 200)
             expired = meta.create_session(meta.UserToken(TOKEN, time.time() - 1))
             self.api.cookies.set(meta.SESSION_COOKIE, expired, path="/api/meta")
-            self.assertEqual(self.api.get("/api/meta/test").status_code, 401)
+            self.assertEqual(self.api.get("/api/meta/test").status_code, 200)
             request.assert_not_called()
         session = meta.create_session(meta.UserToken(TOKEN, time.time() + 1000))
         self.api.cookies.set(meta.SESSION_COOKIE, session, path="/api/meta")
         with self.transport(lambda request: httpx.Response(400, json={"error": {"code": 190, "message": TOKEN}})):
             response = self.api.get("/api/meta/test")
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 200)
         self.assertNotIn(session, meta._sessions)
         self.assertNotIn(TOKEN, response.text)
+
+    def test_status_probe_does_not_hide_real_errors(self):
+        for error, status in ((meta.MetaPermissionError("denied"), 403),
+                              (meta.MetaConfigurationError("unavailable"), 503),
+                              (meta.MetaError("provider failed"), 502)):
+            with self.subTest(status=status), patch("app.meta.session_client", side_effect=error):
+                response = self.api.get("/api/meta/test")
+            self.assertEqual(response.status_code, status)
+            self.assertNotIn("connected", response.json())
+
+    def test_absent_status_is_private_and_protected_discovery_stays_unauthorized(self):
+        with patch("app.meta.session_client", side_effect=meta.MetaNotConnected("expired")):
+            status = self.api.get("/api/meta/test")
+            protected = self.api.get("/api/meta/discovery/pages")
+        self.assertEqual(status.status_code, 200)
+        self.assertEqual(status.json(), {"connected": False})
+        self.assertEqual(status.headers["cache-control"], "no-store")
+        self.assertIn("Max-Age=0", status.headers["set-cookie"])
+        self.assertEqual(protected.status_code, 401)
 
     def test_reauthorization_rotates_session(self):
         old = meta.create_session(meta.UserToken(TOKEN, time.time() + 1000))

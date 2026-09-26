@@ -1,430 +1,310 @@
 import { spawn } from "node:child_process";
 import assert from "node:assert/strict";
-import { test } from "node:test";
+import { test as nodeTest, before, after } from "node:test";
 import { chromium } from "playwright";
-
+const test = (name, run) => nodeTest(name, { timeout: 30000 }, run);
 const origin = "http://127.0.0.1:5179";
-const server = spawn("./node_modules/.bin/vite", ["--host", "127.0.0.1", "--port", "5179", "--strictPort"], { stdio: "ignore" });
-
-async function waitForServer() {
-  for (let attempt = 0; attempt < 50; attempt++) {
-    try { if ((await fetch(origin)).ok) return; } catch { /* still starting */ }
-    await new Promise((resolve) => setTimeout(resolve, 100));
-  }
-  throw new Error("Vite did not start");
-}
-
-const saved = {
-  video_id: "8db7e284-353b-4f3e-9bf0-44d78d888720",
-  metadata: { duration_seconds: 12.3, video: { resolution: { width: 1080, height: 1920 }, fps: 30 } },
-  audio: { text: "Hello world" },
-  scenes: [{ scene_number: 1, start_seconds: 0, end_seconds: 12.3 }],
-  on_screen_text: [{ text: "Watch this", appearance_timestamp_seconds: 1, disappearance_timestamp_seconds: 3 }],
-  motion_events: [{ type: "camera_pan", start_seconds: 2, end_seconds: 4 }],
-  performance_source: "tiktok",
-  performance_metrics: { view_count: 120, like_count: 12, comment_count: null, share_count: 2 },
-};
-
-async function fillForm(page) {
-  await page.locator("#video").setInputFiles({ name: "sample.mp4", mimeType: "video/mp4", buffer: Buffer.from("sample") });
-  await page.locator("#tiktok-url").fill("https://www.tiktok.com/@creator/video/123456789");
-  await page.locator("#api-key").fill("test-runtime-key");
-  await page.getByRole("button", { name: "Analyze video" }).click();
-}
-
-test("browser completes upload, saved analysis, and recommendation flow", async () => {
-  await waitForServer();
-  const browser = await chromium.launch({ headless: true });
-  try {
-    const page = await browser.newPage();
-    const calls = [];
-    await page.route("**/api/videos", async (route) => {
-      const request = route.request();
-      calls.push("upload");
-      assert.match(request.postData() ?? "", /sample\.mp4/);
-      assert.match(request.postData() ?? "", /https:\/\/www\.tiktok\.com\/@creator\/video\/123456789/);
-      assert.doesNotMatch(request.postData() ?? "", /test-runtime-key/);
-      await route.fulfill({ status: 200, json: saved });
-    });
-    await page.route("**/api/videos/*/analysis", async (route) => {
-      calls.push("stored analysis");
-      await route.fulfill({ status: 200, json: saved });
-    });
-    await page.route("**/api/videos/*/recommendations", async (route) => {
-      calls.push("recommendation");
-      assert.equal(route.request().headers()["x-openai-api-key"], "test-runtime-key");
-      await route.fulfill({ status: 200, json: { model: "gpt-6-sol", response: "New video idea: A fresh concept.\nScript: Hello there." } });
-    });
-    await page.goto(origin);
-    await fillForm(page);
-    await page.getByText("Analysis complete.").waitFor();
-    assert.deepEqual(calls, ["upload", "stored analysis", "recommendation"]);
-    assert.match(await page.locator("main").innerText(), /120[\s\S]*12[\s\S]*Unavailable[\s\S]*2/);
-    assert.match(await page.locator("main").innerText(), /Hello world/);
-    assert.match(await page.locator("main").innerText(), /camera pan/);
-    assert.match(await page.locator("main").innerText(), /New video idea:[\s\S]*Script:/);
-    await page.getByText("Full analysis data").click();
-    assert.match(await page.locator("pre").innerText(), /"comment_count": null/);
-    assert.equal(await page.locator("#api-key").getAttribute("type"), "password");
-  } finally { await browser.close(); }
+let server, browser;
+before(async () => {
+  server = spawn("./node_modules/.bin/vite", ["--host", "127.0.0.1", "--port", "5179", "--strictPort"], { stdio: "inherit" });
+  for (let i = 0; i < 70; i++) { try { if ((await fetch(origin)).ok) break; } catch {} await new Promise((resolve) => setTimeout(resolve, 100)); }
+  browser = await chromium.launch({ headless: true });
 });
-
-test("recommendation error keeps saved video analysis visible", async () => {
-  await waitForServer();
-  const browser = await chromium.launch({ headless: true });
-  try {
-    const page = await browser.newPage();
-    await page.route("**/api/videos", (route) => route.fulfill({ status: 200, json: saved }));
-    await page.route("**/api/videos/*/analysis", (route) => route.fulfill({ status: 200, json: saved }));
-    await page.route("**/api/videos/*/recommendations", (route) => route.fulfill({ status: 502, json: { detail: "OpenAI request failed." } }));
-    await page.goto(origin);
-    await fillForm(page);
-    await page.getByRole("alert").getByText("OpenAI request failed.").waitFor();
-    assert.equal(await page.getByRole("heading", { name: "Video analysis" }).count(), 1);
-  } finally { await browser.close(); }
+after(async () => { await browser?.close(); server?.kill(); });
+const uuid = (n) => `00000000-0000-4000-8000-${String(n).padStart(12, "0")}`;
+const account = uuid(1000), jobId = uuid(9000);
+const video = (n, changes = {}) => ({
+  id: uuid(n), video_id: uuid(n), account_id: account, account_label: "Our business", account_platform: "facebook",
+  platform: "facebook", content_type: "reel", label: `Business video ${n}`, published_at: "2026-09-20T12:00:00Z",
+  analysis_state: "completed", analysis_version: 1, analysis_error: null, metrics_state: "completed", metrics_error: null,
+  performance: [{ item_id: uuid(n), fetched_at: "2026-09-21T12:00:00Z", attribution: "organic", snapshot: { performance_source: "facebook", performance_metrics: { view_count: 120, like_count: 12, comment_count: null, share_count: 0 } } }], ...changes,
 });
-
-test("browser displays backend error and stops after failed upload", async () => {
-  await waitForServer();
-  const browser = await chromium.launch({ headless: true });
-  try {
-    const page = await browser.newPage();
-    await page.route("**/api/videos", (route) => route.fulfill({ status: 401, json: { detail: "TikTok account is not connected." } }));
-    await page.goto(origin);
-    await fillForm(page);
-    await page.getByRole("alert").getByText("TikTok account is not connected.").waitFor();
-    assert.equal(await page.getByRole("heading", { name: "Video analysis" }).count(), 0);
-  } finally { await browser.close(); }
-});
-
-test.after(() => server.kill());
-
-async function metaPage(run, initial = { status: 401, json: {} }) {
-  await waitForServer();
-  const browser = await chromium.launch({ headless: true });
-  try {
-    const context = await browser.newContext();
-    await context.route("**/api/meta/test", (route) => route.fulfill(initial));
-    await mockDiscovery(context);
-    const page = await context.newPage();
-    await page.goto(origin);
-    await run(page, context);
-  } finally { await browser.close(); }
-}
-
-test("Meta existing session and mobile layout", async () => {
-  await metaPage(async (page) => {
-    await page.getByText("Meta connected successfully.").waitFor();
-    for (const width of [1280, 320]) {
-      await page.setViewportSize({ width, height: 900 });
-      assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-      assert.equal(await page.getByRole("button", { name: "Reconnect Meta" }).isVisible(), true);
-      await page.screenshot({ path: `/tmp/meta-connection-${width}.png`, fullPage: true });
+const job = (id = jobId, changes = {}) => ({ id, kind: "sync", state: "completed", counts: { completed: 2 }, items: [], next_cursor: null, created_at: "2026-09-20T12:00:00Z", finished_at: "2026-09-20T12:01:00Z", ...changes });
+const select = (page, n) => page.getByRole("checkbox", { name: `Select Business video ${n}`, exact: true });
+const generate = (page) => page.getByRole("button", { name: "Generate a new video idea", exact: true });
+const loaded = (page) => select(page, 1).waitFor();
+const generated = (page) => page.getByRole("heading", { name: "New video idea", exact: true }).waitFor();
+async function withApp(options, run) {
+  const context = await browser.newContext();
+  const calls = [], errors = [];
+  const items = options.items ?? [video(1), video(2)];
+  let connected = options.connected ?? true;
+  await context.route("https://meta-provider.test/authorize", (route) => route.fulfill({ contentType: "text/html", body: `<a href="${origin}/api/meta/callback?code=mock&state=mock">Continue with Meta</a>` }));
+  await context.route("**/api/**", async (route) => {
+    const request = route.request(), url = new URL(request.url()), path = url.pathname;
+    calls.push({ path, method: request.method(), body: request.postDataJSON(), headers: request.headers(), url });
+    if (options.route && await options.route(route, url, calls)) return;
+    if (path === "/api/meta/test") return route.fulfill({ status: 200, json: { connected } });
+    if (path === "/api/meta/connect") return route.fulfill({ contentType: "text/html", body: '<script>location.href="https://meta-provider.test/authorize"</script>' });
+    if (path === "/api/meta/callback") { connected = true; return route.fulfill({ json: { connected: true, job_id: jobId } }); }
+    if (path === "/api/meta/library") return route.fulfill({ json: { items, next_cursor: null } });
+    if (path === "/api/meta/sync") return route.fulfill({ status: 202, json: { job_id: jobId } });
+    if (path.startsWith("/api/meta/jobs/")) return route.fulfill({ json: job(path.split("/").at(-1), { kind: path.endsWith(jobId) ? "sync" : "analysis" }) });
+    if (path === "/api/meta/library/analyze") {
+      for (const item of items.flatMap((item) => [item, ...(item.assets ?? [])])) if (request.postDataJSON().item_ids.includes(item.id)) { item.analysis_state = "completed"; item.video_id = item.id; item.analysis_version = 1; }
+      return route.fulfill({ status: 202, json: { job_id: uuid(9001) } });
     }
-  }, { status: 200, json: { connected: true } });
-});
+    if (path === "/api/meta/recommendations") return route.fulfill({ json: { model: "private-model", response: options.response ?? "## Performance patterns and evidence\nLimited evidence.\n## Uncertainties\nSmall sample.\n## New video idea\nShow the story behind your service.\n## Script\nStart with a customer question.\nShow your process." } });
+    return route.fulfill({ status: 404, json: { detail: "Unsupported route" } });
+  });
+  const page = await context.newPage(); page.setDefaultTimeout(8000);
+  page.on("pageerror", (error) => errors.push(error.message));
+  try {
+    await page.goto(origin); await run(page, calls, context);
+    assert.deepEqual(errors, []);
+    assert.equal(calls.some((call) => call.path.includes("/discovery/") || call.path === "/api/meta/library/sync" || call.path === "/api/meta/library/recommendations" || call.path === "/api/videos"), false);
+    assert.equal(calls.some((call) => call.url.searchParams.has("sources")), false);
+  } finally { await context.close(); }
+}
+async function connect(page) {
+  const popupPromise = page.waitForEvent("popup"); await page.getByRole("button", { name: "Connect Meta", exact: true }).click();
+  await (await popupPromise).getByRole("link", { name: "Continue with Meta" }).click();
+  await page.getByText("Meta connected successfully.").waitFor();
+}
 
-test("Meta popup follows OAuth redirect and verifies session", async () => {
-  await metaPage(async (page, context) => {
-    await page.getByText("Meta is not connected.").waitFor();
-    const paths = [];
-    context.on("request", (request) => { if (request.url().includes("/api/")) paths.push(new URL(request.url()).pathname); });
-    await context.route("**/api/meta/connect", (route) => route.fulfill({ contentType: "text/html", body: '<script>location.href="https://meta-provider.test/authorize"</script>' }));
-    await context.route("https://meta-provider.test/authorize", (route) => route.fulfill({ contentType: "text/html", body: '<a href="http://127.0.0.1:5179/api/meta/callback?code=mock&state=mock">Authorize</a>' }));
-    await context.route("**/api/meta/callback?*", async (route) => {
-      await context.route("**/api/meta/test", (check) => check.fulfill({ json: { connected: true } }));
-      await route.fulfill({ json: { connected: true } });
-    });
-    const popupPromise = page.waitForEvent("popup");
-    await page.getByRole("button", { name: "Connect Meta", exact: true }).click();
-    const popup = await popupPromise;
-    await page.getByText("Connecting to Meta… Complete authorization in the popup window.").waitFor();
-    assert.equal(await page.getByRole("button", { name: "Connecting…", exact: true }).isDisabled(), true);
-    await popup.getByRole("link", { name: "Authorize" }).click();
-    await page.getByText("Meta connected successfully.").waitFor();
-    assert.equal(popup.isClosed(), true);
-    assert.deepEqual(paths, ["/api/meta/connect", "/api/meta/callback", "/api/meta/test"]);
-    await context.route("**/api/videos", (route) => route.fulfill({ json: contentOnly }));
-    await context.route("**/api/videos/*/analysis", (route) => route.fulfill({ json: contentOnly }));
-    await context.route("**/api/meta/instagram/reels/*/metrics", (route) => route.fulfill({ json: {
-      performance_source: "instagram", performance_metrics: saved.performance_metrics,
-    } }));
-    await context.route("**/api/videos/*/recommendations", (route) => route.fulfill({ json: { response: "Connected and analyzed" } }));
-    await fillInstagram(page);
-    await page.getByRole("button", { name: "Analyze video", exact: true }).click();
-    await page.getByText("Analysis complete.").waitFor();
-    await page.getByText("Connected and analyzed").waitFor();
+test("existing session loads the real library shape and bodyless sync", async () => {
+  await withApp({}, async (page, calls) => {
+    await loaded(page); assert.equal(await page.getByRole("checkbox", { name: "Our business", exact: true }).isChecked(), true);
+    assert.equal(calls.find((call) => call.path === "/api/meta/sync").body, null);
+    assert.equal(calls.some((call) => call.path === `/api/meta/jobs/${jobId}`), true);
+    assert.equal(calls.find((call) => call.path === "/api/meta/library").url.searchParams.get("limit"), "100");
   });
 });
-
-for (const [name, path, status, detail] of [
-  ["denied authorization", "/api/meta/callback?error=access_denied", 400, "Meta authorization was not completed."],
-  ["invalid state", "/api/meta/callback?state=bad", 400, "Invalid Meta authorization state."],
-  ["provider failure", "/api/meta/callback?code=mock", 502, "Meta authorization failed. Connect again."],
-  ["missing configuration", "/api/meta/connect", 503, "Meta is not configured correctly."],
-]) {
-  test(`Meta displays ${name} and allows retry`, async () => {
-    await metaPage(async (page, context) => {
-      await context.route("**/api/meta/connect", (route) => path === "/api/meta/connect"
-        ? route.fulfill({ status, json: { detail } })
-        : route.fulfill({ contentType: "text/html", body: `<script>location.href=${JSON.stringify(path)}</script>` }));
-      await context.route("**/api/meta/callback?*", (route) => route.fulfill({ status, json: { detail } }));
-      await page.getByRole("button", { name: "Connect Meta", exact: true }).click();
-      await page.getByRole("alert").getByText(detail, { exact: true }).waitFor();
-      assert.equal(await page.getByRole("button", { name: "Connect Meta", exact: true }).isEnabled(), true);
+test("popup login resumes callback job instead of starting another sync", async () => {
+  await withApp({ connected: false }, async (page, calls) => {
+    await connect(page); await loaded(page);
+    assert.equal(calls.some((call) => call.path === `/api/meta/jobs/${jobId}`), true);
+    assert.equal(calls.some((call) => call.path === "/api/meta/sync"), false);
+    await page.getByRole("button", { name: "Sync content", exact: true }).click();
+    await page.waitForResponse((response) => response.url().endsWith("/api/meta/sync"));
+  });
+});
+test("one and multiple ready videos send video_ids and render text sections", async () => {
+  await withApp({}, async (page, calls) => {
+    await loaded(page); assert.equal(await generate(page).isDisabled(), true);
+    await select(page, 1).check(); await generate(page).click(); await generated(page);
+    assert.deepEqual(calls.find((call) => call.path.endsWith("/recommendations")).body, { video_ids: [uuid(1)] });
+    await select(page, 2).check(); await generate(page).click(); await page.getByText("Based on 2 selected videos.").waitFor();
+    assert.deepEqual(calls.filter((call) => call.path.endsWith("/recommendations")).at(-1).body, { video_ids: [uuid(1), uuid(2)] });
+    assert.match(await page.locator(".script").innerText(), /Show your process/);
+    assert.doesNotMatch(await page.locator(".idea-result").innerText(), /private-model|Limited evidence/);
+  });
+});
+test("multi-select supports individual deselect and clear", async () => {
+  await withApp({}, async (page) => {
+    await loaded(page); await page.getByRole("button", { name: "Select all currently shown" }).click();
+    await page.getByText("2 selected", { exact: true }).waitFor(); await select(page, 1).uncheck();
+    await page.getByText("1 selected", { exact: true }).waitFor(); await page.getByRole("button", { name: "Clear selection" }).click();
+    assert.equal(await select(page, 2).isChecked(), false); assert.equal(await generate(page).isDisabled(), true);
+  });
+});
+test("same-named accounts stay distinct and changing filters does not sync", async () => {
+  await withApp({ items: [video(1), video(2, { account_id: uuid(1001) })] }, async (page, calls) => {
+    await page.getByRole("checkbox", { name: "Our business (1)" }).waitFor();
+    assert.equal(await select(page, 1).count(), 0);
+    const syncs = calls.filter((call) => call.path === "/api/meta/sync").length;
+    await page.getByRole("checkbox", { name: "Our business (1)" }).check(); await loaded(page); await select(page, 1).check();
+    await page.getByRole("checkbox", { name: "Our business (2)" }).check(); assert.equal(await select(page, 1).isChecked(), false);
+    assert.equal(calls.filter((call) => call.path === "/api/meta/sync").length, syncs);
+  });
+});
+test("account auto-selection waits for all real cursor pages", async () => {
+  await withApp({ route: async (route, url) => {
+    if (url.pathname !== "/api/meta/library") return false;
+    const second = url.searchParams.has("after");
+    await route.fulfill({ json: { items: [video(second ? 2 : 1, second ? { account_id: uuid(1001), account_label: "Second shop" } : {})], next_cursor: second ? null : uuid(1) } }); return true;
+  } }, async (page) => {
+    await page.getByRole("checkbox", { name: "Second shop" }).waitFor(); assert.equal(await page.getByRole("checkbox", { name: "Our business", exact: true }).isChecked(), false);
+  });
+});
+test("mixed platforms and an ad deduplicate shared video assets", async () => {
+  const organic = video(1), other = video(2, { account_id: uuid(2000), account_label: "Our Instagram", account_platform: "instagram", platform: "instagram" });
+  const ad = video(3, { video_id: null, account_id: uuid(3000), account_platform: "meta_ads", account_label: "Our ads", platform: "meta_ads", content_type: "ad", assets: [organic], analysis_state: "completed", performance: [] });
+  await withApp({ items: [organic, other, ad] }, async (page, calls) => {
+    await loaded(page); await page.getByText("Paid ad", { exact: true }).waitFor(); await page.getByText("Instagram Reel", { exact: true }).waitFor();
+    await page.getByRole("button", { name: "Select all currently shown" }).click(); await generate(page).click(); await generated(page);
+    assert.deepEqual(calls.find((call) => call.path.endsWith("/recommendations")).body.video_ids, [uuid(1), uuid(2)]);
+  });
+});
+test("ad-only assets are not duplicate organic cards and shared-ad counts are not summed", async () => {
+  const asset = video(1, { account_id: uuid(3000), account_platform: "meta_ads", account_label: "Our ads" });
+  const ad = video(3, { account_id: uuid(3000), account_platform: "meta_ads", account_label: "Our ads", platform: "meta_ads", content_type: "ad", assets: [asset, { ...asset, id: uuid(2), video_id: uuid(2) }], performance: [{ item_id: uuid(3), fetched_at: "2026-09-20", attribution: "shared_ad", snapshot: { performance_source: "meta_ads", performance_metrics: { view_count: 120 } } }] });
+  await withApp({ items: [asset, ad] }, async (page) => {
+    await select(page, 3).waitFor(); assert.equal(await select(page, 1).count(), 0);
+    await page.getByText("Performance describes the whole ad, not individual videos.").waitFor();
+    assert.equal(await page.locator(".metrics dd").innerText(), "120");
+  });
+});
+test("deferred selection automatically prepares using item_ids", async () => {
+  const item = video(1, { analysis_state: "deferred", video_id: null, analysis_version: null });
+  await withApp({ items: [item] }, async (page, calls) => {
+    await loaded(page); await page.getByText("New", { exact: true }).waitFor(); await select(page, 1).check();
+    await page.getByText("Ready", { exact: true }).waitFor();
+    assert.deepEqual(calls.find((call) => call.path === "/api/meta/library/analyze").body, { item_ids: [uuid(1)] });
+    assert.equal(await generate(page).isEnabled(), true);
+  });
+});
+test("processing is polled until ready without losing selection", async () => {
+  const item = video(1, { analysis_state: "processing", video_id: null });
+  await withApp({ items: [item] }, async (page, calls) => {
+    await loaded(page); await select(page, 1).check(); assert.equal(await generate(page).isDisabled(), true);
+    item.analysis_state = "completed"; item.video_id = item.id;
+    await page.getByText("Ready", { exact: true }).waitFor({ timeout: 12000 }); assert.equal(await select(page, 1).isChecked(), true);
+    assert.equal(calls.some((call) => call.path === "/api/meta/library/analyze"), false);
+  });
+});
+test("ready content is usable while sync is running", async () => {
+  await withApp({ route: async (route, url) => {
+    if (!url.pathname.startsWith("/api/meta/jobs/")) return false;
+    await route.fulfill({ json: job(jobId, { state: "running", finished_at: null }) }); return true;
+  } }, async (page) => { await loaded(page); await select(page, 1).check(); assert.equal(await generate(page).isEnabled(), true); });
+});
+test("partly ready ad keeps its usable assets selectable", async () => {
+  await withApp({ items: [video(3, { account_platform: "meta_ads", content_type: "ad", analysis_state: "failed", assets: [video(1), video(2, { analysis_state: "unavailable", video_id: null })] })] }, async (page, calls) => {
+    await select(page, 3).waitFor(); await page.getByText("Partly ready", { exact: true }).waitFor(); await select(page, 3).check();
+    await generate(page).click(); await generated(page); assert.deepEqual(calls.find((call) => call.path.endsWith("/recommendations")).body.video_ids, [uuid(1)]);
+  });
+});
+test("failed, unavailable and unsupported items cannot be selected", async () => {
+  await withApp({ items: [video(1), ...["failed", "unavailable", "unsupported"].map((state, i) => video(i + 2, { analysis_state: state, video_id: null }))] }, async (page) => {
+    await loaded(page); for (const n of [2, 3, 4]) assert.equal(await select(page, n).isDisabled(), true);
+    await page.getByRole("button", { name: "Select all currently shown" }).click(); await page.getByText("1 selected", { exact: true }).waitFor();
+  });
+});
+test("large selection is retained but generation enforces the actual 20-video limit", async () => {
+  await withApp({ items: Array.from({ length: 26 }, (_, i) => video(i + 1)) }, async (page, calls) => {
+    await loaded(page); await page.getByRole("button", { name: "Select all currently shown" }).click();
+    await page.getByText(/25 ready videos selected. Choose up to 20/).waitFor(); assert.equal(await generate(page).isDisabled(), true);
+    await page.getByRole("button", { name: "Load more videos" }).click(); assert.equal(await select(page, 1).isChecked(), true);
+    for (const n of [21, 22, 23, 24, 25]) await select(page, n).uncheck();
+    await generate(page).click(); await generated(page); assert.equal(calls.find((call) => call.path.endsWith("/recommendations")).body.video_ids.length, 20);
+  });
+});
+test("multi-asset ads count towards the 20-video limit", async () => {
+  await withApp({ items: [video(30, { content_type: "ad", account_platform: "meta_ads", assets: Array.from({ length: 21 }, (_, i) => video(i + 1)) })] }, async (page) => {
+    await select(page, 30).check(); await page.getByText(/21 ready videos selected/).waitFor(); assert.equal(await generate(page).isDisabled(), true);
+  });
+});
+test("job result pagination and partial failure preserve successful content", async () => {
+  await withApp({ route: async (route, url) => {
+    if (!url.pathname.startsWith("/api/meta/jobs/")) return false;
+    await route.fulfill({ json: job(jobId, { state: "partial_failure", counts: { completed: 4, failed: 1 }, next_cursor: url.searchParams.has("after") ? null : uuid(9999) }) }); return true;
+  } }, async (page, calls) => {
+    await loaded(page); await page.getByText(/Some content couldn’t be updated/).waitFor(); await select(page, 1).check(); assert.equal(await generate(page).isEnabled(), true);
+    assert.equal(calls.some((call) => call.path.startsWith("/api/meta/jobs/") && call.url.searchParams.has("after")), true);
+  });
+});
+for (const response of ["New video idea: A fresh idea\nScript: A usable script", "**New video idea**\nA fresh idea\n**Script**\nA usable script", "1. New video idea\nA fresh idea\n2. Script\nA usable script"]) {
+  test(`text result sections: ${response.slice(0, 24)}`, async () => {
+    await withApp({ response }, async (page) => { await loaded(page); await select(page, 1).check(); await generate(page).click(); await generated(page); assert.equal(await page.locator(".concept").innerText(), "A fresh idea"); assert.equal(await page.locator(".script").innerText(), "A usable script"); });
+  });
+}
+test("unstructured response is preserved as safe text without internal references", async () => {
+  await withApp({ response: `An exploratory idea for ${uuid(1)}. <script>bad()</script>` }, async (page) => {
+    await loaded(page); await select(page, 1).check(); await generate(page).click(); await generated(page);
+    assert.match(await page.locator(".script").innerText(), /Business video 1.*<script>/); assert.equal(await page.locator(".idea-result script").count(), 0); assert.doesNotMatch(await page.locator("main").innerText(), /00000000|private-model/);
+  });
+});
+for (const [status, message] of [[413, "too much material"], [503, "couldn’t generate your idea"], [404, "no longer available"]]) {
+  test(`recommendation ${status} preserves previous result`, async () => {
+    let fail = false;
+    await withApp({ route: async (route, url) => {
+      if (!fail || url.pathname !== "/api/meta/recommendations") return false;
+      await route.fulfill({ status, json: { detail: "private Graph API error" } }); return true;
+    } }, async (page) => {
+      await loaded(page); await select(page, 1).check(); await generate(page).click(); await generated(page); fail = true;
+      await generate(page).click(); await page.getByText(new RegExp(message)).waitFor(); assert.equal(await page.locator(".idea-result").isVisible(), true); assert.equal(await select(page, 1).isChecked(), true);
     });
   });
 }
-
-test("Meta handles blocked and closed popups", async () => {
-  await metaPage(async (page, context) => {
-    await page.evaluate(() => { window.originalOpen = window.open; window.open = () => null; });
-    await page.getByRole("button", { name: "Connect Meta", exact: true }).click();
-    await page.getByText("Allow popups for this site, then select Connect Meta again.").waitFor();
-    await page.evaluate(() => { window.open = window.originalOpen; });
-    await context.route("**/api/meta/connect", (route) => route.fulfill({ contentType: "text/html", body: "Authorizing" }));
-    const popupPromise = page.waitForEvent("popup");
-    await page.getByRole("button", { name: "Connect Meta", exact: true }).click();
-    await (await popupPromise).close();
-    await page.getByText("Meta authorization was not completed. Select Connect Meta to try again.").waitFor();
+test("409 queues outdated analysis rather than retrying recommendations automatically", async () => {
+  const item = video(1);
+  await withApp({ items: [item], route: async (route, url) => {
+    if (url.pathname === "/api/meta/recommendations") { await route.fulfill({ status: 409, json: { detail: { message: "outdated", video_ids: [item.id] } } }); return true; }
+    if (url.pathname === "/api/meta/library/analyze") { item.analysis_version = 2; await route.fulfill({ status: 202, json: { job_id: uuid(9001) } }); return true; }
+    return false;
+  } }, async (page, calls) => {
+    await loaded(page); await select(page, 1).check(); await generate(page).click(); await page.getByText(/need to be prepared again/).waitFor();
+    await page.waitForFunction(() => ![...document.querySelectorAll("button")].find((button) => button.textContent === "Generate a new video idea").disabled);
+    assert.deepEqual(calls.find((call) => call.path === "/api/meta/library/analyze").body, { item_ids: [item.id] });
+    assert.equal(calls.filter((call) => call.path === "/api/meta/recommendations").length, 1);
   });
 });
-
-test("Meta handles network errors and initial loading", async () => {
-  await metaPage(async (page, context) => {
-    await context.route("**/api/meta/test", async (route) => {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await route.abort();
-    });
-    await page.reload();
-    await page.getByText("Checking Meta connection…").waitFor();
-    assert.equal(await page.getByRole("button", { name: "Connect Meta", exact: true }).isDisabled(), true);
-    await page.getByText("Could not check the Meta connection. Try connecting again.").waitFor();
-    assert.equal(await page.getByRole("button", { name: "Connect Meta", exact: true }).isEnabled(), true);
+test("expired connection retains successful content and reconnects", async () => {
+  let expired = false;
+  await withApp({ route: async (route, url) => {
+    if (!expired || url.pathname !== "/api/meta/library") return false;
+    await route.fulfill({ status: 401, json: {} }); return true;
+  } }, async (page) => {
+    await loaded(page); await select(page, 1).check(); expired = true; await page.getByRole("button", { name: "Sync content", exact: true }).click();
+    await page.getByText(/Your Meta connection has expired. Reconnect to continue/).waitFor(); assert.equal(await select(page, 1).isVisible(), true); assert.equal(await generate(page).isDisabled(), true);
+    expired = false; await connect(page); await loaded(page);
   });
 });
-
-async function fillInstagram(page) {
-  await page.locator("#platform").selectOption("instagram");
-  await page.locator("#video").setInputFiles({ name: "reel.mp4", mimeType: "video/mp4", buffer: Buffer.from("sample") });
-  await page.getByRole("button", { name: /Fresh bread/ }).click();
-  await page.locator("#api-key").fill("test-runtime-key");
-}
-
-const contentOnly = { ...saved, performance_source: undefined, performance_metrics: undefined };
-
-test("Instagram uploads without TikTok fields, attaches metrics, then recommends", async () => {
-  await metaPage(async (page, context) => {
-    const calls = [];
-    await page.locator("#tiktok-url").fill("https://www.tiktok.com/@creator/video/123456789");
-    await context.route("**/api/videos", async (route) => {
-      calls.push("upload");
-      assert.match(route.request().postData(), /reel\.mp4/);
-      assert.doesNotMatch(route.request().postData(), /tiktok_url|123456789|17895695668004550|test-runtime-key/);
-      await route.fulfill({ json: contentOnly });
-    });
-    await context.route("**/api/videos/*/analysis", async (route) => {
-      calls.push("analysis"); await route.fulfill({ json: contentOnly });
-    });
-    await context.route("**/api/meta/instagram/reels/*/metrics", async (route) => {
-      calls.push("metrics");
-      assert.equal(route.request().method(), "POST");
-      assert.equal(new URL(route.request().url()).pathname, "/api/meta/instagram/reels/17895695668004550/metrics");
-      assert.deepEqual(route.request().postDataJSON(), { video_id: saved.video_id });
-      assert.equal(route.request().headers()["x-openai-api-key"], undefined);
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      await route.fulfill({ json: { video_id: saved.video_id, performance_source: "instagram", performance_metrics: saved.performance_metrics } });
-    });
-    await context.route("**/api/videos/*/recommendations", async (route) => {
-      calls.push("recommendation");
-      assert.equal(route.request().headers()["x-openai-api-key"], "test-runtime-key");
-      await route.fulfill({ json: { model: "test", response: "Reel idea and script" } });
-    });
-    await fillInstagram(page);
-    await page.getByRole("button", { name: "Analyze video", exact: true }).click();
-    await page.getByText("Retrieving Instagram Reel metrics…").waitFor();
-    assert.equal(await page.locator("#platform").isDisabled(), true);
-    await page.getByText("Analysis complete.").waitFor();
-    await page.getByText("Reel idea and script").waitFor();
-    assert.deepEqual(calls, ["upload", "analysis", "metrics", "recommendation"]);
-    assert.match(await page.locator(".stats").innerText(), /120/);
-    await page.getByText("Meta connected successfully.").waitFor();
-  }, { status: 200, json: { connected: true } });
+test("blocked job asks for reconnection and stops generation", async () => {
+  await withApp({ route: async (route, url) => {
+    if (!url.pathname.startsWith("/api/meta/jobs/")) return false;
+    await route.fulfill({ json: job(jobId, { state: "blocked" }) }); return true;
+  } }, async (page) => { await page.getByText(/Your Meta connection has expired. Reconnect to continue/).waitFor(); assert.equal(await generate(page).isDisabled(), true); });
 });
-
-test("Disconnected users cannot submit Meta content or enter IDs", async () => {
-  await metaPage(async (page) => {
-    await page.locator("#platform").selectOption("instagram");
-    await page.getByText("Connect Meta above to browse your Pages, accounts, and content.").waitFor();
-    assert.equal(await page.locator("#meta-identifier").count(), 0);
-    assert.equal(await page.getByRole("button", { name: "Analyze video", exact: true }).isDisabled(), true);
-  });
-});
-
-for (const status of [401, 422, 502]) {
-  test(`Instagram metrics ${status} preserves analysis and stops recommendations`, async () => {
-    await metaPage(async (page, context) => {
-      let recommendations = 0;
-      await context.route("**/api/videos", (route) => route.fulfill({ json: contentOnly }));
-      await context.route("**/api/videos/*/analysis", (route) => route.fulfill({ json: contentOnly }));
-      await context.route("**/api/meta/instagram/reels/*/metrics", (route) => route.fulfill({ status, json: { detail: "Instagram metrics unavailable for this account." } }));
-      await context.route("**/api/videos/*/recommendations", (route) => { recommendations++; return route.abort(); });
-      await fillInstagram(page);
-      await page.getByRole("button", { name: "Analyze video", exact: true }).click();
-      await page.getByRole("alert").getByText("Instagram metrics unavailable for this account.").waitFor();
-      assert.equal(await page.getByRole("heading", { name: "Video analysis", exact: true }).isVisible(), true);
-      assert.equal(await page.locator("#platform").isEnabled(), true);
-      assert.equal(recommendations, 0);
-    }, { status: 200, json: { connected: true } });
+for (const status of [403, 503]) {
+  test(`library ${status} is not presented as an empty account`, async () => {
+    await withApp({ route: async (route, url) => {
+      if (url.pathname !== "/api/meta/library") return false;
+      await route.fulfill({ status, json: { detail: "database Graph API private" } }); return true;
+    } }, async (page) => { await page.getByRole("alert").waitFor(); assert.equal(await page.getByRole("heading", { name: "Your videos will appear here" }).count(), 0); assert.doesNotMatch(await page.locator("main").innerText(), /Graph|API|database/); });
   });
 }
-
-test("Meta content stays readable on desktop and narrow phones without exposed IDs", async () => {
-  await metaPage(async (page) => {
-    for (const platform of ["instagram", "facebook", "meta_ads"]) {
-      await page.locator("#platform").selectOption(platform);
-      await page.getByRole("button", { name: /Fresh bread/ }).waitFor();
-      for (const width of [1280, 320]) {
-        await page.setViewportSize({ width, height: 1000 });
-        assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-        await page.screenshot({ path: `/tmp/meta-content-${platform}-${width}.png`, fullPage: true });
-      }
-      assert.doesNotMatch(await page.locator("main").innerText(), /17895695668004550|act_345|Graph media ID|Page ID/);
-    }
-  }, { status: 200, json: { connected: true } });
+test("empty content library can sync without choosing an account", async () => {
+  await withApp({ items: [] }, async (page, calls) => { await page.getByRole("heading", { name: "Your videos will appear here" }).waitFor(); assert.equal(calls.some((call) => call.path === "/api/meta/sync"), true); assert.equal(await generate(page).isDisabled(), true); });
 });
-
-for (const kind of ["reels", "videos"]) {
-  test(`Facebook ${kind} selects content and attaches metrics before recommending`, async () => {
-    await metaPage(async (page, context) => {
-      const calls = [];
-      await context.route("**/api/videos", async (route) => {
-        calls.push("upload");
-        assert.doesNotMatch(route.request().postData(), /tiktok_url|test-runtime-key/);
-        await route.fulfill({ json: contentOnly });
-      });
-      await context.route("**/api/videos/*/analysis", (route) => route.fulfill({ json: contentOnly }));
-      await context.route("**/api/meta/facebook/*/*/metrics", async (route) => {
-        calls.push("metrics");
-        assert.equal(new URL(route.request().url()).pathname, `/api/meta/facebook/${kind}/456/metrics`);
-        assert.deepEqual(route.request().postDataJSON(), { video_id: saved.video_id, page_id: "123" });
-        await route.fulfill({ json: { performance_source: "facebook", performance_metrics: saved.performance_metrics } });
-      });
-      await context.route("**/api/videos/*/recommendations", async (route) => {
-        calls.push("recommendation"); await route.fulfill({ json: { model: "test", response: "Facebook script" } });
-      });
-      await fillInstagram(page);
-      await page.locator("#platform").selectOption("facebook");
-      await page.locator("#facebook-kind").selectOption(kind);
-      await page.getByRole("button", { name: /Fresh bread/ }).click();
-      await page.getByRole("button", { name: "Analyze video", exact: true }).click();
-      await page.getByText("Analysis complete.").waitFor();
-      await page.getByText("Facebook script").waitFor();
-      assert.deepEqual(calls, ["upload", "metrics", "recommendation"]);
-    }, { status: 200, json: { connected: true } });
+test("legacy mocked shape is rejected", async () => {
+  await withApp({ route: async (route, url) => {
+    if (url.pathname !== "/api/meta/library") return false;
+    await route.fulfill({ json: { items: [{ id: uuid(1), status: "ready", title: "obsolete" }], next_cursor: null } }); return true;
+  } }, async (page) => { await page.getByText("We couldn’t read the latest update. Please try again.").waitFor(); assert.equal(await generate(page).isDisabled(), true); });
+});
+test("blocked and closed popups are recoverable", async () => {
+  await withApp({ connected: false }, async (page) => {
+    await page.getByText("Meta is not connected.").waitFor(); await page.evaluate(() => { window.savedOpen = window.open; window.open = () => null; });
+    await page.getByRole("button", { name: "Connect Meta", exact: true }).click(); await page.getByText(/Allow popups/).waitFor();
+    await page.evaluate(() => { window.open = window.savedOpen; }); const opened = page.waitForEvent("popup"); await page.getByRole("button", { name: "Connect Meta", exact: true }).click();
+    const popup = await opened; await popup.getByRole("link", { name: "Continue with Meta" }).waitFor(); await popup.close(); await page.getByText(/authorization was not completed/).waitFor();
   });
-}
-
-async function mockDiscovery(context) {
-  await context.route("**/api/meta/discovery/**", (route) => {
-    const path = new URL(route.request().url()).pathname;
-    const items = path.endsWith("/pages") ? [{ id: "123", name: "Our bakery", type: "page" }]
-      : path.endsWith("/instagram-accounts") ? [{ id: "234", name: "Bakery Instagram", type: "instagram" }]
-      : path.endsWith("/ad-accounts") ? [{ id: "act_345", name: "Bakery advertising", type: "ad_account" }]
-      : [{ id: path.endsWith("/media") ? "17895695668004550" : "456", name: "Fresh bread", type: "REELS", created_at: "2026-09-01T10:00:00Z" }];
-    return route.fulfill({ json: { items, next_cursor: null } });
+});
+test("desktop, mobile and 320px preserve layout, keyboard selection and result focus", async () => {
+  await withApp({}, async (page) => {
+    await loaded(page); await select(page, 1).focus(); await page.keyboard.press("Space"); assert.equal(await select(page, 1).isChecked(), true);
+    for (const width of [1280, 390, 320]) { await page.setViewportSize({ width, height: 900 }); assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await page.screenshot({ path: `/tmp/meta-integrated-library-${width}.png`, fullPage: true }); }
+    assert.equal(await page.locator('input[type="file"], input[type="url"], input[type="password"], pre').count(), 0);
+    await generate(page).click(); await generated(page); assert.equal(await page.locator("#idea-title").evaluate((element) => document.activeElement === element), true);
+    for (const width of [320, 1280]) { await page.setViewportSize({ width, height: 900 }); await page.locator(".idea-result").screenshot({ path: `/tmp/meta-integrated-idea-${width}.png` }); }
   });
-}
-
-test("Meta ad selection attaches metrics with chosen reporting dates", async () => {
-  await metaPage(async (page, context) => {
-    const calls = [];
-    await context.route("**/api/videos", (route) => { calls.push("upload"); return route.fulfill({ json: contentOnly }); });
-    await context.route("**/api/videos/*/analysis", (route) => route.fulfill({ json: contentOnly }));
-    await context.route("**/api/meta/ads/456/metrics", (route) => {
-      calls.push("metrics");
-      assert.deepEqual(route.request().postDataJSON(), { video_id: saved.video_id, since: "2026-09-01", until: "2026-09-20" });
-      return route.fulfill({ json: { performance_source: "meta_ads", performance_metrics: saved.performance_metrics } });
-    });
-    await context.route("**/api/videos/*/recommendations", (route) => { calls.push("recommendation"); return route.fulfill({ json: { response: "Ad script" } }); });
-    await page.locator("#platform").selectOption("meta_ads");
-    await page.getByRole("button", { name: /Fresh bread/ }).click();
-    await page.locator("#ad-since").fill("2026-09-01");
-    await page.locator("#ad-until").fill("2026-09-20");
-    await page.locator("#video").setInputFiles({ name: "ad.mp4", mimeType: "video/mp4", buffer: Buffer.from("sample") });
-    await page.locator("#api-key").fill("test-runtime-key");
-    await page.getByRole("button", { name: "Analyze video", exact: true }).click();
-    await page.getByText("Analysis complete.").waitFor();
-    assert.deepEqual(calls, ["upload", "metrics", "recommendation"]);
-  }, { status: 200, json: { connected: true } });
 });
 
-for (const status of [200, 403, 401, 502]) {
-  test(`Discovery handles ${status} empty/error state`, async () => {
-    await metaPage(async (page, context) => {
-      await context.route("**/api/meta/discovery/pages", (route) => route.fulfill({ status,
-        json: status === 200 ? { items: [], next_cursor: null } : { detail: "Reconnect Meta and allow access to your Page." } }));
-      await page.locator("#platform").selectOption("instagram");
-      await page.getByText(status === 200 ? /No facebook pages available/ : status === 401
-        ? "Meta is not connected." : "Reconnect Meta and allow access to your Page.", { exact: status === 401 }).waitFor();
-      assert.equal(await page.getByRole("button", { name: "Analyze video", exact: true }).isDisabled(), true);
-      if (status === 403 || status === 502) {
-        await mockDiscovery(context);
-        await page.getByRole("button", { name: "Try again" }).click();
-        await page.getByRole("button", { name: /Fresh bread/ }).waitFor();
-      }
-    }, { status: 200, json: { connected: true } });
+for (const failSecond of [false, true]) test(`large deferred selection uses 100-item preparation batches (partial failure: ${failSecond})`, async () => {
+  const assets = Array.from({ length: 105 }, (_, i) => video(i + 10, { analysis_state: "deferred", video_id: null }));
+  const ad = video(1, { content_type: "ad", assets });
+  let batches = 0;
+  await withApp({ items: [ad], route: async (route, url) => {
+    if (url.pathname !== "/api/meta/library/analyze") return false;
+    batches++;
+    if (failSecond && batches === 2) { await route.fulfill({ status: 503, json: {} }); return true; }
+    const ids = route.request().postDataJSON().item_ids;
+    for (const asset of assets) if (ids.includes(asset.id)) { asset.analysis_state = "completed"; asset.video_id = asset.id; }
+    await route.fulfill({ status: 202, json: { job_id: uuid(9100 + batches) } }); return true;
+  } }, async (page, calls) => {
+    await loaded(page); await select(page, 1).check();
+    await page.getByText(failSecond ? "100 of 105 videos ready. Your idea will use the ready videos." : "105 ready videos selected. Choose up to 20 ready videos for one idea. An ad can contain more than one video.", { exact: !failSecond }).waitFor();
+    assert.deepEqual(calls.filter((call) => call.path.endsWith("/analyze")).map((call) => call.body.item_ids.length), [100, 5]);
+    if (failSecond) await page.getByText("Your video library is temporarily unavailable. Please try again later.").waitFor();
+    assert.equal(await select(page, 1).isChecked(), true);
   });
-}
-
-test("Pages paginate and changing Page clears selected content", async () => {
-  await metaPage(async (page, context) => {
-    await context.route("**/api/meta/discovery/pages*", async (route) => {
-      const later = new URL(route.request().url()).searchParams.has("after");
-      await route.fulfill({ json: { items: [{ id: later ? "999" : "123", name: later ? "Second bakery" : "Our bakery", type: "page" }], next_cursor: later ? null : "more" } });
-    });
-    await page.locator("#platform").selectOption("facebook");
-    await page.getByRole("button", { name: "Our bakery", exact: true }).click();
-    await page.getByRole("button", { name: /Fresh bread/ }).click();
-    assert.equal(await page.getByRole("button", { name: "Analyze video", exact: true }).isEnabled(), true);
-    await page.getByRole("button", { name: /Load more facebook pages/ }).click();
-    await page.getByRole("button", { name: "Second bakery", exact: true }).click();
-    assert.equal(await page.getByRole("button", { name: "Analyze video", exact: true }).isDisabled(), true);
-  }, { status: 200, json: { connected: true } });
 });
 
-test("Reconnecting clears selection and reloads assets after an expired session", async () => {
-  await metaPage(async (page, context) => {
-    await page.locator("#platform").selectOption("facebook");
-    await page.getByRole("button", { name: /Fresh bread/ }).click();
-    await context.route("**/api/meta/discovery/pages/123/facebook/videos", (route) => route.fulfill({ status: 401, json: {} }));
-    await page.locator("#facebook-kind").selectOption("videos");
-    await page.getByText("Meta is not connected.").waitFor();
-    await context.route("**/api/meta/connect", (route) => route.fulfill({ json: { connected: true } }));
-    await page.getByRole("button", { name: "Connect Meta", exact: true }).click();
-    await page.getByText("Meta connected successfully.").waitFor();
-    await page.getByRole("button", { name: /Fresh bread/ }).waitFor();
-    assert.equal(await page.getByRole("button", { name: "Analyze video", exact: true }).isDisabled(), true);
-    await page.getByRole("button", { name: /Fresh bread/ }).click();
-    assert.equal(await page.getByRole("button", { name: "Analyze video", exact: true }).isEnabled(), true);
-  }, { status: 200, json: { connected: true } });
-});
-
-test("Content pagination, unsupported Instagram posts, and loading state", async () => {
-  await metaPage(async (page, context) => {
-    await context.route("**/api/meta/discovery/pages/123/instagram/234/media*", async (route) => {
-      const later = new URL(route.request().url()).searchParams.has("after");
-      await new Promise((resolve) => setTimeout(resolve, 300));
-      await route.fulfill({ json: { items: later
-        ? [{ id: "555", name: "Weekend Reel", type: "REELS", selectable: true }]
-        : [{ id: "444", name: "Bakery photo", type: "IMAGE", selectable: false }], next_cursor: later ? null : "next" } });
-    });
-    await page.locator("#platform").selectOption("instagram");
-    await page.getByText("Loading content…", { exact: true }).waitFor();
-    await page.getByRole("button", { name: /Bakery photo/ }).waitFor();
-    assert.equal(await page.getByRole("button", { name: /Bakery photo/ }).isDisabled(), true);
-    await page.getByRole("button", { name: "Load more content" }).click();
-    await page.getByRole("button", { name: /Weekend Reel/ }).click();
-    assert.equal(await page.getByRole("button", { name: /Weekend Reel/ }).getAttribute("aria-pressed"), "true");
-  }, { status: 200, json: { connected: true } });
+test("recommendations identify library leaves rather than assuming storage IDs are equal", async () => {
+  await withApp({ items: [video(1, { video_id: uuid(777) })] }, async (page, calls) => {
+    await loaded(page); await select(page, 1).check(); await generate(page).click(); await generated(page);
+    assert.deepEqual(calls.find((call) => call.path.endsWith("/recommendations")).body, { video_ids: [uuid(1)] });
+  });
 });

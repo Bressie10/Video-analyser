@@ -1,6 +1,7 @@
 """PostgreSQL access to processed video data."""
 
 import os
+from contextlib import nullcontext
 from uuid import UUID
 
 import psycopg
@@ -17,7 +18,7 @@ def _database_url() -> str:
     return database_url
 
 
-def save_analysis(analysis: dict) -> str:
+def save_analysis(analysis: dict, *, connection=None, video_id=None, analysis_version=1, connection_id=None) -> str:
     """Store one processing result and its ordered child records atomically."""
     performance = None
     if analysis.get("performance_metrics") is not None:
@@ -25,32 +26,39 @@ def save_analysis(analysis: dict) -> str:
     metadata = analysis["metadata"]
     video = metadata["video"]
     audio = metadata["audio"]
-    with psycopg.connect(_database_url(), connect_timeout=3) as connection:
+    with (nullcontext(connection) if connection is not None else psycopg.connect(_database_url(), connect_timeout=3)) as connection:
         with connection.cursor() as cursor:
-            cursor.execute(
-                """INSERT INTO videos (
-                    duration_seconds, container, file_size_bytes, overall_bit_rate,
-                    video_codec, video_codec_long_name, width, height, fps, source_fps,
-                    pixel_format, video_bit_rate, frame_count, audio_codec,
-                    audio_codec_long_name, audio_sample_rate, audio_channels,
-                    audio_channel_layout, audio_bit_rate, transcript_text
-                ) VALUES (
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s,
-                    %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
-                ) RETURNING id""",
-                (
-                    metadata["duration_seconds"], metadata["container"],
-                    metadata["file_size_bytes"], metadata["overall_bit_rate"],
-                    video["codec"], video["codec_long_name"],
-                    video["resolution"]["width"], video["resolution"]["height"],
-                    video["fps"], video["source_fps"], video["pixel_format"],
-                    video["bit_rate"], video["frame_count"], audio["codec"],
-                    audio["codec_long_name"], audio["sample_rate"],
-                    audio["channels"], audio["channel_layout"], audio["bit_rate"],
-                    analysis["audio"]["text"],
-                ),
-            )
-            video_id = cursor.fetchone()[0]
+            columns = [
+                'duration_seconds', 'container', 'file_size_bytes', 'overall_bit_rate',
+                'video_codec', 'video_codec_long_name', 'width', 'height', 'fps', 'source_fps',
+                'pixel_format', 'video_bit_rate', 'frame_count', 'audio_codec',
+                'audio_codec_long_name', 'audio_sample_rate', 'audio_channels',
+                'audio_channel_layout', 'audio_bit_rate', 'transcript_text',
+            ]
+            values = [
+                metadata['duration_seconds'], metadata['container'], metadata['file_size_bytes'],
+                metadata['overall_bit_rate'], video['codec'], video['codec_long_name'],
+                video['resolution']['width'], video['resolution']['height'], video['fps'],
+                video['source_fps'], video['pixel_format'], video['bit_rate'], video['frame_count'],
+                audio['codec'], audio['codec_long_name'], audio['sample_rate'], audio['channels'],
+                audio['channel_layout'], audio['bit_rate'], analysis['audio']['text'],
+            ]
+            replacement_id = video_id
+            if replacement_id is not None:
+                columns += ['analysis_version', 'meta_connection_id', 'id']
+                values += [analysis_version, connection_id, replacement_id]
+            # Identifiers are fixed above, never derived from request/provider data.
+            statement = ('INSERT INTO videos (' + ','.join(columns) + ') VALUES ('
+                         + ','.join(['%s'] * len(columns)) + ')')
+            if replacement_id is not None:
+                statement += ' ON CONFLICT(id) DO UPDATE SET ' + ','.join(
+                    f'{column}=EXCLUDED.{column}' for column in columns if column != 'id')
+            cursor.execute(statement + ' RETURNING id', tuple(values))
+            inserted = cursor.fetchone()
+            video_id = inserted['id'] if isinstance(inserted, dict) else inserted[0]
+            if replacement_id is not None:
+                for table in ('transcript_segments', 'scenes', 'on_screen_text', 'motion_events'):
+                    cursor.execute(f'DELETE FROM {table} WHERE video_id=%s', (video_id,))
             for index, segment in enumerate(analysis["audio"]["segments"]):
                 cursor.execute(
                     """INSERT INTO transcript_segments
@@ -97,13 +105,15 @@ def save_analysis(analysis: dict) -> str:
     return str(video_id)
 
 
-def get_analysis(video_id: UUID) -> dict | None:
+def get_analysis(video_id: UUID, *, connection_id=None) -> dict | None:
     """Load a complete result in the same shape as the upload response."""
     with psycopg.connect(_database_url(), connect_timeout=3, row_factory=dict_row) as connection:
         with connection.cursor() as cursor:
             cursor.execute("SELECT * FROM videos WHERE id = %s", (video_id,))
             row = cursor.fetchone()
             if row is None:
+                return None
+            if row.get('meta_connection_id') is not None and row['meta_connection_id'] != connection_id:
                 return None
             def children(table: str, order_column: str) -> list[dict]:
                 # Only fixed, local identifiers are passed to this helper.

@@ -8,6 +8,7 @@ import re
 import secrets
 import threading
 import time
+import psycopg
 from dataclasses import dataclass, field
 from urllib.parse import urlencode, urlsplit
 
@@ -68,8 +69,9 @@ class _MetaLogFilter(logging.Filter):
         # httpx logs full URLs at INFO. The documented token exchange is GET.
         if record.name == "httpx" and isinstance(record.args, tuple):
             record.args = tuple(
-                value.copy_with(query=None)
-                if isinstance(value, httpx.URL) and value.host == "graph.facebook.com"
+                value.copy_with(query=None, path='/[redacted]')
+                if isinstance(value, httpx.URL) and (value.host == "graph.facebook.com" or
+                    any(value.host.endswith('.'+domain) for domain in ('fbcdn.net','cdninstagram.com','facebook.com')))
                 else value for value in record.args
             )
         # Uvicorn's standard access logger otherwise includes OAuth codes/state.
@@ -181,6 +183,19 @@ def exchange_code(config: MetaSettings, code: str) -> UserToken:
     return UserToken(token, time.time() + expires)
 
 
+def extend_token(config: MetaSettings, token: UserToken) -> UserToken:
+    """Exchange the initial login token for Meta's long-lived user token."""
+    payload = _get(config, 'oauth/access_token', {
+        'grant_type':'fb_exchange_token', 'client_id':config.app_id,
+        'client_secret':config.app_secret, 'fb_exchange_token':token.access_token,
+    })
+    value, expires = payload.get('access_token'), payload.get('expires_in')
+    if (not isinstance(value,str) or not value or any(c.isspace() for c in value)
+            or type(expires) is not int or expires<=0):
+        raise MetaError('Meta returned an invalid extended token.')
+    return UserToken(value,time.time()+expires)
+
+
 class MetaClient:
     def __init__(self, config: MetaSettings, token: UserToken):
         self._config = config
@@ -256,6 +271,12 @@ def create_session(token: UserToken, previous: str | None = None) -> str:
 
 
 def session_client(session_id: str | None) -> MetaClient:
+    if os.environ.get('META_TOKEN_ENCRYPTION_KEY'):
+        from app import meta_library_repository as library
+        try:
+            return library.connection_client(library.session_connection(session_id))
+        except (ValueError, psycopg.Error):
+            raise MetaConfigurationError('Meta library storage is unavailable.') from None
     with _lock:
         token = _sessions.get(session_id)
         if token is None or token.expires_at <= time.time():

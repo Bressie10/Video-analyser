@@ -1,6 +1,8 @@
 """Backend-only Meta authorization and connection check routes."""
 
 import time
+import os
+import psycopg
 
 from fastapi import APIRouter, Request
 from fastapi.responses import JSONResponse, RedirectResponse
@@ -45,6 +47,8 @@ def callback(request: Request):
         else:
             try:
                 token = meta.exchange_code(config, code)
+                if os.environ.get('META_TOKEN_ENCRYPTION_KEY'):
+                    token = meta.extend_token(config,token)
                 client = meta.MetaClient(config, token)
                 client.verify_permissions()
                 result = client.test_connection()
@@ -53,7 +57,18 @@ def callback(request: Request):
             except meta.MetaError:
                 response = JSONResponse({"detail": "Meta authorization failed. Connect again."}, status_code=502)
             else:
-                session_id = meta.create_session(token, request.cookies.get(meta.SESSION_COOKIE))
+                if os.environ.get('META_TOKEN_ENCRYPTION_KEY'):
+                    from app import meta_library_repository as library
+                    try:
+                        identity = client.get('me', {'fields':'id'})['id']
+                        session_id, job_id = library.connect_identity(identity, token, request.cookies.get(meta.SESSION_COOKIE))
+                        result = {**result, 'job_id':job_id}
+                    except (psycopg.Error, ValueError, meta.MetaError):
+                        response = JSONResponse({'detail':'Persistent Meta connection could not be saved.'},status_code=503)
+                        response.delete_cookie(meta.STATE_COOKIE,path='/api/meta/callback',secure=True,httponly=True,samesite='lax')
+                        return _private(response)
+                else:
+                    session_id = meta.create_session(token, request.cookies.get(meta.SESSION_COOKIE))
                 response = JSONResponse(result)
                 response.set_cookie(
                     meta.SESSION_COOKIE, session_id, max_age=max(1, int(token.expires_at - time.time())),
@@ -65,6 +80,7 @@ def callback(request: Request):
 
 @router.get("/test")
 def test_connection(request: Request):
+    """Report connection status; absence is normal, provider failures are errors."""
     session_id = request.cookies.get(meta.SESSION_COOKIE)
     try:
         result = meta.session_client(session_id).test_connection()
@@ -72,8 +88,10 @@ def test_connection(request: Request):
         response = JSONResponse({"detail": "Meta is not configured correctly."}, status_code=503)
     except meta.MetaNotConnected:
         meta.remove_session(session_id)
-        response = JSONResponse({"detail": "Meta account is not connected. Connect again."}, status_code=401)
+        response = JSONResponse({"connected": False})
         response.delete_cookie(meta.SESSION_COOKIE, path="/api/meta", secure=True, httponly=True, samesite="lax")
+    except meta.MetaPermissionError:
+        response = JSONResponse({"detail": "Meta permission is required. Reconnect and grant access."}, status_code=403)
     except meta.MetaError:
         response = JSONResponse({"detail": "Meta API request failed."}, status_code=502)
     else:

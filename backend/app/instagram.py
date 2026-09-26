@@ -33,14 +33,14 @@ def _metric_value(row: dict) -> int | None:
     return values[0].get("value")
 
 
-def reel_performance(client: MetaClient, media_id: str) -> VideoPerformance:
+def reel_performance(client: MetaClient, media_id: str, *, allow_video: bool = False) -> VideoPerformance:
     """Read only this Reel's organic Instagram metrics using the existing token."""
     if not re.fullmatch(r"[0-9]{1,30}", media_id):
         raise NotInstagramReel("Provide the numeric Instagram Graph media ID.")
     media = client.get(media_id, {"fields": "id,media_type,media_product_type"})
     if media.get("id") != media_id:
         raise MetaError("Instagram returned a different media ID.")
-    if media.get("media_product_type") != "REELS" or media.get("media_type") != "VIDEO":
+    if (not allow_video and media.get("media_product_type") != "REELS") or media.get("media_type") != "VIDEO":
         raise NotInstagramReel("The Instagram media must be a Reel.")
 
     payload = client.get(f"{media_id}/insights", {"metric": ",".join(INSIGHT_FIELDS)})

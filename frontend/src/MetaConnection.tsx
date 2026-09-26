@@ -1,36 +1,41 @@
 import { useEffect, useRef, useState } from "react";
+import { friendlyError, isUUID } from "./metaLibrary";
 
 type Status = "checking" | "disconnected" | "connecting" | "connected" | "error";
 
-export function MetaConnection({ onConnectionChange, disconnected = false, disabled = false }: { onConnectionChange: (connected: boolean) => void; disconnected?: boolean; disabled?: boolean }) {
+export function MetaConnection({ onConnectionChange, disconnected = false, disabled = false, onSyncStarted }: { onSyncStarted: (id: string | null) => void; onConnectionChange: (connected: boolean) => void; disconnected?: boolean; disabled?: boolean }) {
   const [status, setStatus] = useState<Status>("checking");
   const [error, setError] = useState("");
   const stopWatching = useRef<(() => void) | null>(null);
 
   useEffect(() => { onConnectionChange(status === "connected"); }, [status, onConnectionChange]);
-  useEffect(() => { if (disconnected) setStatus("disconnected"); }, [disconnected]);
+  useEffect(() => { if (disconnected) { setStatus("disconnected"); setError(""); } }, [disconnected]);
 
   async function checkConnection(signal: AbortSignal, afterLogin = false) {
     const response = await fetch("/api/meta/test", { credentials: "same-origin", cache: "no-store", signal });
-    if (response.status === 401 && !afterLogin) return "disconnected" as const;
     const body = await response.json();
+    if (response.ok && body?.connected === false && !afterLogin) return "disconnected" as const;
     if (!response.ok || body?.connected !== true) {
-      throw new Error(typeof body?.detail === "string" ? body.detail : "Could not verify the Meta connection. Try again.");
+      throw new Error(friendlyError(response.status, "accounts"));
     }
     return "connected" as const;
   }
 
   useEffect(() => {
     const controller = new AbortController();
-    checkConnection(AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]))
-      .then((result) => { if (!controller.signal.aborted) setStatus(result); })
-      .catch(() => {
-        if (!controller.signal.aborted) {
-          setError("Could not check the Meta connection. Try connecting again.");
-          setStatus("error");
-        }
-      });
-    return () => { controller.abort(); stopWatching.current?.(); };
+    // Strict Mode replays effects in development. Cancel the first scheduled
+    // probe before it reaches the network, while keeping real unmount cleanup.
+    const timer = window.setTimeout(() => {
+      checkConnection(AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]))
+        .then((result) => { if (!controller.signal.aborted) setStatus(result); })
+        .catch(() => {
+          if (!controller.signal.aborted) {
+            setError("Could not check the Meta connection. Try connecting again.");
+            setStatus("error");
+          }
+        });
+    }, 0);
+    return () => { window.clearTimeout(timer); controller.abort(); stopWatching.current?.(); };
   }, []);
 
   function connect() {
@@ -41,6 +46,7 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
       setStatus("error");
       return;
     }
+    onSyncStarted(null);
     setStatus("connecting");
     const started = Date.now();
     const controller = new AbortController();
@@ -68,9 +74,10 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
       window.clearInterval(timer);
       popup.close();
       if (body?.connected !== true) {
-        fail(typeof body?.detail === "string" ? body.detail : "Meta authentication failed. Try again.");
+        fail("We couldn’t connect Meta. Try again and allow access to your business accounts.");
         return;
       }
+      onSyncStarted(isUUID(body.job_id) ? body.job_id : null);
       checkConnection(AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]), true)
         .then((result) => { if (!controller.signal.aborted) setStatus(result); })
         .catch((caught) => {
@@ -82,7 +89,7 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
     }, 400);
   }
 
-  return <section aria-labelledby="meta-title">
+  return <section className="connection" aria-labelledby="meta-title">
     <h2 id="meta-title">Meta account</h2>
     <p role="status">{{
       checking: "Checking Meta connection…",

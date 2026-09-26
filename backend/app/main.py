@@ -19,6 +19,9 @@ from app.instagram_routes import router as instagram_router
 from app.facebook_routes import router as facebook_router
 from app.meta_ads_routes import router as meta_ads_router
 from app.video_repository import get_analysis, save_analysis
+from app.analysis_pipeline import analyze_file
+from app.meta_library_routes import router as meta_library_router
+from app.meta_library_worker import lifespan
 
 from app.video_processing import (
     SUPPORTED_EXTENSIONS,
@@ -34,7 +37,8 @@ from app.video_processing import (
 
 load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=False)
 
-app = FastAPI(title="Video Analyzer API")
+app = FastAPI(title="Video Analyzer API", lifespan=lifespan)
+app.include_router(meta_library_router)
 app.include_router(meta_router)
 app.include_router(meta_discovery_router)
 app.include_router(instagram_router)
@@ -184,25 +188,15 @@ async def upload_video(
                 source_file.write(chunk)
 
         try:
-            metadata = inspect_video(source_path)
-            normalised_path = Path(directory, "normalised.mp4")
-            normalise_video(source_path, normalised_path)
-            scenes = detect_scenes(normalised_path)
-            on_screen_text = detect_on_screen_text(normalised_path)
-            motion_events = detect_motion_events(normalised_path)
-            audio_path = Path(directory, "audio.wav")
-            extract_wav_audio(normalised_path, audio_path)
-            transcription = transcribe_audio(audio_path)
+            analysis = analyze_file(source_path, directory, operations={
+                'inspect_video': inspect_video, 'normalise_video': normalise_video,
+                'detect_scenes': detect_scenes, 'detect_on_screen_text': detect_on_screen_text,
+                'detect_motion_events': detect_motion_events, 'extract_wav_audio': extract_wav_audio,
+                'transcribe_audio': transcribe_audio,
+            })
         except VideoProcessingError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
 
-    analysis = {
-        "metadata": metadata.as_dict(),
-        "audio": transcription,
-        "scenes": scenes,
-        "on_screen_text": on_screen_text,
-        "motion_events": motion_events,
-    }
     if performance is not None:
         analysis.update(performance)
     if os.environ.get("DATABASE_URL"):
