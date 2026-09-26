@@ -65,17 +65,34 @@ Install backend requirements into `.venv` first if needed with
 is unavailable.
 
 The frontend entry point is `frontend/src/main.tsx`. The API entry point is
-`backend/app/main.py`; `GET /health` returns a liveness response. In the
-frontend, connect TikTok, then provide a video file, its matching full TikTok
-video URL, and an OpenAI API key. The form uploads to `POST /api/videos`, reads
-the saved result through `GET /api/videos/{video_id}/analysis`, and requests the
-idea and script through `POST /api/videos/{video_id}/recommendations`. The
-runtime key is sent only with the recommendation request and is not persisted
-by the frontend. Run `npm run test:e2e` from `frontend` for the browser flow
-test, which uses mocked API responses. Videos are capped at 500 MiB and 10
-minutes, normalised to MP4/H.264/AAC (maximum 1,920 pixels per dimension), then
-have mono 16 kHz PCM WAV audio extracted during the request. Processed files
-are temporary and are not retained yet.
+`backend/app/main.py`; `GET /health` returns a liveness response.
+
+The frontend now starts with **Connect Meta → choose business accounts → sync
+content → select videos → Generate a new video idea**. It displays a combined
+concept and script, supports selection across multiple pages of content, and
+requires no file upload, media URL, account ID entry, or customer API key.
+
+**Integration status:** Meta authentication and account discovery use existing
+backend routes. Library sync, saved readiness, and multi-video generation use a
+**proposed frontend contract**. Concurrent backend library work in this checkout
+uses different routes and response shapes; it has not been integrated with or
+validated against this frontend. Until the contract is aligned, missing or
+incompatible responses produce a friendly unavailable/update-error state.
+It never supplies demo videos in production. See
+[the library contract](frontend/LIBRARY_CONTRACT.md) for the exact integration
+boundary and expected server behavior. Generation assumes server-configured
+credentials. The former TikTok/manual-upload frontend is removed; existing
+backend upload, analysis, metrics, and single-video recommendation routes remain.
+
+From `frontend`, run `npm run typecheck`, `npm run build`, and
+`npm run test:e2e`. Browser tests intercept requests using the proposed contract;
+they prove frontend behavior, not live Meta imports, persistence, or generation.
+There is no frontend lint script configured.
+
+For programmatic uploads, videos remain capped at 500 MiB and 10 minutes,
+normalised to MP4/H.264/AAC (maximum 1,920 pixels per dimension), then have mono
+16 kHz PCM WAV audio extracted during the request. Processed files are temporary
+and are not retained yet.
 
 Successful video uploads include a `metadata` hash map containing the source
 duration, container, file size, overall bitrate, and nested video/audio stream
@@ -477,14 +494,14 @@ included.
 
 ## Browse Meta content
 
-Connect Meta in the frontend, choose Instagram, Facebook, or Meta Ads, then
-choose a named Page/account and content card. A sole Page/account is selected
-automatically. Lists have **Load more**, loading, empty, permission-error and
-reconnect states. IDs are held internally in React state, never entered by the
-user or added to database storage. Upload the matching video as before. Ads
-also require a reporting date range (defaults to the last 30 calendar dates).
-Only Instagram Reels support the existing metrics provider; other Instagram
-posts are visible with an explanation and cannot be selected for analysis.
+Connect Meta in the frontend and choose named business accounts. All account
+pages are discovered before a sole account in each source category is selected
+automatically. Multiple Pages, linked Instagram accounts, and ad accounts can be
+selected together. Content cards distinguish organic videos from paid ads.
+
+The frontend uses account discovery below and the future
+[library contract](frontend/LIBRARY_CONTRACT.md) for content, processing status,
+sync, and batch recommendations. It does not ask for matching uploads or IDs.
 
 Read-only discovery routes under `/api/meta/discovery`:
 
@@ -502,7 +519,7 @@ Graph pagination URLs and Page tokens stay on the backend. Page discovery uses
 the existing request-local Page client and its ANALYZE access requirement.
 Permission errors return 403, disconnected sessions 401, provider errors 502.
 The existing metric endpoints above remain available for programmatic use;
-the frontend supplies their IDs from the selected card automatically.
+the new library frontend does not call these per-video metric endpoints.
 
 Reference: Meta's official [Page SDK edges](https://github.com/facebook/facebook-python-business-sdk/blob/main/facebook_business/adobjects/page.py)
 and [Instagram account discovery example](https://www.postman.com/meta/instagram/documentation/6yqw8pt/instagram-api).

@@ -1,84 +1,55 @@
 import { useEffect, useState } from "react";
+import { discoverSources, errorMessage, ServiceError, sourceKey, type Source } from "./metaLibrary";
 
-export type MetaSelection = { id: string; pageId: string; kind: string; name: string };
-type Item = { id: string; name: string; type: string; thumbnail?: string; created_at?: string; status?: string; selectable?: boolean };
-type Listing = { items: Item[]; next_cursor: string | null };
-type Props = { platform: string; disabled: boolean; onSelect: (selection: MetaSelection | null) => void; onDisconnected: () => void };
-
-function Choices({ path, label, disabled, selected, onChoose, onDisconnected, cards = false }: {
-  path: string; label: string; disabled: boolean; selected: string;
-  onChoose: (item: Item) => void; onDisconnected: () => void; cards?: boolean;
+export function MetaBrowser({ connected, selected, onChange, onDisconnected, disabled }: {
+  connected: boolean; selected: Source[]; onChange: (sources: Source[]) => void; onDisconnected: () => void; disabled: boolean;
 }) {
-  const [data, setData] = useState<Listing>({ items: [], next_cursor: null });
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [sources, setSources] = useState<Source[]>([]);
+  const [errors, setErrors] = useState<string[]>([]);
+  const [loading, setLoading] = useState(false);
   const [attempt, setAttempt] = useState(0);
-  const [cursor, setCursor] = useState<string | null>(null);
   useEffect(() => {
+    if (!connected) return;
     const controller = new AbortController();
-    setLoading(true); setError("");
-    fetch(`/api/meta/discovery/${path}${cursor ? `?after=${encodeURIComponent(cursor)}` : ""}`, {
-      signal: AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]), cache: "no-store",
-    }).then(async (response) => {
+    setLoading(true); setErrors([]);
+    discoverSources(controller.signal).then((result) => {
       if (controller.signal.aborted) return;
-      if (response.status === 401) { onDisconnected(); return; }
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.detail || "Could not load content. Try again.");
+      setSources(result.sources); setErrors(result.errors);
+      // Revalidate access on every reconnect. Never keep an inaccessible source selected.
+      const retained = selected.filter((source) => result.sources.some((current) => sourceKey(current) === sourceKey(source)));
+      const defaults = ["facebook", "instagram", "meta_ads"].flatMap((platform) => {
+        const group = result.sources.filter((source) => source.platform === platform);
+        return group.length === 1 ? group : [];
+      });
+      onChange(selected.length ? retained : defaults);
+    }).catch((error) => {
       if (controller.signal.aborted) return;
-      setData((previous) => ({ ...result, items: cursor
-        ? [...previous.items, ...result.items.filter((item: Item) => !previous.items.some((old) => old.id === item.id))]
-        : result.items }));
-      if (!cards && !cursor && !result.next_cursor && result.items.length === 1) onChoose(result.items[0]);
-    }).catch((caught) => {
-      if (!controller.signal.aborted) setError(caught instanceof Error ? caught.message : "Could not load content.");
+      setErrors([errorMessage(error, "accounts")]);
+      if (error instanceof ServiceError && error.status === 401) onDisconnected();
     }).finally(() => { if (!controller.signal.aborted) setLoading(false); });
     return () => controller.abort();
-    // Parents key each list by its source; callbacks do not change the request.
+    // Account discovery is scoped to connection/retry, not checkbox changes.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [path, cursor, attempt]);
-  return <div className="meta-list">
-    <p><strong>{label}</strong></p>
-    {loading && <p role="status">Loading {label.toLowerCase()}…</p>}
-    {error && <><p role="alert" className="error">{error}</p><button type="button" disabled={disabled} onClick={() => setAttempt(attempt + 1)}>Try again</button></>}
-    {!loading && !error && data.items.length === 0 && <p role="status">No {label.toLowerCase()} available. Check that you shared access when connecting Meta.</p>}
-    <div className={cards ? "meta-grid" : "meta-options"}>
-      {data.items.map((item) => <button key={item.id} type="button" disabled={disabled || item.selectable === false}
-        aria-pressed={selected === item.id} onClick={() => onChoose(item)}>
-        {cards && item.thumbnail && <img src={item.thumbnail} alt="" loading="lazy" referrerPolicy="no-referrer" onError={(event) => { event.currentTarget.hidden = true; }} />}
-        <span>{item.name}</span>
-        {cards && <small>{item.type.replaceAll("_", " ").toLowerCase()}{item.status ? ` · ${item.status.replaceAll("_", " ").toLowerCase()}` : ""}
-          {item.created_at && !Number.isNaN(Date.parse(item.created_at)) ? ` · ${new Date(item.created_at).toLocaleDateString()}` : ""}</small>}
-        {item.selectable === false && <small>Only Reels can be analyzed currently.</small>}
-      </button>)}
+  }, [connected, attempt]);
+  return <section className="sources" aria-labelledby="sources-title">
+    <div className="section-heading"><div><p className="eyebrow">Your sources</p><h2 id="sources-title">Choose your business accounts</h2></div></div>
+    <p className="muted">Use your Facebook, Instagram and advertising content together.</p>
+    {loading && <p role="status">Loading your accounts…</p>}
+    {errors.map((error) => <p key={error} role="alert" className="error">{error}</p>)}
+    {!!errors.length && <button disabled={!connected || loading || disabled} onClick={() => setAttempt((value) => value + 1)}>Try accounts again</button>}
+    {!loading && !errors.length && !sources.length && <p>No business accounts were shared. Reconnect Meta and choose the accounts you want to use.</p>}
+    <div className="source-groups">
+      {(["facebook", "instagram", "meta_ads"] as const).map((platform) => {
+        const group = sources.filter((source) => source.platform === platform);
+        if (!group.length) return null;
+        return <fieldset key={platform} disabled={!connected || loading || disabled}>
+          <legend>{{ facebook: "Facebook Pages", instagram: "Instagram accounts", meta_ads: "Ad accounts" }[platform]}</legend>
+          {group.map((source) => <label className="source-choice" key={sourceKey(source)}>
+            <input type="checkbox" checked={selected.some((current) => sourceKey(current) === sourceKey(source))} onChange={(event) => onChange(event.target.checked ? [...selected, source] : selected.filter((current) => sourceKey(current) !== sourceKey(source)))} />
+            <span>{source.name}</span>
+          </label>)}
+        </fieldset>;
+      })}
     </div>
-    {data.next_cursor && !error && <button type="button" disabled={loading || disabled} onClick={() => setCursor(data.next_cursor)}>Load more {label.toLowerCase()}</button>}
-  </div>;
-}
-
-export function MetaBrowser({ platform, disabled, onSelect, onDisconnected }: Props) {
-  const [page, setPage] = useState<Item | null>(null);
-  const [account, setAccount] = useState<Item | null>(null);
-  const [kind, setKind] = useState("reels");
-  const [selected, setSelected] = useState("");
-  function clear() { setSelected(""); onSelect(null); }
-  const ads = platform === "meta_ads";
-  const path = ads && account ? `ad-accounts/${account.id}/ads`
-    : platform === "facebook" && page ? `pages/${page.id}/facebook/${kind}`
-    : platform === "instagram" && page && account ? `pages/${page.id}/instagram/${account.id}/media` : "";
-  return <div aria-label="Browse Meta content">
-    <Choices path={ads ? "ad-accounts" : "pages"} label={ads ? "Ad accounts" : "Facebook Pages"} disabled={disabled}
-      selected={ads ? account?.id ?? "" : page?.id ?? ""} onDisconnected={onDisconnected}
-      onChoose={(item) => { clear(); if (ads) setAccount(item); else { setPage(item); setAccount(null); } }} />
-    {platform === "instagram" && page && <Choices key={page.id} path={`pages/${page.id}/instagram-accounts`}
-      label="Instagram accounts" disabled={disabled} selected={account?.id ?? ""} onDisconnected={onDisconnected}
-      onChoose={(item) => { clear(); setAccount(item); }} />}
-    {platform === "facebook" && page && <><label htmlFor="facebook-kind">Facebook content type</label>
-      <select id="facebook-kind" disabled={disabled} value={kind} onChange={(event) => { clear(); setKind(event.target.value); }}>
-        <option value="reels">Reels</option><option value="videos">Videos</option>
-      </select></>}
-    {path && <Choices key={path} path={path} label={ads ? "Ads" : "Content"} cards disabled={disabled}
-      selected={selected} onDisconnected={onDisconnected} onChoose={(item) => {
-        setSelected(item.id); onSelect({ id: item.id, pageId: page?.id ?? "", kind, name: item.name });
-      }} />}
-  </div>;
+  </section>;
 }
