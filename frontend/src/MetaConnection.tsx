@@ -12,8 +12,8 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
 
   async function checkConnection(signal: AbortSignal, afterLogin = false) {
     const response = await fetch("/api/meta/test", { credentials: "same-origin", cache: "no-store", signal });
-    if (response.status === 401 && !afterLogin) return "disconnected" as const;
     const body = await response.json();
+    if (response.ok && body?.connected === false && !afterLogin) return "disconnected" as const;
     if (!response.ok || body?.connected !== true) {
       throw new Error(typeof body?.detail === "string" ? body.detail : "Could not verify the Meta connection. Try again.");
     }
@@ -22,15 +22,19 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
 
   useEffect(() => {
     const controller = new AbortController();
-    checkConnection(AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]))
-      .then((result) => { if (!controller.signal.aborted) setStatus(result); })
-      .catch(() => {
-        if (!controller.signal.aborted) {
-          setError("Could not check the Meta connection. Try connecting again.");
-          setStatus("error");
-        }
-      });
-    return () => { controller.abort(); stopWatching.current?.(); };
+    // Strict Mode replays effects in development. Cancel the first scheduled
+    // probe before it reaches the network, while keeping real unmount cleanup.
+    const timer = window.setTimeout(() => {
+      checkConnection(AbortSignal.any([controller.signal, AbortSignal.timeout(15000)]))
+        .then((result) => { if (!controller.signal.aborted) setStatus(result); })
+        .catch(() => {
+          if (!controller.signal.aborted) {
+            setError("Could not check the Meta connection. Try connecting again.");
+            setStatus("error");
+          }
+        });
+    }, 0);
+    return () => { window.clearTimeout(timer); controller.abort(); stopWatching.current?.(); };
   }, []);
 
   function connect() {

@@ -65,6 +65,7 @@ def callback(request: Request):
 
 @router.get("/test")
 def test_connection(request: Request):
+    """Report connection status; absence is normal, provider failures are errors."""
     session_id = request.cookies.get(meta.SESSION_COOKIE)
     try:
         result = meta.session_client(session_id).test_connection()
@@ -72,8 +73,10 @@ def test_connection(request: Request):
         response = JSONResponse({"detail": "Meta is not configured correctly."}, status_code=503)
     except meta.MetaNotConnected:
         meta.remove_session(session_id)
-        response = JSONResponse({"detail": "Meta account is not connected. Connect again."}, status_code=401)
+        response = JSONResponse({"connected": False})
         response.delete_cookie(meta.SESSION_COOKIE, path="/api/meta", secure=True, httponly=True, samesite="lax")
+    except meta.MetaPermissionError:
+        response = JSONResponse({"detail": "Meta permission is required. Reconnect and grant access."}, status_code=403)
     except meta.MetaError:
         response = JSONResponse({"detail": "Meta API request failed."}, status_code=502)
     else:

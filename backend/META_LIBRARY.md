@@ -145,7 +145,7 @@ not arbitrary public URLs. The full request schemas are available in `/docs`.
 | `GET /health/db` | `SELECT 1`; 503 if database configuration/connection is unavailable |
 | `GET /api/meta/connect` | Starts OAuth redirect |
 | `GET /api/meta/callback` | OAuth `state`, `code` or error query; saves session and queues V2 sync |
-| `GET /api/meta/test` | Authenticated identity check; returns connection status, not asset-access proof |
+| `GET /api/meta/test` | Status probe: 200 `{connected:false}` when absent/expired/revoked, 200 `{connected:true}` when valid; real permission/provider failures remain errors, not asset-access proof |
 | `POST /api/photos` | Multipart `photo`; accepts image MIME type and acknowledges receipt only; no analysis/storage |
 | `POST /api/videos` | Multipart `video`, optional `tiktok_url`; processes upload and returns analysis plus `video_id` when database configured |
 | `GET /api/videos/{video_id}/analysis` | Saved legacy upload analysis |

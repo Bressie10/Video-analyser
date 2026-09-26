@@ -99,7 +99,7 @@ test("browser displays backend error and stops after failed upload", async () =>
 
 test.after(() => server.kill());
 
-async function metaPage(run, initial = { status: 401, json: {} }) {
+async function metaPage(run, initial = { status: 200, json: { connected: false } }) {
   await waitForServer();
   const browser = await chromium.launch({ headless: true });
   try {
