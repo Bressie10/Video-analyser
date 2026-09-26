@@ -1,33 +1,24 @@
 # PostgreSQL database
 
-The source of truth for the schema is
-[`backend/migrations/001_create_video_analysis.sql`](backend/migrations/001_create_video_analysis.sql).
-It creates five tables. Each processed video has one UUID in `videos.id`; all
-analysis rows refer to it through `video_id`. Deleting a video cascades to its
-analysis rows.
+The source of truth is the ordered SQL in [backend/migrations](backend/migrations).
+V2 stores reusable content analysis separately from refreshable performance and
+private provider identities. See [the backend guide](backend/META_LIBRARY.md) for
+scheduling and API behavior, and [README.md](README.md) for stack setup.
 
-[`backend/migrations/002_create_tiktok_video_performance.sql`](backend/migrations/002_create_tiktok_video_performance.sql)
-adds a sixth table for optional TikTok performance counts linked to the same
-internal video UUID. Migration
-[`003_platform_agnostic_performance.sql`](backend/migrations/003_platform_agnostic_performance.sql)
-renames it to `video_performance` and backfills existing rows with source `tiktok`,
-preserving counts and timestamps. Migration
-[`004_meta_ads_metrics.sql`](backend/migrations/004_meta_ads_metrics.sql) adds a
-nullable `meta_ads JSONB` column for currency, reporting context, decimal values,
-and action arrays that the four BIGINT columns cannot represent. Existing rows
-keep their counts and timestamps. Apply migrations in numerical order.
+## Migrations and local setup
 
-When `DATABASE_URL` is configured, `POST /api/videos` stores its result in these
-tables and returns `video_id`. The examples below describe possible rows; they
-are not seed data and are not present in the database by default.
+| Order | Migration | Effect |
+| --- | --- | --- |
+| 001 | [create_video_analysis](backend/migrations/001_create_video_analysis.sql) | Creates videos and four ordered content-analysis child tables |
+| 002 | [create_tiktok_video_performance](backend/migrations/002_create_tiktok_video_performance.sql) | Adds optional TikTok count snapshots |
+| 003 | [platform_agnostic_performance](backend/migrations/003_platform_agnostic_performance.sql) | Renames the snapshot table to `video_performance`, backfills source `tiktok`, preserves counts/timestamps |
+| 004 | [meta_ads_metrics](backend/migrations/004_meta_ads_metrics.sql) | Adds nullable Ads JSONB and permits ad-only snapshots |
+| 005 | [meta_library](backend/migrations/005_meta_library.sql) | Adds persistent Meta authorization, source identities, jobs, library snapshots, analysis ownership and versioning |
 
-## Local setup
-
-From the project root:
+Start PostgreSQL and configure root `.env` as described in README. For a **new,
+empty database only**, run from the repository root:
 
 ```sh
-cp .env.example .env
-docker compose up -d postgres
 set -a
 source .env
 set +a
@@ -35,50 +26,127 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/001_create_video_a
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/002_create_tiktok_video_performance.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/003_platform_agnostic_performance.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/004_meta_ads_metrics.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/005_meta_library.sql
 ```
 
-The migration is applied once to a new database. Change the credentials and
-port in `.env` for your local setup, and keep `DATABASE_URL` in sync. To inspect
-the resulting tables, run `psql "$DATABASE_URL" -c '\dt'`. To test a sample
-round trip without retaining rows, run:
+For an **existing installation**, back up the database, establish which migrations
+have already been applied, and run only the remaining files in numerical order.
+If 001–004 are already applied, run only 005. These scripts are transactional,
+not idempotent; there is no migration runner/history table or automatic startup
+migration. Do not rerun the full sequence on an existing database. Inspect
+`\dt`, `\d videos`, and `\d video_performance` in `psql` against the migration
+files if the installation record is unavailable; resolve uncertainty before applying.
+Migration 005 preserves existing analyses, UUIDs and performance snapshots and
+backfills `videos.analysis_version` to 1; it does not infer source identities for
+old uploads.
+
+A content-schema fixture check runs inside a rollback transaction:
 
 ```sh
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/tests/schema_roundtrip.sql
 ```
 
-## Tables and relationships
+This checks representative analysis rows, not live Meta access or the full job
+pipeline. See [testing](README.md#testing) for migration/repository/API and browser
+integration tests against disposable PostgreSQL.
 
-| Table | One row represents | Primary key | Link to video |
-| --- | --- | --- | --- |
-| `videos` | One video's metadata and complete transcript | `id` (UUID) | The parent row |
-| `transcript_segments` | One timestamped speech segment | `(video_id, segment_index)` | `video_id` → `videos.id` |
-| `scenes` | One detected scene and its cut boundary | `(video_id, scene_number)` | `video_id` → `videos.id` |
-| `on_screen_text` | One interval when detected text is visible | `(video_id, detection_index)` | `video_id` → `videos.id` |
-| `motion_events` | One classified motion interval | `(video_id, event_index)` | `video_id` → `videos.id` |
-| `video_performance` | Available video engagement counts | `video_id` | `video_id` → `videos.id` |
+## Relationships and library storage
 
-The performance table stores a count snapshot, a required `source`, and `fetched_at`. It stores
-neither the TikTok URL nor TikTok's video ID; the internal UUID is the only
-database link. Ad and account IDs are also excluded from persistence.
+| Table | Purpose / key relationships |
+| --- | --- |
+| `videos` | UUID plus metadata, transcript, analysis version and optional Meta owner |
+| `transcript_segments`, `scenes`, `on_screen_text`, `motion_events` | Ordered analysis rows linked by `video_id`; cascade on video deletion |
+| `video_performance` | Legacy upload snapshot keyed by `video_id`; cascades on deletion |
+| `meta_connections` | Unique private `external_user_id`, encrypted `token_ciphertext`, expiry, connection status and `next_sync_at` |
+| `meta_sessions` | `token_hash` primary key, connection owner and expiry; no plaintext browser token |
+| `meta_accounts` | UUID, connection, platform, private external/Page IDs, label, timezone, `initial_run_id` and `initialized_at` |
+| `meta_library_items` | UUID, account/connection, platform, private `external_id`, content type, publication/seen times, `auto_analyze`, analysis/metrics states and safe errors, `video_id`, `analysis_version` |
+| `meta_ad_assets` | Composite `(ad_item_id, video_item_id)` key; multiple ads can link to the same canonical video |
+| `meta_library_performance` | One latest `snapshot JSONB` object and `fetched_at` per `item_id` |
+| `meta_sync_runs` | Sync/analysis/metrics run, discovery-finalization flag, creation/finish times |
+| `meta_jobs` | Durable task kind/payload, item/run/connection links, state, attempts, scheduling, claim UUID, lease and safe error |
 
-`meta_ads` is only allowed for source `meta_ads`. The common API embeds its
-allowlisted contents at `performance_metrics.meta_ads`; other sources omit this
-key. Ad-only snapshots can have all four common counts null, provided at least
-one ad metric is available. The existing row lock, source-conflict check,
-refresh timestamp, and cascade deletion still apply. Decimal values are stored
-as strings to avoid binary floating-point rounding. See the Meta Ads section
-in README.md for fields and reporting semantics.
+Accounts and library items each enforce uniqueness on
+`(connection_id, platform, external_id)`. Identical Facebook video IDs discovered
+through video/Reel/ad paths share content analysis; different provider IDs are
+not deduplicated by file similarity. Ads retain separate identities and snapshots.
+Signed media URLs are not stored. External IDs and encrypted credentials stay
+private; the authenticated library API returns internal UUIDs.
 
-The numbered child keys preserve the order of arrays in the processing
-response. `segment_index`, `detection_index`, and `event_index` start at 0;
-`scene_number` starts at 1, as in the current scene output. A video can have
-zero or many rows in any child table.
+Imported `videos.meta_connection_id` restricts retrieval to its owning connection.
+A successfully analyzed video item uses the same UUID for its item and `videos`
+row; an ad's UUID is separate from its assets. Item `analysis_version` is nullable
+until analyzed; the current pipeline constant is `ANALYSIS_VERSION = 1`.
+Replacement analysis preserves the UUID and is committed atomically. Legacy
+uploads have no source identity and cannot be automatically matched to imports.
+
+Partial unique indexes allow one unfinished sync per connection and one active
+queued/running/blocked task per item and kind. Job uniqueness within a run is
+`(run_id, kind, task_key)`; leases support recovery after interruption. Disconnect
+clears credentials/sessions and cancels work while retaining library data.
+The retained library link to `videos` is a foreign key without a deletion cascade;
+video deletion is not a public library API.
+
+## Performance storage
+
+`video_performance` is the legacy, single-snapshot table:
+
+| Column | Type / meaning |
+| --- | --- |
+| `video_id` | UUID primary key referencing `videos.id` |
+| `source` | Required text: `instagram`, `facebook`, `meta_ads`, or `tiktok`; no default |
+| `view_count`, `like_count`, `comment_count`, `share_count` | Nullable nonnegative `BIGINT` counts |
+| `fetched_at` | `TIMESTAMPTZ`, default `now()`, replaced on refresh |
+| `meta_ads` | Nullable JSONB object allowed only for source `meta_ads` |
+
+At least one count must be known, or the Ads object must contain a metric value
+accepted by migration 004. A refresh replaces the snapshot rather than appending
+a time series. Repository writes lock the video and reject a source conflict.
+This legacy table stores no external media/account ID.
+
+The V2 library instead writes `meta_library_performance.snapshot` with
+`performance_source` and `performance_metrics`. It can retain independent organic
+and multiple ad snapshots without overwriting each other or legacy data. Organic
+snapshots can include optional reach/impressions as well as the four counts.
+Missing metrics are unknown, not zero. API provenance adds `item_id`, `fetched_at`
+and `organic`, `ad`, or `shared_ad` attribution. These are latest snapshots, not
+historical performance series.
+
+### Meta Ads JSONB
+
+Both snapshot forms use `performance_metrics.meta_ads` in API evidence; in the
+legacy table the object lives directly in the `meta_ads` column.
+
+| Field | Representation / meaning |
+| --- | --- |
+| `impressions`, `reach`, `clicks` | Integer or null; reach is not summed across placements |
+| `spend`, `ctr`, `cpc` | Exact decimal strings or null; CTR is all-click percentage |
+| `actions`, `conversions`, `video_play_actions` | Arrays of action types with decimal-string `value`, `7d_click`, `1d_view`; missing values are null |
+| `account_currency` | Provider currency or null; no assumed currency/conversion |
+| `date_start`, `date_stop` | Reporting dates |
+| `action_report_time`, `action_attribution_windows` | Requested reporting/attribution settings |
+
+The provider requests ad-level, all-placement aggregates with `time_increment=all_days`,
+`action_report_time=impression`, and `7d_click`/`1d_view` attribution. Automatic
+library reporting runs from ad creation through today in the ad account timezone;
+legacy manual requests supply the dates. `view_count` uses only `video_view`
+(three-second views), not impressions or plays; ad likes/comments/shares remain null.
+Explicit zero, empty arrays, missing arrays and fractional conversions remain
+distinct. Rates are not recomputed and overlapping action types/windows are never
+summed. Private ad identities are stored separately from the metric object.
+
+## Content-analysis column reference
+
+The numbered child keys preserve response order: segment/detection/event indexes
+start at 0; scene numbers start at 1. Each video can have zero or many child rows.
 
 ### `videos`
 
 | Column | PostgreSQL type | Meaning |
 | --- | --- | --- |
 | `id` | `UUID` | Unique video ID; defaults to `gen_random_uuid()` |
+| `analysis_version` | `INTEGER`, default 1 | Positive processing version; existing analyses backfilled by 005 |
+| `meta_connection_id` | `UUID`, nullable | Owner of imported Meta analysis; references `meta_connections.id` |
 | `duration_seconds` | `NUMERIC(12,3)` | Source video duration |
 | `container` | `TEXT` | Source container name from ffprobe |
 | `file_size_bytes` | `BIGINT` | Source file size |
