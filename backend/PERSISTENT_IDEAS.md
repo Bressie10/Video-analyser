@@ -8,7 +8,7 @@ Existing V1/V2 unscoped recommendation endpoints retain their current behavior.
 
 ## Integrated ownership and profiles
 
-Apply real migrations **001–009** in order; test fixtures are never migrations.
+Apply real migrations **001–010** in order; test fixtures are never migrations.
 The default `OwnershipIdeaAccess` adapter binds ideas to the existing persisted
 Meta session, 006 company ownership repository, and 007 profile revisions. No new
 authentication or membership system is introduced. An explicit
@@ -148,11 +148,11 @@ recommendation endpoints are unchanged.
   The primary key serves per-idea association reads; the existing company history
   index serves bounded feedback context. No new company fields on shared content.
 
-010 has no required index/constraint gap for these operations. If it adds recent
-feedback ordering across older ideas or reverse publication browsing, establish
-those query shapes and measure plans before adding corresponding indexes. It must
-preserve immutable generation evidence and keep historical links separate from
-current access. Migration 010 is not implemented here.
+The final release audit required migration 010 to enforce the same-profile FK
+between profile refresh requests and jobs. It does not change idea/publication
+schema or add speculative query indexes. Ad discovery also now invalidates and
+suppresses profiles transactionally when a creative relationship changes, closing
+a stale-profile authorization gap. See [the release audit](V3_RELEASE_AUDIT.md).
 
 ## Storage and transactions
 
@@ -213,7 +213,7 @@ TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:55440/postgres \
   .venv/bin/python -m unittest discover -s tests -p 'test_persistent_ideas.py' -v
 ```
 
-`test_idea_integration.py` applies the actual migration sequence through 009, including
+`test_idea_integration.py` applies the actual migration sequence through 010, including
 an upgrade from populated V2 data. It runs the 007 worker with a stubbed generator
 and calls the idea HTTP API using real persisted sessions and 006 ownership.
 Coverage includes cross-company shared creatives, organic metric isolation,
@@ -235,7 +235,8 @@ The V2 recommendation tests passed. Python compilation and `git diff --check`
 passed; no Python lint command is configured.
 
 OpenAI output is mocked. No paid generation, production database, live Meta refresh,
-or browser UX verification is claimed. A process failure after the model call but
+or V3 workflow UX verification is claimed. The final release audit separately
+verifies the existing V2 browser flow on the integrated schema. A process failure after the model call but
 before commit may require another paid call after lease recovery; persistence
 remains at most one idea per company/request. The bounded recent-history prompt
 is duplicate avoidance, not a semantic deduplication guarantee.

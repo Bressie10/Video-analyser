@@ -7,10 +7,11 @@ unchanged: no inline profile generation and no invalidation from generating an i
 
 ## Deployment and ownership boundary
 
-Apply migrations 001–007 in order. Existing V2 installations apply only 006 and 007;
-the backend never applies migrations automatically. Both are required before using
-the integrated company ownership operations: an unavailable profile invalidation
-hook rolls back the ownership mutation. Neither migration backfills company ownership.
+Apply the integrated release migrations 001–010 in order, running only missing
+files on existing installations. Migration 007 adds profiles; 010 tightens refresh
+job integrity. The backend never applies migrations automatically. Ownership
+operations require the profile invalidation hook and roll back if it is unavailable.
+Migrations do not backfill guessed company ownership.
 The historical `NOT VALID` constraints from 006 remain unvalidated and unrepaired.
 
 `backend/app/company_profile_company.py` binds `OwnershipCompanyAdapter` by default:
@@ -38,7 +39,7 @@ Reconnect clears the old `/api/meta` cookie; disconnect clears both paths. Exist
 browsers with only the old cookie must reconnect once to use company routes. Legacy
 in-memory Meta sessions retain their original transport and cannot authorize profiles.
 
-Set `COMPANY_PROFILE_WORKER_ENABLED=true` after applying 007 to enable the background
+Set `COMPANY_PROFILE_WORKER_ENABLED=true` after applying the full migration chain to enable the background
 worker. Default is `false`. Workers use `DATABASE_URL`, server-side `OPENAI_API_KEY`,
 and `COMPANY_PROFILE_MODEL` (fallback: `OPENAI_MODEL`, then `gpt-6-sol`). They do not
 need a live Meta access token. Request API keys are neither accepted nor stored.
@@ -107,7 +108,7 @@ active work. It does not inspect or implement company ownership.
 | Discovery adds company content | `new_content`; its platform plus any affected ad-asset platform |
 | Analysis completed or replaced | `analysis_changed`; every platform referencing that analysis |
 | Semantic performance change | `performance_changed`; every platform referencing that item/ad |
-| Ad/creative relationship added/removed | `relationship_changed`; affected organic platform(s) and `meta_ads` |
+| Ad/creative relationship added/removed | **Bound in ad discovery**: additions stale all owner scopes; removals suppress all owner scopes with `evidence_removed` |
 | 006 account link/unlink or organic reassignment | **Bound**: `account_assignment` / `account_unassignment`; suppress all scopes, both companies on transfer |
 | 006 ad assign/unassign/reassign | **Bound**: same restrictive reasons; suppress all scopes for the affected company, both companies on transfer |
 | 006 archive/restore | **Bound**: `evidence_removed` / `account_assignment`; suppress all scopes; archived companies cannot read or refresh |
@@ -118,11 +119,18 @@ Platform invalidations also stale shared. Publishing a new platform revision enq
 shared. Ownership hooks are bound in `company_ownership_repository.py`; no-op links,
 assignments, releases, or archive/restore calls do not invalidate. An unrelated
 company is not invalidated, including when it shares an Ads account.
-Discovery, analysis, metrics, and creative-edge hooks remain documented integration
-points, **not wired into V2 connection-owned writes** in this ownership/profile
-integration. Until those writers are integrated, request an explicit profile refresh
-after source content changes. Such refreshes recheck effective evidence without
-rerunning media analysis.
+Ad discovery now treats creative edges as company access grants. It resolves
+provider data first, locks the connection before changing edges, and invalidates
+only the ad's assigned company in the same transaction. Removed edges suppress
+cached profiles and fence running builds; an invalidation failure rolls back the
+edge changes. Repeated identical discovery does not invalidate. Standalone V2
+schemas without company assignments retain their existing behavior.
+
+Other new-content, analysis and metric hooks remain documented integration points,
+not automatically wired into V2 source writes. Request an explicit profile refresh
+after those changes. Refresh rechecks effective evidence without rerunning media
+analysis. This limitation affects freshness; creative-access revocation is handled
+transactionally and does not wait for a manual refresh.
 Use `evidence.semantic(old_snapshot) != evidence.semantic(new_snapshot)` as the
 conservative material-change policy: every semantic value/context change matters,
 while an identical retrieval with only a new `fetched_at` does not. Do not emit an
@@ -248,19 +256,32 @@ TEST_DATABASE_URL=postgresql://USER@127.0.0.1:PORT/postgres \
   .venv/bin/python -m unittest discover -s tests -p test_company_profiles.py -v
 ```
 
-The profile suites now apply the real 001–007 migrations and use the actual ownership
+The profile suites apply the real 001–010 migrations and use the actual ownership
 adapter and persisted Meta sessions. Existing profile-cache tests seed initial links
 directly to keep their queue assertions isolated; focused integration tests exercise
-all real ownership mutation hooks. V2 database/API suites also run on 001–007.
+all real ownership mutation hooks. Standalone V2 database/API fixtures retain
+001–005 coverage; OAuth and full-stack fixtures additionally exercise V3 schemas.
 
 `test_company_profile_integration.py` covers two companies on one connection, separate
 organic content, shared Ads accounts/creatives, metrics/metadata isolation through
 platform and shared profiles, transactional invalidation, no-op/rollback behavior,
 archive/restore, concurrency, and foreign/unauthenticated access. Ownership upgrade
-tests preserve populated V2 fixtures through 006 and 007. The V2 OAuth fixture verifies
+tests preserve populated V2 fixtures through the complete migration chain. The V2 OAuth fixture verifies
 cookie transport into company routes and cookie cleanup on disconnect.
 
 Run the full backend suite with `python -m unittest discover -s tests -v` and
 `TEST_DATABASE_URL` set. Provider/model calls are stubs; live model quality, production
-migration locking, and deployment remain unverified. No frontend or video-processing
-behavior changed, so browser/media acceptance is outside this integration.
+migration locking, and deployment remain unverified. The final audit also verifies
+the existing V2 browser/media flow on the fully migrated database.
+
+
+## Release audit corrections
+
+Migration 010 validates the composite `(profile_id, job_id)` refresh relationship;
+independent foreign keys previously allowed a refresh key to replay another
+profile's job UUID. The supporting unique job key also supports lookup by profile.
+Archived companies now reject account/ad release and reassignment as well as new
+assignments. Restore the company before making ownership changes. Restoration,
+read-only company lookup and retained historical records remain supported.
+See [the final V3 audit](backend/V3_RELEASE_AUDIT.md) for verification and remaining
+operational limits.

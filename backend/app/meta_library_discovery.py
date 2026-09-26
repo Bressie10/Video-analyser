@@ -116,14 +116,7 @@ def creative_video_ids(creative):
 
 
 def import_ad(db, job, account, row, client):
-    ad = repo.upsert_item(
-        db,
-        account,
-        identifier(row.get("id")),
-        "ad",
-        label(row, "Meta ad"),
-        timestamp(row.get("created_time")),
-    )
+    ad_external_id = identifier(row.get('id'))
     creative = row.get("creative") or {}
     video_ids = creative_video_ids(creative)
     # Published post creatives may omit video_id; resolve only a provider-supplied post.
@@ -158,6 +151,16 @@ def import_ad(db, job, account, row, client):
                 collect((attachment.get("subattachments") or {}).get("data", []))
 
         collect((story.get("attachments") or {}).get("data", []))
+    # Resolve provider data before taking the revocation-conflicting lock. Ad
+    # edges are content grants in 006, so discovery must serialize with company
+    # readers, ownership writers and final idea persistence, not just other syncs.
+    db.execute('SELECT id FROM meta_connections WHERE id=%s FOR UPDATE', (account['connection_id'],))
+    ad = repo.upsert_item(
+        db, account, ad_external_id, 'ad', label(row, 'Meta ad'),
+        timestamp(row.get('created_time')),
+    )
+    previous = {r['video_item_id'] for r in db.execute(
+        'SELECT video_item_id FROM meta_ad_assets WHERE ad_item_id=%s', (ad['id'],)).fetchall()}
     links = []
     for external_id in set(video_ids):
         # Video identity is Facebook's video namespace even when found via an ad.
@@ -176,6 +179,19 @@ def import_ad(db, job, account, row, client):
         "DELETE FROM meta_ad_assets WHERE ad_item_id=%s AND NOT(video_item_id=ANY(%s))",
         (ad["id"], links),
     )
+    if previous != set(links):
+        # Standalone V2 databases have no company layer. Once 006 exists, a
+        # missing/broken 007 hook must roll back the edge change (fail closed).
+        if db.execute("SELECT to_regclass('company_ad_assignments') AS table_name").fetchone()['table_name']:
+            from app import company_profile_repository as profiles
+            from app.company_profile_types import SCOPES
+
+            owners = db.execute('''SELECT company_id FROM company_ad_assignments
+                WHERE ad_item_id=%s AND connection_id=%s ORDER BY company_id''',
+                (ad['id'], account['connection_id'])).fetchall()
+            for owner in owners:
+                profiles.invalidate(db, owner['company_id'], SCOPES,
+                    'evidence_removed' if previous - set(links) else 'relationship_changed')
     if not links:
         db.execute(
             "UPDATE meta_library_items SET analysis_state='unavailable',analysis_error='No accessible video creative.' WHERE id=%s",

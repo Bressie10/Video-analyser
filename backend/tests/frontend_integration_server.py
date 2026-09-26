@@ -41,6 +41,7 @@ def main():
         "OPENAI_API_KEY": "fixture-only-key",
         "HF_HUB_OFFLINE": "1",
         "META_WORKER_ENABLED": "false",
+        "COMPANY_PROFILE_WORKER_ENABLED": "false",
     })
     from test_meta_library import MetaLibraryDatabaseTests
     from test_meta_media_pipeline import MediaPipelineTests
@@ -56,6 +57,11 @@ def main():
     try:
         fixture.setUp()
         setup_done = True
+        # Exercise the V2 browser contract on the complete integrated V3 schema.
+        # The base fixture intentionally retains a 001-005-only regression path.
+        with repo.database() as db:
+            for migration in sorted((ROOT / 'migrations').glob('*.sql'))[5:]:
+                db.execute(migration.read_text())
         MediaPipelineTests.setUpClass()
         media_done = True
         fixture.graph.test_connection = lambda: {"connected": True}

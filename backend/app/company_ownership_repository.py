@@ -145,7 +145,7 @@ def link_account(db, connection_id, company_id, account_id):
 
 @_transaction
 def unlink_account(db, connection_id, company_id, account_id):
-    _company(db, connection_id, company_id, active=False, write=True)
+    _company(db, connection_id, company_id, write=True)
     _account(db, connection_id, account_id)
     if db.execute(
         'SELECT 1 FROM company_ad_assignments WHERE company_id=%s AND account_id=%s',
@@ -162,7 +162,7 @@ def unlink_account(db, connection_id, company_id, account_id):
 
 @_transaction
 def reassign_organic_account(db, connection_id, source_company_id, target_company_id, account_id):
-    _company(db, connection_id, source_company_id, active=False, write=True)
+    _company(db, connection_id, source_company_id, write=True)
     _company(db, connection_id, target_company_id, write=True)
     account = _account(db, connection_id, account_id)
     if account['platform'] not in ('facebook', 'instagram'):
@@ -225,7 +225,7 @@ def assign_ad(db, connection_id, company_id, ad_item_id):
 
 @_transaction
 def unassign_ad(db, connection_id, company_id, ad_item_id):
-    _company(db, connection_id, company_id, active=False, write=True)
+    _company(db, connection_id, company_id, write=True)
     _ad(db, connection_id, ad_item_id)
     # Never remove a different company's assignment.
     removed = db.execute(
@@ -238,7 +238,7 @@ def unassign_ad(db, connection_id, company_id, ad_item_id):
 
 @_transaction
 def reassign_ad(db, connection_id, source_company_id, target_company_id, ad_item_id):
-    _company(db, connection_id, source_company_id, active=False, write=True)
+    _company(db, connection_id, source_company_id, write=True)
     _company(db, connection_id, target_company_id, write=True)
     ad = _ad(db, connection_id, ad_item_id)
     if source_company_id == target_company_id:

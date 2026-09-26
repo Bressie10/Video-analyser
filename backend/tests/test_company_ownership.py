@@ -269,7 +269,7 @@ class CompanyOwnershipTests(unittest.TestCase):
             repo.reassign_ad(self.db, self.connection, self.a, self.foreign_company, self.ad_a)
         self.assertIn(self.ad_a, self.ids(self.a))
 
-    def test_archive_retains_ownership_disables_access_and_allows_release(self):
+    def test_archive_retains_ownership_and_blocks_mutations_until_restore(self):
         self.shared_setup()
         self.link(self.a, self.fb)
         repo.set_company_archived(self.db, self.connection, self.a)
@@ -277,7 +277,10 @@ class CompanyOwnershipTests(unittest.TestCase):
         self.assertEqual(len(repo.list_companies(self.db, self.connection, include_archived=True)), 2)
         for reader, extra in ((repo.list_items, ()), (repo.get_item, (self.ad_a,)), (repo.performance, (self.creative,)),
                               (repo.analysis, (self.creative,)), (repo.ad_assets, (self.ad_a,)),
-                              (repo.assign_ad, (self.unassigned,)), (repo.link_account, (self.ig,))):
+                              (repo.assign_ad, (self.unassigned,)), (repo.link_account, (self.ig,)),
+                              (repo.unassign_ad, (self.ad_a,)), (repo.unlink_account, (self.fb,)),
+                              (repo.reassign_ad, (self.b, self.ad_a)),
+                              (repo.reassign_organic_account, (self.b, self.fb))):
             with self.assertRaises(repo.CompanyNotFound):
                 reader(self.db, self.connection, self.a, *extra)
         with self.assertRaises(repo.OwnershipConflict):
@@ -286,11 +289,10 @@ class CompanyOwnershipTests(unittest.TestCase):
             self.assign(self.b, self.ad_a)
         repo.set_company_archived(self.db, self.connection, self.a, archived=False)
         self.assertIn(self.ad_a, self.ids(self.a))
-        repo.set_company_archived(self.db, self.connection, self.a)
         repo.reassign_ad(self.db, self.connection, self.a, self.b, self.ad_a)
         repo.reassign_organic_account(self.db, self.connection, self.a, self.b, self.fb)
         repo.unlink_account(self.db, self.connection, self.a, self.ads)
-        self.assertIsNotNone(repo.get_company(self.db, self.connection, self.a)['archived_at'])
+        self.assertIsNone(repo.get_company(self.db, self.connection, self.a)['archived_at'])
         self.assertIn(self.organic, self.ids(self.b))
 
     def test_disconnect_preserves_company_and_meta_data(self):

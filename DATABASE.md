@@ -18,6 +18,7 @@ scheduling and API behavior, and [README.md](README.md) for stack setup.
 | 007 | [company_profiles](backend/migrations/007_company_profiles.sql) | Adds immutable profile revisions, scoped cache state, refresh jobs and invalidation records |
 | 008 | [persistent_ideas](backend/migrations/008_persistent_ideas.sql) | Adds company ideas, immutable generation evidence, targets and idempotency claims |
 | 009 | [idea_feedback_publications](backend/migrations/009_idea_feedback_publications.sql) | Extends lifecycle, adds current feedback and manual publication associations |
+| 010 | [profile_refresh_integrity](backend/migrations/010_profile_refresh_integrity.sql) | Enforces that a refresh request references a job belonging to the same profile |
 
 Start PostgreSQL and configure root `.env` as described in README. For a **new,
 empty database only**, run from the repository root:
@@ -35,12 +36,13 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/006_company_owners
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/007_company_profiles.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/008_persistent_ideas.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/009_idea_feedback_publications.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/010_profile_refresh_integrity.sql
 ```
 
 For an **existing installation**, back up the database, establish which migrations
 have already been applied, and run only the remaining files in numerical order.
-For the integrated V3 backend, a database at 005 needs 006–009; one at 008 needs only
-009. These scripts are transactional,
+For the integrated V3 backend, a database at 005 needs 006–010; one at 008 needs 009
+and 010. A database at 009 needs only 010. These scripts are transactional,
 not idempotent; there is no migration runner/history table or automatic startup
 migration. Do not rerun the full sequence on an existing database. Inspect
 `\dt`, `\d videos`, and `\d video_performance` in `psql` against the migration
@@ -297,3 +299,13 @@ Migration [009](backend/migrations/009_idea_feedback_publications.sql) extends i
 and current feedback, and adds `idea_publications` with restrictive idea/item foreign
 keys and a composite primary key. Publication links persist through ownership changes
 and confer no live library access. See the [exact 009 schema](backend/PERSISTENT_IDEAS.md#migration-009-schema).
+
+
+Migration 010 replaces the independent profile-job reference in
+`company_profile_refresh_requests` with a validated composite FK
+`(profile_id, job_id) → company_profile_jobs(profile_id, id)`, supported by a unique
+key on the job pair. This closes a reproduced cross-profile/cross-company refresh
+replay defect. Existing inconsistent refresh records cause the migration to fail
+and roll back; inspect and explicitly repair such records before retrying, rather
+than silently discarding idempotency history. All delete/update actions remain
+NO ACTION. See [the release audit](backend/V3_RELEASE_AUDIT.md).

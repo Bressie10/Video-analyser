@@ -60,7 +60,7 @@ docker compose exec postgres pg_isready
 Wait for PostgreSQL to accept connections, then follow the
 [ordered migration instructions](DATABASE.md#migrations-and-local-setup).
 V2 requires migrations **001–005**; integrated company ownership, profiles and ideas
-require **001–009**. Existing installations apply only missing
+require **001–010**. Existing installations apply only missing
 migrations. The backend does not apply migrations automatically.
 
 Start the backend in a terminal from the repository root:
