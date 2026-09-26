@@ -13,7 +13,8 @@ type Analysis = {
   performance_metrics?: { view_count: number | null; like_count: number | null; comment_count: number | null; share_count: number | null };
 };
 type Recommendation = { model: string; response: string };
-type Stage = "idle" | "uploading" | "processing" | "loading" | "generating" | "complete";
+type Platform = "tiktok" | "instagram";
+type Stage = "idle" | "uploading" | "processing" | "loading" | "metrics" | "generating" | "complete";
 
 function responseError(body: unknown, fallback: string): string {
   if (body && typeof body === "object" && "detail" in body) {
@@ -34,7 +35,7 @@ function uploadVideo(file: File, tiktokUrl: string, onProcessing: () => void): P
   return new Promise((resolve, reject) => {
     const form = new FormData();
     form.append("video", file);
-    form.append("tiktok_url", tiktokUrl);
+    if (tiktokUrl) form.append("tiktok_url", tiktokUrl);
     const request = new XMLHttpRequest();
     request.open("POST", "/api/videos");
     request.upload.addEventListener("load", onProcessing);
@@ -59,27 +60,38 @@ const seconds = (value: number) => `${Number(value).toFixed(1)}s`;
 function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [tiktokUrl, setTiktokUrl] = useState("");
+  const [platform, setPlatform] = useState<Platform>("tiktok");
+  const [metaIdentifier, setMetaIdentifier] = useState("");
   const [apiKey, setApiKey] = useState("");
   const [stage, setStage] = useState<Stage>("idle");
   const [error, setError] = useState("");
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
-  const busy = stage === "uploading" || stage === "processing" || stage === "loading" || stage === "generating";
+  const busy = stage === "uploading" || stage === "processing" || stage === "loading" || stage === "metrics" || stage === "generating";
   const status = {
     idle: "Ready to analyze a video.",
     uploading: "Uploading video…",
-    processing: "Processing video and retrieving TikTok stats… This can take several minutes.",
+    processing: "Processing video… This can take several minutes.",
     loading: "Loading saved analysis from the database…",
+    metrics: "Retrieving Instagram Reel metrics…",
     generating: "Generating recommendation and script…",
     complete: "Analysis complete.",
   }[stage];
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!selectedFile || !tiktokUrl.trim() || !apiKey.trim()) return;
+    if (!selectedFile || !apiKey.trim()) {
+      setError("Choose a matching video file and enter your OpenAI API key."); return;
+    }
+    if (platform === "tiktok" && !tiktokUrl.trim()) {
+      setError("Enter the matching TikTok video URL."); return;
+    }
+    if (platform === "instagram" && !/^[0-9]{1,30}$/.test(metaIdentifier.trim())) {
+      setError("Enter a numeric Instagram Graph media ID (1–30 digits). Public Reel URLs and shortcodes are not supported yet."); return;
+    }
     setError(""); setAnalysis(null); setRecommendation(null); setStage("uploading");
     try {
-      const uploaded = await uploadVideo(selectedFile, tiktokUrl.trim(), () => setStage("processing"));
+      const uploaded = await uploadVideo(selectedFile, platform === "tiktok" ? tiktokUrl.trim() : "", () => setStage("processing"));
       if (!uploaded.video_id) throw new Error("The upload was processed but was not saved. Configure the backend database to generate recommendations.");
       setStage("loading");
       const saved = await readResponse<Analysis>(
@@ -87,6 +99,17 @@ function App() {
         "Could not load the saved analysis.",
       );
       setAnalysis(saved);
+      if (platform === "instagram") {
+        setStage("metrics");
+        const performance = await readResponse<Pick<Analysis, "performance_source" | "performance_metrics">>(
+          await fetch(`/api/meta/instagram/reels/${encodeURIComponent(metaIdentifier.trim())}/metrics`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ video_id: uploaded.video_id }),
+          }),
+          "Could not retrieve content metrics. Your video analysis has been saved.",
+        );
+        setAnalysis({ ...saved, ...performance });
+      }
       setStage("generating");
       const generated = await readResponse<Recommendation>(
         await fetch(`/api/videos/${encodeURIComponent(uploaded.video_id)}/recommendations`, {
@@ -103,16 +126,34 @@ function App() {
 
   return <main>
     <h1>Video Analyzer</h1>
-    <p>Analyze one of your TikTok videos and get an idea and script for the next one.</p>
-    <p><a href="/api/tiktok/connect">Connect your TikTok account</a> before analyzing a video. The video URL must belong to that account.</p>
+    <p>Analyze your video content and performance, then get an idea and script for the next one.</p>
+    {platform === "tiktok" && <p><a href="/api/tiktok/connect">Connect your TikTok account</a> before analyzing a video. The video URL must belong to that account.</p>}
     <form onSubmit={handleSubmit}>
+      <label htmlFor="platform">Platform / content type</label>
+      <select id="platform" value={platform} disabled={busy} onChange={(event) => {
+        setPlatform(event.target.value as Platform); setMetaIdentifier("");
+        setError(""); setAnalysis(null); setRecommendation(null); setStage("idle");
+      }}>
+        <option value="tiktok">TikTok video</option>
+        <option value="instagram">Instagram Reel</option>
+      </select>
       <label htmlFor="video">Video file</label>
       <input id="video" type="file" accept="video/mp4,video/quicktime,video/x-matroska,video/webm" required disabled={busy}
         onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)} />
+      <small>Choose the same video as the content identifier below.</small>
+      {platform === "tiktok" ? <>
       <label htmlFor="tiktok-url">Matching TikTok video URL</label>
       <input id="tiktok-url" type="url" value={tiktokUrl} required disabled={busy}
         placeholder="https://www.tiktok.com/@user/video/123456789"
         onChange={(event) => setTiktokUrl(event.target.value)} />
+      </> : <>
+        <label htmlFor="meta-identifier">Instagram Graph media ID</label>
+        <input id="meta-identifier" type="text" value={metaIdentifier} required disabled={busy}
+          aria-describedby="meta-identifier-help" inputMode="numeric"
+          placeholder="17895695668004550"
+          onChange={(event) => setMetaIdentifier(event.target.value)} />
+        <small id="meta-identifier-help">Use a connected Meta account. Enter the numeric Graph media ID for your Reel, not its public URL or shortcode. URL lookup is not supported yet.</small>
+      </>}
       <label htmlFor="api-key">OpenAI API key</label>
       <input id="api-key" type="password" value={apiKey} required disabled={busy} autoComplete="off"
         onChange={(event) => setApiKey(event.target.value)} />

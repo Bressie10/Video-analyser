@@ -5,7 +5,7 @@ h1 { margin-bottom: 8px; }
 form, section { background: white; border: 1px solid #d9dee6; border-radius: 8px; padding: 20px; margin: 22px 0; }
 form { display: grid; gap: 10px; }
 label { font-weight: 600; margin-top: 6px; }
-input { box-sizing: border-box; width: 100%; padding: 10px; font: inherit; }
+input, select { box-sizing: border-box; width: 100%; min-width: 0; padding: 10px; font: inherit; }
 input[type="file"] { padding-left: 0; }
 small { color: #4b5563; }
 button { justify-self: start; padding: 10px 18px; font: inherit; cursor: pointer; }
