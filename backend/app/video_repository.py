@@ -88,10 +88,11 @@ def save_analysis(analysis: dict) -> str:
                 counts = performance["performance_metrics"]
                 cursor.execute(
                     """INSERT INTO video_performance
-                    (video_id, source, view_count, like_count, comment_count, share_count)
-                    VALUES (%s, %s, %s, %s, %s, %s)""",
+                    (video_id, source, view_count, like_count, comment_count, share_count, meta_ads)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s)""",
                     (video_id, performance["performance_source"], counts["view_count"], counts["like_count"],
-                     counts["comment_count"], counts["share_count"]),
+                     counts["comment_count"], counts["share_count"],
+                     Jsonb(counts["meta_ads"]) if "meta_ads" in counts else None),
                 )
     return str(video_id)
 
@@ -117,7 +118,7 @@ def get_analysis(video_id: UUID) -> dict | None:
             detections = children("on_screen_text", "detection_index")
             events = children("motion_events", "event_index")
             cursor.execute(
-                """SELECT source, view_count, like_count, comment_count, share_count
+                """SELECT source, view_count, like_count, comment_count, share_count, meta_ads
                 FROM video_performance WHERE video_id = %s""",
                 (video_id,),
             )
@@ -161,3 +162,42 @@ def get_analysis(video_id: UUID) -> dict | None:
                           for item in events],
         **(performance_snapshot(performance["source"], performance) if performance is not None else {}),
     }
+
+
+class PerformanceSourceConflict(ValueError):
+    """The single stored snapshot belongs to a different provider."""
+
+
+def save_performance(video_id: UUID, performance: dict) -> bool:
+    """Attach/refresh one snapshot atomically, preserving other analysis data.
+
+    Return False for an unknown video; never replace another provider's snapshot.
+    """
+    snapshot = performance_snapshot(performance["performance_source"], performance["performance_metrics"])
+    counts = snapshot["performance_metrics"]
+    with psycopg.connect(_database_url(), connect_timeout=3) as connection:
+        with connection.cursor() as cursor:
+            # Serialize metric updates for this UUID, including the first insert.
+            cursor.execute("SELECT id FROM videos WHERE id = %s FOR UPDATE", (video_id,))
+            if cursor.fetchone() is None:
+                return False
+            cursor.execute("SELECT source FROM video_performance WHERE video_id = %s", (video_id,))
+            existing = cursor.fetchone()
+            if existing is not None and existing[0] != snapshot["performance_source"]:
+                raise PerformanceSourceConflict("Video already has performance from a different source.")
+            cursor.execute(
+                """INSERT INTO video_performance
+                (video_id, source, view_count, like_count, comment_count, share_count, meta_ads)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (video_id) DO UPDATE SET
+                    view_count = EXCLUDED.view_count,
+                    like_count = EXCLUDED.like_count,
+                    comment_count = EXCLUDED.comment_count,
+                    share_count = EXCLUDED.share_count,
+                    meta_ads = EXCLUDED.meta_ads,
+                    fetched_at = now()""",
+                (video_id, snapshot["performance_source"], counts["view_count"], counts["like_count"],
+                 counts["comment_count"], counts["share_count"],
+                 Jsonb(counts["meta_ads"]) if "meta_ads" in counts else None),
+            )
+    return True

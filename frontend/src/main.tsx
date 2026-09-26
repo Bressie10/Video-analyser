@@ -1,5 +1,7 @@
-import { FormEvent, StrictMode, useState } from "react";
+import { FormEvent, StrictMode, useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
+import { MetaConnection } from "./MetaConnection";
+import { MetaBrowser, type MetaSelection } from "./MetaBrowser";
 import "./style.css";
 
 type Analysis = {
@@ -13,7 +15,8 @@ type Analysis = {
   performance_metrics?: { view_count: number | null; like_count: number | null; comment_count: number | null; share_count: number | null };
 };
 type Recommendation = { model: string; response: string };
-type Stage = "idle" | "uploading" | "processing" | "loading" | "generating" | "complete";
+type Platform = "tiktok" | "instagram" | "facebook" | "meta_ads";
+type Stage = "idle" | "uploading" | "processing" | "loading" | "metrics" | "generating" | "complete";
 
 function responseError(body: unknown, fallback: string): string {
   if (body && typeof body === "object" && "detail" in body) {
@@ -34,7 +37,7 @@ function uploadVideo(file: File, tiktokUrl: string, onProcessing: () => void): P
   return new Promise((resolve, reject) => {
     const form = new FormData();
     form.append("video", file);
-    form.append("tiktok_url", tiktokUrl);
+    if (tiktokUrl) form.append("tiktok_url", tiktokUrl);
     const request = new XMLHttpRequest();
     request.open("POST", "/api/videos");
     request.upload.addEventListener("load", onProcessing);
@@ -59,27 +62,51 @@ const seconds = (value: number) => `${Number(value).toFixed(1)}s`;
 function App() {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [tiktokUrl, setTiktokUrl] = useState("");
+  const [platform, setPlatform] = useState<Platform>("tiktok");
+  const [metaSelection, setMetaSelection] = useState<MetaSelection | null>(null);
+  const [metaConnected, setMetaConnected] = useState(false);
+  const [metaDisconnected, setMetaDisconnected] = useState(false);
+  useEffect(() => {
+    setMetaSelection(null);
+    if (metaConnected) setMetaDisconnected(false);
+  }, [metaConnected]);
+  const [since, setSince] = useState(() => new Date(Date.now() - 29 * 86400000).toISOString().slice(0, 10));
+  const [until, setUntil] = useState(() => new Date().toISOString().slice(0, 10));
   const [apiKey, setApiKey] = useState("");
   const [stage, setStage] = useState<Stage>("idle");
   const [error, setError] = useState("");
   const [analysis, setAnalysis] = useState<Analysis | null>(null);
   const [recommendation, setRecommendation] = useState<Recommendation | null>(null);
-  const busy = stage === "uploading" || stage === "processing" || stage === "loading" || stage === "generating";
+  const busy = stage === "uploading" || stage === "processing" || stage === "loading" || stage === "metrics" || stage === "generating";
+
   const status = {
     idle: "Ready to analyze a video.",
     uploading: "Uploading video…",
-    processing: "Processing video and retrieving TikTok stats… This can take several minutes.",
+    processing: "Processing video… This can take several minutes.",
     loading: "Loading saved analysis from the database…",
+    metrics: platform === "meta_ads" ? "Retrieving ad metrics…" : platform === "facebook" ? "Retrieving Facebook metrics…" : "Retrieving Instagram Reel metrics…",
     generating: "Generating recommendation and script…",
     complete: "Analysis complete.",
   }[stage];
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (!selectedFile || !tiktokUrl.trim() || !apiKey.trim()) return;
+
+    if (!selectedFile || !apiKey.trim()) {
+      setError("Choose a matching video file and enter your OpenAI API key."); return;
+    }
+    if (platform === "tiktok" && !tiktokUrl.trim()) {
+      setError("Enter the matching TikTok video URL."); return;
+    }
+    if (platform !== "tiktok" && (!metaConnected || !metaSelection)) {
+      setError("Connect Meta and choose the content you want to analyze."); return;
+    }
+    if (platform === "meta_ads" && (!since || !until || since > until)) {
+      setError("Choose a reporting start date on or before the end date."); return;
+    }
     setError(""); setAnalysis(null); setRecommendation(null); setStage("uploading");
     try {
-      const uploaded = await uploadVideo(selectedFile, tiktokUrl.trim(), () => setStage("processing"));
+      const uploaded = await uploadVideo(selectedFile, platform === "tiktok" ? tiktokUrl.trim() : "", () => setStage("processing"));
       if (!uploaded.video_id) throw new Error("The upload was processed but was not saved. Configure the backend database to generate recommendations.");
       setStage("loading");
       const saved = await readResponse<Analysis>(
@@ -87,6 +114,19 @@ function App() {
         "Could not load the saved analysis.",
       );
       setAnalysis(saved);
+      if (platform !== "tiktok" && metaSelection) {
+        setStage("metrics");
+        const metricsResponse = await fetch(`/api/meta/${platform === "meta_ads" ? "ads" : `${platform}/${platform === "instagram" ? "reels" : metaSelection.kind}`}/${encodeURIComponent(metaSelection.id)}/metrics`, {
+            method: "POST", headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ video_id: uploaded.video_id, ...(platform === "facebook" ? { page_id: metaSelection.pageId } : {}), ...(platform === "meta_ads" ? { since, until } : {}) }),
+          });
+        if (metricsResponse.status === 401) { setMetaConnected(false); setMetaDisconnected(true); setMetaSelection(null); }
+        const performance = await readResponse<Pick<Analysis, "performance_source" | "performance_metrics">>(
+          metricsResponse,
+          "Could not retrieve content metrics. Your video analysis has been saved.",
+        );
+        setAnalysis({ ...saved, ...performance });
+      }
       setStage("generating");
       const generated = await readResponse<Recommendation>(
         await fetch(`/api/videos/${encodeURIComponent(uploaded.video_id)}/recommendations`, {
@@ -103,21 +143,42 @@ function App() {
 
   return <main>
     <h1>Video Analyzer</h1>
-    <p>Analyze one of your TikTok videos and get an idea and script for the next one.</p>
-    <p><a href="/api/tiktok/connect">Connect your TikTok account</a> before analyzing a video. The video URL must belong to that account.</p>
+    <p>Analyze your video content and performance, then get an idea and script for the next one.</p>
+    {platform === "tiktok" && <p><a href="/api/tiktok/connect">Connect your TikTok account</a> before analyzing a video. The video URL must belong to that account.</p>}
+    <MetaConnection disabled={busy} disconnected={metaDisconnected} onConnectionChange={setMetaConnected} />
     <form onSubmit={handleSubmit}>
+      <label htmlFor="platform">Platform / content type</label>
+      <select id="platform" value={platform} disabled={busy} onChange={(event) => {
+        setPlatform(event.target.value as Platform); setMetaSelection(null);
+        setError(""); setAnalysis(null); setRecommendation(null); setStage("idle");
+      }}>
+        <option value="tiktok">TikTok video</option>
+        <option value="instagram">Instagram Reel</option>
+        <option value="facebook">Facebook Reel/Video</option>
+        <option value="meta_ads">Meta Ads</option>
+      </select>
+      {platform !== "tiktok" && (metaConnected ? <MetaBrowser key={platform} platform={platform} disabled={busy}
+        onSelect={setMetaSelection} onDisconnected={() => { setMetaConnected(false); setMetaDisconnected(true); setMetaSelection(null); }} />
+        : <p role="status">Connect Meta above to browse your Pages, accounts, and content.</p>)}
+      {platform === "meta_ads" && <>
+        <label htmlFor="ad-since">Reporting start date</label><input id="ad-since" type="date" required disabled={busy} value={since} onChange={(event) => setSince(event.target.value)} />
+        <label htmlFor="ad-until">Reporting end date</label><input id="ad-until" type="date" required disabled={busy} value={until} min={since} onChange={(event) => setUntil(event.target.value)} />
+      </>}
       <label htmlFor="video">Video file</label>
       <input id="video" type="file" accept="video/mp4,video/quicktime,video/x-matroska,video/webm" required disabled={busy}
         onChange={(event) => setSelectedFile(event.target.files?.[0] ?? null)} />
+      <small>Choose the video file that matches your selected content.</small>
+      {platform === "tiktok" && <>
       <label htmlFor="tiktok-url">Matching TikTok video URL</label>
       <input id="tiktok-url" type="url" value={tiktokUrl} required disabled={busy}
         placeholder="https://www.tiktok.com/@user/video/123456789"
         onChange={(event) => setTiktokUrl(event.target.value)} />
+      </>}
       <label htmlFor="api-key">OpenAI API key</label>
       <input id="api-key" type="password" value={apiKey} required disabled={busy} autoComplete="off"
         onChange={(event) => setApiKey(event.target.value)} />
       <small>The key is used for this request and is not saved by the frontend.</small>
-      <button type="submit" disabled={busy}>{busy ? "Analyzing…" : "Analyze video"}</button>
+      <button type="submit" disabled={busy || (platform !== "tiktok" && (!metaConnected || !metaSelection))}>{busy ? "Analyzing…" : "Analyze video"}</button>
     </form>
     <p role="status" aria-live="polite">{status}</p>
     {error && <p role="alert" className="error">{error}</p>}

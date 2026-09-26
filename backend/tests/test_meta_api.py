@@ -82,7 +82,7 @@ class MetaAPITests(unittest.TestCase):
             checked = self.api.get("/api/meta/test")
         self.assertEqual(callback.status_code, 200)
         self.assertEqual(checked.status_code, 200)
-        self.assertEqual(callback.json(), {"connected": True, "user_id": "123"})
+        self.assertEqual(callback.json(), {"connected": True})
         self.assertEqual(checked.json(), callback.json())
         self.assertEqual(len(meta._sessions), 1)
         self.assertEqual(self.outbound[0].url.params["client_secret"], CONFIG["META_APP_SECRET"])
@@ -139,6 +139,19 @@ class MetaAPITests(unittest.TestCase):
                 with self.transport(respond):
                     self.assertEqual(self.callback(state).status_code, 403)
                 self.assertEqual(meta._sessions, {})
+
+    def test_documented_facebook_insights_permission_is_optional(self):
+        state = self.begin()
+        def respond(request):
+            if request.url.path.endswith("/permissions"):
+                return httpx.Response(200, json={"data": [
+                    {"permission": p, "status": "granted"}
+                    for p in meta.PERMISSIONS | {"pages_manage_engagement"}
+                ]})
+            return self.respond(request)
+        with self.transport(respond):
+            self.assertEqual(self.callback(state).status_code, 200)
+        self.assertEqual(len(meta._sessions), 1)
 
     def test_bad_token_and_provider_responses_are_safe(self):
         for payload in ([], {"access_token": TOKEN}, {"access_token": TOKEN, "expires_in": True},

@@ -46,6 +46,7 @@ class PerformanceDatabaseTests(unittest.TestCase):
                     ).fetchone()
                     self.assertEqual(after[:-1], before)
                     self.assertEqual(after[-1], "tiktok")
+                    db.execute((migrations / "004_meta_ads_metrics.sql").read_text())
                     db.execute((Path(__file__).parent / "schema_roundtrip.sql").read_text())
                     with patch.dict(os.environ, {"DATABASE_URL": url, "OPENAI_API_KEY": "test-key"}):
                         for source in ("tiktok", "instagram", "facebook", "meta_ads"):

@@ -59,7 +59,7 @@ class VideoAccessTests(unittest.TestCase):
 
         statement, values = cursor.execute.call_args.args
         self.assertIn("INSERT INTO video_performance", statement)
-        self.assertEqual(values, (VIDEO_ID, "instagram", 120, 12, 3, 2))
+        self.assertEqual(values, (VIDEO_ID, "instagram", 120, 12, 3, 2, None))
 
     @patch.dict(os.environ, {"DATABASE_URL": "postgresql://test"})
     @patch("app.video_repository.psycopg.connect")

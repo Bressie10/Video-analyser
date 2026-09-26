@@ -13,12 +13,15 @@ from urllib.parse import urlencode, urlsplit
 
 import httpx
 
-# Configure exactly these business permissions in the Meta login configuration.
+# Configure these required business permissions in the Meta login configuration.
 # pages_read_user_content is a documented dependency of instagram_basic.
 PERMISSIONS = frozenset({
     "pages_show_list", "pages_read_engagement", "pages_read_user_content",
     "read_insights", "instagram_basic", "instagram_manage_insights", "ads_read",
 })
+# The video_insights reference lists this permission, unlike the video guide.
+# Allow it when configured without requiring existing Instagram sessions to add it.
+OPTIONAL_PERMISSIONS = frozenset({"pages_manage_engagement"})
 STATE_COOKIE = "meta_oauth_state"
 SESSION_COOKIE = "meta_session"
 STATE_MAX_AGE = 600
@@ -152,6 +155,8 @@ def _get(config: MetaSettings, path: str, params: dict, token: str | None = None
             if isinstance(payload, dict) and isinstance(payload.get("error"), dict):
                 if payload["error"].get("code") == 190:
                     raise MetaNotConnected("Meta authorization expired or was revoked. Connect again.")
+                if payload["error"].get("code") in (10, 200, 294):
+                    raise MetaPermissionError("Meta permission is required. Reconnect and grant access.")
                 raise MetaError("Meta API request failed.")
             response.raise_for_status()
             if not isinstance(payload, dict):
@@ -194,15 +199,50 @@ class MetaClient:
                    and row.get("status") == "granted" and isinstance(row.get("permission"), str)}
         if not PERMISSIONS <= granted:
             raise MetaPermissionError("Required Meta permissions were not granted. Check the login configuration.")
-        if granted - PERMISSIONS - {"public_profile", "email"}:
-            raise MetaPermissionError("Meta granted unexpected permissions. Use the documented read-only configuration.")
+        if granted - PERMISSIONS - OPTIONAL_PERMISSIONS - {"public_profile", "email"}:
+            raise MetaPermissionError("Meta granted unexpected permissions. Use the documented login configuration.")
+
+    def for_page(self, page_id: str) -> "MetaClient":
+        """Derive a request-local Page client from this authorized user's Pages."""
+        if not re.fullmatch(r"[0-9]{1,30}", page_id):
+            raise MetaError("Invalid Facebook Page ID.")
+        params = {"fields": "id,access_token,tasks", "limit": 100}
+        seen = set()
+        for _ in range(100):
+            payload = self.get("me/accounts", params)
+            rows = payload.get("data")
+            if not isinstance(rows, list) or any(not isinstance(row, dict) for row in rows):
+                raise MetaError("Meta returned invalid Page data.")
+            for row in rows:
+                if row.get("id") != page_id:
+                    continue
+                tasks = row.get("tasks")
+                if not isinstance(tasks, list) or "ANALYZE" not in tasks:
+                    raise MetaPermissionError("The Facebook Page requires ANALYZE access.")
+                token = row.get("access_token")
+                if not isinstance(token, str) or not token or any(c.isspace() for c in token):
+                    raise MetaError("Meta returned an invalid Page token.")
+                return MetaClient(self._config, UserToken(token, self._token.expires_at))
+            paging = payload.get("paging", {})
+            if not isinstance(paging, dict):
+                raise MetaError("Meta returned invalid Page pagination.")
+            if not paging.get("next"):
+                raise MetaPermissionError("Facebook Page is not accessible to this Meta account.")
+            cursors = paging.get("cursors")
+            after = cursors.get("after") if isinstance(cursors, dict) else None
+            if not isinstance(after, str) or not after or after in seen:
+                raise MetaError("Meta returned invalid Page pagination.")
+            seen.add(after)
+            # Never follow provider URLs, which may contain credentials.
+            params["after"] = after
+        raise MetaError("Too many Facebook Pages to search.")
 
     def test_connection(self) -> dict:
         payload = self.get("me", {"fields": "id"})
         user_id = payload.get("id")
         if not isinstance(user_id, str) or not re.fullmatch(r"[0-9]+", user_id):
             raise MetaError("Meta returned an invalid identity response.")
-        return {"connected": True, "user_id": user_id}
+        return {"connected": True}
 
 
 def create_session(token: UserToken, previous: str | None = None) -> str:

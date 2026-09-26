@@ -11,7 +11,11 @@ adds a sixth table for optional TikTok performance counts linked to the same
 internal video UUID. Migration
 [`003_platform_agnostic_performance.sql`](backend/migrations/003_platform_agnostic_performance.sql)
 renames it to `video_performance` and backfills existing rows with source `tiktok`,
-preserving counts and timestamps. Apply migrations in numerical order.
+preserving counts and timestamps. Migration
+[`004_meta_ads_metrics.sql`](backend/migrations/004_meta_ads_metrics.sql) adds a
+nullable `meta_ads JSONB` column for currency, reporting context, decimal values,
+and action arrays that the four BIGINT columns cannot represent. Existing rows
+keep their counts and timestamps. Apply migrations in numerical order.
 
 When `DATABASE_URL` is configured, `POST /api/videos` stores its result in these
 tables and returns `video_id`. The examples below describe possible rows; they
@@ -30,6 +34,7 @@ set +a
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/001_create_video_analysis.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/002_create_tiktok_video_performance.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/003_platform_agnostic_performance.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/004_meta_ads_metrics.sql
 ```
 
 The migration is applied once to a new database. Change the credentials and
@@ -54,7 +59,15 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/tests/schema_roundtrip.sql
 
 The performance table stores a count snapshot, a required `source`, and `fetched_at`. It stores
 neither the TikTok URL nor TikTok's video ID; the internal UUID is the only
-database link.
+database link. Ad and account IDs are also excluded from persistence.
+
+`meta_ads` is only allowed for source `meta_ads`. The common API embeds its
+allowlisted contents at `performance_metrics.meta_ads`; other sources omit this
+key. Ad-only snapshots can have all four common counts null, provided at least
+one ad metric is available. The existing row lock, source-conflict check,
+refresh timestamp, and cascade deletion still apply. Decimal values are stored
+as strings to avoid binary floating-point rounding. See the Meta Ads section
+in README.md for fields and reporting semantics.
 
 The numbered child keys preserve the order of arrays in the processing
 response. `segment_index`, `detection_index`, and `event_index` start at 0;
