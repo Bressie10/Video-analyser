@@ -21,6 +21,7 @@ const saved = {
   scenes: [{ scene_number: 1, start_seconds: 0, end_seconds: 12.3 }],
   on_screen_text: [{ text: "Watch this", appearance_timestamp_seconds: 1, disappearance_timestamp_seconds: 3 }],
   motion_events: [{ type: "camera_pan", start_seconds: 2, end_seconds: 4 }],
+  performance_source: "tiktok",
   performance_metrics: { view_count: 120, like_count: 12, comment_count: null, share_count: 2 },
 };
 

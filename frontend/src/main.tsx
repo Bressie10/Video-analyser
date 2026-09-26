@@ -9,6 +9,7 @@ type Analysis = {
   scenes: { scene_number: number; start_seconds: number; end_seconds: number }[];
   on_screen_text: { text: string; appearance_timestamp_seconds: number; disappearance_timestamp_seconds: number }[];
   motion_events: { type: string; start_seconds: number; end_seconds: number }[];
+  performance_source?: "tiktok" | "instagram" | "facebook" | "meta_ads";
   performance_metrics?: { view_count: number | null; like_count: number | null; comment_count: number | null; share_count: number | null };
 };
 type Recommendation = { model: string; response: string };
@@ -123,7 +124,7 @@ function App() {
     {analysis && <section aria-labelledby="analysis-title">
       <h2 id="analysis-title">Video analysis</h2>
       <p>Duration: {seconds(analysis.metadata.duration_seconds)} · Resolution: {analysis.metadata.video.resolution.width} × {analysis.metadata.video.resolution.height} · FPS: {analysis.metadata.video.fps ?? "Unavailable"}</p>
-      <h3>TikTok performance</h3>
+      <h3>Video performance</h3>
       {analysis.performance_metrics ? <dl className="stats">
         <div><dt>Views</dt><dd>{count(analysis.performance_metrics.view_count)}</dd></div>
         <div><dt>Likes</dt><dd>{count(analysis.performance_metrics.like_count)}</dd></div>

@@ -171,7 +171,8 @@ class TikTokAPITests(unittest.TestCase):
         )):
             counts = tiktok.video_performance(ACCESS_TOKEN, "123456789")
 
-        self.assertEqual(counts, {
+        self.assertEqual(counts["performance_source"], "tiktok")
+        self.assertEqual(counts["performance_metrics"], {
             "view_count": 120, "like_count": 12, "comment_count": 3, "share_count": 2,
         })
         self.assertEqual(outbound[0].url.path, "/v2/video/query/")
@@ -189,7 +190,7 @@ class TikTokAPITests(unittest.TestCase):
         counts = {"view_count": 120, "like_count": 12, "comment_count": 3, "share_count": 2}
         client = TestClient(app, base_url="https://testserver")
         client.cookies.set(tiktok.SESSION_COOKIE, session_id, path="/api")
-        with patch("app.main.tiktok.video_performance", return_value=counts) as fetch, \
+        with patch("app.main.tiktok.video_performance", return_value={"performance_source": "tiktok", "performance_metrics": counts}) as fetch, \
              patch("app.main.inspect_video") as inspect, \
              patch("app.main.normalise_video"), \
              patch("app.main.detect_scenes", return_value=[]), \
@@ -211,6 +212,8 @@ class TikTokAPITests(unittest.TestCase):
         fetch.assert_called_once_with(ACCESS_TOKEN, "123456789")
         saved = save.call_args.args[0]
         self.assertEqual(saved["performance_metrics"], counts)
+        self.assertEqual(saved["performance_source"], "tiktok")
+        self.assertEqual(response.json()["performance_source"], "tiktok")
         self.assertNotIn("tiktok_url", saved)
         self.assertNotIn("tiktok_video_id", saved)
 
