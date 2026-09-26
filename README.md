@@ -134,7 +134,8 @@ so the secure session cookie reaches the upload request.
 Analysis responses keep counts in `performance_metrics` (view_count, like_count,
 comment_count, share_count) and provenance separately in `performance_source`.
 Supported source identifiers are `tiktok`, `instagram`, `facebook`, and `meta_ads`;
-only TikTok has an API integration. Missing counts are null, never assumed zero.
+TikTok uploads and Instagram Reel metric attachment are implemented. Missing
+counts are null, never assumed zero.
 Uploads without performance data omit both fields. Each analyzed video still has
 one count snapshot. Source IDs and URLs are not persisted.
 
@@ -145,3 +146,87 @@ To run backend checks, use `cd backend && .venv/bin/python -m unittest discover 
 Set `TEST_DATABASE_URL` to a disposable PostgreSQL database to include the
 migration/repository/API test; it creates and removes an isolated test schema.
 Without that variable, the database integration test is skipped.
+
+## Attach Instagram Reel metrics to an analyzed video
+
+After Meta authorization, send a JSON request on the same HTTPS origin:
+
+```http
+POST /api/meta/instagram/reels/17895695668004550/metrics
+Content-Type: application/json
+
+{"video_id": "YOUR_INTERNAL_VIDEO_UUID"}
+```
+
+Use the existing `meta_session` cookie from login. The numeric path value is an
+**Instagram Graph media ID**, not the shortcode in a public Reel URL or a Facebook
+video ID. Obtain it from Meta's tools or the authorized Instagram account's
+`/{instagram-account-id}/media` listing. The UUID must be the `video_id` returned
+by an earlier upload. The caller selects the matching video; the backend does
+not compare uploaded content with Instagram or resolve public Reel URLs.
+
+The backend reuses `MetaClient` and its Facebook User access token:
+
+1. Read `/{instagram-media-id}?fields=id,media_type,media_product_type` and verify
+   the ID and `VIDEO` / `REELS` classification.
+2. Read `/{instagram-media-id}/insights?metric=views,likes,comments,shares`.
+   Media insights default to a single lifetime value per metric.
+3. Save the common snapshot to `video_performance` using the supplied internal
+   UUID, then return:
+
+```json
+{
+  "video_id": "YOUR_INTERNAL_VIDEO_UUID",
+  "performance_source": "instagram",
+  "performance_metrics": {
+    "view_count": 120,
+    "like_count": 12,
+    "comment_count": 0,
+    "share_count": null
+  }
+}
+```
+
+| Instagram insight | Common metric |
+| --- | --- |
+| `views` | `view_count` |
+| `likes` | `like_count` |
+| `comments` | `comment_count` |
+| `shares` | `share_count` |
+
+Only the requested Instagram insights are used. No deprecated play-count
+fallback, ad totals, crossposted Facebook counts, reach, or inferred values are
+substituted. Missing metrics, empty values, and null values remain null; an
+explicit zero remains zero. Meta documents that insight data may be delayed.
+
+A successful refresh replaces the previous Instagram snapshot, including
+replacing newly unavailable counts with null, and updates `fetched_at`.
+`GET /api/videos/{video_id}/analysis` reads the saved snapshot as before.
+The existing schema stores one snapshot per video and does not retain the
+external media ID. Use the same Reel ID when refreshing a video's snapshot.
+Requests cannot overwrite a snapshot from another platform (409).
+
+Unknown internal UUIDs return 404; non-Reels or completely unavailable counts
+return 422 without changing stored data. The existing contract requires at
+least one known count. Malformed responses and provider errors return 502;
+expired/revoked authorization returns 401. Database failures return 503.
+No schema migration is needed beyond migrations 001–003.
+
+This requires the authorized professional Instagram account and its connected
+Page, plus `instagram_basic`, `instagram_manage_insights`, and
+`pages_read_engagement` (already in the login configuration). Meta also documents
+additional ads permissions for some Business Manager-assigned Page roles; this
+implementation does not broaden OAuth permissions or bypass access failures.
+Use an account with the required Page/media access. No Facebook or ads metrics
+endpoint is called.
+
+References verified on 2026-09-26:
+[Instagram media fields](https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-media/),
+[media insights, metrics, permissions, and response format](https://developers.facebook.com/docs/instagram-platform/instagram-graph-api/reference/ig-media/insights/),
+and [insights access requirements](https://developers.facebook.com/docs/instagram-platform/insights/).
+Requests use the existing configured Graph API version.
+
+The backend suite includes mocked Graph responses plus a real PostgreSQL
+API-to-repository round trip when `TEST_DATABASE_URL` is set. Live Reel access
+still requires configured Meta credentials, browser authorization, and an
+accessible Reel; mocked Graph tests do not establish live provider access.

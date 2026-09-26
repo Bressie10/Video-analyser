@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 
 from app.recommendations import MissingAPIKeyError, recommend_videos
 from app import tiktok
+from app.instagram_routes import router as instagram_router
 from app.video_repository import get_analysis, save_analysis
 
 from app.video_processing import (
@@ -30,6 +31,7 @@ from app.video_processing import (
 load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=False)
 
 app = FastAPI(title="Video Analyzer API")
+app.include_router(instagram_router)
 MAX_UPLOAD_SIZE_BYTES = 500 * 1024 * 1024
 
 
