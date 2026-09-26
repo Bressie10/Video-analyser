@@ -4,6 +4,12 @@ Minimal local development scaffold for a React frontend and FastAPI backend.
 See [DATABASE.md](DATABASE.md) for the PostgreSQL table and column reference,
 example rows, and setup commands.
 
+For automatic backend Meta discovery, cached analysis, daily performance refresh,
+and multi-video recommendations, see [the backend library guide](backend/META_LIBRARY.md).
+It documents migration 005, encrypted persistent authorization, worker setup, and
+the implemented internal-UUID API contract. Older manual Meta endpoints below are
+retained as deprecated compatibility APIs.
+
 Video processing requires `ffmpeg` and `ffprobe` to be installed and available
 on your shell `PATH`.
 
@@ -28,6 +34,7 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/001_create_video_a
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/002_create_tiktok_video_performance.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/003_platform_agnostic_performance.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/004_meta_ads_metrics.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/005_meta_library.sql
 ```
 
 To check that the schema can round-trip representative processing output,

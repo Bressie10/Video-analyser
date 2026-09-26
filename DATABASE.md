@@ -1,5 +1,28 @@
 # PostgreSQL database
 
+Migration `005_meta_library.sql` adds the automatic Meta library described in
+[backend/META_LIBRARY.md](backend/META_LIBRARY.md). Apply it after migrations
+001–004. It preserves existing video/metric rows and backfills analysis version 1.
+
+| Added table | Purpose |
+| --- | --- |
+| `meta_connections` | Private stable identity, encrypted authorization, expiry, daily schedule |
+| `meta_sessions` | Hashed browser session tokens and connection ownership |
+| `meta_accounts` | Private Page/Instagram/ad-account identities and initial-sync boundary |
+| `meta_library_items` | Internal UUID, private source identity, publication date, readiness and cached analysis link |
+| `meta_ad_assets` | Many-to-many links from ads to canonical video assets |
+| `meta_library_performance` | Independent latest snapshot and retrieval time per organic item/ad |
+| `meta_sync_runs` | Durable sync or explicit batch and completion state |
+| `meta_jobs` | Resumable discovery, independent analysis/metrics work, leases, claims and safe outcomes |
+
+`videos.analysis_version` identifies the processing pipeline version.
+`videos.meta_connection_id` scopes imported analyses to their owning connection;
+legacy public upload routes cannot retrieve them. Canonical source uniqueness is
+`(connection_id, platform, external_id)`: Facebook videos and Reels with the same
+provider identity share one item, including when discovered through an ad. Account
+context and ad identity are retained privately. New library metric snapshots can
+coexist across organic items and multiple ads without replacing legacy snapshots.
+
 The source of truth for the schema is
 [`backend/migrations/001_create_video_analysis.sql`](backend/migrations/001_create_video_analysis.sql).
 It creates five tables. Each processed video has one UUID in `videos.id`; all
@@ -59,7 +82,9 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/tests/schema_roundtrip.sql
 
 The performance table stores a count snapshot, a required `source`, and `fetched_at`. It stores
 neither the TikTok URL nor TikTok's video ID; the internal UUID is the only
-database link. Ad and account IDs are also excluded from persistence.
+database link in this legacy table. The new Meta library stores stable ad, video,
+and account identities privately for synchronization and deduplication; it never
+exposes them in the new customer-facing API.
 
 `meta_ads` is only allowed for source `meta_ads`. The common API embeds its
 allowlisted contents at `performance_metrics.meta_ads`; other sources omit this

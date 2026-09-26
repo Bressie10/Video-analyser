@@ -11,7 +11,7 @@ from app import instagram, meta
 from app.meta_routes import _private
 from app.video_repository import PerformanceSourceConflict, get_analysis, save_performance
 
-router = APIRouter(prefix="/api/meta/instagram")
+router = APIRouter(deprecated=True, prefix="/api/meta/instagram")
 
 
 class ReelMetricsRequest(BaseModel):

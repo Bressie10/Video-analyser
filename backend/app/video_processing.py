@@ -93,7 +93,7 @@ def _frame_rate(value: str | None) -> float | None:
         return None
 
 
-def inspect_video(video_path: Path) -> VideoMetadata:
+def inspect_video(video_path: Path, *, allow_silent: bool = False) -> VideoMetadata:
     """Confirm a file is readable and contains a supported video stream."""
     try:
         result = subprocess.run(
@@ -137,7 +137,7 @@ def inspect_video(video_path: Path) -> VideoMetadata:
         raise VideoProcessingError("The uploaded file is not a supported video container.")
     if "video" not in stream_types:
         raise VideoProcessingError("The uploaded file does not contain a video stream.")
-    if "audio" not in stream_types:
+    if "audio" not in stream_types and not allow_silent:
         raise VideoProcessingError("The uploaded video must contain an audio stream.")
     if duration <= 0 or duration > MAX_DURATION_SECONDS:
         raise VideoProcessingError(
@@ -145,7 +145,7 @@ def inspect_video(video_path: Path) -> VideoMetadata:
         )
 
     video_stream = next(stream for stream in streams if stream.get("codec_type") == "video")
-    audio_stream = next(stream for stream in streams if stream.get("codec_type") == "audio")
+    audio_stream = next((stream for stream in streams if stream.get("codec_type") == "audio"), {})
 
     return VideoMetadata(
         duration_seconds=duration,

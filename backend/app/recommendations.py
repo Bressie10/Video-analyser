@@ -18,6 +18,8 @@ State when the sample is too small, metrics are missing or incomparable, or evid
 
 Use the supported observations to propose one original video idea and a usable script. Explain how the idea follows from the evidence. Do not copy or lightly rewrite the concept, hook, lines, or structure of a previous video. If the evidence is insufficient, label the recommendation as an exploratory idea rather than a proven approach.
 
+When performance_snapshots is supplied, videos refer to snapshots by performance_ids. Each snapshot occurs once even if several videos share it. A shared_ad snapshot describes the whole ad, not the contribution of any individual creative. Never duplicate or sum overlapping paid and organic metrics. Preserve reporting dates, currency, attribution windows, retrieval time, and metric definitions in comparisons. CTR and CPC are provider rates; actions and conversions may overlap. Compare transcript hooks, scene timing/editing, on-screen text, motion, and metadata only against appropriately comparable evidence.
+
 Respond with four short sections: Performance patterns and evidence; Uncertainties; New video idea; Script."""
 
 
