@@ -306,6 +306,9 @@ def disconnect(request: Request):
     )
     if response.status_code == 200:
         response.delete_cookie(
+            meta.SESSION_COOKIE, path="/api", secure=True, httponly=True, samesite="lax",
+        )
+        response.delete_cookie(
             meta.SESSION_COOKIE,
             path="/api/meta",
             secure=True,

@@ -14,6 +14,8 @@ scheduling and API behavior, and [README.md](README.md) for stack setup.
 | 003 | [platform_agnostic_performance](backend/migrations/003_platform_agnostic_performance.sql) | Renames the snapshot table to `video_performance`, backfills source `tiktok`, preserves counts/timestamps |
 | 004 | [meta_ads_metrics](backend/migrations/004_meta_ads_metrics.sql) | Adds nullable Ads JSONB and permits ad-only snapshots |
 | 005 | [meta_library](backend/migrations/005_meta_library.sql) | Adds persistent Meta authorization, source identities, jobs, library snapshots, analysis ownership and versioning |
+| 006 | [company_ownership](backend/migrations/006_company_ownership.sql) | Adds explicit companies, organic/account links and ad assignments; preserves unassigned V2 data |
+| 007 | [company_profiles](backend/migrations/007_company_profiles.sql) | Adds immutable profile revisions, scoped cache state, refresh jobs and invalidation records |
 
 Start PostgreSQL and configure root `.env` as described in README. For a **new,
 empty database only**, run from the repository root:
@@ -27,18 +29,25 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/002_create_tiktok_
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/003_platform_agnostic_performance.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/004_meta_ads_metrics.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/005_meta_library.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/006_company_ownership.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/007_company_profiles.sql
 ```
 
 For an **existing installation**, back up the database, establish which migrations
 have already been applied, and run only the remaining files in numerical order.
-If 001–004 are already applied, run only 005. These scripts are transactional,
+For the integrated V3 backend, a database at 005 needs 006 then 007; one at 004
+needs 005–007. These scripts are transactional,
 not idempotent; there is no migration runner/history table or automatic startup
 migration. Do not rerun the full sequence on an existing database. Inspect
 `\dt`, `\d videos`, and `\d video_performance` in `psql` against the migration
 files if the installation record is unavailable; resolve uncertainty before applying.
 Migration 005 preserves existing analyses, UUIDs and performance snapshots and
 backfills `videos.analysis_version` to 1; it does not infer source identities for
-old uploads.
+old uploads. Migrations 006 and 007 create no default companies or guessed assignments.
+The five historical connection foreign keys added `NOT VALID` by 006 remain
+unvalidated; scoped readers independently check connection integrity. Ownership
+mutations and their profile invalidations require both migrations and commit together.
+See [company profiles](COMPANY_PROFILES.md) for retained revisions and archive behavior.
 
 A content-schema fixture check runs inside a rollback transaction:
 

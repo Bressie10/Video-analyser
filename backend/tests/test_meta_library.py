@@ -206,7 +206,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         self.env.start()
         with repo.database() as db:
             for migration in sorted(
-                (Path(__file__).resolve().parents[1] / "migrations").glob("00[1-5]_*.sql")
+                (Path(__file__).resolve().parents[1] / "migrations").glob("*.sql")
             ):
                 db.execute(migration.read_text())
         self.graph = GraphFixture()
@@ -809,6 +809,22 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         self.assertTrue(response.json()["connected"])
         self.assertEqual(response.json()["job_id"], self.run_id)
         self.assertNotIn("oauth-private", response.text + str(response.headers))
+        session_headers = [value for value in response.headers.get_list('set-cookie')
+                           if value.startswith(meta.SESSION_COOKIE + '=')]
+        self.assertTrue(any('Path=/api;' in value and 'HttpOnly' in value
+                            and 'Secure' in value and 'SameSite=lax' in value for value in session_headers))
+        self.assertTrue(any('Path=/api/meta;' in value and 'Max-Age=0' in value for value in session_headers))
+        from app import company_ownership_repository as ownership
+        with repo.database() as db:
+            company = ownership.create_company(db, self.connection_id, 'OAuth company')['id']
+        # The cookie obtained from the real callback reaches company routes too.
+        self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 200)
+        disconnected = self.api.post('/api/meta/disconnect')
+        self.assertEqual(disconnected.status_code, 200)
+        deleted = disconnected.headers.get_list('set-cookie')
+        for path in ('Path=/api;', 'Path=/api/meta;'):
+            self.assertTrue(any(path in value and 'Max-Age=0' in value for value in deleted))
+        self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 401)
 
     def test_recommendations_reject_oversized_evidence(self):
         self.drain()

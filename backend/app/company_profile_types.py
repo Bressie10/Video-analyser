@@ -7,7 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 Scope = Literal['shared', 'instagram', 'facebook', 'meta_ads']
 SCOPES = ('shared', 'instagram', 'facebook', 'meta_ads')
 PLATFORMS = SCOPES[1:]
-GENERATOR_VERSION = '1'
+GENERATOR_VERSION = '2'  # 006 item-scoped evidence and sanitized creative metadata.
 SCHEMA_VERSION = '1'
 MAX_ITEMS = 40
 MAX_PERFORMANCES = 80

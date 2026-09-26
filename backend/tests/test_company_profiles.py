@@ -1,4 +1,4 @@
-"""Fake company/model boundaries with real PostgreSQL concurrency and API tests."""
+"""Real company ownership, stubbed model, PostgreSQL concurrency and API tests."""
 import os
 import threading
 import unittest
@@ -12,31 +12,20 @@ import psycopg
 from psycopg import sql
 from psycopg.conninfo import make_conninfo
 from psycopg.types.json import Jsonb
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from app import company_profile_repository as repo
 from app import company_profile_evidence as evidence
 from app import company_profile_worker as worker
 from app import company_profile_types as policy
-from app.company_profile_company import CompanyEvidenceAccess, bind_company_adapter
+from app.company_profile_company import OwnershipCompanyAdapter, bind_company_adapter, get_company_adapter
+from app import company_ownership_repository as ownership
+from app import meta
+from app import meta_library_repository as library
 from app.company_profile_generator import OpenAIProfileGenerator, InvalidProfile, validate
 from app.company_profile_types import ProfileDocument
 from app.company_profile_routes import router
-
-
-class StubCompanyAdapter:
-    def authorize(self, db, request, company_id, *, write):
-        if request.headers.get('X-Test-Company') != str(company_id):
-            raise HTTPException(404, 'Company was not found.')
-        if not db.execute('SELECT id FROM companies WHERE id=%s', (company_id,)).fetchone():
-            raise HTTPException(404, 'Company was not found.')
-
-    def evidence_access(self, db, company_id):
-        row = db.execute('SELECT generation FROM companies WHERE id=%s', (company_id,)).fetchone()
-        accounts = db.execute('SELECT account_id FROM test_assignments WHERE company_id=%s ORDER BY account_id',
-                              (company_id,)).fetchall()
-        return CompanyEvidenceAccess(tuple(r['account_id'] for r in accounts), str(row['generation']))
 
 
 class FakeGenerator:
@@ -72,28 +61,29 @@ class CompanyProfileTests(unittest.TestCase):
         self.addCleanup(env.stop)
         migrations = Path(__file__).resolve().parents[1] / 'migrations'
         with repo.database() as db:
-            for path in sorted(migrations.glob('00[1-5]_*.sql')):
+            for path in sorted(migrations.glob('*.sql')):
                 db.execute(path.read_text())
-            db.execute('''CREATE TABLE companies(id UUID PRIMARY KEY, generation INTEGER NOT NULL DEFAULT 1);
-                CREATE TABLE test_assignments(company_id UUID REFERENCES companies(id),
-                account_id UUID REFERENCES meta_accounts(id),PRIMARY KEY(company_id,account_id));''')
-            db.execute((migrations / '007_company_profiles.sql').read_text())
-            self.company, self.other = uuid4(), uuid4()
-            db.execute('INSERT INTO companies(id) VALUES (%s),(%s)', (self.company, self.other))
             self.connection = db.execute('''INSERT INTO meta_connections(external_user_id,expires_at)
                 VALUES ('shared-connection',now()+interval '1 day') RETURNING id''').fetchone()['id']
+            self.company = ownership.create_company(db, self.connection, 'Company')['id']
+            self.other = ownership.create_company(db, self.connection, 'Other')['id']
+            self.session = 'test-persisted-profile-session'
+            db.execute("INSERT INTO meta_sessions VALUES (%s,%s,now()+interval '1 day')",
+                       (library.token_hash(self.session), self.connection))
             self.account = self.add_account(db, self.company, 'instagram')
             self.other_account = self.add_account(db, self.other, 'instagram')
             self.item = self.add_item(db, self.account)
             self.other_item = self.add_item(db, self.other_account, label='PRIVATE OTHER COMPANY')
-        self.adapter = StubCompanyAdapter()
+        self.adapter = OwnershipCompanyAdapter()
+        previous_adapter = get_company_adapter()
         bind_company_adapter(self.adapter)
-        self.addCleanup(bind_company_adapter, None)
+        self.addCleanup(bind_company_adapter, previous_adapter)
         self.generator = FakeGenerator()
         app = FastAPI()
         app.include_router(router)
         self.client = TestClient(app)
-        self.headers = {'X-Test-Company': str(self.company)}
+        self.client.cookies.set(meta.SESSION_COOKIE, self.session, path='/api')
+        self.headers = {}
         self.base = f'/api/companies/{self.company}/profiles'
 
     def cleanup_db(self):
@@ -103,7 +93,10 @@ class CompanyProfileTests(unittest.TestCase):
     def add_account(self, db, company, platform):
         account = db.execute('''INSERT INTO meta_accounts(connection_id,platform,external_id,label)
             VALUES (%s,%s,%s,'fixture') RETURNING id''', (self.connection, platform, str(uuid4()))).fetchone()['id']
-        db.execute('INSERT INTO test_assignments VALUES (%s,%s)', (company, account))
+        # Seed fixture ownership without scheduling refreshes. Mutation tests below
+        # exercise the transactional service hooks on top of this initial state.
+        db.execute('''INSERT INTO company_accounts(company_id,connection_id,account_id,account_platform)
+            VALUES (%s,%s,%s,%s)''', (company, self.connection, account, platform))
         return account
 
     def add_item(self, db, account, platform='instagram', *, label='Fixture topic', analyzed=True, ad=False):
@@ -116,6 +109,12 @@ class CompanyProfileTests(unittest.TestCase):
             VALUES (%s,%s,%s,%s,%s,%s,%s,now(),%s,%s,%s)''',
             (item, self.connection, account, platform, str(item), 'ad' if ad else 'video', label,
              'completed' if analyzed else 'deferred', 1 if analyzed else None, item if analyzed else None))
+        if ad:
+            owner = db.execute("""SELECT company_id FROM company_accounts
+                WHERE account_id=%s AND account_platform='meta_ads'""", (account,)).fetchone()
+            if owner:
+                db.execute("""INSERT INTO company_ad_assignments(ad_item_id,company_id,connection_id,account_id)
+                    VALUES (%s,%s,%s,%s)""", (item, owner['company_id'], self.connection, account))
         return item
 
     def refresh(self, scope='instagram', key=None):
@@ -245,9 +244,7 @@ class CompanyProfileTests(unittest.TestCase):
         self.refresh()
         def change():
             with repo.database() as db:
-                repo.lock_company(db, self.company)
-                db.execute('UPDATE companies SET generation=generation+1 WHERE id=%s', (self.company,))
-                repo.invalidate(db, self.company, ['instagram'], 'account_unassignment')
+                ownership.unlink_account(db, self.connection, self.company, self.account)
         self.generator.callback = change
         self.assertEqual(self.process()['state'], 'queued')
         self.assertFalse(self.read()['usable'])
@@ -293,10 +290,11 @@ class CompanyProfileTests(unittest.TestCase):
         self.assertNotIn(str(self.other_item), evidence.encoded(self.generator.calls))
         for suffix in ('', '/instagram'):
             response = self.client.get(f'/api/companies/{self.other}/profiles' + suffix, headers=self.headers)
-            self.assertEqual(response.status_code, 404)
+            # One authenticated connection may manage both companies.
+            self.assertEqual(response.status_code, 200)
         response = self.client.post(f'/api/companies/{self.other}/profiles/instagram/refresh',
                                     headers={**self.headers, 'Idempotency-Key': 'x'})
-        self.assertEqual(response.status_code, 404)
+        self.assertEqual(response.status_code, 202)
 
     def test_paid_metrics_deduplicated_and_context_preserved(self):
         with repo.database() as db:
@@ -427,7 +425,7 @@ class CompanyProfileTests(unittest.TestCase):
 
     def test_missing_all_evidence_skips_model_including_shared(self):
         with repo.database() as db:
-            db.execute('DELETE FROM test_assignments WHERE company_id=%s', (self.company,))
+            db.execute('DELETE FROM company_accounts WHERE company_id=%s', (self.company,))
         self.refresh('shared')
         for _ in range(4):
             self.process()

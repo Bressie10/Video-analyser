@@ -96,13 +96,31 @@ def get_company(db, connection_id, company_id):
 
 
 @_transaction
+def require_active_company(db, connection_id, company_id):
+    """Authorize a live company with the connection supplied by authentication."""
+    return _company(db, connection_id, company_id)
+
+
+def _invalidate_profiles(db, company_id, reason):
+    # 007 is required by the integrated company layer. Never commit an access
+    # change if its suppression/invalidation could not be persisted.
+    from app import company_profile_repository as profiles
+    from app.company_profile_types import SCOPES
+
+    profiles.invalidate(db, company_id, SCOPES, reason)
+
+
+@_transaction
 def set_company_archived(db, connection_id, company_id, *, archived=True):
-    _company(db, connection_id, company_id, active=False, write=True)
-    return db.execute(
+    previous = _company(db, connection_id, company_id, active=False, write=True)
+    row = db.execute(
         '''UPDATE companies SET archived_at=CASE WHEN %s
         THEN COALESCE(archived_at,now()) ELSE NULL END WHERE id=%s RETURNING *''',
         (archived, company_id),
     ).fetchone()
+    if (previous['archived_at'] is not None) != archived:
+        _invalidate_profiles(db, company_id, 'evidence_removed' if archived else 'account_assignment')
+    return row
 
 
 def _link(db, connection_id, company_id, account):
@@ -111,17 +129,18 @@ def _link(db, connection_id, company_id, account):
         (account['id'], company_id),
     ).fetchone():
         raise OwnershipConflict('Organic account already belongs to a company.')
-    db.execute(
+    return db.execute(
         '''INSERT INTO company_accounts(company_id,connection_id,account_id,account_platform)
-        VALUES (%s,%s,%s,%s) ON CONFLICT (company_id,account_id) DO NOTHING''',
+        VALUES (%s,%s,%s,%s) ON CONFLICT (company_id,account_id) DO NOTHING RETURNING account_id''',
         (company_id, connection_id, account['id'], account['platform']),
-    )
+    ).fetchone() is not None
 
 
 @_transaction
 def link_account(db, connection_id, company_id, account_id):
     _company(db, connection_id, company_id, write=True)
-    _link(db, connection_id, company_id, _account(db, connection_id, account_id))
+    if _link(db, connection_id, company_id, _account(db, connection_id, account_id)):
+        _invalidate_profiles(db, company_id, 'account_assignment')
 
 
 @_transaction
@@ -133,10 +152,12 @@ def unlink_account(db, connection_id, company_id, account_id):
         (company_id, account_id),
     ).fetchone():
         raise OwnershipConflict('Unassign or reassign ads before unlinking their account.')
-    db.execute(
-        'DELETE FROM company_accounts WHERE company_id=%s AND account_id=%s',
+    removed = db.execute(
+        'DELETE FROM company_accounts WHERE company_id=%s AND account_id=%s RETURNING account_id',
         (company_id, account_id),
-    )
+    ).fetchone()
+    if removed:
+        _invalidate_profiles(db, company_id, 'account_unassignment')
 
 
 @_transaction
@@ -151,11 +172,15 @@ def reassign_organic_account(db, connection_id, source_company_id, target_compan
         (source_company_id, account_id),
     ).fetchone():
         raise OwnershipNotFound('Account ownership was not found.')
+    if source_company_id == target_company_id:
+        return
     db.execute(
         'DELETE FROM company_accounts WHERE company_id=%s AND account_id=%s',
         (source_company_id, account_id),
     )
     _link(db, connection_id, target_company_id, account)
+    for company in sorted((source_company_id, target_company_id)):
+        _invalidate_profiles(db, company, 'account_unassignment' if company == source_company_id else 'account_assignment')
 
 
 def _ad(db, connection_id, ad_item_id):
@@ -184,17 +209,18 @@ def _assign(db, connection_id, company_id, ad):
     ).fetchone()
     if existing and existing['company_id'] != company_id:
         raise OwnershipConflict('Ad already belongs to a company.')
-    db.execute(
+    return db.execute(
         '''INSERT INTO company_ad_assignments(ad_item_id,company_id,connection_id,account_id)
-        VALUES (%s,%s,%s,%s) ON CONFLICT (ad_item_id) DO NOTHING''',
+        VALUES (%s,%s,%s,%s) ON CONFLICT (ad_item_id) DO NOTHING RETURNING ad_item_id''',
         (ad['id'], company_id, connection_id, ad['account_id']),
-    )
+    ).fetchone() is not None
 
 
 @_transaction
 def assign_ad(db, connection_id, company_id, ad_item_id):
     _company(db, connection_id, company_id, write=True)
-    _assign(db, connection_id, company_id, _ad(db, connection_id, ad_item_id))
+    if _assign(db, connection_id, company_id, _ad(db, connection_id, ad_item_id)):
+        _invalidate_profiles(db, company_id, 'account_assignment')
 
 
 @_transaction
@@ -202,10 +228,12 @@ def unassign_ad(db, connection_id, company_id, ad_item_id):
     _company(db, connection_id, company_id, active=False, write=True)
     _ad(db, connection_id, ad_item_id)
     # Never remove a different company's assignment.
-    db.execute(
-        'DELETE FROM company_ad_assignments WHERE company_id=%s AND ad_item_id=%s',
+    removed = db.execute(
+        'DELETE FROM company_ad_assignments WHERE company_id=%s AND ad_item_id=%s RETURNING ad_item_id',
         (company_id, ad_item_id),
-    )
+    ).fetchone()
+    if removed:
+        _invalidate_profiles(db, company_id, 'account_unassignment')
 
 
 @_transaction
@@ -213,12 +241,21 @@ def reassign_ad(db, connection_id, source_company_id, target_company_id, ad_item
     _company(db, connection_id, source_company_id, active=False, write=True)
     _company(db, connection_id, target_company_id, write=True)
     ad = _ad(db, connection_id, ad_item_id)
+    if source_company_id == target_company_id:
+        if not db.execute(
+            'SELECT 1 FROM company_ad_assignments WHERE company_id=%s AND ad_item_id=%s',
+            (source_company_id, ad_item_id),
+        ).fetchone():
+            raise OwnershipNotFound('Ad ownership was not found.')
+        return
     if not db.execute(
         'DELETE FROM company_ad_assignments WHERE company_id=%s AND ad_item_id=%s RETURNING ad_item_id',
         (source_company_id, ad_item_id),
     ).fetchone():
         raise OwnershipNotFound('Ad ownership was not found.')
     _assign(db, connection_id, target_company_id, ad)
+    for company in sorted((source_company_id, target_company_id)):
+        _invalidate_profiles(db, company, 'account_unassignment' if company == source_company_id else 'account_assignment')
 
 
 COMPANY_SCOPE_SQL = '''

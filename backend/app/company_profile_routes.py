@@ -18,9 +18,10 @@ def respond(request, company_id, operation, *, write=False):
     try:
         adapter = get_company_adapter()
         with repo.database() as db:
-            # Serialize with assignment/removal invalidations, including suppression checks.
-            repo.lock_company(db, company_id)
             adapter.authorize(db, request, company_id, write=write)
+            # Authentication takes the connection lock first; retain that lock
+            # through the company lock and read/refresh to fence ownership changes.
+            repo.lock_company(db, company_id)
             result = operation(db)
         response = JSONResponse(jsonable_encoder(result), status_code=202 if write else 200)
     except HTTPException as error:

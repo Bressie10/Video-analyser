@@ -8,6 +8,7 @@ from psycopg import sql
 
 from app import company_profile_types as p
 from app import company_profile_repository as repo
+from app import company_ownership_repository as ownership
 
 
 def encoded(value):
@@ -42,24 +43,42 @@ def children(db, video_id, table, order, limit, columns):
 
 
 def platform(db, company_id, scope, access):
-    accounts = list(access.account_ids)
-    total = db.execute('''SELECT count(*) AS total,count(*) FILTER (WHERE analysis_state='completed') AS analyzed
-        FROM meta_library_items WHERE account_id=ANY(%s::uuid[]) AND platform=%s''',
-        (accounts, scope)).fetchone()
-    rows = db.execute('''SELECT id,account_id,connection_id,platform,content_type,
-        left(label,%s) AS label,published_at,analysis_state,analysis_version,video_id
-        FROM meta_library_items WHERE account_id=ANY(%s::uuid[]) AND platform=%s
-        ORDER BY published_at DESC NULLS LAST,id LIMIT %s''',
-        (p.MAX_TEXT_CHARS, accounts, scope, p.MAX_ITEMS)).fetchall()
+    # Reuse 006's exact item-level boundary. Account membership alone never
+    # authorizes an ad, its performance, or traversal to a sibling ad.
+    ownership.require_active_company(db, access.connection_id, company_id)
+    params = dict(connection_id=access.connection_id, company_id=company_id,
+                  scope=scope, text_limit=p.MAX_TEXT_CHARS, item_limit=p.MAX_ITEMS,
+                  byte_limit=p.MAX_INPUT_BYTES, performance_limit=p.MAX_PERFORMANCES,
+                  relationship_limit=p.MAX_RELATIONSHIPS)
+    scoped = ownership.COMPANY_SCOPE_SQL + """,
+    candidates AS (
+        SELECT i.* FROM valid_items i JOIN accessible_items visible ON visible.id=i.id
+        WHERE (%(scope)s='meta_ads' AND i.content_type='ad')
+        OR (%(scope)s<>'meta_ads' AND i.content_type<>'ad' AND i.platform=%(scope)s)
+    )
+    """
+    total = db.execute(scoped + """SELECT count(*) AS total,
+        count(*) FILTER (WHERE analysis_state='completed') AS analyzed FROM candidates""", params).fetchone()
+    # V2 discovery can overwrite a shared creative's label with another ad's
+    # name. Match 006's sanitized content projection, including organic views.
+    projection = """id,connection_id,platform,content_type,
+        CASE WHEN content_type='ad' THEN left(label,%(text_limit)s) ELSE NULL END AS label,
+        published_at,analysis_state,analysis_version,video_id"""
+    rows = db.execute(scoped + 'SELECT ' + projection + """ FROM candidates
+        ORDER BY published_at DESC NULLS LAST,id LIMIT %(item_limit)s""", params).fetchall()
+    params['selected_ids'] = [r['id'] for r in rows]
     if scope == 'meta_ads':
-        # Ad creative assets can live under a different platform but must be assigned to this company.
-        assets = db.execute('''SELECT DISTINCT i.id,i.account_id,i.connection_id,i.platform,i.content_type,
-            left(i.label,%s) AS label,i.published_at,i.analysis_state,i.analysis_version,i.video_id
-            FROM meta_ad_assets a JOIN meta_library_items i ON i.id=a.video_item_id
-            WHERE a.ad_item_id=ANY(%s::uuid[]) AND i.account_id=ANY(%s::uuid[])
-            ORDER BY i.published_at DESC NULLS LAST,i.id LIMIT %s''',
-            (p.MAX_TEXT_CHARS, [r['id'] for r in rows], accounts, p.MAX_ITEMS)).fetchall()
-        source_rows = assets
+        assets = ownership.COMPANY_SCOPE_SQL + """,
+        assets AS (
+            SELECT DISTINCT asset.* FROM direct_items ad
+            JOIN meta_ad_assets edge ON edge.ad_item_id=ad.id
+            JOIN valid_items asset ON asset.id=edge.video_item_id
+            WHERE ad.content_type='ad' AND ad.id=ANY(%(selected_ids)s::uuid[])
+            AND asset.content_type<>'ad'
+        )
+        """
+        source_rows = db.execute(assets + 'SELECT ' + projection + """ FROM assets
+            ORDER BY published_at DESC NULLS LAST,id LIMIT %(item_limit)s""", params).fetchall()
     else:
         source_rows = rows
     items, seen_videos = [], set()
@@ -71,7 +90,7 @@ def platform(db, company_id, scope, access):
             video = db.execute('''SELECT id,duration_seconds,width,height,fps,
                 left(transcript_text,%s) AS transcript,analysis_version FROM videos
                 WHERE id=%s AND meta_connection_id=%s''',
-                (p.MAX_TRANSCRIPT_CHARS, row['video_id'], row['connection_id'])).fetchone()
+                (p.MAX_TRANSCRIPT_CHARS, row['video_id'], access.connection_id)).fetchone()
             if video:
                 seen_videos.add(row['video_id'])
                 video['scenes'] = children(db, row['video_id'], 'scenes', 'scene_number', p.MAX_SCENES,
@@ -82,25 +101,29 @@ def platform(db, company_id, scope, access):
                     f'left(type,{p.MAX_TEXT_CHARS}) AS type,confidence,start_seconds,end_seconds')
                 item['analysis'] = video
         items.append(item)
-    source_ids = [r['id'] for r in rows + source_rows]
-    metrics = db.execute('''SELECT perf.item_id,perf.snapshot,perf.fetched_at,i.content_type,
-        (SELECT count(*) FROM meta_ad_assets a WHERE a.ad_item_id=i.id) AS asset_count
-        FROM meta_library_performance perf JOIN meta_library_items i ON i.id=perf.item_id
-        WHERE i.account_id=ANY(%s::uuid[]) AND (i.id=ANY(%s::uuid[]) OR i.id IN (
-            SELECT ad_item_id FROM meta_ad_assets WHERE video_item_id=ANY(%s::uuid[])))
-        AND octet_length(perf.snapshot::text)<=%s ORDER BY i.id LIMIT %s''',
-        (accounts, source_ids, source_ids, p.MAX_INPUT_BYTES, p.MAX_PERFORMANCES)).fetchall()
+    params['source_ids'] = [r['id'] for r in rows + source_rows]
+    params['asset_ids'] = [r['id'] for r in source_rows]
+    metrics = db.execute(ownership.COMPANY_SCOPE_SQL + '''SELECT perf.item_id,perf.snapshot,perf.fetched_at,i.content_type,
+        (SELECT count(*) FROM meta_ad_assets edge JOIN valid_items asset ON asset.id=edge.video_item_id
+         WHERE edge.ad_item_id=i.id AND asset.content_type<>'ad') AS asset_count
+        FROM meta_library_performance perf JOIN direct_items i ON i.id=perf.item_id
+        WHERE (i.id=ANY(%(source_ids)s::uuid[]) OR (i.content_type='ad' AND EXISTS (
+            SELECT 1 FROM meta_ad_assets edge WHERE edge.ad_item_id=i.id
+            AND edge.video_item_id=ANY(%(asset_ids)s::uuid[]))))
+        AND octet_length(perf.snapshot::text)<=%(byte_limit)s
+        ORDER BY i.id LIMIT %(performance_limit)s''', params).fetchall()
     performances = []
     for metric in metrics:
         metric['ref'] = 'performance:' + str(metric['item_id'])
         metric['attribution'] = ('shared_ad' if metric['asset_count'] > 1 else 'ad') if metric['content_type'] == 'ad' else 'organic'
         performances.append(metric)
-    links = db.execute('''SELECT a.ad_item_id,a.video_item_id FROM meta_ad_assets a
-        JOIN meta_library_items ad ON ad.id=a.ad_item_id JOIN meta_library_items v ON v.id=a.video_item_id
-        WHERE ad.account_id=ANY(%s::uuid[]) AND v.account_id=ANY(%s::uuid[])
-        AND v.id=ANY(%s::uuid[]) AND (%s<>'meta_ads' OR ad.id=ANY(%s::uuid[]))
-        ORDER BY ad.id,v.id LIMIT %s''',
-        (accounts, accounts, [r['id'] for r in source_rows], scope, [r['id'] for r in rows], p.MAX_RELATIONSHIPS)).fetchall()
+    links = db.execute(ownership.COMPANY_SCOPE_SQL + '''SELECT edge.ad_item_id,edge.video_item_id
+        FROM meta_ad_assets edge JOIN direct_items ad ON ad.id=edge.ad_item_id
+        JOIN valid_items asset ON asset.id=edge.video_item_id
+        WHERE ad.content_type='ad' AND asset.content_type<>'ad'
+        AND asset.id=ANY(%(asset_ids)s::uuid[])
+        AND (%(scope)s<>'meta_ads' OR ad.id=ANY(%(selected_ids)s::uuid[]))
+        ORDER BY ad.id,asset.id LIMIT %(relationship_limit)s''', params).fetchall()
     return {'scope': scope, 'items': items, 'performances': performances, 'relationships': links,
             'platform_profiles': [], 'evidence_registry': {}, 'coverage': {
                 'available_items': total['total'], 'completed_items': total['analyzed'],

@@ -118,7 +118,7 @@ def worker(stop):
                 finally:
                     lock_db.execute('SELECT pg_advisory_unlock(%s)', (p.WORKER_LOCK,))
         except CompanyLayerUnavailable:
-            # Disabled until the 006 integration explicitly binds an adapter.
+            # An explicitly unbound adapter must never fall back to V2 access.
             stop.wait(p.POLL_SECONDS)
         except Exception:
             logger.warning('Profile worker storage unavailable.')

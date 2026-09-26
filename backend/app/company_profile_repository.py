@@ -16,7 +16,11 @@ RESTRICTIVE_REASONS = {'account_unassignment', 'evidence_removed', 'account_assi
 
 
 def lock_company(db, company_id):
-    # Same lock for every scope; serialize invalidation, enqueue and publication.
+    # Global order: connection row -> company advisory lock -> profile/job rows.
+    # Ownership writers hold this connection FOR UPDATE before changing access.
+    # Taking the shared connection lock first avoids inversion with their hooks.
+    db.execute('''SELECT c.id FROM meta_connections c JOIN companies company
+        ON company.connection_id=c.id WHERE company.id=%s FOR SHARE OF c''', (company_id,))
     db.execute('SELECT pg_advisory_xact_lock(hashtextextended(%s, 72419401))', (str(company_id),))
 
 
@@ -138,8 +142,9 @@ def claim():
     with database() as db:
         job = db.execute('''SELECT j.*,p.company_id,p.scope,p.input_revision AS latest_input_revision FROM company_profile_jobs j
             JOIN company_profiles p ON p.id=j.profile_id
-            WHERE (j.state='queued' AND j.available_at<=now())
-               OR (j.state='running' AND j.lease_until<now())
+            JOIN companies c ON c.id=p.company_id
+            WHERE c.archived_at IS NULL AND ((j.state='queued' AND j.available_at<=now())
+               OR (j.state='running' AND j.lease_until<now()))
             ORDER BY CASE WHEN p.scope='shared' THEN 1 ELSE 0 END,j.available_at,j.created_at,j.id
             LIMIT 1''').fetchone()
         if not job:
@@ -149,7 +154,8 @@ def claim():
         lock_company(db, job['company_id'])
         job = db.execute('''SELECT j.*,p.company_id,p.scope,p.input_revision AS latest_input_revision
             FROM company_profile_jobs j JOIN company_profiles p ON p.id=j.profile_id
-            WHERE j.id=%s AND ((j.state='queued' AND j.available_at<=now())
+            JOIN companies c ON c.id=p.company_id
+            WHERE c.archived_at IS NULL AND j.id=%s AND ((j.state='queued' AND j.available_at<=now())
                 OR (j.state='running' AND j.lease_until<now()))
             FOR UPDATE OF j SKIP LOCKED''', (job['id'],)).fetchone()
         if not job:
@@ -236,8 +242,9 @@ def publish(db, job, captured, bundle, document, input_hash, model):
 
 def schedule_versions():
     with database() as db:
-        companies = db.execute('''SELECT DISTINCT company_id FROM company_profiles
-            WHERE generator_version<>%s OR schema_version<>%s ORDER BY company_id LIMIT %s''',
+        companies = db.execute('''SELECT DISTINCT p.company_id FROM company_profiles p
+            JOIN companies c ON c.id=p.company_id WHERE c.archived_at IS NULL
+            AND (p.generator_version<>%s OR p.schema_version<>%s) ORDER BY p.company_id LIMIT %s''',
             (policy.GENERATOR_VERSION, policy.SCHEMA_VERSION, policy.VERSION_SCAN_LIMIT)).fetchall()
         for row in companies:
             invalidate(db, row['company_id'], policy.SCOPES, 'version_upgrade')

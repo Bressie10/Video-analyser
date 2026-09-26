@@ -83,7 +83,8 @@ class CompanyOwnershipTests(unittest.TestCase):
             self.admin.close()
 
     def migrate(self):
-        self.db.execute(self.migrations[5].read_text())
+        for migration in self.migrations[5:]:
+            self.db.execute(migration.read_text())
 
     def new_connection(self, external):
         return self.db.execute(

@@ -70,9 +70,15 @@ def callback(request: Request):
                 else:
                     session_id = meta.create_session(token, request.cookies.get(meta.SESSION_COOKIE))
                 response = JSONResponse(result)
+                # Persistent sessions authorize both the V2 library and V3
+                # company routes. Remove the narrower cookie on reconnection.
+                persistent = bool(os.environ.get('META_TOKEN_ENCRYPTION_KEY'))
+                if persistent:
+                    response.delete_cookie(meta.SESSION_COOKIE, path='/api/meta',
+                                           secure=True, httponly=True, samesite='lax')
                 response.set_cookie(
                     meta.SESSION_COOKIE, session_id, max_age=max(1, int(token.expires_at - time.time())),
-                    secure=True, httponly=True, samesite="lax", path="/api/meta",
+                    secure=True, httponly=True, samesite="lax", path="/api" if persistent else "/api/meta",
                 )
     response.delete_cookie(meta.STATE_COOKIE, path="/api/meta/callback", secure=True, httponly=True, samesite="lax")
     return _private(response)
@@ -90,6 +96,7 @@ def test_connection(request: Request):
         meta.remove_session(session_id)
         response = JSONResponse({"connected": False})
         response.delete_cookie(meta.SESSION_COOKIE, path="/api/meta", secure=True, httponly=True, samesite="lax")
+        response.delete_cookie(meta.SESSION_COOKIE, path="/api", secure=True, httponly=True, samesite="lax")
     except meta.MetaPermissionError:
         response = JSONResponse({"detail": "Meta permission is required. Reconnect and grant access."}, status_code=403)
     except meta.MetaError:

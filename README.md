@@ -58,7 +58,8 @@ docker compose exec postgres pg_isready
 
 Wait for PostgreSQL to accept connections, then follow the
 [ordered migration instructions](DATABASE.md#migrations-and-local-setup).
-V2 requires migrations **001–005**. Existing installations apply only missing
+V2 requires migrations **001–005**; integrated company ownership/profiles require
+**001–007**. Existing installations apply only missing
 migrations. The backend does not apply migrations automatically.
 
 Start the backend in a terminal from the repository root:
@@ -248,6 +249,8 @@ or output quality on real business footage.
 
 ## V3 company profile subsystem
 
-See [Company profiles](COMPANY_PROFILES.md) for migration 007, the migration 006 adapter
-contract, asynchronous refresh APIs, evidence limits, invalidation hooks and tests.
-The subsystem is isolated and disabled until the company integration is bound.
+See [Company profiles](COMPANY_PROFILES.md) for the integrated 006 ownership adapter,
+migration 007, asynchronous refresh APIs, scoped evidence, invalidation hooks and tests.
+The real adapter is bound by default; apply both migrations before company operations.
+The background worker remains opt-in via `COMPANY_PROFILE_WORKER_ENABLED=true`.
+Existing Meta sessions must reconnect once to receive the `/api` cookie used by company routes.

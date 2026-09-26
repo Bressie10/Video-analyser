@@ -1,39 +1,49 @@
 # V3 company intelligence profiles
 
-This isolated backend subsystem adds cached intelligence for `shared`, `instagram`,
-`facebook`, and `meta_ads`. It does not implement company ownership, persistent ideas,
-or UI. Recommendation endpoints remain unchanged: no inline profile generation and
-no invalidation just because an idea was generated.
+This backend subsystem adds cached intelligence for `shared`, `instagram`,
+`facebook`, and `meta_ads`, integrated with migration 006's explicit company ownership.
+It does not implement persistent ideas or UI. V2 recommendation endpoints remain
+unchanged: no inline profile generation and no invalidation from generating an idea.
 
-## Deployment and migration 006 boundary
+## Deployment and ownership boundary
 
-Apply migrations 001–005, the separately maintained 006 ownership migration, then
-`backend/migrations/007_company_profiles.sql`. The backend never applies migrations.
-007 requires `companies(id UUID PRIMARY KEY)`; it intentionally fails without 006.
-No production stub or invented assignment table is included.
+Apply migrations 001–007 in order. Existing V2 installations apply only 006 and 007;
+the backend never applies migrations automatically. Both are required before using
+the integrated company ownership operations: an unavailable profile invalidation
+hook rolls back the ownership mutation. Neither migration backfills company ownership.
+The historical `NOT VALID` constraints from 006 remain unvalidated and unrepaired.
 
-Bind a `CompanyAdapter` with `bind_company_adapter(adapter)` before starting the app's
-lifespan. The adapter in `backend/app/company_profile_company.py` defines two methods:
+`backend/app/company_profile_company.py` binds `OwnershipCompanyAdapter` by default:
 
-- `authorize(db, request, company_id, write=...)`: call the 006 authorization helpers,
-  distinguishing read from refresh permission. Raise HTTP 401 for signed-out users,
-  HTTP 404 for missing/inaccessible companies. Implement any cookie/CSRF checks here
-  using the company layer's existing policy. Do not reuse connection identity as
-  company identity.
-- `evidence_access(db, company_id) -> CompanyEvidenceAccess`: return assigned Meta
-  account UUIDs and a monotonically changing assignment generation, using the supplied
-  transaction. Include explicitly authorized creative-asset accounts when relevant.
-  Never return accounts merely because they share a Meta connection.
+- HTTP authorization resolves the existing persisted Meta session cookie in the
+  request transaction, then calls 006's `require_active_company` with the authenticated
+  connection ID. Missing/expired/disconnected sessions return 401; unknown, foreign,
+  or archived companies return 404. A connection may access all of its active
+  companies; there are no users, memberships, or per-company permission tiers.
+- Trusted profile jobs resolve their persisted company to its owning connection and
+  use the same active-company helper. Linked account IDs are provenance only.
+  Evidence queries reuse 006's `COMPANY_SCOPE_SQL`, including explicit ad assignments,
+  sanitized creative metadata, and connection checks at each relationship.
+- The adapter's version is a deterministic hash of effective account links and ad
+  assignments. It is not an event counter. Transactional profile `input_revision`
+  counters fence access changes, including removal followed by restoration, while
+  identical effective ownership/evidence can reuse an immutable successful revision.
 
-The adapter is unbound by default: profile routes return 503 and the worker does no
-work. Tests use private `companies`/`test_assignments` fixtures only. Migration 006's
-real helpers and session transport are not validated by this branch.
+An explicit `bind_company_adapter(None)` still fails closed (503/no worker generation).
+There is no production ownership stub or fallback to connection-wide content.
 
-Set `COMPANY_PROFILE_WORKER_ENABLED=true` after binding the adapter and applying 007.
-Default is `false`, so V2 installations still start normally. Profile workers use
-`DATABASE_URL`, server-side `OPENAI_API_KEY`, and `COMPANY_PROFILE_MODEL` (fallback:
-`OPENAI_MODEL`, then the existing `gpt-6-sol` default). They do not require a live Meta
-access token. Request API keys are neither accepted nor stored for these jobs.
+Persistent OAuth sessions now use cookie `Path=/api` so the same session reaches both
+`/api/meta` and `/api/companies`. Secure, HttpOnly, and SameSite=Lax remain in place.
+Reconnect clears the old `/api/meta` cookie; disconnect clears both paths. Existing
+browsers with only the old cookie must reconnect once to use company routes. Legacy
+in-memory Meta sessions retain their original transport and cannot authorize profiles.
+
+Set `COMPANY_PROFILE_WORKER_ENABLED=true` after applying 007 to enable the background
+worker. Default is `false`. Workers use `DATABASE_URL`, server-side `OPENAI_API_KEY`,
+and `COMPANY_PROFILE_MODEL` (fallback: `OPENAI_MODEL`, then `gpt-6-sol`). They do not
+need a live Meta access token. Request API keys are neither accepted nor stored.
+Archived companies are excluded from claims/version scheduling; restore invalidates
+and resumes their work. Model calls remain outside database transactions.
 
 ## Schema and cache semantics
 
@@ -81,8 +91,12 @@ with database() as db:
     )
 ```
 
-Acquire the company advisory lock before source changes. For multi-company writes,
-lock company UUIDs in sorted order. Keep locks out of network/model calls. Pass one
+The lock order is connection row, company advisory lock, then profile/job rows.
+`profiles.lock_company` takes a shared connection lock before the advisory lock.
+Ownership operations take an exclusive connection lock before mutations and invoke
+invalidation in that same transaction. For other source writers, acquire
+`profiles.lock_company` before source changes. For multi-company writes, lock
+company UUIDs in sorted order. Keep locks out of network/model calls. Pass one
 complete event with all affected scopes; event keys deduplicate the entire event,
 not individual scope invocations. Source rollback also rolls back invalidation/jobs.
 The hook creates missing profile rows, atomically advances counters, and coalesces
@@ -94,20 +108,28 @@ active work. It does not inspect or implement company ownership.
 | Analysis completed or replaced | `analysis_changed`; every platform referencing that analysis |
 | Semantic performance change | `performance_changed`; every platform referencing that item/ad |
 | Ad/creative relationship added/removed | `relationship_changed`; affected organic platform(s) and `meta_ads` |
-| 006 account assignment or unassignment | `account_assignment` / `account_unassignment`; all scopes and both companies on transfer; advance adapter generation |
+| 006 account link/unlink or organic reassignment | **Bound**: `account_assignment` / `account_unassignment`; suppress all scopes, both companies on transfer |
+| 006 ad assign/unassign/reassign | **Bound**: same restrictive reasons; suppress all scopes for the affected company, both companies on transfer |
+| 006 archive/restore | **Bound**: `evidence_removed` / `account_assignment`; suppress all scopes; archived companies cannot read or refresh |
 | Content/analysis/metric/evidence removed | `evidence_removed`; all scopes are conservatively suppressed |
 | Prompt, assembly, generator or document contract upgraded | Bump `GENERATOR_VERSION` / `SCHEMA_VERSION`; worker schedules all scopes |
 
 Platform invalidations also stale shared. Publishing a new platform revision enqueues
-shared. These source-writer call sites are documented integration hooks, **not wired
-into V2 connection-owned writes**. They must be connected by the company integration.
+shared. Ownership hooks are bound in `company_ownership_repository.py`; no-op links,
+assignments, releases, or archive/restore calls do not invalidate. An unrelated
+company is not invalidated, including when it shares an Ads account.
+Discovery, analysis, metrics, and creative-edge hooks remain documented integration
+points, **not wired into V2 connection-owned writes** in this ownership/profile
+integration. Until those writers are integrated, request an explicit profile refresh
+after source content changes. Such refreshes recheck effective evidence without
+rerunning media analysis.
 Use `evidence.semantic(old_snapshot) != evidence.semantic(new_snapshot)` as the
 conservative material-change policy: every semantic value/context change matters,
 while an identical retrieval with only a new `fetched_at` does not. Do not emit an
 invalidation for job-state changes or idea generation.
 
 A snapshot-consistent read captures inputs before generation. Publication checks the
-claim/lease, input counter, assignment generation and platform dependencies under the
+claim/lease, input counter, effective ownership fingerprint and platform dependencies under the
 company lock. Changed inputs discard the result and requeue. The same rule protects
 newer invalidations when an older generation fails. Pure content mutations without
 the transactional hook are outside this contract and cannot guarantee freshness.
@@ -146,7 +168,7 @@ deterministically, retaining each list's leading entries; relationships to remov
 units are removed too. Coverage reports truncation and exclusions. Large platform
 documents may be omitted whole from shared inputs; this is a coverage limitation.
 
-The fingerprint includes effective bounded evidence, assignment generation, model,
+The fingerprint includes effective bounded evidence, effective ownership fingerprint, model,
 generator/schema versions. Retrieval timestamps are retained as provenance but ignored
 in the hash. Shared event counters/transient freshness are publication checks rather
 than new intelligence, so unchanged platform revisions avoid another model call.
@@ -207,9 +229,15 @@ replays its original job even after completion/failure; use a new key for a new 
 Shared refresh first queues stale/missing platforms, waits for active platform work,
 and can build a partial document after a platform reaches terminal failure.
 
-The repository read contract can be used later by company recommendation code to
-consume bounded cached profiles. Recommendation reads must not call `refresh`, the
-generator, evidence assembly or source invalidation.
+Migration 008/company recommendation code must authorize its authenticated connection
+with `ownership.require_active_company(db, connection_id, company_id)`, then take
+`profiles.lock_company` and call `profiles.read` in that transaction. Consume only
+`usable` documents; ordinary stale successful revisions can remain usable, but
+ownership-suppressed revisions cannot. Do not read revision history directly or use
+V2 connection-wide performance helpers. Recommendation reads must not call `refresh`,
+the generator, evidence assembly, or source invalidation. Persisted ideas must respect
+subsequent ownership revocation rather than treating an old profile manifest as an
+access grant. No migration 008 tables or behavior are implemented here.
 
 ## Verification
 
@@ -220,9 +248,19 @@ TEST_DATABASE_URL=postgresql://USER@127.0.0.1:PORT/postgres \
   .venv/bin/python -m unittest discover -s tests -p test_company_profiles.py -v
 ```
 
-The suite applies 001–005 + a test-only company stub + 007 per isolated schema. It
-exercises the actual SQL, API, queue, background thread and publication path. Existing
-V2 suites remain pinned to migrations 001–005 until real 006 integration testing is
-available. Provider calls are fake; tests do not validate live model access/quality,
-production ownership helpers, real account assignments or deployment. No frontend or
-video-processing behavior changed, so browser/media acceptance is outside this change.
+The profile suites now apply the real 001–007 migrations and use the actual ownership
+adapter and persisted Meta sessions. Existing profile-cache tests seed initial links
+directly to keep their queue assertions isolated; focused integration tests exercise
+all real ownership mutation hooks. V2 database/API suites also run on 001–007.
+
+`test_company_profile_integration.py` covers two companies on one connection, separate
+organic content, shared Ads accounts/creatives, metrics/metadata isolation through
+platform and shared profiles, transactional invalidation, no-op/rollback behavior,
+archive/restore, concurrency, and foreign/unauthenticated access. Ownership upgrade
+tests preserve populated V2 fixtures through 006 and 007. The V2 OAuth fixture verifies
+cookie transport into company routes and cookie cleanup on disconnect.
+
+Run the full backend suite with `python -m unittest discover -s tests -v` and
+`TEST_DATABASE_URL` set. Provider/model calls are stubs; live model quality, production
+migration locking, and deployment remain unverified. No frontend or video-processing
+behavior changed, so browser/media acceptance is outside this integration.
