@@ -69,7 +69,7 @@ def capture_evidence(db, access, session, company_id, body):
         # Content only; mutable legacy metrics must not sneak into source analysis.
         analysis = {key: analysis[key] for key in
                     ('metadata', 'audio', 'scenes', 'on_screen_text', 'motion_events')}
-        snapshots = library.public_performance(db, identity)
+        snapshots = access.performance(db, company_id, identity)
         owners = [s['item_id'] for s in snapshots]
         access.authorize(db, session, company_id, owners, write=True)
         for snapshot in snapshots:
@@ -120,6 +120,7 @@ def generate(access, session, company_id, body, api_key=None):
         with library.database() as db:
             # 006's locks serialize this check + insert against access revocation.
             access.authorize(db, session, company_id, capture['authorized_ids'], write=True)
+            access.revalidate(db, company_id, capture)
             return ideas.persist(db, company_id, body, digest, claim, capture, result, model,
                                  RECOMMENDATION_VERSION, EVIDENCE_SCHEMA_VERSION)
     except Exception:

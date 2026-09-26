@@ -54,6 +54,13 @@ class FixtureAccess:
         row = db.execute('SELECT * FROM fixture_profiles WHERE company_id=%s', (company_id,)).fetchone()
         return ProfileEvidence(row['revision_id'], row['payload']) if row else None
 
+    def performance(self, db, company_id, item_id):
+        return library.public_performance(db, item_id)
+
+    def revalidate(self, db, company_id, capture):
+        # This fixture has no distinction between content and metric grants.
+        pass
+
 
 @unittest.skipUnless(os.environ.get('TEST_DATABASE_URL'), 'requires disposable PostgreSQL')
 class PersistentIdeasTests(unittest.TestCase):
@@ -146,7 +153,7 @@ class PersistentIdeasTests(unittest.TestCase):
         self.assertEqual(result['status'], 'draft')
         self.assertEqual(result['model'], 'test-model')
         self.assertEqual(result['recommendation_version'], 3)
-        self.assertEqual(result['evidence_schema_version'], 1)
+        self.assertEqual(result['evidence_schema_version'], 2)
         self.assertEqual(result['profile_revision_id'], str(self.profile_id))
         evidence = self.evidence(result['id'])
         self.assertEqual(evidence, self.model.call_args.args[0])

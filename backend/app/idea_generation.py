@@ -8,7 +8,7 @@ from app.idea_models import GeneratedIdea
 from app.recommendations import MissingAPIKeyError, SYSTEM_PROMPT
 
 RECOMMENDATION_VERSION = 3
-EVIDENCE_SCHEMA_VERSION = 1
+EVIDENCE_SCHEMA_VERSION = 2
 IDEA_PROMPT = SYSTEM_PROMPT.rsplit('Respond with four short sections:', 1)[0] + '''
 Return exactly one idea using the structured title, concept, and script fields.
 In concept, explain supporting observations and uncertainty briefly. The script

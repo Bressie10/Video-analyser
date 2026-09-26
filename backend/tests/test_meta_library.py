@@ -816,15 +816,21 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         self.assertTrue(any('Path=/api/meta;' in value and 'Max-Age=0' in value for value in session_headers))
         from app import company_ownership_repository as ownership
         with repo.database() as db:
+            # This callback check crosses into V3; the remaining V2 fixtures
+            # deliberately keep testing the original 001-005 schema.
+            for path in sorted((Path(__file__).resolve().parents[1] / 'migrations').glob('00[6-8]_*.sql')):
+                db.execute(path.read_text())
             company = ownership.create_company(db, self.connection_id, 'OAuth company')['id']
         # The cookie obtained from the real callback reaches company routes too.
         self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 200)
+        self.assertEqual(self.api.get(f'/api/meta/companies/{company}/ideas').status_code, 200)
         disconnected = self.api.post('/api/meta/disconnect')
         self.assertEqual(disconnected.status_code, 200)
         deleted = disconnected.headers.get_list('set-cookie')
         for path in ('Path=/api;', 'Path=/api/meta;'):
             self.assertTrue(any(path in value and 'Max-Age=0' in value for value in deleted))
         self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 401)
+        self.assertEqual(self.api.get(f'/api/meta/companies/{company}/ideas').status_code, 401)
 
     def test_recommendations_reject_oversized_evidence(self):
         self.drain()

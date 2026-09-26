@@ -5,38 +5,34 @@ One successful company-scoped generation creates one draft with editable
 script copy, feedback, publication links, frontend changes, or embeddings are added.
 Existing V1/V2 unscoped recommendation endpoints retain their current behavior.
 
-## Required 006/007 integration
+## Integrated ownership and profiles
 
-This branch starts at remote `v3` commit `88b7ecc`, which contains only migrations
-001–005. **Do not deploy 008 alone or use the test fixtures as migrations.** Apply
-the real 006 and 007 first. The only assumed production table shape is
-`companies(id UUID PRIMARY KEY)` from 006; 008 references it and does not alter
-`meta_library_items`. Company hard deletion is restricted while ideas exist.
+Apply real migrations **001–008** in order; test fixtures are never migrations.
+The default `OwnershipIdeaAccess` adapter binds ideas to the existing persisted
+Meta session, 006 company ownership repository, and 007 profile revisions. No new
+authentication or membership system is introduced. An explicit
+`app.state.idea_company_access` override remains available for contract tests;
+setting it to `None` fails closed with 503.
 
-Install the actual 006/007 adapter as `app.state.idea_company_access` during app
-configuration. The contract is in `app/idea_company_access.py`:
-
-- `authorize(db, session, company_id, item_ids, write=...)` must validate the live
-  session, company read/write permission, and authorization for **every** internal
-  library UUID (including ad metric owners). Use the supplied connection; do not
-  open another transaction or infer authorization from item connection ownership.
-- Lock all rows determining that authorization through transaction commit, using
-  locks that conflict with revocation/reassignment (e.g. `FOR SHARE`, not merely
-  `FOR KEY SHARE`). If 006 uses negative grants or policy indirection, its mutation
-  paths and adapter must share an appropriate parent-row lock. Handle absent
-  grants by denying access. Acquire multiple grant locks in stable order.
-- Empty `item_ids` means company authorization only. History, editing, saved
-  evidence and idempotent replay remain available after source unlinking when
-  company access remains. Raise `HTTPException(401/404)` on denial.
-- `profile(db, company_id)` reads the current 007 revision on the same transaction,
-  returning `ProfileEvidence(revision_id: UUID, payload: dict)` or `None`. Its
-  payload must contain only generation-relevant profile fields, no credentials or
-  raw provider identity fields. The revision UUID and exact supplied profile are
-  frozen with the idea. No guessed FK to an unknown 007 table is introduced.
-
-Without this adapter the new API fails closed with 503. The fixture adapter under
-`tests/` exercises the contract, but integration with actual 006/007 authorization
-and revocation paths must be tested before enabling V3 in production.
+- Live session and connection rows are locked through commit. The connection lock
+  conflicts with 006 ownership changes, company archival and disconnect. Company
+  authorization alone is enough for history, edits, frozen evidence and replay.
+- Sources use 006's `accessible_items`; performance uses its stricter
+  `direct_items` boundary through `ownership.performance`. Sharing an Ads account
+  or creative never grants another company's ads or organic publication metrics.
+- Generation uses the unsuppressed shared 007 profile document, if available.
+  `profile_revision_id` records that shared revision; the frozen profile payload's
+  `revision_ids` records both it and the exact platform dependency revisions used
+  to build it. These are internal UUIDs, not provider identities. No live profile
+  read is needed to reproduce saved evidence. A missing or suppressed profile is
+  omitted rather than replaced with another company's profile.
+- After the model call, authorization is rechecked for every source and metric
+  owner. Metric owners must still be directly owned. When a profile was supplied,
+  the company profile lock fences suppression/publication through persistence;
+  a suppressed or replaced shared revision returns 409. This also catches removal
+  of profile evidence outside the selected videos. Retry after refreshing inputs.
+  Analysis/metric refresh alone can retain captured evidence; publication of a new
+  shared profile during a profiled generation requires retry.
 
 ## API
 
@@ -123,7 +119,7 @@ before commit. Evidence privileges assume a normal application role, not a DB
 administrator capable of disabling triggers or truncating tables.
 
 Model comes from `OPENAI_MODEL` (existing default `gpt-6-sol`). Recommendation
-version is 3 and evidence schema version is 1; increment the appropriate constant
+version is 3 and evidence schema version is 2; increment the appropriate constant
 when changing prompt semantics or captured-input shape. Structured output follows
 [OpenAI's documented Pydantic Responses parsing](https://developers.openai.com/api/docs/guides/structured-outputs).
 
@@ -136,28 +132,23 @@ TEST_DATABASE_URL=postgresql://postgres@127.0.0.1:55440/postgres \
   .venv/bin/python -m unittest discover -s tests -p 'test_persistent_ideas.py' -v
 ```
 
-Tests apply real migrations 001–005 and 008 in isolated schemas, with explicit
-**test-only** 006/007 stand-ins. They cover API → service → PostgreSQL → response,
-provider failures, concurrent retries, lease recovery, mutation during capture,
-revocation during generation, revocation locks at final persistence, frozen evidence,
-company isolation, shared metric deduplication, history, edits, and direct SQL guards.
+`test_idea_integration.py` applies the actual migration sequence 001–008, including
+an upgrade from populated V2 data. It runs the 007 worker with a stubbed generator
+and calls the idea HTTP API using real persisted sessions and 006 ownership.
+Coverage includes cross-company shared creatives, organic metric isolation,
+profile/dependency revision capture, archive/session/source/profile revocation,
+locks at persistence, idempotent replay and frozen evidence after profile refresh.
+`test_persistent_ideas.py` additionally uses explicit test-only 006/007 stand-ins
+to exercise the adapter contract, immutable storage, retries and failures.
 Existing V2 database fixtures deliberately apply only 001–005.
 
-OpenAI output is mocked; no paid generation, production database, live Meta refresh,
-actual 006/007 integration, or browser UX verification is claimed. A process failure
-after the model call but before commit may require another paid call after lease
-recovery; persistence remains at most one idea per company/request. The bounded
-recent-history prompt is duplicate avoidance, not a semantic deduplication guarantee.
+Verified locally on 2026-09-26: all 13 focused idea integration tests passed, and
+the full backend suite passed all 233 tests with `RUN_MEDIA_INTEGRATION=1` and
+`HF_HUB_OFFLINE=1`. Real migrations 001–008 ran in isolated disposable schemas.
+Python compilation and `git diff --check` passed. No Python lint command is configured.
 
-Verified locally on 2026-09-26: 25 V3 tests plus 57 affected V2/recommendation/
-Facebook/Instagram tests ran together: **81 passed, one existing real-media test
-skipped** because its local-model opt-in was not enabled. Python compilation and
-`git diff --check` passed. No new dependencies or configured Python lint command.
-
-Changed implementation files: `008_persistent_ideas.sql`; `idea_company_access.py`,
-`idea_models.py`, `idea_generation.py`, `idea_repository.py`, `idea_service.py`,
-`idea_routes.py`; router registration in `main.py`; same-transaction analysis reader
-in `video_repository.py`; guaranteed connection cleanup after failed commits in
-`meta_library_repository.py`. Tests add `test_persistent_ideas.py` and a test-only
-company fixture, and bound three existing V2 migration fixtures to 001–005. README
-and DATABASE link this integration guide.
+OpenAI output is mocked. No paid generation, production database, live Meta refresh,
+or browser UX verification is claimed. A process failure after the model call but
+before commit may require another paid call after lease recovery; persistence
+remains at most one idea per company/request. The bounded recent-history prompt
+is duplicate avoidance, not a semantic deduplication guarantee.
