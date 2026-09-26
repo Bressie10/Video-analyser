@@ -91,3 +91,23 @@ input[type=checkbox] { width: 20px; height: 20px; flex-shrink: 0; accent-color: 
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; } }
 
 @media (max-height: 650px) { .selection-bar { position: static; } }
+
+.company-navigation { position: sticky; top: 0; z-index: 3; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 12px; margin-bottom: 24px; }
+.company-navigation > .eyebrow { display: block; }
+.company-navigation > button { max-width: 100%; text-align: left; overflow-wrap: anywhere; }
+.company-switcher { max-height: 60vh; overflow: auto; padding-top: 12px; }
+.company-switcher ul, .company-list { list-style: none; padding: 0; display: grid; gap: 8px; }
+.company-switcher li button { width: 100%; text-align: left; overflow-wrap: anywhere; }
+.company-navigation [aria-current], .company-list [aria-pressed=true] { background: var(--soft-accent); border-color: var(--accent); }
+.company-form { display: flex; align-items: end; flex-wrap: wrap; gap: 12px; margin: 20px 0; }
+.company-form label { display: grid; gap: 8px; flex: 1; min-width: min(220px, 100%); }
+.company-form input { width: 100%; min-height: 44px; border: 1px solid var(--line); border-radius: 7px; padding: 10px; font: inherit; }
+.company-list button { max-width: 100%; overflow-wrap: anywhere; text-align: left; }
+.company-confirm { max-width: min(480px, calc(100% - 24px)); border: 1px solid var(--line); border-radius: var(--radius); padding: 24px; color: var(--ink); }
+.company-confirm::backdrop { background: #20263180; }
+.company-confirm button, .welcome button { margin: 4px; }
+@media (max-width: 600px) {
+  .company-navigation > button, .company-form button { width: 100%; }
+  .company-form { align-items: stretch; flex-direction: column; }
+  .company-confirm { padding: 16px; }
+}

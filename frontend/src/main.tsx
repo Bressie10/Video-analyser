@@ -5,8 +5,10 @@ import { VideoLibrary } from "./VideoLibrary";
 import type { Idea } from "./metaLibrary";
 import "./style.css";
 import { CompanyProvider } from "./company/CompanyProvider";
+import { CompanyShell } from "./CompanyShell";
+import type { CompanyUIProps } from "./companyUI";
 
-function App() {
+export function App({ companyUI }: { companyUI?: CompanyUIProps }) {
   const [connected, setConnected] = useState(false);
   const [expired, setExpired] = useState(false);
   const [initialJobId, setInitialJobId] = useState<string | null>(null);
@@ -25,7 +27,7 @@ function App() {
     if (value) { setHasConnected(true); setExpired(false); }
   }, []);
   const disconnected = useCallback(() => { setExpired(true); setConnected(false); }, []);
-  return <main>
+  return <main><CompanyShell companyUI={companyUI}>
     <header className="page-heading"><p className="eyebrow">Your next video starts here</p><h1>Turn your content into your next idea.</h1><p>Choose videos from your business accounts. Get a fresh concept and a script you can make your own.</p></header>
     <MetaConnection onSyncStarted={setInitialJobId} disconnected={expired} disabled={busy} onConnectionChange={connectionChanged} />
     {expired && <p className="notice" role="alert">Your Meta connection has expired. Reconnect to continue. Your content and ideas are still here.</p>}
@@ -37,7 +39,7 @@ function App() {
       {idea.concept && idea.script ? <><p className="concept">{idea.concept}</p><h3>Script</h3><p className="script">{idea.script}</p></>
         : <p className="script">{idea.response}</p>}
     </section>}
-  </main>;
+  </CompanyShell></main>;
 }
 const root = document.getElementById("root");
 if (!root) throw new Error("Application root element is missing.");
