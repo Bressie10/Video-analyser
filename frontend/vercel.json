@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://video-analyser-1ek5.onrender.com/api/:path*"
+    }
+  ]
+}
