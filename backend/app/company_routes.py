@@ -66,6 +66,10 @@ def respond(request, operation, *, write=False, status=200, company_id=None,
                     elif connection_id != account['connection_id']:
                         raise repo.OwnershipNotFound()
             result = operation(db, connection_id)
+            if isinstance(result, dict) and 'company_id' in result:
+                membership = db.execute('SELECT role FROM company_memberships WHERE company_id=%s AND user_id=%s',
+                                        (result['company_id'], user.user_id)).fetchone()
+                result['role'] = membership['role']
         response = JSONResponse(jsonable_encoder(result), status_code=status)
     except HTTPException as error:
         response = JSONResponse({'detail': error.detail}, status_code=error.status_code)
@@ -86,7 +90,7 @@ def companies(request: Request, include_archived: bool = False):
     def operation(db, connection):
         # One snapshot joins verified membership, company and linked accounts.
         # Avoid acquiring multiple connection/company locks in per-company order.
-        rows = db.execute('''SELECT c.id,c.name,c.archived_at,
+        rows = db.execute('''SELECT c.id,c.name,c.archived_at,m.role,
             (SELECT jsonb_agg(to_jsonb(a) ORDER BY a.platform,a.id)
              FROM company_accounts ca JOIN meta_accounts a
              ON a.id=ca.account_id AND a.connection_id=ca.connection_id
@@ -95,7 +99,7 @@ def companies(request: Request, include_archived: bool = False):
             WHERE m.user_id=%s AND (%s OR c.archived_at IS NULL)
             ORDER BY c.created_at,c.id''', (request.state.company_user.user_id, include_archived)).fetchall()
         return {'companies': [{'company_id': row['id'], 'name': row['name'],
-                               'archived': row['archived_at'] is not None,
+                               'archived': row['archived_at'] is not None, 'role': row['role'],
                                'accounts': [repo._account_summary(account) for account in row['accounts'] or []]}
                               for row in rows]}
     return respond(request, operation)

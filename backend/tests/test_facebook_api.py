@@ -1,3 +1,4 @@
+from auth_fixtures import USER_ID
 from app.main import app
 from app.meta_auth_dependencies import require_meta_session
 from contextlib import contextmanager
@@ -72,6 +73,10 @@ def graph_transport(media=None, metrics=None, error=None, pages=None, kind='reel
 @patch.dict(os.environ, CONFIG)
 class FacebookAPITests(unittest.TestCase):
     def setUp(self):
+        from app.auth import require_authenticated_user, AuthenticatedUser
+        from auth_fixtures import USER_ID
+        app.dependency_overrides[require_authenticated_user] = lambda: AuthenticatedUser(USER_ID, 'fixture@example.com')
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_authenticated_user, None))
         app.dependency_overrides[require_meta_session] = lambda: None
         self.addCleanup(lambda: app.dependency_overrides.pop(require_meta_session, None))
         meta._sessions.clear()
@@ -88,8 +93,8 @@ class FacebookAPITests(unittest.TestCase):
                 response = attach(self.api, kind=kind)
             self.assertEqual(response.status_code, 200, response.text)
             self.assertEqual(response.json(), {'video_id': str(VIDEO_ID), **SNAPSHOT})
-            read.assert_called_once_with(VIDEO_ID)
-            save.assert_called_once_with(VIDEO_ID, SNAPSHOT)
+            read.assert_called_once_with(VIDEO_ID, owner_user_id=USER_ID)
+            save.assert_called_once_with(VIDEO_ID, SNAPSHOT, owner_user_id=USER_ID)
             self.assertEqual(len(requests), 3)
             self.assertEqual(requests[0].url.params['fields'], 'id,access_token,tasks')
             self.assertEqual(requests[1].url.params['fields'], 'id,from')

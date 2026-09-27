@@ -5,6 +5,8 @@ import re
 import secrets
 import threading
 import time
+import hmac
+from uuid import UUID
 from dataclasses import dataclass
 from urllib.parse import urlencode, urlsplit
 
@@ -61,6 +63,33 @@ class UserTokens:
 
 _sessions: dict[str, UserTokens] = {}
 _sessions_lock = threading.Lock()
+_session_owners: dict[str, UUID | None] = {}
+_user_states: dict[str, tuple[UUID, float]] = {}
+
+
+def begin_user_state(user_id: UUID) -> str:
+    with _sessions_lock:
+        now = time.time()
+        for state, (_, expires) in list(_user_states.items()):
+            if expires <= now:
+                del _user_states[state]
+        if len(_user_states) >= 1024:
+            raise TikTokConfigurationError("TikTok login is unavailable.")
+        state = secrets.token_urlsafe(32)
+        _user_states[state] = (user_id, now + STATE_MAX_AGE)
+        return state
+
+
+def consume_user_state(state, cookie):
+    if (not isinstance(state, str) or not isinstance(cookie, str)
+            or not re.fullmatch(r"[A-Za-z0-9_-]{43}", state)
+            or not re.fullmatch(r"[A-Za-z0-9_-]{43}", cookie)
+            or not hmac.compare_digest(state, cookie)):
+        return None
+    with _sessions_lock:
+        stored = _user_states.pop(state, None)
+    return stored[0] if stored and stored[1] > time.time() else None
+
 
 
 def settings() -> TikTokSettings:
@@ -130,7 +159,7 @@ def exchange_code(config: TikTokSettings, code: str) -> UserTokens:
     })
 
 
-def create_session(tokens: UserTokens) -> str:
+def create_session(tokens: UserTokens, *, owner_user_id=None) -> str:
     """Keep TikTok tokens in process memory, indexed by an opaque cookie."""
     session_id = secrets.token_urlsafe(32)
     with _sessions_lock:
@@ -138,20 +167,25 @@ def create_session(tokens: UserTokens) -> str:
         for expired_id, stored in list(_sessions.items()):
             if max(stored.expires_at, stored.refresh_expires_at) <= now:
                 del _sessions[expired_id]
+                _session_owners.pop(expired_id, None)
         _sessions[session_id] = tokens
+        _session_owners[session_id] = owner_user_id
     return session_id
 
 
-def access_token_for_session(session_id: str | None, config: TikTokSettings) -> str:
+def access_token_for_session(session_id: str | None, config: TikTokSettings, *, owner_user_id=None) -> str:
     if not session_id:
         raise TikTokNotConnected("TikTok account is not connected.")
     with _sessions_lock:
+        if owner_user_id is not None and _session_owners.get(session_id) != owner_user_id:
+            raise TikTokNotConnected("TikTok account is not connected.")
         tokens = _sessions.get(session_id)
         if tokens is None:
             raise TikTokNotConnected("TikTok account is not connected.")
         if tokens.expires_at <= time.time() + 60:
             if not tokens.refresh_token or tokens.refresh_expires_at <= time.time():
                 del _sessions[session_id]
+                _session_owners.pop(session_id, None)
                 raise TikTokNotConnected("TikTok authorization has expired.")
             refreshed = _token_request(config, {
                 "grant_type": "refresh_token",

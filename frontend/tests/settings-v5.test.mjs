@@ -13,11 +13,11 @@ async function fixture({ width = 1440, connected = true, empty = false, conflict
   const context = await browser.newContext({ viewport: { width, height: 900 } });
   if (!empty) await context.addInitScript(A => localStorage.setItem('video-analyzer.active-company-id', A), A);
   const accountList = accounts ? [
-    { account_id: id(3), display_name: 'Northline Facebook', platform: 'facebook', organic_owner: { company_id: B, name: 'Other studio', archived: false } },
+    { account_id: id(3), display_name: 'Northline Facebook', platform: 'facebook', organic_owner: { company_id: B, name: 'Other studio', role: "owner", archived: false } },
     { account_id: id(4), display_name: 'Northline Instagram', platform: 'instagram', organic_owner: null },
     { account_id: ADS, display_name: 'Northline Ads', platform: 'meta_ads', organic_owner: null },
   ] : [];
-  const companies = empty ? [] : [{ company_id: A, name: 'Northline Studio', archived: false, accounts: accountList.filter(a => a.platform === 'meta_ads') }, { company_id: B, name: 'Other studio', archived: false, accounts: accountList.filter(a => a.platform !== 'instagram') }];
+  const companies = empty ? [] : [{ company_id: A, name: 'Northline Studio', role: "owner", archived: false, accounts: accountList.filter(a => a.platform === 'meta_ads') }, { company_id: B, name: 'Other studio', role: "owner", archived: false, accounts: accountList.filter(a => a.platform !== 'instagram') }];
   let assigned = false; const mutations = [], errors = [];
   await context.route('**/api/**', async route => {
     const path = new URL(route.request().url()).pathname, method = route.request().method();

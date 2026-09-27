@@ -41,6 +41,7 @@ after(async () => {
 });
 async function context(persisted) {
   const c = await browser.newContext({ extraHTTPHeaders: { Cookie: `${session.name}=${session.value}`, Authorization: `Bearer ${session.jwt}` } });
+  await c.addInitScript(jwt => { window.__authMock = { session: { access_token: jwt, user: { id: '11111111-1111-4111-8111-111111111111', email: 'test@example.com' } } }; }, session.jwt);
   await c.addCookies([{ name: session.name, value: session.value, domain: '127.0.0.1', path: '/api', httpOnly: true, secure: true, sameSite: 'Lax' }]);
   if (persisted !== undefined) await c.addInitScript(({ KEY, persisted }) => { if (!sessionStorage.initialized) { localStorage.setItem(KEY, persisted); sessionStorage.initialized = 'true'; } }, { KEY, persisted });
   return c;
@@ -226,4 +227,22 @@ test('blocked localStorage is visible and company creation remains session-local
     await selected(p, 'Session company'); await p.getByRole('heading', { name: 'Session company is ready' }).waitFor();
     await p.reload(); await p.getByRole('heading', { name: 'No company selected' }).waitFor();
   } finally { await c.close(); }
+});
+
+test('real V6 two-user workspace isolation and return to User A',async()=>{
+ const c=await context(companies[0].company_id);
+ // Let the SDK session choose Authorization; a context-wide header overrides fetch headers.
+ await c.setExtraHTTPHeaders({Cookie: `${session.name}=${session.value}`});
+ const p=await pageFor(c);try{
+  await selected(p,companies[0].name);
+  await p.evaluate(jwt=>window.__changeAuth({access_token:jwt,user:{id:'22222222-2222-4222-8222-222222222222',email:'bob@example.com'}}),session.other_jwt);
+  await p.getByRole('heading',{name:'No company selected'}).waitFor();await stored(p,null);
+  await manage(p);await p.getByLabel('New company name').fill('User B private company');await p.getByRole('button',{name:'Create company',exact:true}).click();await selected(p,'User B private company');
+  const statuses=await p.evaluate(async a=>{const {apiFetch}=await import('/src/auth/apiFetch.ts');const response=await apiFetch('/api/companies');const body=await response.json();return {companies:body.companies,foreign:(await apiFetch('/api/companies/'+a)).status,meta:(await apiFetch('/api/meta/test')).status};},companies[0].company_id);
+  assert.equal(statuses.companies.length,1);assert.equal(statuses.companies[0].role,'owner');assert.equal(statuses.foreign,403);assert.equal(statuses.meta,403);
+  await p.evaluate(jwt=>window.__changeAuth({access_token:jwt,user:{id:'11111111-1111-4111-8111-111111111111',email:'alice@example.com'}}),session.jwt);
+  await p.getByRole('heading',{name:'No company selected'}).waitFor();await stored(p,null);
+  assert.doesNotMatch(await p.locator('body').innerText(),/User B private company/);
+  await select(p,companies[0].name);await selected(p,companies[0].name);
+ }finally{await c.close();}
 });

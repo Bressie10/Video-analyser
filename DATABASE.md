@@ -312,3 +312,15 @@ replay defect. Existing inconsistent refresh records cause the migration to fail
 and roll back; inspect and explicitly repair such records before retrying, rather
 than silently discarding idempotency history. All delete/update actions remain
 NO ACTION. See [the release audit](backend/V3_RELEASE_AUDIT.md).
+
+## V6 integration migration 012
+
+Apply `012_upload_ownership.sql` after unchanged migrations 001–011. It adds
+`videos.owner_user_id`, a nullable FK to `user_profiles`, and a partial owner index.
+New authenticated manual uploads are owned by the verified JWT subject. Old uploads
+and imported provider videos remain NULL; no legacy claim or backfill occurs.
+HTTP upload analysis/recommendation and deprecated metrics attachment routes require
+upload ownership. Internal company/provider readers retain their independently
+authorized access paths. Both fresh 001–012 and populated 001–010 → 011–012 upgrades
+are covered by the integration suite. See [V6 integration](V6_INTEGRATION.md) for
+required backend table-owner/BYPASSRLS privileges; RLS remains enabled.

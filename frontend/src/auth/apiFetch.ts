@@ -22,7 +22,7 @@ export const apiFetch: typeof fetch = async (input, init) => {
   const options = { ...init, headers, signal, cache: 'no-store' as const, redirect: 'error' as const };
   const response = await fetch(input, options);
   signal.throwIfAborted();
-  if (response.status !== 401) return response;
+  if (response.status !== 401 || response.headers.get('X-ContentMetric-Auth') === 'provider') return response;
   // A single shared refresh; 403 never changes the authentication session.
   const pending = refresh ??= authClient.refreshSession().catch(() => null);
   const renewed = await pending;

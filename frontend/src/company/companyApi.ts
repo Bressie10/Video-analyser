@@ -2,7 +2,7 @@ import { apiFetch } from "../auth/apiFetch";
 import { isUUID, ServiceError } from "../metaLibrary";
 
 export type MetaAccount = Readonly<{ id: string; name: string; platform: "facebook" | "instagram" | "meta_ads" }>;
-export type Company = Readonly<{ id: string; name: string; archived: boolean; accounts: readonly MetaAccount[] }>;
+export type Company = Readonly<{ id: string; name: string; archived: boolean; role?: "owner" | "member"; accounts: readonly MetaAccount[] }>;
 export type AvailableAccount = MetaAccount & { organicOwner: { id: string; name: string; archived: boolean } | null };
 export type AdsContent = Readonly<{ id: string; label: string; assigned: boolean }>;
 export interface CompanyApi {
@@ -29,7 +29,7 @@ function account(v: unknown): MetaAccount {
 /** Validate normalized store records too; never retain unknown server fields. */
 export function companyRecord(v: unknown): Company {
   if (!object(v) || !isUUID(v.id) || typeof v.name !== "string" || typeof v.archived !== "boolean" || !Array.isArray(v.accounts)) throw invalid();
-  return Object.freeze({ id: v.id.toLowerCase(), name: v.name, archived: v.archived, accounts: Object.freeze(v.accounts.map(account)) });
+  return Object.freeze({ id: v.id.toLowerCase(), name: v.name, archived: v.archived, role: v.role === "owner" ? "owner" : "member", accounts: Object.freeze(v.accounts.map(account)) });
 }
 function wireAccount(v: unknown): MetaAccount {
   if (!object(v)) throw invalid();
@@ -37,7 +37,7 @@ function wireAccount(v: unknown): MetaAccount {
 }
 function wireCompany(v: unknown): Company {
   if (!object(v) || !Array.isArray(v.accounts)) throw invalid();
-  return companyRecord({ id: v.company_id, name: v.name, archived: v.archived, accounts: v.accounts.map(wireAccount) });
+  return companyRecord({ id: v.company_id, name: v.name, archived: v.archived, role: v.role, accounts: v.accounts.map(wireAccount) });
 }
 function available(v: unknown): AvailableAccount {
   if (!object(v)) throw invalid();

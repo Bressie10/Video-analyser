@@ -4,6 +4,7 @@ export interface Company {
   name: string;
   archived: boolean;
   hasLinkedAccounts: boolean;
+  role?: "owner" | "member";
 }
 export interface CompanyAccount {
   id: string;

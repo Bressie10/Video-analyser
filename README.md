@@ -1,6 +1,7 @@
-# Video Analyzer V2
+# ContentMetric V6
 
-Connect Meta → discover business video content → analyze content and collect
+Sign in with Supabase → create/select a company → optionally connect Meta →
+discover business video content → analyze content and collect
 performance metrics → select existing videos → **Generate a new video idea**
 and script.
 
@@ -17,6 +18,7 @@ assets**, including assets linked to ads. No customer upload, provider ID, media
 URL, or OpenAI key entry is required. Unavailable media and missing metrics remain
 visible limitations, not invented data.
 
+- [V6 integration and deployment requirements](V6_INTEGRATION.md): authentication, authorization, migrations, validation and production smoke checks.
 - [V3 persistent ideas](backend/PERSISTENT_IDEAS.md): backend API, frozen evidence, lifecycle/feedback and manual publication links.
 - [V4 company management](backend/COMPANY_API.md): company lifecycle, account links, explicit ad ownership and frontend API contract.
 - [Database and migrations](DATABASE.md): installation, upgrades, schema and metric storage.

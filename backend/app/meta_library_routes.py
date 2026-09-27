@@ -38,7 +38,7 @@ def respond(request, operation, status=200):
         response = JSONResponse(jsonable_encoder(result), status_code=status)
     except meta.MetaNotConnected:
         response = JSONResponse(
-            {"detail": "Reconnect Meta to continue."}, status_code=401
+            {"detail": "Reconnect Meta to continue."}, status_code=401, headers={"X-ContentMetric-Auth": "provider"}
         )
     except meta.MetaConfigurationError:
         response = JSONResponse(

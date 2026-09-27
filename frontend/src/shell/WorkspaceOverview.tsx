@@ -34,7 +34,7 @@ function Overview() {
       actions={<a className="cm-feature-link cm-feature-link--primary" href="#generate"><Sparkles size={18} aria-hidden="true" />Generate idea</a>} />
     <div className="cm-overview-summary">
       <Panel><h3>Linked platforms</h3><div className="cm-overview-platforms">{platforms.map(platform => <Badge key={platform} tone="neutral">{platformLabel(platform)}</Badge>)}</div>
-        <p>{activeCompany!.accounts.length} linked {activeCompany!.accounts.length === 1 ? 'account' : 'accounts'}</p><a href="#settings">Manage connections <ArrowRight size={14} aria-hidden="true" /></a></Panel>
+        <p>{activeCompany!.accounts.length} linked {activeCompany!.accounts.length === 1 ? 'account' : 'accounts'}</p>{activeCompany!.role === 'owner' && <a href="#settings">Manage connections <ArrowRight size={14} aria-hidden="true" /></a>}</Panel>
       <Panel><h3>Ready for new ideas</h3>
         {analysed.status === 'loading' && <LoadingState label="Checking analysed content…" />}
         {analysed.status === 'error' && <Alert tone="danger"><p>Analysed content is unavailable.</p>{retry}</Alert>}

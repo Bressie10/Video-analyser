@@ -13,9 +13,9 @@ function Work() {
 function Fixture() {
   const mode = new URLSearchParams(location.search).get('mode');
   const [companies, setCompanies] = useState<Company[]>(mode === 'none' ? [] : [
-    { id: 'a', name: 'Alpha', archived: false, hasLinkedAccounts: mode !== 'empty' },
-    { id: 'b', name: 'Beta', archived: false, hasLinkedAccounts: true },
-    { id: 'c', name: 'Old company', archived: true, hasLinkedAccounts: true },
+    { id: 'a', name: 'Alpha', role: "owner", archived: false, hasLinkedAccounts: mode !== 'empty' },
+    { id: 'b', name: 'Beta', role: "owner", archived: false, hasLinkedAccounts: true },
+    { id: 'c', name: 'Old company', role: "owner", archived: true, hasLinkedAccounts: true },
   ]);
   const [activeCompanyId, setActive] = useState<string | null>(mode === 'none' ? null : 'a');
   const [inspected, setInspected] = useState<string | null>(null);
@@ -34,8 +34,8 @@ function Fixture() {
     onInspect: setInspected, onAdsReassign: async () => {},
     onRetry: () => setStatus('ready'), onRetryDiscovery: () => record('retry-discovery'),
     onSwitch: async id => { record(`switch:${id}`); if (mode === 'switch-error') throw Error(); setActive(id); },
-    onCreate: async name => { record(`create:${name}`); const company = { id: 'new', name, archived: false, hasLinkedAccounts: false }; setCompanies(cs => [...cs, company]); return company; },
-    onRename: async (id, name) => update(id, { name }), onArchive: async id => update(id, { archived: true }), onRestore: async id => update(id, { archived: false }),
+    onCreate: async name => { record(`create:${name}`); const company = { id: 'new', name, role: "owner", archived: false, hasLinkedAccounts: false }; setCompanies(cs => [...cs, company]); return company; },
+    onRename: async (id, name) => update(id, { name }), onArchive: async id => update(id, { role: "owner", archived: true }), onRestore: async id => update(id, { role: "owner", archived: false }),
     onAccountLink: async (companyId, id, linked) => setAccounts(as => as.map(a => a.id === id ? { ...a, linkedCompanyIds: linked ? [...a.linkedCompanyIds, companyId] : a.linkedCompanyIds.filter(c => c !== companyId) } : a)),
     onAdsAssignment: async (companyId, id, assigned) => setAds(as => as.map(a => a.id === id ? { ...a, assignedCompanyIds: assigned ? [...a.assignedCompanyIds, companyId] : a.assignedCompanyIds.filter(c => c !== companyId) } : a)),
     onConnectMeta: () => record('connect'),

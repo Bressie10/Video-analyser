@@ -8,11 +8,11 @@ import { Button } from './ui/controls';
 import { EmptyState, LoadingState } from './ui/layout';
 import type { CompanyUIProps } from './companyUI';
 
-export function CompanyEmptyState({ name, onManage, onSkip, skipped }: { name: string; onManage(): void; onSkip(): void; skipped: boolean }) {
+export function CompanyEmptyState({ name, onManage, onSkip, skipped, canManage = true }: { canManage?: boolean; name: string; onManage(): void; onSkip(): void; skipped: boolean }) {
   return <section className="welcome" aria-labelledby="company-empty-title">
     <h2 id="company-empty-title">{name} is ready</h2>
-    <p>Your company workspace exists. No accounts are linked yet. You can set up your company now or return later.</p>
-    <button className="primary" onClick={onManage}>Connect/link Meta accounts</button>{!skipped && <button onClick={onSkip}>Skip for now</button>}
+    <p>{canManage ? "Your company workspace exists. No accounts are linked yet. You can set up your company now or return later." : "No accounts are linked yet. Ask a company owner to link accounts; you can use the workspace when content is available."}</p>
+    {canManage && <button className="primary" onClick={onManage}>Connect/link Meta accounts</button>}{!skipped && <button onClick={onSkip}>Skip for now</button>}
     {skipped && <p>You can link accounts later in Manage companies.</p>}
   </section>;
 }
@@ -77,7 +77,7 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
       : model.status === 'error' ? <p>Your workspace will appear when companies can be loaded.</p>
       : !active ? <EmptyState title="No company selected" icon={<Building2 size={32} />} action={<Button variant="primary" onClick={manage}>Manage companies</Button>}><p>Create or select a company to start your workspace.</p></EmptyState>
       : active.archived ? <section className="welcome"><h2>{active.name} is archived</h2><p>Restore it in Manage companies or select another company.</p><button onClick={manage}>Manage companies</button></section>
-      : !active.hasLinkedAccounts && showOnboarding ? <CompanyEmptyState name={active.name} onManage={manage} skipped={skipped.includes(active.id)} onSkip={() => setSkipped(current => [...current, active.id])} /> : null}
+      : !active.hasLinkedAccounts && showOnboarding ? <CompanyEmptyState canManage={active.role === 'owner'} name={active.name} onManage={manage} skipped={skipped.includes(active.id)} onSkip={() => setSkipped(current => [...current, active.id])} /> : null}
     <div hidden={!management}>{settings}</div>
     {(model.status === 'ready' && active && !active.archived && (active.hasLinkedAccounts || allowUnlinkedWorkspace)) && <div hidden={management}>{typeof children === 'function' ? children(manage) : children}</div>}
     <dialog className="company-confirm" ref={dialog} aria-labelledby="company-confirm-title" onCancel={event => { event.preventDefault(); setPending(null); }}>

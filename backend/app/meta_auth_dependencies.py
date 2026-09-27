@@ -20,4 +20,4 @@ def require_meta_session(request: Request,
     try:
         request.state.meta_connection = owned_session_connection(request, user)
     except meta.MetaNotConnected:
-        raise HTTPException(401, 'Reconnect Meta to continue.', headers={'Cache-Control': 'no-store'}) from None
+        raise HTTPException(401, 'Reconnect Meta to continue.', headers={'Cache-Control': 'no-store', 'X-ContentMetric-Auth': 'provider'}) from None

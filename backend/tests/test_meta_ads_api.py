@@ -1,3 +1,4 @@
+from auth_fixtures import USER_ID
 from app.main import app
 from app.meta_auth_dependencies import require_meta_session
 from contextlib import contextmanager
@@ -60,6 +61,10 @@ def graph_transport(row=None, payload=None, ad=None, error=None):
 @patch.dict(os.environ, CONFIG)
 class MetaAdsTests(unittest.TestCase):
     def setUp(self):
+        from app.auth import require_authenticated_user, AuthenticatedUser
+        from auth_fixtures import USER_ID
+        app.dependency_overrides[require_authenticated_user] = lambda: AuthenticatedUser(USER_ID, 'fixture@example.com')
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_authenticated_user, None))
         app.dependency_overrides[require_meta_session] = lambda: None
         self.addCleanup(lambda: app.dependency_overrides.pop(require_meta_session, None))
         self.api = authenticated_api()
@@ -89,8 +94,8 @@ class MetaAdsTests(unittest.TestCase):
         self.assertEqual(details['video_play_actions'][0]['value'], '450')
         for key in ('ad_id', 'account_id', 'access_token'):
             self.assertNotIn(key, details)
-        read.assert_called_once_with(VIDEO_ID)
-        save.assert_called_once_with(VIDEO_ID, {k: result[k] for k in ('performance_source', 'performance_metrics')})
+        read.assert_called_once_with(VIDEO_ID, owner_user_id=USER_ID)
+        save.assert_called_once_with(VIDEO_ID, {k: result[k] for k in ('performance_source', 'performance_metrics')}, owner_user_id=USER_ID)
         self.assertEqual(requests[0].url.params['fields'], 'id,account_id')
         query = requests[1].url.params
         self.assertEqual(set(query['fields'].split(',')), set(meta_ads.FIELDS))

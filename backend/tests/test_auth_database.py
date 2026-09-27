@@ -32,7 +32,8 @@ class AuthDatabaseTests(unittest.TestCase):
         for path in self.migrations[:10]:
             self.db.execute(path.read_text())
         if self._testMethodName not in ('test_populated_v5_upgrade', 'test_migration_failure_is_transactional'):
-            self.db.execute(self.migrations[10].read_text())
+            for migration in self.migrations[10:]:
+                self.db.execute(migration.read_text())
         self.auth = LocalAuth()
         transport = self.auth.serve_jwks()
         transport.start()
@@ -187,10 +188,11 @@ class AuthDatabaseTests(unittest.TestCase):
                   'idea_generation_requests', 'ideas', 'idea_sources', 'idea_target_platforms',
                   'idea_publications')
         before = {t: self.db.execute(sql.SQL('SELECT * FROM {} ORDER BY 1').format(sql.Identifier(t))).fetchall() for t in tables}
-        self.db.execute(self.migrations[10].read_text())
+        for migration in self.migrations[10:]:
+            self.db.execute(migration.read_text())
         for table in tables:
             after = self.db.execute(sql.SQL('SELECT * FROM {} ORDER BY 1').format(sql.Identifier(table))).fetchall()
-            if table == 'meta_connections':
+            if table in ('meta_connections', 'videos'):
                 self.assertIsNone(after[0].pop('owner_user_id'))
             self.assertEqual(after, before[table])
         self.assertEqual(self.get('/api/me/companies').json(), {'companies': []})

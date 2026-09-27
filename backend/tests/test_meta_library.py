@@ -821,16 +821,16 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         from app import company_ownership_repository as ownership
         with repo.database() as db:
             company = ownership.create_company(db, self.connection_id, 'OAuth company')['id']
-        # A real provider cookie alone never grants V6 company application access.
-        self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 401)
-        self.assertEqual(self.api.get(f'/api/meta/companies/{company}/ideas').status_code, 401)
+        # A signed user with a valid provider cookie still cannot access an unclaimed company.
+        self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 403)
+        self.assertEqual(self.api.get(f'/api/meta/companies/{company}/ideas').status_code, 403)
         disconnected = self.api.post('/api/meta/disconnect')
         self.assertEqual(disconnected.status_code, 200)
         deleted = disconnected.headers.get_list('set-cookie')
         for path in ('Path=/api;', 'Path=/api/meta;'):
             self.assertTrue(any(path in value and 'Max-Age=0' in value for value in deleted))
-        self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 401)
-        self.assertEqual(self.api.get(f'/api/meta/companies/{company}/ideas').status_code, 401)
+        self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 403)
+        self.assertEqual(self.api.get(f'/api/meta/companies/{company}/ideas').status_code, 403)
 
     def test_recommendations_reject_oversized_evidence(self):
         self.drain()

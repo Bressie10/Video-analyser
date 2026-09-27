@@ -5,8 +5,8 @@ import { createServer } from "vite";
 import { chromium } from "playwright";
 
 let server, CompanyStore, KEY, ServiceError, createCompanyApi;
-const A = { id: "00000000-0000-4000-8000-000000000001", name: "A", archived: false, accounts: [] };
-const B = { id: "00000000-0000-4000-8000-000000000002", name: "B", archived: false, accounts: [] };
+const A = { id: "00000000-0000-4000-8000-000000000001", name: "A", role: "owner", archived: false, accounts: [] };
+const B = { id: "00000000-0000-4000-8000-000000000002", name: "B", role: "owner", archived: false, accounts: [] };
 const deferred = () => { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; };
 function fixture(id = null, list = async () => [A, B]) {
   const values = new Map(id === null ? [] : [[KEY, id]]), writes = [];
@@ -30,7 +30,7 @@ test("valid persisted UUID restored only after companies load", async () => {
   pending.resolve([A, B]); await loading;
   assert.equal(store.getSnapshot().activeCompanyId, A.id);
 });
-for (const [name, id, companies] of [["invalid UUID", "meta-123", [A]], ["inaccessible company", B.id, [A]], ["archived company", A.id, [{ ...A, archived: true }, B]], ["empty companies", A.id, []]]) {
+for (const [name, id, companies] of [["invalid UUID", "meta-123", [A]], ["inaccessible company", B.id, [A]], ["archived company", A.id, [{ ...A, role: "owner", archived: true }, B]], ["empty companies", A.id, []]]) {
   test(`${name} cleared without fallback`, async () => {
     const { store, values } = fixture(id, async () => companies);
     await store.refreshCompanies();
@@ -58,7 +58,7 @@ test("create selection immediate; archive clears active; restore does not select
   store.acceptCompany({ ...A, token: "never-persist" }, true);
   assert.equal(values.get(KEY), A.id);
   assert.deepEqual(store.getSnapshot().companies, [A]);
-  store.acceptCompany({ ...A, archived: true });
+  store.acceptCompany({ ...A, role: "owner", archived: true });
   assert.equal(values.size, 0); assert.equal(store.captureScope(), null);
   store.acceptCompany(A); assert.equal(store.getSnapshot().activeCompanyId, null);
 });
@@ -106,7 +106,7 @@ test("blocked storage keeps session state usable", async () => {
   assert.equal(store.getSnapshot().activeCompanyId, A.id); assert.ok(store.getSnapshot().persistenceError);
 });
 test("adapter uses exact backend routes, envelopes, and bodyless ownership mutations", async () => {
-  const calls = [], wire = { company_id: A.id, name: A.name, archived: false, accounts: [] };
+  const calls = [], wire = { company_id: A.id, name: A.name, role: "owner", archived: false, accounts: [] };
   const api = createCompanyApi(async (url, options) => {
     calls.push({ url, ...options });
     let result = wire;

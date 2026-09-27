@@ -9,6 +9,7 @@ import httpx
 from openai import OpenAI, OpenAIError
 
 from app.main import app
+from auth_fixtures import USER_ID
 from app.recommendations import SYSTEM_PROMPT, MissingAPIKeyError, recommend_videos
 from app.video_repository import get_analysis, save_analysis
 from app.video_processing import VideoMetadata
@@ -36,6 +37,10 @@ ANALYSIS = {
 
 
 class VideoAccessTests(unittest.TestCase):
+    def setUp(self):
+        from integration_auth import client_factory
+        self.client = client_factory(self, app)
+
     @patch.dict(os.environ, {"DATABASE_URL": "postgresql://test"})
     @patch("app.video_repository.psycopg.connect")
     def test_save_writes_all_analysis_tables(self, connect: MagicMock) -> None:
@@ -88,18 +93,18 @@ class VideoAccessTests(unittest.TestCase):
     @patch("app.main.get_analysis", return_value={"video_id": str(VIDEO_ID), **ANALYSIS})
     @patch("app.main.recommend_videos", return_value={"model": "gpt-6-sol", "response": "Idea one"})
     def test_recommendation_endpoint_returns_model_response(self, recommend: MagicMock, get: MagicMock) -> None:
-        response = TestClient(app).post(f"/api/videos/{VIDEO_ID}/recommendations")
+        response = self.client(app).post(f"/api/videos/{VIDEO_ID}/recommendations")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"model": "gpt-6-sol", "response": "Idea one"})
         recommend.assert_called_once_with({"video_id": str(VIDEO_ID), **ANALYSIS}, api_key=None)
-        get.assert_called_once_with(VIDEO_ID)
+        get.assert_called_once_with(VIDEO_ID, owner_user_id=USER_ID)
 
     @patch("app.main.get_analysis", return_value={"video_id": str(VIDEO_ID), **ANALYSIS})
     @patch("app.main.recommend_videos", return_value={"model": "gpt-6-sol", "response": "Idea one"})
     def test_runtime_key_is_request_only(self, recommend: MagicMock, get: MagicMock) -> None:
         key = "runtime-secret-for-test"
         with patch("app.main.save_analysis") as save:
-            response = TestClient(app).post(
+            response = self.client(app).post(
                 f"/api/videos/{VIDEO_ID}/recommendations",
                 headers={"X-OpenAI-API-Key": key},
             )
@@ -107,13 +112,13 @@ class VideoAccessTests(unittest.TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertNotIn(key, response.text)
         recommend.assert_called_once_with({"video_id": str(VIDEO_ID), **ANALYSIS}, api_key=key)
-        get.assert_called_once_with(VIDEO_ID)
+        get.assert_called_once_with(VIDEO_ID, owner_user_id=USER_ID)
 
     @patch("app.main.get_analysis", return_value={"video_id": str(VIDEO_ID), **ANALYSIS})
     @patch("app.main.recommend_videos", side_effect=OpenAIError("provider error runtime-secret-for-test"))
     def test_provider_error_does_not_expose_key(self, recommend: MagicMock, get: MagicMock) -> None:
         key = "runtime-secret-for-test"
-        response = TestClient(app).post(
+        response = self.client(app).post(
             f"/api/videos/{VIDEO_ID}/recommendations",
             headers={"X-OpenAI-API-Key": key},
         )
@@ -137,16 +142,16 @@ class VideoAccessTests(unittest.TestCase):
 
     @patch("app.main.get_analysis", return_value=None)
     def test_unknown_video_returns_404(self, get: MagicMock) -> None:
-        response = TestClient(app).post(f"/api/videos/{VIDEO_ID}/recommendations")
+        response = self.client(app).post(f"/api/videos/{VIDEO_ID}/recommendations")
         self.assertEqual(response.status_code, 404)
 
     @patch("app.main.get_analysis", return_value={"video_id": str(VIDEO_ID), **ANALYSIS})
     def test_analysis_endpoint_returns_stored_data(self, get: MagicMock) -> None:
-        response = TestClient(app).get(f"/api/videos/{VIDEO_ID}/analysis")
+        response = self.client(app).get(f"/api/videos/{VIDEO_ID}/analysis")
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["audio"]["segments"][0]["text"], "Hello world")
         self.assertEqual(response.json()["on_screen_text"][0]["text"], "Watch this")
-        get.assert_called_once_with(VIDEO_ID)
+        get.assert_called_once_with(VIDEO_ID, owner_user_id=USER_ID)
 
     @patch.dict(os.environ, {"DATABASE_URL": "postgresql://test"})
     @patch("app.main.save_analysis", return_value=str(VIDEO_ID))
@@ -162,10 +167,10 @@ class VideoAccessTests(unittest.TestCase):
                                     normalise: MagicMock, inspect: MagicMock,
                                     save: MagicMock) -> None:
         inspect.return_value = VideoMetadata(**ANALYSIS["metadata"])
-        response = TestClient(app).post("/api/videos", files={"video": ("sample.mp4", b"video", "video/mp4")})
+        response = self.client(app).post("/api/videos", files={"video": ("sample.mp4", b"video", "video/mp4")})
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json()["video_id"], str(VIDEO_ID))
-        save.assert_called_once_with(ANALYSIS)
+        save.assert_called_once_with(ANALYSIS, owner_user_id=USER_ID)
 
     @patch.dict(os.environ, {"OPENAI_API_KEY": "test-key", "OPENAI_MODEL": "gpt-6-sol"})
     @patch("app.recommendations.OpenAI")
@@ -220,7 +225,7 @@ class VideoAccessTests(unittest.TestCase):
 
         with patch("app.main.get_analysis", return_value={"video_id": str(VIDEO_ID), **ANALYSIS}), \
              patch("app.recommendations.OpenAI", side_effect=client_with_transport):
-            api = TestClient(app)
+            api = self.client(app)
             default_response = api.post(f"/api/videos/{VIDEO_ID}/recommendations")
             runtime_response = api.post(
                 f"/api/videos/{VIDEO_ID}/recommendations",

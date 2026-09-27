@@ -74,7 +74,7 @@ def respond(request, operation):
         response = JSONResponse({"detail": "Meta is not configured correctly."}, status_code=503)
     except meta.MetaNotConnected:
         meta.remove_session(session)
-        response = JSONResponse({"detail": "Meta is disconnected. Connect Meta again to browse your content."}, status_code=401)
+        response = JSONResponse({"detail": "Meta is disconnected. Connect Meta again to browse your content."}, status_code=401, headers={"X-ContentMetric-Auth": "provider"})
         response.delete_cookie(meta.SESSION_COOKIE, path="/api/meta", secure=True, httponly=True, samesite="lax")
     except meta.MetaPermissionError:
         response = JSONResponse({"detail": "Meta has not granted access to this content. Reconnect Meta and allow access to the selected Page or account."}, status_code=403)

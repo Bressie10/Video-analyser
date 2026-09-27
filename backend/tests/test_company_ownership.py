@@ -366,6 +366,8 @@ class CompanyOwnershipTests(unittest.TestCase):
         before = self.snapshot()
         self.migrate()
         # 011 adds an explicitly unclaimed owner; all original values survive.
+        for record in before['videos']:
+            record['row']['owner_user_id'] = None
         for record in before['meta_connections']:
             record['row']['owner_user_id'] = None
         self.assertEqual(self.snapshot(), before)
@@ -388,6 +390,8 @@ class CompanyOwnershipTests(unittest.TestCase):
         before = self.snapshot()
         self.migrate()
         # 011 adds an explicitly unclaimed owner; all original values survive.
+        for record in before['videos']:
+            record['row']['owner_user_id'] = None
         for record in before['meta_connections']:
             record['row']['owner_user_id'] = None
         self.assertEqual(self.snapshot(), before)

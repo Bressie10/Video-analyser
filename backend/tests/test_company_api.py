@@ -50,7 +50,7 @@ class CompanyAPITests(unittest.TestCase):
     def test_name_only_lifecycle(self):
         created = self.request('POST', '/api/companies', 201, json={'name': '  New company  '})
         self.assertEqual(created, {'company_id': created['company_id'], 'name': 'New company',
-                                   'archived': False, 'accounts': []})
+                                   'archived': False, 'accounts': [], 'role': 'owner'})
         path = '/api/companies/' + created['company_id']
         self.assertIn(created, self.request('GET', '/api/companies')['companies'])
         self.assertEqual(self.request('PATCH', path, json={'name': 'Renamed'})['name'], 'Renamed')

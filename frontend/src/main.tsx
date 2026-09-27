@@ -1,3 +1,4 @@
+import { beginMetaAuthorization } from './auth/metaAuthorization';
 import { AuthProvider } from './auth/AuthProvider';
 import { AuthGate } from './auth/AuthGate';
 import { StrictMode, useCallback, useRef, useState } from 'react';
@@ -38,7 +39,7 @@ export function App() {
   return <CompanyShell companyUI={model} allowUnlinkedWorkspace showOnboarding={page === 'overview'}
     managementPage={page === 'settings'} onManagementChange={open => navigate(open ? 'settings' : previousWorkflow.current)}
     layout={(selector, content) => <AppShell page={page} companySelector={selector}>{content}</AppShell>}
-    settings={<><MetaConnection onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} connectAction={connect} /><ProfileRefresh /></>}>
+    settings={<><MetaConnection beginAuthorization={beginMetaAuthorization} onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} connectAction={connect} /><ProfileRefresh /></>}>
     {onSetup => <>
       <div hidden={page !== 'overview'}><WorkspaceOverview /></div>
       <div hidden={page !== 'content'}><CompanyContent /></div>

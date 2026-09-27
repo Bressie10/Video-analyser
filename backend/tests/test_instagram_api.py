@@ -1,3 +1,4 @@
+from auth_fixtures import USER_ID
 from app.main import app
 from app.meta_auth_dependencies import require_meta_session
 from contextlib import contextmanager
@@ -66,6 +67,10 @@ def graph_transport(media=None, metrics=None, error=None):
 @patch.dict(os.environ, CONFIG)
 class InstagramAPITests(unittest.TestCase):
     def setUp(self):
+        from app.auth import require_authenticated_user, AuthenticatedUser
+        from auth_fixtures import USER_ID
+        app.dependency_overrides[require_authenticated_user] = lambda: AuthenticatedUser(USER_ID, 'fixture@example.com')
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_authenticated_user, None))
         app.dependency_overrides[require_meta_session] = lambda: None
         self.addCleanup(lambda: app.dependency_overrides.pop(require_meta_session, None))
         meta._sessions.clear()
@@ -80,8 +85,8 @@ class InstagramAPITests(unittest.TestCase):
             response = attach(self.api)
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.json(), {"video_id": str(VIDEO_ID), **SNAPSHOT})
-        read.assert_called_once_with(VIDEO_ID)
-        save.assert_called_once_with(VIDEO_ID, SNAPSHOT)
+        read.assert_called_once_with(VIDEO_ID, owner_user_id=USER_ID)
+        save.assert_called_once_with(VIDEO_ID, SNAPSHOT, owner_user_id=USER_ID)
         self.assertEqual(len(requests), 2)
         self.assertEqual(requests[0].url.params["fields"], "id,media_type,media_product_type")
         self.assertEqual(requests[1].url.params["metric"], "views,likes,comments,shares")

@@ -14,9 +14,9 @@ export function useCompanyUI(metaConnected: boolean, onConnectMeta: () => void):
   const lifetime = useRef(new AbortController());
   useEffect(() => { lifetime.current = new AbortController(); return () => lifetime.current.abort(); }, []);
   const inspected = state.companies.find(c => c.id === inspectedId);
-  const key = `${state.status}:${state.scopeVersion}:${inspectedId}:${revision}:${metaConnected}:${JSON.stringify(inspected?.accounts)}:${inspected?.archived}`;
+  const key = `${state.status}:${state.scopeVersion}:${inspectedId}:${revision}:${metaConnected}:${JSON.stringify(inspected?.accounts)}:${inspected?.archived}:${inspected?.role}`;
   useEffect(() => {
-    if (state.status !== 'ready' || !inspectedId) return;
+    if (state.status !== 'ready' || !inspectedId || inspected?.role !== 'owner') return;
     const controller = new AbortController();
     let current = true;
     void (async () => {
@@ -34,7 +34,7 @@ export function useCompanyUI(metaConnected: boolean, onConnectMeta: () => void):
     return () => { current = false; controller.abort(); };
   }, [key, store]); // key includes inspection, scope, links and explicit refresh version
   const visible = discovery?.key === key ? discovery : undefined;
-  const viewCompany = (company: Company) => ({ id: company.id, name: company.name, archived: company.archived, hasLinkedAccounts: company.accounts.length > 0 });
+  const viewCompany = (company: Company) => ({ id: company.id, name: company.name, archived: company.archived, role: company.role, hasLinkedAccounts: company.accounts.length > 0 });
   async function mutate<T>(action: (signal: AbortSignal) => Promise<T>, apply: (result: T) => void): Promise<T> {
     const signal = lifetime.current.signal;
     const version = store.getSnapshot().scopeVersion;

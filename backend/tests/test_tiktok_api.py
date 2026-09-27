@@ -9,6 +9,7 @@ import httpx
 from fastapi.testclient import TestClient
 
 from app.main import app
+from auth_fixtures import USER_ID
 from app import tiktok
 
 
@@ -23,6 +24,8 @@ REFRESH_TOKEN = "test-refresh-token"
 
 class TikTokAPITests(unittest.TestCase):
     def setUp(self) -> None:
+        from integration_auth import client_factory
+        self.client = client_factory(self, app)
         tiktok._sessions.clear()
 
     def tearDown(self) -> None:
@@ -30,7 +33,7 @@ class TikTokAPITests(unittest.TestCase):
 
     @patch.dict(os.environ, CONFIG)
     def test_connect_requests_only_video_list_scope(self) -> None:
-        client = TestClient(app, base_url="https://testserver")
+        client = self.client(app, base_url="https://testserver")
         response = client.get("/api/tiktok/connect", follow_redirects=False)
 
         self.assertEqual(response.status_code, 302)
@@ -47,7 +50,7 @@ class TikTokAPITests(unittest.TestCase):
 
     @patch.dict(os.environ, CONFIG)
     def test_callback_rejects_wrong_state_without_token_exchange(self) -> None:
-        client = TestClient(app, base_url="https://testserver")
+        client = self.client(app, base_url="https://testserver")
         client.get("/api/tiktok/connect", follow_redirects=False)
         with patch("app.tiktok.exchange_code") as exchange:
             response = client.get("/api/tiktok/callback?state=wrong&code=code")
@@ -81,7 +84,7 @@ class TikTokAPITests(unittest.TestCase):
         def mock_client(*, timeout: float) -> httpx.Client:
             return original_client(timeout=timeout, transport=httpx.MockTransport(respond))
 
-        client = TestClient(app, base_url="https://testserver")
+        client = self.client(app, base_url="https://testserver")
         connect = client.get("/api/tiktok/connect", follow_redirects=False)
         state = parse_qs(urlsplit(connect.headers["location"]).query)["state"][0]
         with patch("app.tiktok.httpx.Client", side_effect=mock_client):
@@ -109,7 +112,7 @@ class TikTokAPITests(unittest.TestCase):
     def test_expired_token_is_refreshed_on_backend(self) -> None:
         session_id = tiktok.create_session(tiktok.UserTokens(
             ACCESS_TOKEN, REFRESH_TOKEN, time.time() - 1, time.time() + 3600,
-        ))
+        ), owner_user_id=USER_ID)
         with patch("app.tiktok._token_request", return_value=tiktok.UserTokens(
             "new-access-token", "new-refresh-token", time.time() + 3600, time.time() + 86400,
         )) as refresh:
@@ -122,7 +125,7 @@ class TikTokAPITests(unittest.TestCase):
 
     @patch.dict(os.environ, CONFIG)
     def test_video_route_requires_server_session(self) -> None:
-        response = TestClient(app, base_url="https://testserver").get("/api/tiktok/videos")
+        response = self.client(app, base_url="https://testserver").get("/api/tiktok/videos")
         self.assertEqual(response.status_code, 401)
         self.assertEqual(response.json(), {"detail": "TikTok account is not connected."})
 
@@ -130,8 +133,8 @@ class TikTokAPITests(unittest.TestCase):
     def test_video_provider_error_cannot_expose_token(self) -> None:
         session_id = tiktok.create_session(tiktok.UserTokens(
             ACCESS_TOKEN, REFRESH_TOKEN, time.time() + 3600, time.time() + 86400,
-        ))
-        client = TestClient(app, base_url="https://testserver")
+        ), owner_user_id=USER_ID)
+        client = self.client(app, base_url="https://testserver")
         client.cookies.set(tiktok.SESSION_COOKIE, session_id, path="/api")
         with patch("app.tiktok.list_videos", side_effect=tiktok.TikTokError(ACCESS_TOKEN)):
             response = client.get("/api/tiktok/videos")
@@ -186,9 +189,9 @@ class TikTokAPITests(unittest.TestCase):
     def test_upload_links_stats_to_internal_video_id(self) -> None:
         session_id = tiktok.create_session(tiktok.UserTokens(
             ACCESS_TOKEN, REFRESH_TOKEN, time.time() + 3600, time.time() + 86400,
-        ))
+        ), owner_user_id=USER_ID)
         counts = {"view_count": 120, "like_count": 12, "comment_count": 3, "share_count": 2}
-        client = TestClient(app, base_url="https://testserver")
+        client = self.client(app, base_url="https://testserver")
         client.cookies.set(tiktok.SESSION_COOKIE, session_id, path="/api")
         with patch("app.main.tiktok.video_performance", return_value={"performance_source": "tiktok", "performance_metrics": counts}) as fetch, \
              patch("app.main.inspect_video") as inspect, \
@@ -219,7 +222,7 @@ class TikTokAPITests(unittest.TestCase):
 
     @patch.dict(os.environ, {**CONFIG, "DATABASE_URL": "postgresql://test"})
     def test_upload_with_tiktok_url_requires_connection(self) -> None:
-        response = TestClient(app, base_url="https://testserver").post(
+        response = self.client(app, base_url="https://testserver").post(
             "/api/videos",
             files={"video": ("sample.mp4", b"video", "video/mp4")},
             data={"tiktok_url": "https://www.tiktok.com/@creator/video/123456789"},
@@ -229,7 +232,7 @@ class TikTokAPITests(unittest.TestCase):
     @patch.dict(os.environ, {**CONFIG, "DATABASE_URL": "postgresql://test"})
     def test_upload_rejects_non_tiktok_url_before_processing(self) -> None:
         with patch("app.main.inspect_video") as inspect:
-            response = TestClient(app, base_url="https://testserver").post(
+            response = self.client(app, base_url="https://testserver").post(
                 "/api/videos",
                 files={"video": ("sample.mp4", b"video", "video/mp4")},
                 data={"tiktok_url": "https://www.tiktok.com.evil.example/@creator/video/123456789"},

@@ -36,12 +36,12 @@ async function fixture(options={}) {
   const request=route.request(),path=new URL(request.url()).pathname,token=request.headers().authorization;
   calls.push({path,token,method:request.method(),body:request.postDataJSON()});
   const bob=token===`Bearer ${session(V).access_token}`;
-  const companies=options.empty?[]:bob?[{company_id:B,name:'Bob workspace',archived:false,accounts:[]}]:[{company_id:A,name:'Alice workspace',archived:!!options.archived,accounts:[]}];
+  const companies=options.empty?[]:bob?[{company_id:B,name:'Bob workspace',role: "owner", archived: false,accounts:[]}]:[{company_id:A,name:'Alice workspace',archived:!!options.archived,accounts:[]}];
   if(path==='/api/me/companies') {
    if(options.companyDelay)await new Promise(r=>setTimeout(r,options.companyDelay));
    return route.fulfill({json:{companies:options.inaccessible?[]:companies.map(c=>({id:c.company_id,archived_at:c.archived?'2026-01-01':null}))}});
   }
-  if(path==='/api/companies' && request.method()==='POST')return route.fulfill({json:{company_id:B,name:request.postDataJSON().name,archived:false,accounts:[]}});
+  if(path==='/api/companies' && request.method()==='POST')return route.fulfill({json:{company_id:B,name:request.postDataJSON().name,role: "owner", archived: false,accounts:[]}});
   if(path==='/api/companies')return route.fulfill({json:{companies}});
   if(options.apiStatus && path==='/api/probe')return route.fulfill({status:options.apiStatus,json:{}});
   if(path==='/api/meta/test')return route.fulfill({json:{connected:false}});
@@ -50,7 +50,7 @@ async function fixture(options={}) {
   if(path.endsWith('/profiles'))return route.fulfill({json:{shared:{state:'not_started'},platforms:[]}});
   return route.fulfill({json:{}});
  });
- const page=await context.newPage();page.setDefaultTimeout(6000);page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(m.type()==='error' && !m.text().startsWith('Failed to load resource:'))errors.push(m.text());});
+ const page=await context.newPage();page.setDefaultTimeout(6000);page.on('pageerror',e=>errors.push(e.message));page.on('console',m=>{if(['error','warning'].includes(m.type()) && !m.text().startsWith('Failed to load resource:'))errors.push(m.text());});
  await page.goto(origin+(options.path??''));
  return {page,context,calls,async close(){assert.deepEqual(errors,[]);await context.close();}};
 }
@@ -76,7 +76,7 @@ for (const transition of ['identity change', 'logout and login']) test(`${transi
  const saved={id:B,company_id:A,title:'Alice generated idea',concept:'Alice private concept',script:'Alice private script',status:'draft',feedback:'none',target_platforms:['instagram'],created_at:'2026-09-20T12:00:00Z',updated_at:'2026-09-20T12:00:00Z',publications:[]};
  const destination=async name=>{await p.getByRole('navigation',{name:'Primary',exact:true}).getByRole('link',{name,exact:true}).click();await heading(p,name).waitFor();};
  try {
-  await p.route('**/api/companies?*',route=>route.fulfill({json:{companies:route.request().headers().authorization.includes(U)?[{company_id:A,name:'Alice workspace',archived:false,accounts:[{account_id:B,platform:'instagram',display_name:'Alice account'}]}]:[{company_id:B,name:'Bob workspace',archived:false,accounts:[]}]}}));
+  await p.route('**/api/companies?*',route=>route.fulfill({json:{companies:route.request().headers().authorization.includes(U)?[{company_id:A,name:'Alice workspace',role: "owner", archived: false,accounts:[{account_id:B,platform:'instagram',display_name:'Alice account'}]}]:[{company_id:B,name:'Bob workspace',role: "owner", archived: false,accounts:[]}]}}));
   await p.route('**/api/companies/*/content?**',route=>route.fulfill({json:{items:[{library_item_id:B,display_title:'Alice content',platform:'instagram',published_at:null,analyzed:true}],next_offset:null}}));
   await p.route('**/api/meta/companies/*/ideas?**',route=>route.fulfill({json:{items:[saved],next_cursor:null}}));
   await p.route(`**/api/meta/companies/${A}/ideas/${B}`,route=>route.fulfill({json:saved}));
@@ -122,4 +122,37 @@ for(const width of [1440,1024,768,390,320])test(`password recovery fits ${width}
 
 test('sign-out failure locks private UI and offers retry',async()=>{
  const f=await fixture({signedIn:true,selected:A});try{const p=f.page;await heading(p,'Overview').waitFor();await p.route('https://auth-test.supabase.co/auth/v1/logout*',r=>r.fulfill({status:500,json:{msg:'offline'}}));await p.getByRole('button',{name:'Sign out',exact:true}).click();await heading(p,'Finish signing out').waitFor();assert.doesNotMatch(await p.locator('body').textContent(),/Alice workspace|alice@example.com/);await p.unroute('https://auth-test.supabase.co/auth/v1/logout*');await p.getByRole('button',{name:'Sign out',exact:true}).click();await heading(p,'Welcome back').waitFor();}finally{await f.close();}
+});
+
+test('provider-session expiry does not refresh or sign out the application user',async()=>{
+ const f=await fixture({signedIn:true});try{
+  await heading(f.page,'Overview').waitFor();
+  await f.page.route('**/api/provider-expiry',r=>r.fulfill({status:401,headers:{'X-ContentMetric-Auth':'provider'},json:{detail:'Reconnect Meta to continue.'}}));
+  assert.equal(await f.page.evaluate(async()=>{const {apiFetch}=await import('/src/auth/apiFetch.ts');return (await apiFetch('/api/provider-expiry')).status;}),401);
+  await heading(f.page,'Overview').waitFor();assert.equal(f.calls.filter(c=>c.query==='?grant_type=refresh_token').length,0);
+ }finally{await f.close();}
+});
+test('member sees product navigation and profile refresh without administrative controls',async()=>{
+ const f=await fixture({signedIn:true,selected:A});try{
+  await f.page.route('**/api/companies?*',r=>r.fulfill({json:{companies:[{company_id:A,name:'Member workspace',role:'member',archived:false,accounts:[]}]}}));
+  await f.page.reload();await heading(f.page,'Overview').waitFor();
+  await f.page.getByRole('navigation',{name:'Primary',exact:true}).getByRole('link',{name:'Settings',exact:true}).click();
+  await f.page.getByText('You are a member.',{exact:false}).waitFor();
+  for(const name of ['Save name','Archive company','Refresh available accounts'])assert.equal(await f.page.getByRole('button',{name,exact:true}).count(),0);
+  assert.equal(await f.page.getByRole('heading',{name:'Content ownership',exact:true}).count(),0);
+  assert.equal(f.calls.some(c=>c.path==='/api/meta/accounts'),false);
+  await f.page.getByText('Company intelligence · Member workspace',{exact:true}).click();
+  assert.equal(await f.page.getByRole('button',{name:'Refresh company intelligence'}).isEnabled(),true);
+  for(const name of ['Content','Generate','Ideas'])assert.equal(await f.page.getByRole('navigation',{name:'Primary',exact:true}).getByRole('link',{name,exact:true}).count(),1);
+ }finally{await f.close();}
+});
+for(const width of [1440,1024,768,390,320])test(`verification, callback, no-company and account control fit ${width}px`,async()=>{
+ const f=await fixture({path:'signup',width,empty:true});try{
+  const p=f.page;await p.getByLabel('Email',{exact:true}).fill('alice@example.com');await p.getByLabel('Password',{exact:true}).fill('Strong-password-123');await p.getByLabel('Confirm password',{exact:true}).fill('Strong-password-123');await p.getByRole('button',{name:'Create account',exact:true}).click();await heading(p,'Check your email').waitFor();
+  assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await p.screenshot({path:`/tmp/v6-d-auth-screenshots/verification-${width}.png`});
+  await p.goto(origin+'auth/callback?error=access_denied');await heading(p,'Link unavailable').waitFor();assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await p.screenshot({path:`/tmp/v6-d-auth-screenshots/callback-${width}.png`});
+  await p.goto(origin+'login');await login(p);await heading(p,'Overview').waitFor();await heading(p,'No company selected').waitFor();
+  if(width<=700)await p.getByRole('button',{name:'Open navigation'}).click();
+  await p.getByRole('button',{name:'Sign out',exact:true}).waitFor();assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);await p.screenshot({path:`/tmp/v6-d-auth-screenshots/account-${width}.png`});
+ }finally{await f.close();}
 });

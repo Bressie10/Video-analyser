@@ -7,7 +7,7 @@ let server, browser, origin, apiModule;
 const uuid = n => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const A = uuid(1000), B = uuid(2000);
 const item = n => ({ library_item_id: uuid(n), video_id: n % 2 ? null : uuid(n+5000), display_title: `Source ${n}`, platform: n % 2 ? 'instagram' : 'facebook', published_at: new Date(Date.UTC(2026, 0, n)).toISOString(), analyzed: true });
-const company = (id, name, platforms = ['instagram', 'facebook', 'meta_ads']) => ({ company_id: id, name, archived: false, accounts: platforms.map((platform, i) => ({ account_id: uuid(3000+i), display_name: platform, platform })) });
+const company = (id, name, platforms = ['instagram', 'facebook', 'meta_ads']) => ({ company_id: id, name, role: "owner", archived: false, accounts: platforms.map((platform, i) => ({ account_id: uuid(3000+i), display_name: platform, platform })) });
 const saved = { id: uuid(9000), company_id: A, title: 'Persisted winter idea', concept: 'Help homeowners prepare.', script: 'Start with the roof.\nThen check the windows.', target_platforms: ['instagram'] };
 before(async () => {
   server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0];

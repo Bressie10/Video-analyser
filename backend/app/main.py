@@ -1,17 +1,16 @@
 import os
-import hmac
-import secrets
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from uuid import UUID
 
 import psycopg
-from fastapi import FastAPI, File, Form, Header, HTTPException, Query, Request, Response, UploadFile
+from fastapi import Depends, FastAPI, File, Form, Header, HTTPException, Query, Request, Response, UploadFile
 from fastapi.responses import JSONResponse, RedirectResponse
 from openai import OpenAIError
 from dotenv import load_dotenv
 
 from app.recommendations import MissingAPIKeyError, recommend_videos
+from app.auth import AuthenticatedUser, require_authenticated_user
 from app import tiktok
 from app.meta_routes import router as meta_router
 from app.meta_discovery import router as meta_discovery_router
@@ -55,6 +54,14 @@ app.include_router(meta_ads_router)
 MAX_UPLOAD_SIZE_BYTES = 500 * 1024 * 1024
 
 
+@app.middleware("http")
+async def private_application_responses(request: Request, call_next):
+    response = await call_next(request)
+    if request.url.path.startswith('/api/'):
+        response.headers.setdefault('Cache-Control', 'private, no-store')
+    return response
+
+
 @app.get("/health")
 async def health_check() -> dict[str, str]:
     """Return a minimal liveness response for local development."""
@@ -62,13 +69,13 @@ async def health_check() -> dict[str, str]:
 
 
 @app.get("/api/tiktok/connect")
-def connect_tiktok() -> RedirectResponse:
+def connect_tiktok(user: AuthenticatedUser = Depends(require_authenticated_user)) -> RedirectResponse:
     """Start web OAuth with a browser-bound anti-forgery state."""
     try:
         config = tiktok.settings()
+        state = tiktok.begin_user_state(user.user_id)
     except tiktok.TikTokConfigurationError:
         raise HTTPException(status_code=503, detail="TikTok is not configured.") from None
-    state = secrets.token_urlsafe(32)
     response = RedirectResponse(tiktok.authorization_url(config, state), status_code=302)
     response.set_cookie(
         tiktok.STATE_COOKIE, state, max_age=tiktok.STATE_MAX_AGE,
@@ -83,7 +90,8 @@ def tiktok_callback(request: Request) -> JSONResponse:
     """Exchange TikTok's authorization code without exposing tokens."""
     state = request.query_params.get("state")
     stored_state = request.cookies.get(tiktok.STATE_COOKIE)
-    if not state or not stored_state or not hmac.compare_digest(state, stored_state):
+    owner = tiktok.consume_user_state(state, stored_state)
+    if owner is None:
         response = JSONResponse({"detail": "Invalid TikTok authorization state."}, status_code=400)
     elif request.query_params.get("error") or not request.query_params.get("code"):
         response = JSONResponse({"detail": "TikTok authorization was not completed."}, status_code=400)
@@ -93,7 +101,7 @@ def tiktok_callback(request: Request) -> JSONResponse:
         except tiktok.TikTokError:
             response = JSONResponse({"detail": "TikTok authorization failed."}, status_code=502)
         else:
-            session_id = tiktok.create_session(tokens)
+            session_id = tiktok.create_session(tokens, owner_user_id=owner)
             response = JSONResponse({"connected": True})
             response.set_cookie(
                 tiktok.SESSION_COOKIE, session_id, max_age=tiktok.SESSION_MAX_AGE,
@@ -105,16 +113,16 @@ def tiktok_callback(request: Request) -> JSONResponse:
 
 
 @app.get("/api/tiktok/videos")
-def tiktok_videos(request: Request, response: Response, cursor: int | None = Query(default=None, ge=0)) -> dict:
+def tiktok_videos(request: Request, response: Response, cursor: int | None = Query(default=None, ge=0), user: AuthenticatedUser = Depends(require_authenticated_user)) -> dict:
     """Return one page of the authorized user's public videos and counts."""
     try:
         config = tiktok.settings()
-        access_token = tiktok.access_token_for_session(request.cookies.get(tiktok.SESSION_COOKIE), config)
+        access_token = tiktok.access_token_for_session(request.cookies.get(tiktok.SESSION_COOKIE), config, owner_user_id=user.user_id)
         videos = tiktok.list_videos(access_token, cursor)
     except tiktok.TikTokConfigurationError:
         raise HTTPException(status_code=503, detail="TikTok is not configured.") from None
     except tiktok.TikTokNotConnected:
-        raise HTTPException(status_code=401, detail="TikTok account is not connected.") from None
+        raise HTTPException(status_code=401, detail="TikTok account is not connected.", headers={"X-ContentMetric-Auth": "provider"}) from None
     except tiktok.TikTokError:
         raise HTTPException(status_code=502, detail="TikTok request failed.") from None
     response.headers["Cache-Control"] = "no-store"
@@ -140,7 +148,7 @@ def database_health_check() -> dict[str, str]:
 
 
 @app.post("/api/photos")
-async def upload_photo(photo: UploadFile = File(...)) -> dict[str, str]:
+async def upload_photo(photo: UploadFile = File(...), user: AuthenticatedUser = Depends(require_authenticated_user)) -> dict[str, str]:
     """Accept an image upload for later analysis without persisting it."""
     if not photo.content_type or not photo.content_type.startswith("image/"):
         raise HTTPException(status_code=415, detail="Only image files are supported.")
@@ -157,6 +165,7 @@ async def upload_video(
     request: Request,
     video: UploadFile = File(...),
     tiktok_url: str | None = Form(default=None),
+    user: AuthenticatedUser = Depends(require_authenticated_user),
 ) -> dict[str, object]:
     """Validate, normalise, and extract PCM WAV audio from a video upload."""
     filename = video.filename or "upload"
@@ -174,12 +183,12 @@ async def upload_video(
             raise HTTPException(status_code=422, detail="Enter a full TikTok video URL.") from None
         try:
             config = tiktok.settings()
-            access_token = tiktok.access_token_for_session(request.cookies.get(tiktok.SESSION_COOKIE), config)
+            access_token = tiktok.access_token_for_session(request.cookies.get(tiktok.SESSION_COOKIE), config, owner_user_id=user.user_id)
             performance = tiktok.video_performance(access_token, tiktok_video_id)
         except tiktok.TikTokConfigurationError:
             raise HTTPException(status_code=503, detail="TikTok is not configured.") from None
         except tiktok.TikTokNotConnected:
-            raise HTTPException(status_code=401, detail="TikTok account is not connected.") from None
+            raise HTTPException(status_code=401, detail="TikTok account is not connected.", headers={"X-ContentMetric-Auth": "provider"}) from None
         except tiktok.TikTokVideoNotFound:
             raise HTTPException(status_code=404, detail="TikTok video was not found for this account.") from None
         except tiktok.TikTokError:
@@ -209,16 +218,16 @@ async def upload_video(
         analysis.update(performance)
     if os.environ.get("DATABASE_URL"):
         try:
-            video_id = save_analysis(analysis)
+            video_id = save_analysis(analysis, owner_user_id=user.user_id)
         except psycopg.Error as error:
             raise HTTPException(status_code=503, detail="Database is unavailable.") from error
         return {"video_id": video_id, **analysis}
     return analysis
 
 
-def _stored_analysis(video_id: UUID) -> dict:
+def _stored_analysis(video_id: UUID, user: AuthenticatedUser) -> dict:
     try:
-        analysis = get_analysis(video_id)
+        analysis = get_analysis(video_id, owner_user_id=user.user_id)
     except ValueError as error:
         raise HTTPException(status_code=503, detail=str(error)) from error
     except psycopg.Error as error:
@@ -229,18 +238,19 @@ def _stored_analysis(video_id: UUID) -> dict:
 
 
 @app.get("/api/videos/{video_id}/analysis")
-def read_video_analysis(video_id: UUID) -> dict:
+def read_video_analysis(video_id: UUID, user: AuthenticatedUser = Depends(require_authenticated_user)) -> dict:
     """Expose stored metadata and analysis to API clients."""
-    return _stored_analysis(video_id)
+    return _stored_analysis(video_id, user)
 
 
 @app.post("/api/videos/{video_id}/recommendations")
 def create_video_recommendations(
     video_id: UUID,
     runtime_api_key: str | None = Header(default=None, alias="X-OpenAI-API-Key"),
+    user: AuthenticatedUser = Depends(require_authenticated_user),
 ) -> dict[str, str]:
     """Ask GPT-6 Sol to recommend future videos from stored analysis."""
-    analysis = _stored_analysis(video_id)
+    analysis = _stored_analysis(video_id, user)
     try:
         return recommend_videos(analysis, api_key=runtime_api_key)
     except MissingAPIKeyError as error:

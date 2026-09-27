@@ -45,6 +45,7 @@ after(async () => {
 });
 async function context(persisted) {
   const c = await browser.newContext({ extraHTTPHeaders: { Cookie: `${session.name}=${session.value}`, Authorization: `Bearer ${session.jwt}` } });
+  await c.addInitScript(jwt => { window.__authMock = { session: { access_token: jwt, user: { id: '11111111-1111-4111-8111-111111111111', email: 'test@example.com' } } }; }, session.jwt);
   await c.addCookies([{ name: session.name, value: session.value, domain: '127.0.0.1', path: '/api', httpOnly: true, secure: true, sameSite: 'Lax' }]);
   if (persisted !== undefined) await c.addInitScript(({ KEY, persisted }) => { if (!sessionStorage.initialized) { localStorage.setItem(KEY, persisted); sessionStorage.initialized = 'true'; } }, { KEY, persisted });
   return c;

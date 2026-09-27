@@ -27,7 +27,7 @@ async function fixture({ page = 'content', width = 1440, selected = A, linked = 
     const url = new URL(route.request().url()); calls.push(url);
     if (await intercept?.(route, url)) return;
     if (new URL(route.request().url()).pathname === '/api/me/companies') return route.fulfill({ json: { companies: [A, B].map(value => ({ id: typeof value === 'string' ? value : value.id, archived_at: null })) } });
-    if (url.pathname === '/api/companies') return route.fulfill({ json: { companies: [A, B].map((company_id, i) => ({ company_id, name: i ? 'Beta' : 'Northline Studio', archived: false, accounts: linked ? [{ account_id: id(i + 3), platform: 'instagram', display_name: 'Studio Instagram' }] : [] })) } });
+    if (url.pathname === '/api/companies') return route.fulfill({ json: { companies: [A, B].map((company_id, i) => ({ company_id, name: i ? 'Beta' : 'Northline Studio', role: "owner", archived: false, accounts: linked ? [{ account_id: id(i + 3), platform: 'instagram', display_name: 'Studio Instagram' }] : [] })) } });
     if (url.pathname.endsWith('/content')) return route.fulfill({ json: { items: (url.searchParams.get('analyzed_only') === 'true' ? content.filter(c => c.analyzed) : content).slice(0, Number(url.searchParams.get('limit') || 20)), next_offset: null } });
     if (url.pathname.endsWith('/ideas')) return route.fulfill({ json: { items: ideas, next_cursor: null } });
     return route.fulfill({ json: { connected: false, accounts: [] } });

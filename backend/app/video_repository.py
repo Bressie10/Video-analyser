@@ -18,7 +18,7 @@ def _database_url() -> str:
     return database_url
 
 
-def save_analysis(analysis: dict, *, connection=None, video_id=None, analysis_version=1, connection_id=None) -> str:
+def save_analysis(analysis: dict, *, connection=None, video_id=None, analysis_version=1, connection_id=None, owner_user_id=None) -> str:
     """Store one processing result and its ordered child records atomically."""
     performance = None
     if analysis.get("performance_metrics") is not None:
@@ -43,6 +43,11 @@ def save_analysis(analysis: dict, *, connection=None, video_id=None, analysis_ve
                 audio['codec'], audio['codec_long_name'], audio['sample_rate'], audio['channels'],
                 audio['channel_layout'], audio['bit_rate'], analysis['audio']['text'],
             ]
+            if owner_user_id is not None:
+                from app.auth_repository import ensure_profile
+                ensure_profile(connection, owner_user_id)
+                columns += ['owner_user_id']
+                values += [owner_user_id]
             replacement_id = video_id
             if replacement_id is not None:
                 columns += ['analysis_version', 'meta_connection_id', 'id']
@@ -105,18 +110,20 @@ def save_analysis(analysis: dict, *, connection=None, video_id=None, analysis_ve
     return str(video_id)
 
 
-def get_analysis(video_id: UUID, *, connection_id=None) -> dict | None:
+def get_analysis(video_id: UUID, *, connection_id=None, owner_user_id=None) -> dict | None:
     """Load a complete result in the same shape as the upload response."""
     with psycopg.connect(_database_url(), connect_timeout=3, row_factory=dict_row) as connection:
-        return read_analysis(connection, video_id, connection_id=connection_id)
+        return read_analysis(connection, video_id, connection_id=connection_id, owner_user_id=owner_user_id)
 
 
-def read_analysis(connection, video_id, *, connection_id=None, company_authorized=False):
+def read_analysis(connection, video_id, *, connection_id=None, company_authorized=False, owner_user_id=None):
     """Internal reader. Company callers MUST authorize this item on this transaction first."""
     with connection.cursor() as cursor:
         cursor.execute("SELECT * FROM videos WHERE id = %s", (video_id,))
         row = cursor.fetchone()
         if row is None:
+            return None
+        if owner_user_id is not None and row.get('owner_user_id') != owner_user_id:
             return None
         if not company_authorized and row.get('meta_connection_id') is not None and row['meta_connection_id'] != connection_id:
             return None
@@ -183,7 +190,7 @@ class PerformanceSourceConflict(ValueError):
     """The single stored snapshot belongs to a different provider."""
 
 
-def save_performance(video_id: UUID, performance: dict) -> bool:
+def save_performance(video_id: UUID, performance: dict, *, owner_user_id=None) -> bool:
     """Attach/refresh one snapshot atomically, preserving other analysis data.
 
     Return False for an unknown video; never replace another provider's snapshot.
@@ -193,7 +200,10 @@ def save_performance(video_id: UUID, performance: dict) -> bool:
     with psycopg.connect(_database_url(), connect_timeout=3) as connection:
         with connection.cursor() as cursor:
             # Serialize metric updates for this UUID, including the first insert.
-            cursor.execute("SELECT id FROM videos WHERE id = %s FOR UPDATE", (video_id,))
+            if owner_user_id is None:
+                cursor.execute("SELECT id FROM videos WHERE id = %s FOR UPDATE", (video_id,))
+            else:
+                cursor.execute("SELECT id FROM videos WHERE id=%s AND owner_user_id=%s AND meta_connection_id IS NULL FOR UPDATE", (video_id, owner_user_id))
             if cursor.fetchone() is None:
                 return False
             cursor.execute("SELECT source FROM video_performance WHERE video_id = %s", (video_id,))

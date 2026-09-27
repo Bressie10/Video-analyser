@@ -9,6 +9,7 @@ from uuid import UUID, uuid4
 import psycopg
 from psycopg.conninfo import make_conninfo
 
+from auth_fixtures import USER_ID
 from app import meta
 from app.video_repository import PerformanceSourceConflict, get_analysis, save_analysis, save_performance
 from test_instagram_api import CONFIG, SNAPSHOT, attach, authenticated_api, graph_transport, insights
@@ -20,6 +21,10 @@ class InstagramDatabaseTests(unittest.TestCase):
     def setUp(self):
         from app.main import app
         from app.meta_auth_dependencies import require_meta_session
+        from app.auth import require_authenticated_user, AuthenticatedUser
+        from auth_fixtures import USER_ID
+        app.dependency_overrides[require_authenticated_user] = lambda: AuthenticatedUser(USER_ID, 'fixture@example.com')
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_authenticated_user, None))
         app.dependency_overrides[require_meta_session] = lambda: None
         self.addCleanup(lambda: app.dependency_overrides.pop(require_meta_session, None))
 
@@ -31,14 +36,14 @@ class InstagramDatabaseTests(unittest.TestCase):
             try:
                 url = make_conninfo(os.environ["TEST_DATABASE_URL"], options=f"-csearch_path={schema}")
                 with psycopg.connect(url, autocommit=True) as db:
-                    for migration in sorted(migrations.glob("00[1-5]_*.sql")):
+                    for migration in sorted(migrations.glob("*.sql")):
                         db.execute(migration.read_text())
                     with patch.dict(os.environ, {**CONFIG, "DATABASE_URL": url}):
-                        target = UUID(save_analysis(ANALYSIS))
-                        unrelated = UUID(save_analysis(ANALYSIS))
+                        target = UUID(save_analysis(ANALYSIS, owner_user_id=USER_ID))
+                        unrelated = UUID(save_analysis(ANALYSIS, owner_user_id=USER_ID))
                         tiktok = UUID(save_analysis({
                             **ANALYSIS, **SNAPSHOT, "performance_source": "tiktok",
-                        }))
+                        }, owner_user_id=USER_ID))
                         before = get_analysis(target)
                         api = authenticated_api()
                         with graph_transport() as requests:

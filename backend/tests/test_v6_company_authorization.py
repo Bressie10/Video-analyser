@@ -98,7 +98,7 @@ class CompanyAuthorizationTests(unittest.TestCase):
         result = self.client.post('/api/companies', json={'name': 'Fresh'})
         self.assertEqual(result.status_code, 201, result.text)
         identity = result.json()['company_id']
-        self.assertEqual(set(result.json()), {'company_id', 'name', 'archived', 'accounts'})
+        self.assertEqual(set(result.json()), {'company_id', 'name', 'archived', 'accounts', 'role'})
         row = self.f.db.execute('''SELECT c.connection_id,m.user_id,m.role FROM companies c
             JOIN company_memberships m ON m.company_id=c.id WHERE c.id=%s''', (identity,)).fetchone()
         self.assertEqual(row, {'connection_id': None, 'user_id': USER_ID, 'role': 'owner'})

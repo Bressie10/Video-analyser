@@ -41,6 +41,7 @@ test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-vid
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext({ extraHTTPHeaders: { Authorization: `Bearer ${session.jwt}` } });
     // A real backend-issued session, scoped to the same route as the production cookie.
+    await context.addInitScript(jwt => { window.__authMock = { session: { access_token: jwt, user: { id: '11111111-1111-4111-8111-111111111111', email: 'test@example.com' } } }; }, session.jwt);
     await context.addCookies([{ name: session.name, value: session.value, domain: "127.0.0.1", path: "/api", httpOnly: true, secure: true, sameSite: "Lax" }]);
     const page = await context.newPage(); page.setDefaultTimeout(60000);
     page.on("request", (request) => {

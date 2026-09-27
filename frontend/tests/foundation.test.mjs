@@ -25,7 +25,7 @@ async function fixture({ selected = A, width = 1440, archived = false, inaccessi
     if (new URL(route.request().url()).pathname === '/api/me/companies') return route.fulfill({ json: { companies: [A, B].map(value => ({ id: typeof value === 'string' ? value : value.id, archived_at: null })) } });
     if (path === '/api/companies') return route.fulfill({ status: fail ? 503 : 200, json: { companies: [
       ...(!inaccessible ? [{ company_id: A, name: companyName, archived, accounts: [{ account_id: B, platform: 'instagram', display_name: 'Northline Instagram' }] }] : []),
-      { company_id: B, name: 'Beta', archived: false, accounts: [] },
+      { company_id: B, name: 'Beta', role: "owner", archived: false, accounts: [] },
     ] } });
     if (path.endsWith('/content')) return route.fulfill({ json: { items: [], next_offset: null } });
     if (path.endsWith('/ideas')) return route.fulfill({ json: { items: [], next_cursor: null } });

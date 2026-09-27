@@ -8,6 +8,7 @@ from fastapi import APIRouter, Depends, Path, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, model_validator
 
+from app.auth import AuthenticatedUser, require_authenticated_user
 from app import meta_ads, meta
 from app.meta_auth_dependencies import require_meta_session
 from app.meta_routes import _private
@@ -32,25 +33,27 @@ class AdMetricsRequest(BaseModel):
 @router.post("/{ad_id}/metrics")
 def fetch_ad_metrics(
     request: Request,
+    *,
+    user: AuthenticatedUser = Depends(require_authenticated_user),
     body: AdMetricsRequest,
     ad_id: str = Path(pattern=r"^[0-9]{1,30}$"),
 ):
     session_id = request.cookies.get(meta.SESSION_COOKIE)
     try:
         client = meta.session_client(session_id)
-        analysis = get_analysis(body.video_id)
+        analysis = get_analysis(body.video_id, owner_user_id=user.user_id)
         if analysis is None:
             return _private(JSONResponse({"detail": "Video analysis not found."}, status_code=404))
         if analysis.get("performance_source") not in (None, "meta_ads"):
             raise PerformanceSourceConflict("Video already has performance from a different source.")
         performance = meta_ads.ad_performance(client, ad_id, body.since, body.until)
-        if not save_performance(body.video_id, performance):
+        if not save_performance(body.video_id, performance, owner_user_id=user.user_id):
             return _private(JSONResponse({"detail": "Video analysis not found."}, status_code=404))
     except meta.MetaConfigurationError:
         response = JSONResponse({"detail": "Meta is not configured correctly."}, status_code=503)
     except meta.MetaNotConnected:
         meta.remove_session(session_id)
-        response = JSONResponse({"detail": "Meta account is not connected. Connect again."}, status_code=401)
+        response = JSONResponse({"detail": "Meta account is not connected. Connect again."}, status_code=401, headers={"X-ContentMetric-Auth": "provider"})
         response.delete_cookie(meta.SESSION_COOKIE, path="/api/meta", secure=True, httponly=True, samesite="lax")
     except meta_ads.AdMetricsUnavailable as error:
         response = JSONResponse({"detail": str(error)}, status_code=422)

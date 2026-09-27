@@ -30,14 +30,14 @@ async function withApp(options, run) {
   const calls = [], errors = [];
   const items = options.items ?? [video(1), video(2)];
   let connected = options.connected ?? true;
-  await context.route("https://meta-provider.test/authorize", (route) => route.fulfill({ contentType: "text/html", body: `<a href="${origin}/api/meta/callback?code=mock&state=mock">Continue with Meta</a>` }));
+  await context.route("https://www.facebook.com/v25.0/dialog/oauth", (route) => route.fulfill({ contentType: "text/html", body: `<a href="${origin}/api/meta/callback?code=mock&state=mock">Continue with Meta</a>` }));
   await context.route("**/api/**", async (route) => {
     const request = route.request(), url = new URL(request.url()), path = url.pathname;
     calls.push({ path, method: request.method(), body: request.postDataJSON(), headers: request.headers(), url });
     if (options.route && await options.route(route, url, calls)) return;
     if (path === "/api/companies") return route.fulfill({ json: { items: [], next_cursor: null } });
     if (path === "/api/meta/test") return route.fulfill({ status: 200, json: { connected } });
-    if (path === "/api/meta/connect") return route.fulfill({ contentType: "text/html", body: '<script>location.href="https://meta-provider.test/authorize"</script>' });
+    if (path === "/api/meta/connect") return route.fulfill({ json: { authorization_url: "https://www.facebook.com/v25.0/dialog/oauth" } });
     if (path === "/api/meta/callback") { connected = true; return route.fulfill({ json: { connected: true, job_id: jobId } }); }
     if (path === "/api/meta/library") return route.fulfill({ json: { items, next_cursor: null } });
     if (path === "/api/meta/sync") return route.fulfill({ status: 202, json: { job_id: jobId } });

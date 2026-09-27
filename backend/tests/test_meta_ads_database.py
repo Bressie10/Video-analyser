@@ -11,6 +11,7 @@ import psycopg
 from psycopg.conninfo import make_conninfo
 from psycopg.types.json import Jsonb
 
+from auth_fixtures import USER_ID
 from app import meta
 from app.video_repository import get_analysis, save_analysis, save_performance
 from test_meta_ads_api import CONFIG, ROW, attach, authenticated_api, graph_transport
@@ -22,6 +23,10 @@ class MetaAdsDatabaseTests(unittest.TestCase):
     def setUp(self):
         from app.main import app
         from app.meta_auth_dependencies import require_meta_session
+        from app.auth import require_authenticated_user, AuthenticatedUser
+        from auth_fixtures import USER_ID
+        app.dependency_overrides[require_authenticated_user] = lambda: AuthenticatedUser(USER_ID, 'fixture@example.com')
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_authenticated_user, None))
         app.dependency_overrides[require_meta_session] = lambda: None
         self.addCleanup(lambda: app.dependency_overrides.pop(require_meta_session, None))
 
@@ -43,13 +48,15 @@ class MetaAdsDatabaseTests(unittest.TestCase):
                     self.assertEqual(after[:-1], before)
                     self.assertIsNone(after[-1])
 
+                    for migration in sorted(migrations.glob('*.sql')):
+                        if int(migration.name[:3]) >= 5: db.execute(migration.read_text())
                     # Include ordered children so changing performance cannot corrupt video analysis.
                     analysis = deepcopy(ANALYSIS)
                     analysis['scenes'] = [{'scene_number': 1, 'start_seconds': 0, 'end_seconds': 1,
                                            'duration_seconds': 1, 'cut_timestamp_seconds': None}]
                     analysis['motion_events'] = [{'start_seconds': 0, 'end_seconds': 1, 'type': 'camera_pan', 'confidence': 0.9}]
-                    target = UUID(save_analysis(analysis))
-                    unrelated = UUID(save_analysis(ANALYSIS))
+                    target = UUID(save_analysis(analysis, owner_user_id=USER_ID))
+                    unrelated = UUID(save_analysis(ANALYSIS, owner_user_id=USER_ID))
                     before_analysis = get_analysis(target)
                     api = authenticated_api()
                     with graph_transport():
@@ -82,7 +89,7 @@ class MetaAdsDatabaseTests(unittest.TestCase):
                             self.assertEqual(attach(api, target).status_code, status)
                         self.assertEqual(get_analysis(target)['performance_metrics'], refreshed)
                     with graph_transport() as requests:
-                        self.assertEqual(attach(api, legacy).status_code, 409)
+                        self.assertEqual(attach(api, legacy).status_code, 404)  # unclaimed legacy upload is hidden
                         self.assertEqual(attach(api, uuid4()).status_code, 404)
                         self.assertEqual(requests, [])
                     self.assertFalse(save_performance(uuid4(), snapshot))

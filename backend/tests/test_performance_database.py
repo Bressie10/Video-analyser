@@ -12,6 +12,7 @@ from psycopg.conninfo import make_conninfo
 from fastapi.testclient import TestClient
 
 from app.main import app
+from auth_fixtures import USER_ID
 from app.performance import performance_snapshot
 from app.video_repository import get_analysis, save_analysis
 from test_recommendations_api import ANALYSIS
@@ -19,6 +20,10 @@ from test_recommendations_api import ANALYSIS
 
 @unittest.skipUnless(os.environ.get("TEST_DATABASE_URL"), "requires disposable PostgreSQL")
 class PerformanceDatabaseTests(unittest.TestCase):
+    def setUp(self):
+        from integration_auth import client_factory
+        self.client = client_factory(self, app)
+
     def test_migration_repository_api_and_model(self):
         schema = "metrics_test_" + uuid4().hex
         migrations = Path(__file__).resolve().parents[1] / "migrations"
@@ -48,15 +53,18 @@ class PerformanceDatabaseTests(unittest.TestCase):
                     self.assertEqual(after[-1], "tiktok")
                     db.execute((migrations / "004_meta_ads_metrics.sql").read_text())
                     db.execute((Path(__file__).parent / "schema_roundtrip.sql").read_text())
+                    for migration in sorted(migrations.glob('*.sql')):
+                        if int(migration.name[:3]) >= 5:
+                            db.execute(migration.read_text())
                     with patch.dict(os.environ, {"DATABASE_URL": url, "OPENAI_API_KEY": "test-key"}):
                         for source in ("tiktok", "instagram", "facebook", "meta_ads"):
                             with self.subTest(source=source):
                                 snapshot = performance_snapshot(source, {"view_count": 0, "like_count": 2})
-                                video_id = save_analysis({**ANALYSIS, **snapshot})
+                                video_id = save_analysis({**ANALYSIS, **snapshot}, owner_user_id=USER_ID)
                                 stored = get_analysis(UUID(video_id))
                                 for key, value in snapshot.items():
                                     self.assertEqual(stored[key], value)
-                                api = TestClient(app)
+                                api = self.client(app)
                                 self.assertEqual(api.get(f"/api/videos/{video_id}/analysis").json(), stored)
                                 with patch("app.recommendations.OpenAI") as model:
                                     sdk = model.return_value.__enter__.return_value

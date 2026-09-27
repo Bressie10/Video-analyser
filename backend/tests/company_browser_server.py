@@ -24,7 +24,7 @@ def main():
     try:
         fixture.setUp()
         f = fixture.f
-        from auth_fixtures import LocalAuth, USER_ID
+        from auth_fixtures import LocalAuth, USER_ID, OTHER_USER_ID
         from app.auth import get_token_verifier
         from app.auth_repository import ensure_profile
         auth = LocalAuth()
@@ -40,7 +40,7 @@ def main():
         for ad, label in [(f.ad_a, 'Summer ad'), (f.ad_b, 'Winter ad'), (f.unassigned, 'Unused ad')]:
             f.db.execute('UPDATE meta_library_items SET label=%s WHERE id=%s', (label, ad))
         # Foreign company/account/ad and raw provider IDs stay in the fixture to test redaction.
-        (directory / 'session.json').write_text(json.dumps({'name': meta.SESSION_COOKIE, 'value': 'company-api-session', 'jwt': auth.token()}))
+        (directory / 'session.json').write_text(json.dumps({'name': meta.SESSION_COOKIE, 'value': 'company-api-session', 'jwt': auth.token(), 'other_jwt': auth.token(sub=str(OTHER_USER_ID))}))
         (directory / 'session.json').chmod(0o600)
         class Server(uvicorn.Server):
             @contextmanager
