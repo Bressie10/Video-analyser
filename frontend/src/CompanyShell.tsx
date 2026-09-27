@@ -13,10 +13,10 @@ export function CompanyEmptyState({ name, onManage, onSkip, skipped }: { name: s
     {skipped && <p>You can link accounts later in Manage companies.</p>}
   </section>;
 }
-export function CompanyShell({ companyUI, children }: { companyUI: CompanyUIProps; children: ReactNode }) {
+export function CompanyShell({ companyUI, children }: { companyUI: CompanyUIProps; children: ReactNode | ((onManage: () => void) => ReactNode) }) {
   return <CompanySwitchGuardProvider><Shell companyUI={companyUI}>{children}</Shell></CompanySwitchGuardProvider>;
 }
-function Shell({ companyUI: model, children }: { companyUI: CompanyUIProps; children: ReactNode }) {
+function Shell({ companyUI: model, children }: { companyUI: CompanyUIProps; children: ReactNode | ((onManage: () => void) => ReactNode) }) {
   const [management, setManagement] = useState(false);
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
@@ -63,7 +63,7 @@ function Shell({ companyUI: model, children }: { companyUI: CompanyUIProps; chil
       : !active ? <section className="welcome"><h2>No company selected</h2><p>Create or select a company to start your workspace.</p><button onClick={manage}>Manage companies</button></section>
       : active.archived ? <section className="welcome"><h2>{active.name} is archived</h2><p>Restore it in Manage companies or select another company.</p><button onClick={manage}>Manage companies</button></section>
       : !active.hasLinkedAccounts ? <CompanyEmptyState name={active.name} onManage={manage} skipped={skipped.includes(active.id)} onSkip={() => setSkipped(current => [...current, active.id])} /> : null}
-    {(model.status === 'ready' && active && !active.archived && active.hasLinkedAccounts) && <div hidden={management}>{children}</div>}
+    {(model.status === 'ready' && active && !active.archived && active.hasLinkedAccounts) && <div hidden={management}>{typeof children === 'function' ? children(manage) : children}</div>}
     <dialog className="company-confirm" ref={dialog} aria-labelledby="company-confirm-title" onCancel={event => { event.preventDefault(); setPending(null); }}>
       <h2 id="company-confirm-title">Switch company?</h2>
       {reasons.unsavedEdits && <p>You have unsaved edits. Switching may discard those edits.</p>}

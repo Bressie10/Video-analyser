@@ -111,3 +111,15 @@ input[type=checkbox] { width: 20px; height: 20px; flex-shrink: 0; accent-color: 
   .company-form { align-items: stretch; flex-direction: column; }
   .company-confirm { padding: 16px; }
 }
+
+.generation form { display: grid; gap: 18px; }
+.generation form > button { justify-self: start; }
+.generation-filters { display: grid; grid-template-columns: 2fr 1fr; gap: 16px; }
+.generation-filters label, .generation-brief { display: grid; gap: 8px; min-width: 0; }
+.generation input[type=search], .generation select, .generation textarea { width: 100%; min-width: 0; max-width: 100%; padding: 12px; border: 1px solid var(--line); border-radius: 7px; font: inherit; color: var(--ink); background: white; }
+.generation textarea { resize: vertical; }
+.generation-sources { max-height: 440px; overflow-y: auto; padding: 6px; }
+.generation-sources small { display: block; color: var(--muted); margin-top: 4px; }
+.generation-sources span { min-width: 0; overflow-wrap: anywhere; }
+.generation-count { font-weight: 650; margin: 0; }
+@media (max-width: 600px) { .generation-filters { grid-template-columns: 1fr; } .generation form > button { width: 100%; } }

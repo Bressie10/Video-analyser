@@ -11,7 +11,8 @@
     "test:e2e": "node --test tests/flow.test.mjs tests/meta-status.test.mjs",
     "test:integration": "node --test tests/integration.test.mjs",
     "test:companies": "node --test tests/company.test.mjs",
-    "test:company-integration": "node --test tests/company-integration.test.mjs"
+    "test:company-integration": "node --test tests/company-integration.test.mjs",
+    "test:generation": "node --test tests/generation.test.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",
