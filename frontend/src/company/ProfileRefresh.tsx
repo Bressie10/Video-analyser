@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { CompanyScopeBoundary, useCompany, useCompanyStore } from './CompanyProvider';
 import { ServiceError } from '../metaLibrary';
 import { companyError } from './companyApi';
+import { Button } from '../ui/controls';
+import '../settings.css';
 export function ProfileRefresh() { return <CompanyScopeBoundary><Refresh /></CompanyScopeBoundary>; }
 function Refresh() {
   const { activeCompany } = useCompany(); const store = useCompanyStore();
@@ -49,5 +51,5 @@ function Refresh() {
     } catch (caught) { if (scope.isCurrent() && !lifetime.current.signal.aborted) setError(companyError(caught)); }
     finally { lock.current = false; if (scope.isCurrent() && !lifetime.current.signal.aborted) setBusy(false); }
   }
-  return <details className="profile-refresh"><summary>Company intelligence · {activeCompany?.name}</summary><p>Refresh the shared intelligence used for new ideas in the active company.</p><button disabled={busy || tracking || activeCompany?.archived} onClick={() => void refresh()}>{busy ? 'Requesting refresh…' : 'Refresh company intelligence'}</button>{message && <p role="status">{message}</p>}{status && <p role="status">{status}</p>}{error && <p role="alert">{error}</p>}{statusError && <div role="alert"><p>{statusError}</p><button onClick={() => { setStatusError(''); setCheck(v => v + 1); }}>Retry refresh status</button></div>}</details>;
+  return <section className="settings-analysis" aria-labelledby="settings-analysis"><h2 id="settings-analysis" tabIndex={-1}>AI &amp; Analysis</h2><p>Keep the company knowledge used for new ideas up to date.</p><details className="profile-refresh"><summary>Company intelligence · {activeCompany?.name}</summary><p>Refresh the shared intelligence used for new ideas in the active company.</p><Button disabled={busy || tracking || activeCompany?.archived} onClick={() => void refresh()}>{busy ? 'Requesting refresh…' : 'Refresh company intelligence'}</Button>{message && <p role="status">{message}</p>}{status && <p role="status">{status}</p>}{error && <p role="alert">{error}</p>}{statusError && <div role="alert"><p>{statusError}</p><Button onClick={() => { setStatusError(''); setCheck(v => v + 1); }}>Retry refresh status</Button></div>}</details></section>;
 }

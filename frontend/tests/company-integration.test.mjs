@@ -121,6 +121,7 @@ test('real browser → FastAPI → PostgreSQL lifecycle, ownership, Ads, guards 
     await p.getByRole('checkbox', { name: 'Ads Business', exact: true }).click();
     await p.getByRole('alert').filter({ hasText: 'still has assigned ads' }).waitFor();
     assert.equal(await p.getByRole('checkbox', { name: 'Ads Business', exact: true }).isChecked(), true);
+    await p.getByText('Manage existing and archived companies', { exact: true }).click();
     // Inspect B without changing the active workspace. Conflicts must not transfer ownership.
     await p.getByRole('button', { name: 'B', exact: true }).click();
     await p.getByRole('checkbox', { name: 'Facebook Page', exact: true }).click();
@@ -129,6 +130,7 @@ test('real browser → FastAPI → PostgreSQL lifecycle, ownership, Ads, guards 
     await check(p, 'Ads Business', true);
     assert.equal(await p.getByRole('checkbox', { name: 'Summer ad', exact: true }).count(), 0);
     await p.getByRole('button', { name: 'Renamed studio — Active', exact: true }).click();
+    await p.getByText('Move to another company', { exact: true }).click();
     await p.getByRole('combobox', { name: /Move Summer ad to/ }).selectOption({ label: 'B' });
     await p.getByRole('button', { name: 'Reassign Summer ad', exact: true }).click();
     await p.getByRole('checkbox', { name: 'Summer ad', exact: true }).waitFor({ state: 'detached' });

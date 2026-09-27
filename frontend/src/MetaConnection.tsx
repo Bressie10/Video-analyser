@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { friendlyError, isUUID } from "./metaLibrary";
 
+import { Button } from "./ui/controls";
+import { Badge } from "./ui/layout";
+import "./settings.css";
+
 type Status = "checking" | "disconnected" | "connecting" | "connected" | "error";
 
 export function MetaConnection({ onConnectionChange, disconnected = false, disabled = false, onSyncStarted, connectAction }: { connectAction?: RefObject<() => void>; onSyncStarted: (id: string | null) => void; onConnectionChange: (connected: boolean) => void; disconnected?: boolean; disabled?: boolean }) {
@@ -91,8 +95,10 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
 
   useEffect(() => { if (connectAction) connectAction.current = connect; });
 
-  return <section className="connection" aria-labelledby="meta-title">
-    <h2 id="meta-title">Meta account</h2>
+  return <section className="settings-connection" aria-labelledby="settings-meta">
+    <h2 id="settings-meta" tabIndex={-1}>Integrations</h2>
+    <h3>Meta <Badge tone={status === "connected" ? "success" : status === "error" ? "warning" : "neutral"}>{status === "connected" ? "Connected" : status === "error" ? "Connection issue" : status === "disconnected" ? "Not connected" : status === "checking" ? "Checking" : "Connecting"}</Badge></h3>
+    <p>Connect once, then choose Facebook Pages, Instagram accounts and Ads accounts for each company in Content ownership.</p>
     <p role="status">{{
       checking: "Checking Meta connection…",
       disconnected: "Meta is not connected.",
@@ -101,8 +107,8 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
       error: "Meta connection could not be confirmed.",
     }[status]}</p>
     {error && <p role="alert" className="error">{error}</p>}
-    <button type="button" onClick={connect} disabled={disabled || status === "checking" || status === "connecting"}>
+    <Button variant={status === "connected" ? "secondary" : "primary"} type="button" onClick={connect} disabled={disabled || status === "checking" || status === "connecting"}>
       {status === "connecting" ? "Connecting…" : status === "connected" ? "Reconnect Meta" : "Connect Meta"}
-    </button>
+    </Button>
   </section>;
 }

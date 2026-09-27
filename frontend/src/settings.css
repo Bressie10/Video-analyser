@@ -1,0 +1,33 @@
+.settings-page, .settings-connection, .settings-analysis { max-width: 880px; min-width: 0; }
+.settings-page p, .settings-connection p, .settings-analysis p { color: var(--color-text-secondary); }
+.settings-heading { display: flex; align-items: start; justify-content: space-between; gap: var(--space-4); }
+.settings-nav { display: flex; flex-wrap: wrap; gap: var(--space-1); padding-block: var(--space-3); border-bottom: 1px solid var(--color-border); }
+.settings-page .settings-section, section.settings-connection, section.settings-analysis { padding: var(--space-6) 0; margin: 0; border: 0; border-bottom: 1px solid var(--color-border); border-radius: 0; background: transparent; }
+.settings-section h2, .settings-connection h2, .settings-analysis h2 { font-size: var(--text-section); scroll-margin-top: 140px; }
+.settings-form { display: flex; flex-wrap: wrap; align-items: end; gap: var(--space-3); max-width: 640px; }
+.settings-form label { flex: 1 1 240px; min-width: 0; }
+.settings-form label input, .settings-form label select { width: 100%; margin-top: var(--space-2); }
+.settings-picker { min-width: 0; margin-block: var(--space-4); padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+.settings-picker legend { font-weight: 650; padding-inline: var(--space-2); }
+.settings-row { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: var(--space-3); padding-block: var(--space-3); }
+.settings-check { display: flex; align-items: center; gap: var(--space-3); min-height: 44px; min-width: 0; cursor: pointer; }
+.settings-check input { flex: 0 0 auto; width: 18px; height: 18px; min-height: 0; }
+.settings-check span, .settings-page h3, .settings-page button, .settings-page .ui-badge { overflow-wrap: anywhere; }
+.settings-ad + .settings-ad { border-top: 1px solid var(--color-border); }
+.settings-reassign { padding-bottom: var(--space-3); }
+.settings-reassign summary, .settings-disclosure summary, .settings-analysis summary { cursor: pointer; padding-block: var(--space-3); min-height: 44px; }
+.settings-filters { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-3); }
+.settings-filters label { min-width: 0; }
+.settings-filters input, .settings-filters select { width: 100%; }
+.settings-company-list { list-style: none; padding: 0; display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.settings-page .settings-danger { border-left: 3px solid var(--color-border-strong); padding-left: var(--space-4); }
+.settings-note { padding: var(--space-4); background: var(--color-subtle); border-radius: var(--radius-card); }
+.settings-caption { font-size: var(--text-secondary); }
+@media (max-width: 700px) {
+  .settings-heading { flex-direction: column; }
+  .settings-nav .ui-button { padding-inline: var(--space-2); }
+  .settings-filters { grid-template-columns: 1fr; }
+  .settings-form { align-items: stretch; flex-direction: column; }
+  .settings-form label { flex-basis: auto; }
+  .settings-picker { padding: var(--space-3); }
+}

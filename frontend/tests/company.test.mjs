@@ -71,7 +71,7 @@ test('rename archive restore; archived workspace cannot be used', async () => {
     await p.getByRole('button', { name: 'Archive company', exact: true }).click(); await p.getByRole('button', { name: 'Restore company' }).waitFor();
     assert.equal(await p.getByLabel('Facebook Page').isDisabled(), true);
     await p.getByRole('button', { name: 'Back to workspace' }).click(); await p.getByRole('heading', { name: 'Renamed is archived' }).waitFor();
-    await p.getByRole('button', { name: 'Manage companies', exact: true }).click(); await p.getByLabel('Show archived companies').check();
+    await p.getByRole('button', { name: 'Manage companies', exact: true }).click(); await p.getByText('Manage existing and archived companies', { exact: true }).click(); await p.getByLabel('Show archived companies').check();
     await p.getByRole('button', { name: 'Renamed — Archived' }).waitFor(); await p.getByRole('button', { name: 'Restore company' }).click();
     await p.getByRole('button', { name: 'Archive company', exact: true }).waitFor();
   } finally { await p.close(); }
@@ -119,6 +119,6 @@ test('create retry does not duplicate a company after activation fails', async (
     await manage(p); await p.getByLabel('New company name').fill('Retry studio'); await p.getByRole('button', { name: 'Create company', exact: true }).click();
     await p.getByRole('alert').waitFor(); await p.getByRole('button', { name: 'Create company', exact: true }).click();
     await p.waitForFunction(() => document.querySelector('output').textContent === 'create:Retry studio|switch:new|switch:new');
-    assert.equal(await p.getByRole('button', { name: 'Retry studio', exact: true }).count(), 1);
+    await p.getByText('Manage existing and archived companies', { exact: true }).click(); assert.equal(await p.getByRole('button', { name: 'Retry studio', exact: true }).count(), 1);
   } finally { await p.close(); }
 });

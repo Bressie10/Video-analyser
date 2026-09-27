@@ -10,6 +10,7 @@ export interface CompanyAccount {
   name: string;
   kind: 'facebook' | 'instagram' | 'ads';
   linkedCompanyIds: readonly string[];
+  ownerName?: string;
 }
 export interface AdsContent {
   id: string;

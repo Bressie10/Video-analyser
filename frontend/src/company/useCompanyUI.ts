@@ -59,6 +59,7 @@ export function useCompanyUI(metaConnected: boolean, onConnectMeta: () => void):
     companies: state.companies.map(viewCompany), activeCompanyId: state.activeCompanyId, status: state.status,
     error: state.error ? companyError(state.error) : state.persistenceError ? 'Company selection could not be saved in this browser. It remains available for this session.' : undefined,
     accounts: (visible?.accounts ?? []).map(account => ({ id: account.id, name: account.name, kind: account.platform === 'meta_ads' ? 'ads' : account.platform,
+      ownerName: account.organicOwner?.name,
       linkedCompanyIds: state.companies.filter(c => c.accounts.some(a => a.id === account.id)).map(c => c.id) })),
     discoveryCompanyId: visible ? inspectedId : null,
     adsContent: visible?.ads ?? [], discoveryStatus: visible ? visible.error ? 'error' : 'ready' : 'loading',
