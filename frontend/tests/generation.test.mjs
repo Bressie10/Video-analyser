@@ -27,7 +27,7 @@ async function app(options = {}) {
     if (path === '/api/meta/test') return route.fulfill({ json: { connected: false } });
     return route.fulfill({ json: { accounts: [] } });
   });
-  const page = await context.newPage(); page.setDefaultTimeout(5000); page.on('pageerror', e => errors.push(e.message)); await page.goto(`${origin}#generate`);
+  const page = await context.newPage(); page.setDefaultTimeout(5000); page.on('pageerror', e => errors.push(e.message)); page.on('console', message => { if (message.type() === 'error') errors.push(message.text()); }); await page.goto(`${origin}#generate`);
   return { page, calls, errors, close: () => context.close() };
 }
 const generate = p => p.getByRole('button', { name: 'Generate idea', exact: true });
@@ -36,7 +36,7 @@ for (const count of [1, 7, 20, 25]) test(`default All mode resolves latest ${cou
   const f = await app({ count }); const p = f.page;
   try {
     await generate(p).waitFor(); await p.waitForFunction(() => !document.querySelector('button[type=submit]').disabled);
-    assert.equal(await p.getByLabel('All analyzed content', { exact: true }).isChecked(), true);
+    assert.equal(await p.getByLabel('Latest analysed content', { exact: true }).isChecked(), true);
     assert.equal(await p.getByLabel('Instagram', { exact: true }).isChecked(), true); assert.equal(await p.getByLabel('Facebook', { exact: true }).isChecked(), true);
     assert.equal(await p.getByRole('checkbox', { name: /Meta Ads/ }).count(), 0);
     await p.getByLabel('Facebook', { exact: true }).uncheck(); await generate(p).click();
@@ -65,7 +65,7 @@ test('manual search, filter, max 20, deselection, optional brief, no-target bloc
 });
 test('manual selection and result reset on company switch', async () => {
   const f = await app(); const p = f.page;
-  try { await p.getByLabel('Choose manually').check(); await p.locator('.generation-sources input').first().check(); await generate(p).click(); await p.getByRole('heading', { name: saved.title }).waitFor(); await switchBeta(p); await p.getByLabel('All analyzed content', { exact: true }).waitFor(); assert.equal(await p.getByRole('heading', { name: saved.title }).count(), 0); await p.getByLabel('Choose manually').check(); assert.equal(await p.locator('.generation-sources input:checked').count(), 0); } finally { await f.close(); }
+  try { await p.getByLabel('Choose manually').check(); await p.locator('.generation-sources input').first().check(); await generate(p).click(); await p.getByRole('heading', { name: saved.title }).waitFor(); await switchBeta(p); await p.getByLabel('Latest analysed content', { exact: true }).waitFor(); assert.equal(await p.getByRole('heading', { name: saved.title }).count(), 0); await p.getByLabel('Choose manually').check(); assert.equal(await p.locator('.generation-sources input:checked').count(), 0); } finally { await f.close(); }
 });
 test('stale content response ignored after switching companies', async () => {
   let release, began; const gate = new Promise(r => release=r), started = new Promise(r => began=r);
@@ -94,10 +94,10 @@ test('source error retry and loading state', async () => {
   let count=0; const f = await app({ sources: route => ++count === 1 ? route.fulfill({ status: 503, json: { detail: 'SECRET' } }) : route.fulfill({ json: { items: [item(1)], next_offset: null } }) });
   try { await f.page.getByRole('button', { name: 'Retry sources' }).click(); await f.page.getByText('Using 1 source item', { exact: false }).waitFor(); assert.equal(await generate(f.page).isEnabled(), true); } finally { await f.close(); }
 });
-test('responsive 320/600/1280 and result focus', async () => {
+test('responsive 1440/1280/1024/768/390/320 and result focus', async () => {
   const f = await app(); const p = f.page;
   try { await p.getByLabel('Choose manually').check(); await p.locator('.generation-sources input').first().check();
-    for (const width of [320,600,1280]) { await p.setViewportSize({ width, height: 900 }); assert.equal(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await p.screenshot({ path: `/tmp/generation-${width}.png`, fullPage: true }); }
+    for (const width of [1440,1280,1024,768,390,320]) { await p.setViewportSize({ width, height: 900 }); assert.equal(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await p.screenshot({ path: `/tmp/v5-c-generation-${width}.png`, fullPage: true }); }
     await p.setViewportSize({ width:320,height:900 }); await generate(p).click(); await p.getByRole('heading', { name: saved.title }).waitFor(); assert.equal(await p.evaluate(() => document.activeElement.id), 'generated-title'); assert.equal(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
   } finally { await f.close(); }
 });
@@ -128,4 +128,58 @@ test('default source resolution fetches only latest page 20 and uses library IDs
   assert.deepEqual(Object.fromEntries(new URL(calls[0],'http://local').searchParams),{analyzed_only:'true',limit:'20',order:'desc'});
   assert.deepEqual(rows.map(i=>i.id),[uuid(1),uuid(2)]);
   assert.equal(rows.some(i=>i.id===uuid(5002)),false);
+});
+
+test('unavailable selected sources require explicit removal after reload', async () => {
+  let unavailable = false;
+  const f = await app({ sources: route => route.fulfill({ json: {items: unavailable ? [item(2)] : [item(1),item(2)], next_offset: null} }), generate: route => { unavailable = true; return route.fulfill({status:409,json:{detail:'Source unavailable'}}); } });
+  try {
+    await f.page.getByLabel('Choose manually').check();
+    await f.page.getByRole('checkbox',{name:/^Source 1 /}).check();
+    await f.page.getByRole('checkbox',{name:/^Source 2 /}).check();
+    await generate(f.page).click();
+    await f.page.getByRole('button',{name:'Reload sources'}).click();
+    await f.page.getByText('1 selected source is no longer available.').waitFor();
+    assert.equal(await generate(f.page).isDisabled(),true);
+    await f.page.getByRole('button',{name:'Remove unavailable selection'}).click();
+    assert.equal(await f.page.getByRole('checkbox',{name:/^Source 2 /}).isChecked(),true);
+    assert.equal(await generate(f.page).isEnabled(),true);
+  } finally { await f.close(); }
+});
+
+test('manual one-source request, mobile keyboard interaction, saved document and Ideas route', async () => {
+  const f=await app(); const p=f.page;
+  try {
+    await p.setViewportSize({width:320,height:900});
+    await p.getByLabel('Choose manually').check();
+    const source=p.getByRole('checkbox',{name:/^Source 25 /}); await source.focus(); await p.keyboard.press('Space');
+    await p.getByLabel('Brief (optional)').fill('   ');
+    await generate(p).click(); await p.getByRole('heading',{name:saved.title}).waitFor();
+    assert.deepEqual(f.calls[0].video_ids,[uuid(25)]); assert.equal(f.calls[0].generation_brief,null);
+    assert.equal(await p.evaluate(()=>document.activeElement.id),'generated-title');
+    await p.getByRole('link',{name:'View in Ideas'}).click();
+    await p.getByRole('heading',{level:1,name:'Ideas',exact:true}).waitFor();
+    assert.equal(new URL(p.url()).hash,'#ideas');
+  } finally { await f.close(); }
+});
+
+test('latest workspace and saved document visual states at every required viewport', async () => {
+  const f=await app(); const p=f.page;
+  try {
+    await generate(p).waitFor();
+    await p.waitForFunction(()=>!document.querySelector('button[type=submit]').disabled);
+    assert.equal(await p.title(),'ContentMetric');
+    for(const width of [1440,1280,1024,768,390,320]) {
+      await p.setViewportSize({width,height:900});
+      assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+      await p.screenshot({path:`/tmp/v5-c-generation-latest-${width}.png`,fullPage:true});
+    }
+    await generate(p).click(); await p.getByRole('heading',{name:saved.title}).waitFor();
+    for(const width of [1440,1280,1024,768,390,320]) {
+      await p.setViewportSize({width,height:900});
+      assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+      await p.locator('.generate-document').screenshot({path:`/tmp/v5-c-generation-result-${width}.png`});
+    }
+    assert.equal(await p.locator('vite-error-overlay').count(),0); assert.deepEqual(f.errors,[]);
+  } finally { await f.close(); }
 });

@@ -1,10 +1,14 @@
+import { ArrowRight, Check, FileVideo, Sparkles } from 'lucide-react';
+import { Button, Checkbox, Input, Select, Textarea } from '../ui/controls';
+import { Alert, Badge, EmptyState, LoadingState } from '../ui/layout';
+import './generate.css';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { CompanyScopeBoundary, useCompany, useCompanyQuery, useCompanyStore } from '../company/CompanyProvider';
 import { useCompanySwitchGuard } from '../CompanySwitchGuard';
 import { generationApi, generationError, latestSources, type GenerationApi, type PersistedIdea, type TargetPlatform } from './generationApi';
 
 export function GenerateIdea({ onSetup, onSaved, api = generationApi }: { onSetup(): void; onSaved?(): void; api?: GenerationApi }) {
-  return <CompanyScopeBoundary fallback={<section><h2>Select a company to generate an idea</h2><p>Select or create a company in the app shell.</p><button onClick={onSetup}>Company setup</button></section>}>
+  return <CompanyScopeBoundary fallback={<EmptyState title="Select a company to generate an idea" action={<Button onClick={onSetup}>Company setup</Button>}><p>Select or create a company to use its analysed content.</p></EmptyState>}>
     <Workflow api={api} onSetup={onSetup} onSaved={onSaved} />
   </CompanyScopeBoundary>;
 }
@@ -33,10 +37,11 @@ function Workflow({ api, onSetup, onSaved }: { api: GenerationApi; onSetup(): vo
   useCompanySwitchGuard({ generationInProgress: busy });
   const items = sources.data ?? [];
   const sourceIds = mode === 'all' ? latestSources(items).map(i => i.id) : selection.filter(id => items.some(i => i.id === id));
+  const missingSelection = mode === 'manual' && sources.status === 'success' ? selection.filter(id => !items.some(i => i.id === id)) : [];
   const chosenTargets = targets.filter(t => available.includes(t));
   const visible = items.filter(i => (platform === 'all' || i.platform === platform) && i.title.toLowerCase().includes(search.toLowerCase()));
   async function generate() {
-    if (lock.current || sources.status !== 'success' || !sourceIds.length || !chosenTargets.length) return;
+    if (lock.current || sources.status !== 'success' || !sourceIds.length || sourceIds.length > 20 || missingSelection.length > 0 || !chosenTargets.length) return;
     const scope = store.captureScope();
     if (!scope) return;
     lock.current = true; setBusy(true); setError('');
@@ -53,44 +58,46 @@ function Workflow({ api, onSetup, onSaved }: { api: GenerationApi; onSetup(): vo
       if (!signal.aborted && scope.isCurrent()) { lock.current = false; setBusy(false); }
     }
   }
-  return <>
+  return <div className="generate-workspace">
     <section className="generation" aria-labelledby="generate-heading">
-      <p className="eyebrow">{activeCompany?.name}</p><h2 id="generate-heading">Generate Idea</h2>
-      <p>Build a new idea from analyzed content in this company.</p>
-      {sources.status === 'loading' && <p role="status">Loading analyzed source content…</p>}
-      {sources.status === 'error' && <div role="alert"><p>{generationError(sources.error)}</p><button onClick={() => revise(v => v + 1)}>Retry sources</button></div>}
-      {sources.status === 'success' && !items.length && <div><h3>No analyzed source content available</h3><p>Link accounts and analyze content for this company before generating an idea.</p><button onClick={onSetup}>Company and account setup</button></div>}
-      <form onSubmit={e => { e.preventDefault(); void generate(); }}>
-        <fieldset disabled={busy || sources.status !== 'success' || !items.length}>
-          <legend>Content source</legend>
-          <label className="source-choice"><input type="radio" name="source-mode" checked={mode === 'all'} onChange={() => setMode('all')} />All analyzed content</label>
-          <p className="muted">Uses the 20 most recent analyzed items accessible to this company, or all available if fewer than 20.</p>
-          <label className="source-choice"><input type="radio" name="source-mode" checked={mode === 'manual'} onChange={() => setMode('manual')} />Choose manually</label>
-          {mode === 'manual' && <div>
-            <div className="generation-filters"><label>Search analyzed content<input type="search" value={search} onChange={e => setSearch(e.target.value)} /></label>
-              <label>Source platform<select value={platform} onChange={e => setPlatform(e.target.value)}><option value="all">All platforms</option>{[...new Set(items.map(i => i.platform))].map(p => <option value={p} key={p}>{p === 'meta_ads' ? 'Meta Ads (source)' : p === 'instagram' ? 'Instagram' : 'Facebook'}</option>)}</select></label></div>
-            <p className="muted">Select 1–20 items. {sourceIds.length === 20 ? 'Maximum 20 selected. Deselect an item to choose another.' : 'Selections are kept while filtering.'}</p>
+      <header className="generate-intro"><h2 id="generate-heading">Generate an idea</h2><p>Use your analysed content to create a new concept.</p></header>
+      {sources.status === 'loading' && <LoadingState label="Loading analyzed source content…" />}
+      {sources.status === 'error' && <Alert tone="danger"><p>{generationError(sources.error)}</p><Button onClick={() => revise(v => v + 1)}>Retry sources</Button></Alert>}
+      {sources.status === 'success' && !items.length && <EmptyState title="No analyzed source content available" action={<Button onClick={onSetup}>Company and account setup</Button>}><p>Link accounts and analyse content for this company before generating an idea.</p><a href="#content">View company content</a></EmptyState>}
+      <form onSubmit={e => { e.preventDefault(); void generate(); }} aria-busy={busy}>
+        <fieldset className="generate-step" disabled={busy || sources.status !== 'success' || !items.length} aria-describedby="source-help source-count source-validation">
+          <legend>Sources</legend>
+          <p id="source-help">Start with what you already know. Choose the content that will inform your idea.</p>
+          <div className="generate-modes">
+            <label><input type="radio" name="source-mode" checked={mode === 'all'} onChange={() => setMode('all')} /><span>Latest analysed content</span></label>
+            <label><input type="radio" name="source-mode" checked={mode === 'manual'} onChange={() => setMode('manual')} /><span>Choose manually</span></label>
+          </div>
+          {mode === 'all' ? <div className="generate-source-summary"><FileVideo aria-hidden="true" size={24} /><div><strong>Use my latest analysed content</strong><p>Up to the latest 20 analysed items accessible to {activeCompany?.name}.</p></div></div> : <div className="generate-picker">
+            <div className="generation-filters"><label htmlFor="generate-search">Search analyzed content<Input id="generate-search" type="search" placeholder="Search by title" value={search} onChange={e => setSearch(e.target.value)} /></label>
+              <label htmlFor="generate-platform">Source platform<Select id="generate-platform" value={platform} onChange={e => setPlatform(e.target.value)}><option value="all">All platforms</option>{[...new Set(items.map(i => i.platform))].map(p => <option value={p} key={p}>{p === 'meta_ads' ? 'Meta Ads (source)' : p === 'instagram' ? 'Instagram' : 'Facebook'}</option>)}</Select></label></div>
+            <p id="selection-help">Select 1–20 items. Selections are kept while filtering.</p>
             {!visible.length && <p>No analyzed content matches your search or platform filter.</p>}
-            <div className="generation-sources">{visible.map(item => <label className="source-choice" key={item.id}>
-              <input type="checkbox" checked={sourceIds.includes(item.id)} disabled={!sourceIds.includes(item.id) && sourceIds.length >= 20} onChange={e => select(current => e.target.checked ? current.length < 20 ? [...current, item.id] : current : current.filter(id => id !== item.id))} />
-              <span>{item.title}<small>{item.platform === 'meta_ads' ? 'Meta Ads' : item.platform} · {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : 'Date unavailable'}</small></span>
+            <div className="generation-sources" role="group" aria-label="Analysed content" aria-describedby="selection-help source-count source-validation">{visible.map(item => <label className="generate-source" key={item.id}>
+              <input type="checkbox" checked={sourceIds.includes(item.id)} aria-describedby="source-validation" disabled={!sourceIds.includes(item.id) && sourceIds.length >= 20} onChange={e => select(current => e.target.checked ? current.length < 20 ? [...current, item.id] : current : current.filter(id => id !== item.id))} />
+              <span className="generate-source-icon"><FileVideo aria-hidden="true" size={20} /></span>
+              <span className="generate-source-label"><strong>{item.title}</strong><small>{item.platform === 'meta_ads' ? 'Meta Ads' : item.platform === 'instagram' ? 'Instagram' : 'Facebook'} · {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' }) : 'Date unavailable'}<span className="generate-analysis">Analysed</span></small></span>
             </label>)}</div>
           </div>}
+          {missingSelection.length > 0 && <Alert tone="danger"><p>{missingSelection.length} selected {missingSelection.length === 1 ? 'source is' : 'sources are'} no longer available.</p><p>Review your sources before generating. Your other selections have been kept.</p><Button onClick={() => select(current => current.filter(id => !missingSelection.includes(id)))}>Remove unavailable selection</Button></Alert>}
+          <p role="status" id="source-count" className="generation-count">Using {sourceIds.length} source {sourceIds.length === 1 ? 'item' : 'items'}{mode === 'manual' ? ' (maximum 20)' : ' — latest available, up to 20'}.</p>
+          <p id="source-validation" className="generate-validation" role="status">{mode === 'manual' && (!sourceIds.length ? 'Select at least one analyzed source item.' : sourceIds.length >= 20 ? 'Maximum 20 selected. Deselect an item to choose another.' : '')}</p>
         </fieldset>
-        <p role="status" className="generation-count">Using {sourceIds.length} source {sourceIds.length === 1 ? 'item' : 'items'}{mode === 'manual' ? ' (maximum 20)' : ' — latest available, up to 20'}.</p>
-        <fieldset disabled={busy}>
-          <legend>Brief and publishing targets</legend>
-          <label className="generation-brief">Brief (optional)<textarea rows={4} maxLength={10000} placeholder="Make something aimed at homeowners before winter" value={brief} onChange={e => setBrief(e.target.value)} /></label>
-          <p>Target platforms</p>
-          {available.map(p => <label className="source-choice" key={p}><input type="checkbox" checked={targets.includes(p)} onChange={e => setTargets(current => e.target.checked ? [...current, p] : current.filter(t => t !== p))} />{p === 'instagram' ? 'Instagram' : 'Facebook'}</label>)}
-          {!available.length ? <p>No linked publishing platforms. Link Instagram or Facebook in company setup. <button type="button" onClick={onSetup}>Company setup</button></p> : !chosenTargets.length && <p>Select at least one target platform.</p>}
+        <fieldset className="generate-step" disabled={busy} aria-describedby="target-help target-validation">
+          <legend>Target platforms</legend><p id="target-help">Where do you want to publish this idea?</p>
+          <div className="generate-targets">{(['instagram', 'facebook'] as const).map(p => <Checkbox key={p} label={p === 'instagram' ? 'Instagram' : 'Facebook'} disabled={!available.includes(p)} checked={chosenTargets.includes(p)} aria-describedby="target-validation" onChange={e => setTargets(current => e.target.checked ? [...current, p] : current.filter(t => t !== p))} />)}</div>
+          <div id="target-validation" role="status">{!available.length ? <p>No linked publishing platforms. Link Instagram or Facebook in company setup. <Button onClick={onSetup}>Company setup</Button></p> : !chosenTargets.length ? <p className="generate-validation">Select at least one target platform.</p> : available.length < 2 ? <p className="generate-help">Link another publishing platform in <a href="#settings">Settings</a> to use it here.</p> : null}</div>
         </fieldset>
-        {mode === 'manual' && !sourceIds.length && <p>Select at least one analyzed source item.</p>}
-        {error && <div className="notice error"><p role="alert">{error}</p><button type="button" disabled={busy} onClick={() => { select([]); setError(''); revise(v => v + 1); }}>Reload sources</button></div>}
-        <button className="primary" type="submit" disabled={busy || sources.status !== 'success' || !sourceIds.length || !chosenTargets.length}>{busy ? 'Generating…' : 'Generate idea'}</button>
-        {busy && <p role="status">Generating and saving your idea. This may take a moment.</p>}
+        <div className="generate-step generate-brief"><label htmlFor="generate-brief">Brief (optional)</label><p id="brief-help">What do you want this idea to focus on? Share a goal, audience or message.</p><Textarea id="generate-brief" disabled={busy} aria-describedby="brief-help" rows={3} maxLength={10000} placeholder="For example, help homeowners prepare for winter." value={brief} onChange={e => setBrief(e.target.value)} /></div>
+        {error && <Alert tone="danger"><p>{error}</p><Button disabled={busy} onClick={() => { setError(''); revise(v => v + 1); }}>Reload sources</Button></Alert>}
+        <div className="generate-action"><Button variant="primary" type="submit" disabled={busy || sources.status !== 'success' || !sourceIds.length || sourceIds.length > 20 || missingSelection.length > 0 || !chosenTargets.length}><Sparkles size={18} aria-hidden="true" />{busy ? 'Generating…' : 'Generate idea'}</Button><p>One idea, saved to your company’s Ideas.</p></div>
       </form>
+        {busy && <Alert><strong>Generating and saving your idea. This may take a moment.</strong><p>We’re using your selected content and brief. You can stay here while your idea is prepared.</p></Alert>}
     </section>
-    {result && <section className="idea-result" aria-labelledby="generated-title"><p className="eyebrow">Saved idea</p><h2 id="generated-title" ref={resultHeading} tabIndex={-1}>{result.title}</h2><h3>Concept</h3><p className="concept">{result.concept}</p><h3>Script</h3><div className="script">{result.script}</div><h3>Target platforms</h3><p>{result.targetPlatforms.map(p => p === 'instagram' ? 'Instagram' : 'Facebook').join(', ')}</p></section>}
-  </>;
+    {result && <article className="idea-result generate-document" aria-labelledby="generated-title"><header><div className="generate-document-meta"><Badge tone="success"><Check aria-hidden="true" size={14} /> Saved idea</Badge><span>{result.targetPlatforms.map(p => p === 'instagram' ? 'Instagram' : 'Facebook').join(' · ')}</span></div><h2 id="generated-title" ref={resultHeading} tabIndex={-1}>{result.title}</h2><p>Saved to {activeCompany?.name}’s Ideas. Ready to review and develop.</p></header><div className="generate-document-body"><h3>Concept</h3><p className="concept">{result.concept}</p><h3>Script</h3><div className="script">{result.script}</div></div><footer><a href="#ideas">View in Ideas <ArrowRight size={16} aria-hidden="true" /></a></footer></article>}
+  </div>;
 }
