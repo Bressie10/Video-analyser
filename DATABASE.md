@@ -19,6 +19,7 @@ scheduling and API behavior, and [README.md](README.md) for stack setup.
 | 008 | [persistent_ideas](backend/migrations/008_persistent_ideas.sql) | Adds company ideas, immutable generation evidence, targets and idempotency claims |
 | 009 | [idea_feedback_publications](backend/migrations/009_idea_feedback_publications.sql) | Extends lifecycle, adds current feedback and manual publication associations |
 | 010 | [profile_refresh_integrity](backend/migrations/010_profile_refresh_integrity.sql) | Enforces that a refresh request references a job belonging to the same profile |
+| 011 | [auth_foundation](backend/migrations/011_auth_foundation.sql) | Adds user profiles, owner/member memberships, nullable company connections and unclaimed Meta ownership; see [V6 auth](V6_AUTH_ARCHITECTURE.md) |
 
 Start PostgreSQL and configure root `.env` as described in README. For a **new,
 empty database only**, run from the repository root:
@@ -37,12 +38,14 @@ psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/007_company_profil
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/008_persistent_ideas.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/009_idea_feedback_publications.sql
 psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/010_profile_refresh_integrity.sql
+psql "$DATABASE_URL" -v ON_ERROR_STOP=1 -f backend/migrations/011_auth_foundation.sql
 ```
 
 For an **existing installation**, back up the database, establish which migrations
 have already been applied, and run only the remaining files in numerical order.
-For the integrated V3 backend, a database at 005 needs 006–010; one at 008 needs 009
-and 010. A database at 009 needs only 010. These scripts are transactional,
+For this V6 foundation, a database at 005 needs 006–011; one at 008 needs 009–011.
+A database at 010 needs only 011. Migration 011 does not claim or delete legacy data.
+These scripts are transactional,
 not idempotent; there is no migration runner/history table or automatic startup
 migration. Do not rerun the full sequence on an existing database. Inspect
 `\dt`, `\d videos`, and `\d video_performance` in `psql` against the migration

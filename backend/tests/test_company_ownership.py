@@ -365,6 +365,9 @@ class CompanyOwnershipTests(unittest.TestCase):
     def test_migration_preserves_populated_v2_and_leaves_everything_unassigned(self):
         before = self.snapshot()
         self.migrate()
+        # 011 adds an explicitly unclaimed owner; all original values survive.
+        for record in before['meta_connections']:
+            record['row']['owner_user_id'] = None
         self.assertEqual(self.snapshot(), before)
         for table in ('companies', 'company_accounts', 'company_ad_assignments'):
             self.assertEqual(self.db.execute(sql.SQL('SELECT count(*) AS n FROM {}').format(sql.Identifier(table))).fetchone()['n'], 0)
@@ -384,6 +387,9 @@ class CompanyOwnershipTests(unittest.TestCase):
         self.db.execute('UPDATE meta_accounts SET initial_run_id=%s WHERE id=%s', (self.run, self.foreign_ads))
         before = self.snapshot()
         self.migrate()
+        # 011 adds an explicitly unclaimed owner; all original values survive.
+        for record in before['meta_connections']:
+            record['row']['owner_user_id'] = None
         self.assertEqual(self.snapshot(), before)
         self.a = repo.create_company(self.db, self.connection, 'Manual')['id']
         self.link(self.a, self.fb)
