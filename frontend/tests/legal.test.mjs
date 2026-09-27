@@ -1,16 +1,25 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { mkdir, mkdtemp, readFile, rm } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
 import { test, before, after } from 'node:test';
-import { preview } from 'vite';
+import { build, preview } from 'vite';
 import { chromium } from 'playwright';
 const routes = [['/privacy', 'Privacy Policy', 'Privacy Policy'], ['/terms', 'Terms of Service', 'Terms of Service'], ['/data-deletion', 'Data Deletion Instructions', 'Data Deletion']];
-let server, browser, origin;
+let server, browser, origin, directory;
 before(async () => {
-  // Test the production bundle; build before running this suite.
-  server = await preview({ preview: { host: '127.0.0.1', port: 0 }, logLevel: 'error' });
+  // Always test a fresh production bundle, including when invoked on its own.
+  directory = await mkdtemp(join(tmpdir(), 'contentmetric-legal-'));
+  if (process.env.V5_SCREENSHOT_DIR) await mkdir(process.env.V5_SCREENSHOT_DIR, { recursive: true });
+  await build({ build: { outDir: directory, emptyOutDir: true }, logLevel: 'error' });
+  server = await preview({ build: { outDir: directory }, preview: { host: '127.0.0.1', port: 0 }, logLevel: 'error' });
   origin = server.resolvedUrls.local[0]; browser = await chromium.launch();
 });
-after(async () => { await browser?.close(); await new Promise(resolve => server?.httpServer.close(resolve)); });
+after(async () => {
+  await browser?.close();
+  if (server) await new Promise(resolve => server.httpServer.close(resolve));
+  if (directory) await rm(directory, { recursive: true, force: true });
+});
 test('Vercel preserves API proxy precedence and serves all legal routes', async () => {
   const { rewrites } = JSON.parse(await readFile('vercel.json', 'utf8'));
   assert.deepEqual(rewrites[0], { source: '/api/:path*', destination: 'https://video-analyser-1ek5.onrender.com/api/:path*' });
@@ -26,7 +35,7 @@ for (const [route, heading, title] of routes) {
     });
     const page = await context.newPage(); page.on('pageerror', error => errors.push(error.message));
     try {
-      for (const width of [1280, 375, 320]) {
+      for (const width of [1440, 1280, 1024, 768, 390, 375, 320]) {
         await page.setViewportSize({ width, height: 900 });
         await page.goto(`${origin}${route.slice(1)}`, { waitUntil: 'networkidle' });
         await page.getByRole('heading', { level: 1, name: heading, exact: true }).waitFor();
@@ -37,6 +46,7 @@ for (const [route, heading, title] of routes) {
         const text = await page.locator('main').innerText();
         assert.match(text, /Last updated: 27 September 2026/);
         assert.doesNotMatch(text, /Video Analy[sz]er|\[PLACEHOLDER\]|ContentMetric Ltd|GDPR certified|100% secure/);
+        if (process.env.V5_SCREENSHOT_DIR) await page.screenshot({ path: `${process.env.V5_SCREENSHOT_DIR}/${route.slice(1)}-${width}.png`, fullPage: true });
       }
       await page.reload({ waitUntil: 'networkidle' });
       assert.equal(await page.title(), `${title} | ContentMetric`);

@@ -31,7 +31,7 @@ async function fixture({ selected = A, width = 1440, archived = false, inaccessi
   });
   const page = await context.newPage(); page.setDefaultTimeout(5000);
   page.on('pageerror', error => errors.push(error.message));
-  page.on('console', message => { if (message.type() === 'error' && !fail) errors.push(message.text()); });
+  page.on('console', message => { if (['error', 'warning'].includes(message.type()) && !fail) errors.push(message.text()); });
   await page.goto(origin);
   await page.getByRole('heading', { name: 'Overview', exact: true }).waitFor();
   await page.getByRole('navigation', { name: 'Company', exact: true }).getByRole('button').first().waitFor({ state: 'visible' });
@@ -122,6 +122,52 @@ test('workflow draft survives navigation to another page', async () => {
     await p.getByLabel('Brief (optional)').fill('Keep this draft across navigation');
     await destination(p, 'Content'); await destination(p, 'Generate');
     assert.equal(await p.getByLabel('Brief (optional)').inputValue(), 'Keep this draft across navigation');
+  } finally { await f.close(); }
+});
+
+test('integrated navigation preserves filters, sources and unsaved idea edits until a confirmed company switch', async () => {
+  const f = await fixture(); const p = f.page;
+  const saved = { id: B, company_id: A, title: 'Studio story', concept: 'Show the process', script: 'Open with the finished work.', status: 'draft', feedback: 'none', target_platforms: ['instagram'], created_at: '2026-09-20T12:00:00Z', updated_at: '2026-09-20T12:00:00Z', publications: [] };
+  try {
+    await p.route('**/api/companies/*/content?**', route => route.fulfill({ json: { items: [{ library_item_id: B, display_title: 'Studio source', platform: 'instagram', content_type: 'reel', published_at: null, analyzed: true }], next_offset: null } }));
+    await p.route('**/api/meta/companies/*/ideas?**', route => route.fulfill({ json: { items: route.request().url().includes(A) ? [saved] : [], next_cursor: null } }));
+    await p.route(`**/api/meta/companies/${A}/ideas/${B}`, route => route.fulfill({ json: saved }));
+    await p.reload();
+    await destination(p, 'Content');
+    await p.getByLabel('Content platform', { exact: true }).selectOption('instagram');
+    await destination(p, 'Generate');
+    await p.getByLabel('Choose manually').check();
+    await p.getByRole('checkbox', { name: /^Studio source / }).check();
+    await p.getByLabel('Brief (optional)').fill('Keep the creative direction');
+    await destination(p, 'Ideas');
+    await p.getByRole('button', { name: saved.title, exact: true }).click();
+    await p.getByRole('button', { name: 'Edit', exact: true }).click();
+    await p.getByLabel('Title', { exact: true }).fill('Unsaved studio story');
+    await destination(p, 'Settings'); await destination(p, 'Overview');
+    await destination(p, 'Content');
+    assert.equal(await p.getByLabel('Content platform', { exact: true }).inputValue(), 'instagram');
+    await destination(p, 'Generate');
+    assert.equal(await p.getByRole('checkbox', { name: /^Studio source / }).isChecked(), true);
+    assert.equal(await p.getByLabel('Brief (optional)').inputValue(), 'Keep the creative direction');
+    // The hidden Ideas editor must still register its switch guard.
+    await company(p).getByRole('button').first().click();
+    await company(p).getByRole('button', { name: 'Beta', exact: true }).click();
+    await p.getByRole('dialog', { name: 'Switch company?' }).getByText('You have unsaved edits. Switching may discard those edits.').waitFor();
+    await p.getByRole('button', { name: 'Stay here', exact: true }).click();
+    await destination(p, 'Ideas');
+    assert.equal(await p.getByLabel('Title', { exact: true }).inputValue(), 'Unsaved studio story');
+    await company(p).getByRole('button').first().click();
+    await company(p).getByRole('button', { name: 'Beta', exact: true }).click();
+    await p.getByRole('button', { name: 'Continue and switch', exact: true }).click();
+    await p.getByRole('heading', { name: 'No saved ideas yet for this company.', exact: true }).waitFor();
+    assert.equal(await p.getByLabel('Title', { exact: true }).count(), 0);
+    await destination(p, 'Content');
+    assert.equal(await p.getByLabel('Content platform', { exact: true }).inputValue(), '');
+    await destination(p, 'Generate');
+    assert.equal(await p.getByLabel('Brief (optional)').inputValue(), '');
+    assert.equal(await p.getByLabel('Latest analysed content', { exact: true }).isChecked(), true);
+    await p.getByLabel('Choose manually').check();
+    assert.equal(await p.locator('.generation-sources input:checked').count(), 0);
   } finally { await f.close(); }
 });
 

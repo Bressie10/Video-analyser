@@ -4,7 +4,7 @@ import { House, Library, Lightbulb, PencilLine, Settings2 } from 'lucide-react';
 export const navigation = [
   { id: 'overview', label: 'Overview', icon: House, description: 'Your company workspace.' },
   { id: 'content', label: 'Content', icon: Library, description: 'Browse the content in your company library.' },
-  { id: 'generate', label: 'Generate', icon: PencilLine, description: 'Build your next idea from analyzed content.' },
+  { id: 'generate', label: 'Generate', icon: PencilLine, description: 'Build your next idea from analysed content.' },
   { id: 'ideas', label: 'Ideas', icon: Lightbulb, description: 'Review, refine and use your saved ideas.' },
   { id: 'settings', label: 'Settings', icon: Settings2, description: 'Manage your companies and integrations.' },
 ] as const;

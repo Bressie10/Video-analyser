@@ -14,7 +14,8 @@ button:hover:not(:disabled) { background: var(--color-hover); border-color: var(
 button.primary, .ui-button--primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-on-accent); }
 button.primary:hover:not(:disabled), .ui-button--primary:hover:not(:disabled) { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
 button:disabled { cursor: not-allowed; opacity: .45; }
-:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+/* Native date segments move focus within the control in Chromium. */
+:focus-visible, input[type=date]:focus-within { outline: 3px solid var(--color-accent); outline-offset: 3px; }
 :where(input:not([type=checkbox]):not([type=radio]), select, textarea) { width: 100%; min-width: 0; max-width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-control); font: inherit; color: var(--color-text); background: var(--color-surface); }
 textarea { resize: vertical; line-height: 1.6; }
 input::placeholder, textarea::placeholder { color: var(--color-text-muted); opacity: 1; }

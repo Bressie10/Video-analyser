@@ -32,7 +32,7 @@ async function fixture({ width = 1440, connected = true, empty = false, conflict
   });
   const page = await context.newPage(); page.setDefaultTimeout(5000);
   page.on('pageerror', error => errors.push(error.message));
-  page.on('console', message => { if (message.type() === 'error' && !conflict) errors.push(message.text()); });
+  page.on('console', message => { if (['error', 'warning'].includes(message.type()) && !conflict) errors.push(message.text()); });
   await page.goto(`${origin}#settings`);
   await page.getByRole('heading', { name: 'Settings', exact: true }).waitFor();
   await page.getByText(connected ? 'Meta connected successfully.' : 'Meta is not connected.', { exact: true }).waitFor();

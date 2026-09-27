@@ -32,7 +32,7 @@ async function fixture({ page = 'content', width = 1440, selected = A, linked = 
   });
   const p = await context.newPage(); p.setDefaultTimeout(7000);
   p.on('pageerror', e => errors.push(e.message));
-  p.on('console', message => { if (message.type() === 'error') errors.push(message.text()); });
+  p.on('console', message => { if (['error', 'warning'].includes(message.type())) errors.push(message.text()); });
   await p.goto(`${origin}#${page}`);
   return { p, calls, errors, close: () => context.close() };
 }

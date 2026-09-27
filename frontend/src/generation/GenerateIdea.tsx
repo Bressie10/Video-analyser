@@ -61,9 +61,9 @@ function Workflow({ api, onSetup, onSaved }: { api: GenerationApi; onSetup(): vo
   return <div className="generate-workspace">
     <section className="generation" aria-labelledby="generate-heading">
       <header className="generate-intro"><h2 id="generate-heading">Generate an idea</h2><p>Use your analysed content to create a new concept.</p></header>
-      {sources.status === 'loading' && <LoadingState label="Loading analyzed source content…" />}
+      {sources.status === 'loading' && <LoadingState label="Loading analysed source content…" />}
       {sources.status === 'error' && <Alert tone="danger"><p>{generationError(sources.error)}</p><Button onClick={() => revise(v => v + 1)}>Retry sources</Button></Alert>}
-      {sources.status === 'success' && !items.length && <EmptyState title="No analyzed source content available" action={<Button onClick={onSetup}>Company and account setup</Button>}><p>Link accounts and analyse content for this company before generating an idea.</p><a href="#content">View company content</a></EmptyState>}
+      {sources.status === 'success' && !items.length && <EmptyState title="No analysed source content available" action={<Button onClick={onSetup}>Company and account setup</Button>}><p>Link accounts and analyse content for this company before generating an idea.</p><a href="#content">View company content</a></EmptyState>}
       <form onSubmit={e => { e.preventDefault(); void generate(); }} aria-busy={busy}>
         <fieldset className="generate-step" disabled={busy || sources.status !== 'success' || !items.length} aria-describedby="source-help source-count source-validation">
           <legend>Sources</legend>
@@ -73,10 +73,10 @@ function Workflow({ api, onSetup, onSaved }: { api: GenerationApi; onSetup(): vo
             <label><input type="radio" name="source-mode" checked={mode === 'manual'} onChange={() => setMode('manual')} /><span>Choose manually</span></label>
           </div>
           {mode === 'all' ? <div className="generate-source-summary"><FileVideo aria-hidden="true" size={24} /><div><strong>Use my latest analysed content</strong><p>Up to the latest 20 analysed items accessible to {activeCompany?.name}.</p></div></div> : <div className="generate-picker">
-            <div className="generation-filters"><label htmlFor="generate-search">Search analyzed content<Input id="generate-search" type="search" placeholder="Search by title" value={search} onChange={e => setSearch(e.target.value)} /></label>
+            <div className="generation-filters"><label htmlFor="generate-search">Search analysed content<Input id="generate-search" type="search" placeholder="Search by title" value={search} onChange={e => setSearch(e.target.value)} /></label>
               <label htmlFor="generate-platform">Source platform<Select id="generate-platform" value={platform} onChange={e => setPlatform(e.target.value)}><option value="all">All platforms</option>{[...new Set(items.map(i => i.platform))].map(p => <option value={p} key={p}>{p === 'meta_ads' ? 'Meta Ads (source)' : p === 'instagram' ? 'Instagram' : 'Facebook'}</option>)}</Select></label></div>
             <p id="selection-help">Select 1–20 items. Selections are kept while filtering.</p>
-            {!visible.length && <p>No analyzed content matches your search or platform filter.</p>}
+            {!visible.length && <p>No analysed content matches your search or platform filter.</p>}
             <div className="generation-sources" role="group" aria-label="Analysed content" aria-describedby="selection-help source-count source-validation">{visible.map(item => <label className="generate-source" key={item.id}>
               <input type="checkbox" checked={sourceIds.includes(item.id)} aria-describedby="source-validation" disabled={!sourceIds.includes(item.id) && sourceIds.length >= 20} onChange={e => select(current => e.target.checked ? current.length < 20 ? [...current, item.id] : current : current.filter(id => id !== item.id))} />
               <span className="generate-source-icon"><FileVideo aria-hidden="true" size={20} /></span>
@@ -85,7 +85,7 @@ function Workflow({ api, onSetup, onSaved }: { api: GenerationApi; onSetup(): vo
           </div>}
           {missingSelection.length > 0 && <Alert tone="danger"><p>{missingSelection.length} selected {missingSelection.length === 1 ? 'source is' : 'sources are'} no longer available.</p><p>Review your sources before generating. Your other selections have been kept.</p><Button onClick={() => select(current => current.filter(id => !missingSelection.includes(id)))}>Remove unavailable selection</Button></Alert>}
           <p role="status" id="source-count" className="generation-count">Using {sourceIds.length} source {sourceIds.length === 1 ? 'item' : 'items'}{mode === 'manual' ? ' (maximum 20)' : ' — latest available, up to 20'}.</p>
-          <p id="source-validation" className="generate-validation" role="status">{mode === 'manual' && (!sourceIds.length ? 'Select at least one analyzed source item.' : sourceIds.length >= 20 ? 'Maximum 20 selected. Deselect an item to choose another.' : '')}</p>
+          <p id="source-validation" className="generate-validation" role="status">{mode === 'manual' && (!sourceIds.length ? 'Select at least one analysed source item.' : sourceIds.length >= 20 ? 'Maximum 20 selected. Deselect an item to choose another.' : '')}</p>
         </fieldset>
         <fieldset className="generate-step" disabled={busy} aria-describedby="target-help target-validation">
           <legend>Target platforms</legend><p id="target-help">Where do you want to publish this idea?</p>

@@ -55,6 +55,45 @@ const button = (p, name) => p.getByRole('button', { name, exact: true });
 async function open(p, title = 'Idea 10') { await button(p, title).click(); await button(p, 'Edit').waitFor(); }
 async function switchB(p) { const nav = p.getByRole('navigation', { name: 'Company', exact: true }); await nav.getByRole('button').first().click(); await nav.getByRole('button', { name: 'Beta', exact: true }).click(); }
 async function saved(p) { await p.getByRole('status').filter({ hasText: /^Saved\.$/ }).waitFor(); }
+test('keyboard feedback, lifecycle and publication actions expose focus and saved state', async () => {
+  const f = await fixture(); const p = f.p;
+  async function activate(name) {
+    const control = button(p, name);
+    await control.focus();
+    assert.equal(await control.evaluate(el => getComputedStyle(el).outlineStyle), 'solid');
+    await p.keyboard.press('Enter');
+  }
+  try {
+    await p.getByLabel('Created from (UTC)').focus();
+    for (let step = 0; step < 8; step++) {
+      await p.keyboard.press('Tab');
+      const focusedDate = await p.evaluate(() => {
+        const input = document.activeElement;
+        return input.matches('input[type=date]') ? getComputedStyle(input).outlineStyle : null;
+      });
+      if (focusedDate !== null) assert.equal(focusedDate, 'solid');
+    }
+    await activate('Idea 10'); await button(p, 'Edit').waitFor();
+    await activate('Like'); await saved(p);
+    assert.equal(await button(p, 'Like').getAttribute('aria-pressed'), 'true');
+    await activate('Dislike');
+    assert.equal(await p.getByLabel('Dislike reason (optional)').evaluate(el => el === document.activeElement), true);
+    await p.keyboard.type('Make the opening clearer');
+    await p.keyboard.press('Tab');
+    assert.equal(await button(p, 'Save dislike').evaluate(el => el === document.activeElement), true);
+    await p.keyboard.press('Enter'); await saved(p);
+    assert.equal(f.state.items[0].feedback_reason, 'Make the opening clearer');
+    await activate('Used'); await saved(p);
+    assert.equal(await button(p, 'Used').getAttribute('aria-pressed'), 'true');
+    await activate('Link published content'); await button(p, 'Link Post 30').waitFor();
+    await activate('Link Post 30');
+    await p.getByRole('dialog').getByRole('status').filter({ hasText: '1 linked' }).waitFor();
+    await p.keyboard.press('Escape');
+    assert.equal(await button(p, 'Link published content').evaluate(el => el === document.activeElement), true);
+    await activate('Unlink Post 30'); await saved(p);
+    assert.equal(f.state.items[0].publications.length, 0);
+  } finally { await f.close(); }
+});
 test('company history and detail use current company and safe creation metadata', async () => { const f = await fixture(); try { await open(f.p); await f.p.getByText('Script 10', { exact: true }).waitFor(); assert.equal((await f.p.locator('body').innerText()).includes('PRIVATE EVIDENCE'), false); await button(f.p, 'Back to history').click(); await switchB(f.p); await button(f.p, 'B idea').waitFor(); assert.equal(await button(f.p, 'Idea 10').count(), 0); assert.ok(f.state.calls.some(c => c.path.includes(B))); } finally { await f.close(); } });
 for (const [name, field, value, extra] of [
   ['search', 'Search ideas', 'Needle', { title: 'Needle' }], ['status', 'Status', 'used', { status: 'used' }], ['feedback', 'Feedback', 'liked', { feedback: 'liked' }], ['platform', 'Target platform', 'instagram', { target_platforms: ['instagram'] }], ['date from', 'Created from (UTC)', '2026-09-22', { created_at: '2026-09-23T10:00:00Z' }], ['date through', 'Created through (UTC)', '2026-09-19', { created_at: '2026-09-18T10:00:00Z' }]
@@ -74,7 +113,7 @@ for (const resource of ['history', 'detail', 'mutation']) test(`late Company A $
   const f = await fixture({ ignoreAbort: true, intercept: async route => { const path = new URL(route.request().url()).pathname; const matches = resource === 'history' ? path === `/api/meta/companies/${A}/ideas` : path === `/api/meta/companies/${A}/ideas/${id(10)}` && route.request().method() === (resource === 'mutation' ? 'PATCH' : 'GET'); if (!matches) return false; began(); await gate; try { await route.fulfill({ json: resource === 'history' ? { items: [idea(10)], next_cursor: null } : idea(10) }); } catch {} return true; } });
   try { if (resource === 'detail') await button(f.p, 'Idea 10').click(); if (resource === 'mutation') { await open(f.p); await button(f.p, 'Used').click(); } await started; await switchB(f.p); await button(f.p, 'B idea').waitFor(); release(); await f.p.waitForTimeout(100); assert.equal((await f.p.locator('body').innerText()).includes('Idea 10'), false); assert.equal(await f.p.getByRole('alert').count(), 0); } finally { release(); await f.close(); }
 });
-for (const width of [1440, 1280, 1024, 768, 390, 320]) test(`responsive ${width}px and keyboard focus through editor and picker`, async () => { const f = await fixture(); try { await f.p.setViewportSize({ width, height: 900 }); await button(f.p, 'Idea 10').waitFor(); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.screenshot({ path: `/tmp/v5-ideas-history-${width}.png`, fullPage: true }); await button(f.p, 'Idea 10').focus(); await f.p.keyboard.press('Enter'); await button(f.p, 'Edit').waitFor(); await button(f.p, 'Edit').focus(); await f.p.keyboard.press('Enter'); assert.equal(await f.p.getByLabel('Title', { exact: true }).evaluate(e => e === document.activeElement), true); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.keyboard.press('Tab'); assert.equal(await f.p.getByLabel('Concept', { exact: true }).evaluate(e => e === document.activeElement), true); await button(f.p, 'Cancel edit').click(); await button(f.p, 'Link published content').focus(); await f.p.keyboard.press('Enter'); await f.p.getByRole('dialog').waitFor(); await button(f.p, 'Link Post 30').waitFor(); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.screenshot({ path: `/tmp/v5-ideas-picker-${width}.png`, fullPage: true }); await f.p.keyboard.press('Escape'); assert.equal(await button(f.p, 'Link published content').evaluate(e => e === document.activeElement), true); await f.p.screenshot({ path: `/tmp/v5-ideas-detail-${width}.png`, fullPage: true }); } finally { await f.close(); } });
+for (const width of [1440, 1280, 1024, 768, 390, 320]) test(`responsive ${width}px and keyboard focus through editor and picker`, async () => { const f = await fixture(); try { await f.p.setViewportSize({ width, height: 900 }); await button(f.p, 'Idea 10').waitFor(); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.screenshot({ path: `/tmp/v5-ideas-history-${width}.png`, fullPage: true }); await button(f.p, 'Idea 10').focus(); await f.p.keyboard.press('Enter'); await button(f.p, 'Edit').waitFor(); await button(f.p, 'Edit').focus(); await f.p.keyboard.press('Enter'); assert.equal(await f.p.getByLabel('Title', { exact: true }).evaluate(e => e === document.activeElement), true); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.keyboard.press('Tab'); assert.equal(await f.p.getByLabel('Concept', { exact: true }).evaluate(e => e === document.activeElement), true); await button(f.p, 'Cancel edit').click(); await button(f.p, 'Link published content').focus(); await f.p.keyboard.press('Enter'); await f.p.getByRole('dialog').waitFor(); await button(f.p, 'Link Post 30').waitFor(); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.screenshot({ path: `/tmp/v5-ideas-picker-${width}.png`, fullPage: true }); await f.p.keyboard.press('Escape'); assert.equal(await button(f.p, 'Link published content').evaluate(e => e === document.activeElement), true); await f.p.evaluate(() => window.scrollTo(0, 0)); await f.p.screenshot({ path: `/tmp/v5-ideas-detail-${width}.png`, fullPage: true }); } finally { await f.close(); } });
 
 test('history network failure retries without presenting an empty history', async () => {
   let failed = false;
