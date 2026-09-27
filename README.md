@@ -277,3 +277,78 @@ Use a disposable UTF-8 PostgreSQL database; the integration fixture creates and
 drops its own schema. Company routes, session authorization, and ownership are real;
 Meta status is a controlled external-provider fixture. No live OAuth or provider
 access is established by these tests.
+
+### V4 company content browsing (Wave 2)
+
+`GET /api/companies/{company_id}/content` uses the existing Meta session cookie
+and returns `Cache-Control: private, no-store`. Missing/expired/disconnected
+sessions return 401; unknown, foreign-connection and archived companies return
+404. Invalid query values return 422; storage failures return the existing
+sanitized 503 response. No discovery, analysis, jobs or selection writes occur.
+
+| Query | Contract |
+| --- | --- |
+| `analyzed_only` | Boolean, default `false`. `true` selects video/reel items with completed current-version analysis and a matching stored video/version in the authenticated connection. |
+| `platform` | Optional `facebook`, `instagram`, or `meta_ads` (friendly provider keys, not provider IDs). |
+| `content_type` | Optional `video`, `reel`, or `ad`. |
+| `search` | Optional 1–200 characters; trimmed, case-insensitive literal substring of the safe `display_title`. SQL wildcard characters have no special meaning. Whitespace-only search behaves like no search. |
+| `published_from`, `published_to` | Optional inclusive ISO-8601 timestamps with timezone; from must not exceed to. Undated items do not match a supplied date bound. |
+| `limit` | Integer 1–100, default 20. This browsing page size does not change the persistent-idea source limit of 1–20. |
+| `offset` | Nonnegative integer, default 0. Use `next_offset` with the same filters/order for subsequent pages. |
+| `sort` | Only `published_at`, the default. |
+| `order` | `desc` (default) or `asc`. |
+
+Response shape (all item fields are always present):
+
+```json
+{
+  "items": [{
+    "library_item_id": "internal-library-item-uuid",
+    "video_id": "internal-video-uuid-or-null",
+    "platform": "facebook",
+    "content_type": "video",
+    "published_at": "2026-01-01T00:00:00+00:00",
+    "analysis_state": "completed",
+    "analyzed": true,
+    "display_title": "Facebook video",
+    "summary": {"duration_seconds": 5.0, "width": 1920, "height": 1080}
+  }],
+  "next_offset": null
+}
+```
+
+`video_id` and `published_at` are nullable. Summary numbers are nullable when
+unavailable. `analysis_state` is the existing stored pipeline state; `analyzed`
+is derived readiness, so a completed item with obsolete/missing analysis is
+not ready. Ad rows are not analyzed video sources; their accessible creative
+video rows appear separately. There is no new stored readiness flag.
+
+Company ownership is applied in SQL **before** filters, ordering and pagination,
+using V3's real ownership repository. Organic accounts are exclusive to their
+owner. Linking a shared Ads account grants no content: only explicitly assigned
+ads and their content-only creative assets are accessible. A creative reference
+never grants access to sibling ads, labels or metrics, including when the
+creative is also an organic item. Foreign-connection assets and video analysis
+are excluded. Company/session locks fence ownership changes through the read.
+
+Ordering is publish timestamp followed by internal library-item UUID, both in
+the requested direction; null timestamps always come last. Unknown dates are
+not replaced by discovery dates. `next_offset` is null at the end. Ordering is
+deterministic for unchanged data; offset pages are not a multi-request snapshot,
+so refresh from offset 0 after ownership/content changes.
+
+For frontend **All analyzed content**, request
+`?analyzed_only=true&limit=20&sort=published_at&order=desc` without other filters
+and use only that first page. It returns up to 20, including fewer or zero when
+appropriate. For manual selection, browse subsequent analyzed pages as needed
+and select 1–20 `library_item_id` values. Existing persistent-idea APIs call this
+source-ID list `video_ids`; do not substitute the analysis `video_id`.
+
+Cards deliberately exclude performance, raw provider identifiers, provider media
+URLs, tokens and raw errors. Organic/creative labels have no safe provenance in
+V2 storage, so their titles are generic. Assigned ads use the existing management
+API's friendly-label rules (fallback for blank labels, provider-ID labels and
+URLs). Search cannot match suppressed labels. There is no safe thumbnail/media
+proxy in this contract, and no thumbnail URL is returned. Frontend should render
+plain text and a placeholder image, clear selections on company change, and use
+`analyzed` to determine source eligibility. This wave makes no frontend changes.

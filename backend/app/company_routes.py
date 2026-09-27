@@ -1,9 +1,11 @@
 """V4 management API using the existing Meta session and 006 ownership layer."""
 
+from datetime import datetime
+from typing import Literal
 from uuid import UUID
 
 import psycopg
-from fastapi import APIRouter, HTTPException, Request
+from fastapi import APIRouter, HTTPException, Query, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, Field, field_validator
@@ -152,3 +154,30 @@ def reassign_ad(request: Request, company_id: UUID, ad_item_id: UUID, body: Reas
     return change_ad(request, company_id, ad_item_id,
                      lambda db, connection, company, ad: repo.reassign_ad(
                          db, connection, company, body.target_company_id, ad))
+
+
+@router.get('/companies/{company_id}/content')
+def content(request: Request, company_id: UUID, analyzed_only: bool = False,
+            platform: Literal['facebook', 'instagram', 'meta_ads'] | None = None,
+            content_type: Literal['video', 'reel', 'ad'] | None = None,
+            search: str | None = Query(None, min_length=1, max_length=200),
+            published_from: datetime | None = None, published_to: datetime | None = None,
+            limit: int = Query(20, ge=1, le=100), offset: int = Query(0, ge=0),
+            sort: Literal['published_at'] = 'published_at',
+            order: Literal['asc', 'desc'] = 'desc'):
+    from app.company_content_repository import list_content
+
+    def operation(db, connection):
+        # Authenticate and authorize even when the date range is invalid.
+        repo.require_active_company(db, connection, company_id)
+        dates = (published_from, published_to)
+        if any(value is not None and value.utcoffset() is None for value in dates):
+            raise HTTPException(422, 'Publish timestamps must include a timezone.')
+        if all(value is not None for value in dates) and published_from > published_to:
+            raise HTTPException(422, 'published_from must not be after published_to.')
+        return list_content(db, connection, company_id, analyzed_only=analyzed_only,
+                            platform=platform, content_type=content_type,
+                            search=search.strip() if search else None,
+                            published_from=published_from, published_to=published_to,
+                            limit=limit, offset=offset, order=order)
+    return respond(request, operation)
