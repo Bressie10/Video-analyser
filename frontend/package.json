@@ -15,7 +15,8 @@
     "test:generation": "node --test tests/generation.test.mjs",
     "test:ideas": "node --test tests/ideas-api.test.mjs tests/ideas.test.mjs",
     "test:wave2-integration": "node --test tests/wave2-integration.test.mjs",
-    "test:content-settings": "node --test tests/content-settings.test.mjs"
+    "test:content-settings": "node --test tests/content-settings.test.mjs",
+    "test:legal": "node --test tests/legal.test.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",

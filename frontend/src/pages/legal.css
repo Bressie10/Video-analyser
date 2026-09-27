@@ -1,0 +1,15 @@
+.legal-page { max-width: 800px; padding-bottom: 32px; }
+.legal-back { display: inline-block; margin-bottom: 32px; padding-block: 10px; }
+.legal-page a, .legal-footer a { color: var(--accent); text-underline-offset: 3px; overflow-wrap: anywhere; }
+.legal-page a:hover, .legal-footer a:hover { text-decoration-thickness: 2px; }
+.legal-page h1 { font-size: clamp(2rem, 5vw, 3rem); line-height: 1.15; }
+.legal-page section { background: transparent; border: 0; border-radius: 0; padding: 0; margin: 32px 0; }
+.legal-page h2 { line-height: 1.35; }
+.legal-page p, .legal-page li { line-height: 1.75; }
+.legal-page p { margin: 14px 0; }
+.legal-page ul { padding-left: 24px; }
+.legal-page li + li { margin-top: 10px; }
+.legal-footer { max-width: 1160px; margin: 0 auto; border-top: 1px solid var(--line); padding: 24px; display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px 24px; color: var(--muted); font-size: .88rem; }
+.legal-footer nav { display: flex; flex-wrap: wrap; gap: 4px 24px; }
+.legal-footer a { display: inline-block; padding-block: 12px; }
+@media (max-width: 600px) { .legal-page { padding-inline: 20px; } .legal-footer { padding: 20px; } }

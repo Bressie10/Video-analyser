@@ -3,6 +3,18 @@
     {
       "source": "/api/:path*",
       "destination": "https://video-analyser-1ek5.onrender.com/api/:path*"
+    },
+    {
+      "source": "/privacy",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/data-deletion",
+      "destination": "/index.html"
     }
   ]
 }

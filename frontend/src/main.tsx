@@ -10,6 +10,11 @@ import { CompanyContent } from './company/CompanyContent';
 import { ProfileRefresh } from './company/ProfileRefresh';
 import { IdeasPage } from './ideas/IdeasPage';
 
+import { PrivacyPage } from './pages/PrivacyPage';
+import { TermsPage } from './pages/TermsPage';
+import { DataDeletionPage } from './pages/DataDeletionPage';
+import { LegalFooter } from './pages/LegalLayout';
+
 export function App() {
   const [connected, setConnected] = useState(false);
   const [historyRevision, refreshHistory] = useState(0);
@@ -33,4 +38,10 @@ export function App() {
 }
 const root = document.getElementById('root');
 if (!root) throw new Error('Application root element is missing.');
-createRoot(root).render(<StrictMode><CompanyProvider><App /></CompanyProvider></StrictMode>);
+// Resolve public informational routes before mounting providers that load workspace data.
+// Plain anchors preserve browser history and direct navigation without a routing dependency.
+const pathname = window.location.pathname.replace(/\/+$/, '') || '/';
+const legalPage = pathname === '/privacy' ? <PrivacyPage />
+  : pathname === '/terms' ? <TermsPage />
+  : pathname === '/data-deletion' ? <DataDeletionPage /> : null;
+createRoot(root).render(<StrictMode>{legalPage ?? <><CompanyProvider><App /></CompanyProvider><LegalFooter /></>}</StrictMode>);
