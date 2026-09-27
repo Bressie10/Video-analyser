@@ -1,0 +1,33 @@
+.cm-library, .cm-overview { min-width: 0; }
+.cm-library > .ui-section-header > .ui-actions, .cm-overview > .ui-section-header > .ui-actions { flex-shrink: 0; }
+.cm-feature-link { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); min-height: 44px; font-size: var(--text-button); font-weight: 600; text-decoration: none; border-radius: var(--radius-control); overflow-wrap: anywhere; }
+.cm-feature-link svg { flex-shrink: 0; }
+.cm-feature-link:hover { text-decoration: underline; }
+.cm-feature-link--primary { padding: 10px 16px; color: var(--color-on-accent); background: var(--color-accent); border: 1px solid var(--color-accent); }
+.cm-feature-link--primary:hover { background: var(--color-accent-hover); text-decoration: none; }
+.cm-content-filters { margin-bottom: var(--space-6); }
+.cm-content-filter-main { display: grid; grid-template-columns: minmax(180px, 2fr) repeat(3, minmax(140px, 1fr)); gap: var(--space-4); }
+.cm-content-filter-main label, .cm-content-filter-field, .cm-content-dates label { display: grid; gap: var(--space-2); min-width: 0; color: var(--color-text-secondary); }
+.cm-content-filter-more { display: flex; align-items: flex-start; gap: var(--space-3) var(--space-6); flex-wrap: wrap; margin-top: var(--space-4); }
+.cm-content-filter-more details { min-width: 0; max-width: 100%; }
+.cm-content-filter-more summary { min-height: 44px; padding-block: 10px; cursor: pointer; font-size: var(--text-label); }
+.cm-content-dates { display: flex; flex-wrap: wrap; gap: var(--space-4); padding-block: var(--space-3); }
+.cm-content-dates label { flex: 1 1 180px; }
+.cm-content-results { display: flex; justify-content: space-between; align-items: center; gap: var(--space-4); color: var(--color-text-secondary); font-size: var(--text-secondary); margin-bottom: var(--space-3); }
+.cm-content-results p { margin: 0; }
+.cm-content-results > span { font-size: var(--text-caption); }
+.cm-content-list { list-style: none; padding: 0; margin: 0; border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-surface); }
+.cm-content-row { display: grid; grid-template-columns: 64px minmax(0, 1fr) 140px 148px; align-items: center; gap: var(--space-4); padding: var(--space-5); min-width: 0; }
+.cm-content-row + .cm-content-row { border-top: 1px solid var(--color-border); }
+.cm-content-format { width: 64px; height: 72px; display: grid; place-items: center; border-radius: var(--radius-control); background: var(--color-subtle); color: var(--color-text-muted); }
+.cm-content-copy { min-width: 0; }
+.cm-content-copy h3 { margin: 0 0 var(--space-2); }
+.cm-content-meta { display: flex; flex-wrap: wrap; gap: var(--space-1) var(--space-3); color: var(--color-text-secondary); font-size: var(--text-secondary); margin: 0; }
+.cm-content-meta span + span { border-left: 1px solid var(--color-border-strong); padding-left: var(--space-3); }
+.cm-content-date { color: var(--color-text-secondary); font-size: var(--text-secondary); }
+.cm-content-status { justify-self: end; }
+.cm-content-pagination { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: var(--space-3); margin-top: var(--space-5); }
+.cm-content-pagination > span { color: var(--color-text-secondary); font-size: var(--text-secondary); }
+.cm-library .ui-alert .ui-button { margin-top: var(--space-3); }
+@media (max-width: 1150px) { .cm-content-filter-main { grid-template-columns: repeat(2, minmax(0, 1fr)); } .cm-content-row { grid-template-columns: 56px minmax(0, 1fr) 132px; gap: var(--space-2) var(--space-4); } .cm-content-format { width: 56px; grid-row: span 2; } .cm-content-copy { grid-column: 2; } .cm-content-date { grid-column: 2; } .cm-content-status { grid-column: 3; grid-row: 1 / span 2; } }
+@media (max-width: 700px) { .cm-content-filter-main { grid-template-columns: minmax(0, 1fr); } .cm-content-row { grid-template-columns: 44px minmax(0, 1fr); padding: var(--space-4); gap: var(--space-2) var(--space-3); } .cm-content-format { width: 44px; height: 56px; grid-row: 1 / span 2; } .cm-content-status { grid-column: 2; grid-row: 3; justify-self: start; } .cm-content-results > span { display: none; } .cm-content-pagination > span { order: -1; flex-basis: 100%; } .cm-content-pagination button { flex: 1 1 110px; } }

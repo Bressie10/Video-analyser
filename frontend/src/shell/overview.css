@@ -1,0 +1,23 @@
+.cm-overview-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); margin-bottom: var(--space-8); }
+.cm-overview-summary h3 { margin: 0 0 var(--space-4); }
+.cm-overview-summary p { margin: var(--space-2) 0; color: var(--color-text-secondary); }
+.cm-overview-summary a { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px; font-size: var(--text-secondary); }
+.cm-overview-platforms { display: flex; flex-wrap: wrap; gap: var(--space-2); }
+.cm-overview-count strong { font-size: var(--text-section); color: var(--color-text); margin-right: var(--space-1); font-weight: 650; }
+.cm-overview-section { margin-block: var(--space-8); }
+.cm-overview .ui-empty-state { min-height: 220px; padding: var(--space-6) var(--space-2); }
+.cm-overview .ui-empty-state h2 { font-size: var(--text-section); }
+.cm-overview .ui-empty-icon { width: 48px; height: 48px; margin: 0; }
+.cm-overview-ideas { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--color-border); }
+.cm-overview-ideas li { display: flex; gap: var(--space-4); align-items: center; padding: var(--space-5) 0; border-bottom: 1px solid var(--color-border); }
+.cm-overview-ideas li > svg { flex-shrink: 0; color: var(--color-text-muted); }
+.cm-overview-ideas li > div { flex: 1; min-width: 0; }
+.cm-overview-ideas h3 { margin: 0; }
+.cm-overview-ideas p { margin: var(--space-1) 0 0; font-size: var(--text-secondary); color: var(--color-text-secondary); }
+.cm-overview-next { display: flex; align-items: center; gap: var(--space-4); }
+.cm-overview-next > svg { flex-shrink: 0; color: var(--color-text-secondary); }
+.cm-overview-next > div { flex: 1; min-width: 0; }
+.cm-overview-next h3, .cm-overview-next p { margin: 0; }
+.cm-overview-next p { color: var(--color-text-secondary); margin-top: var(--space-1); }
+.cm-overview .ui-alert .ui-button { margin-top: var(--space-3); }
+@media (max-width: 700px) { .cm-overview-summary { grid-template-columns: minmax(0, 1fr); } .cm-overview-next { align-items: flex-start; flex-wrap: wrap; } .cm-overview-ideas li { flex-wrap: wrap; } .cm-overview-ideas li > div { flex-basis: 70%; } .cm-overview-ideas .ui-badge { margin-left: 36px; } }
