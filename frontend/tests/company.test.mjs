@@ -81,8 +81,8 @@ test('Facebook Instagram Ads link/unlink and specific Ads assign/unassign', asyn
   try {
     await manage(p);
     for (const name of ['Facebook Page', 'Instagram Business', 'Ads Business']) { await p.getByLabel(name).check(); assert.equal(await p.getByLabel(name).isChecked(), true); }
-    await p.getByLabel('Summer video ad').check(); assert.equal(await p.getByLabel('Summer video ad').isChecked(), true);
-    await p.getByLabel('Summer video ad').uncheck(); assert.equal(await p.getByLabel('Summer video ad').isChecked(), false);
+    await p.getByRole('checkbox', { name: 'Summer video ad', exact: true }).check(); assert.equal(await p.getByRole('checkbox', { name: 'Summer video ad', exact: true }).isChecked(), true);
+    await p.getByRole('checkbox', { name: 'Summer video ad', exact: true }).uncheck(); assert.equal(await p.getByRole('checkbox', { name: 'Summer video ad', exact: true }).isChecked(), false);
     for (const name of ['Facebook Page', 'Instagram Business', 'Ads Business']) { await p.getByLabel(name).uncheck(); assert.equal(await p.getByLabel(name).isChecked(), false); }
   } finally { await p.close(); }
 });

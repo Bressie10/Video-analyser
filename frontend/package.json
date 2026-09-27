@@ -10,7 +10,8 @@
     "test:company": "node --test tests/company-state.test.mjs",
     "test:e2e": "node --test tests/flow.test.mjs tests/meta-status.test.mjs",
     "test:integration": "node --test tests/integration.test.mjs",
-    "test:companies": "node --test tests/company.test.mjs"
+    "test:companies": "node --test tests/company.test.mjs",
+    "test:company-integration": "node --test tests/company-integration.test.mjs"
   },
   "dependencies": {
     "react": "^19.0.0",

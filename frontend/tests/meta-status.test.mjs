@@ -30,6 +30,7 @@ for (const connected of [false, true]) {
       const path = new URL(route.request().url()).pathname;
       const id = "00000000-0000-4000-8000-000000000001";
       const json = path === "/api/meta/test" ? { connected }
+        : path === "/api/companies" ? { companies: [] }
         : path === "/api/meta/sync" ? { job_id: id }
         : path.startsWith("/api/meta/jobs/") ? { id, kind: "sync", state: "completed", counts: {}, items: [], next_cursor: null }
         : { items: [], next_cursor: null };
@@ -50,7 +51,7 @@ for (const connected of [false, true]) {
 for (const status of [401, 403, 502, 503]) {
   test(`status probe ${status} remains an error instead of disconnected`, async () => {
     const context = await browser.newContext();
-    await context.route("**/api/companies", (route) => route.fulfill({ json: { items: [], next_cursor: null } }));
+    await context.route("**/api/companies*", (route) => route.fulfill({ json: { companies: [] } }));
     await context.route("**/api/meta/test", (route) => route.fulfill({ status, json: { detail: "Failure" } }));
     const page = await context.newPage();
     try {

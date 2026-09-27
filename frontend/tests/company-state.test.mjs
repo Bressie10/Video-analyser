@@ -4,8 +4,8 @@ import { createServer } from "vite";
 import { chromium } from "playwright";
 
 let server, CompanyStore, KEY, ServiceError, createCompanyApi;
-const A = { id: "00000000-0000-4000-8000-000000000001", name: "A", archived: false };
-const B = { id: "00000000-0000-4000-8000-000000000002", name: "B", archived: false };
+const A = { id: "00000000-0000-4000-8000-000000000001", name: "A", archived: false, accounts: [] };
+const B = { id: "00000000-0000-4000-8000-000000000002", name: "B", archived: false, accounts: [] };
 const deferred = () => { let resolve, reject; const promise = new Promise((a, b) => { resolve = a; reject = b; }); return { promise, resolve, reject }; };
 function fixture(id = null, list = async () => [A, B]) {
   const values = new Map(id === null ? [] : [[KEY, id]]), writes = [];
@@ -104,28 +104,37 @@ test("blocked storage keeps session state usable", async () => {
   await store.refreshCompanies(); store.setActiveCompany(A.id);
   assert.equal(store.getSnapshot().activeCompanyId, A.id); assert.ok(store.getSnapshot().persistenceError);
 });
-test("adapter operations, pagination, atomic reassign and request policy", async () => {
-  const calls = [];
+test("adapter uses exact backend routes, envelopes, and bodyless ownership mutations", async () => {
+  const calls = [], wire = { company_id: A.id, name: A.name, archived: false, accounts: [] };
   const api = createCompanyApi(async (url, options) => {
     calls.push({ url, ...options });
-    const result = options.method === "GET" ? { items: url.includes("ads-content") ? [{ id: B.id, label: "Ad", company_id: A.id }] : url.includes("available-meta") ? [{ id: B.id, name: "Account", platform: "meta_ads" }] : [A], next_cursor: null } : A;
+    let result = wire;
+    if (options.method === 'GET') result = url.includes('/ads') ? { ads: [{ ad_item_id: B.id, display_name: 'Ad', assigned: true }] }
+      : url === '/api/meta/accounts' ? { accounts: [{ account_id: B.id, display_name: 'Account', platform: 'meta_ads', organic_owner: null }] }
+      : url.includes('?') ? { companies: [wire] } : wire;
+    else if (url.includes('/ads/')) result = { ok: true };
     return new Response(JSON.stringify(result));
   });
   const signal = new AbortController().signal;
   assert.deepEqual(await api.listCompanies(signal), [A]);
-  await api.createCompany("A", signal); await api.renameCompany(A.id, "Renamed", signal);
+  assert.deepEqual(await api.getCompany(A.id, signal), A);
+  await api.createCompany('A', signal); await api.renameCompany(A.id, 'Renamed', signal);
   await api.archiveCompany(A.id, signal); await api.restoreCompany(A.id, signal);
   assert.equal((await api.listAvailableMetaAccounts(signal))[0].id, B.id);
   await api.linkAccount(A.id, B.id, signal); await api.unlinkAccount(A.id, B.id, signal);
-  assert.equal((await api.listAssignableAdsContent(signal)).items[0].companyId, A.id);
+  assert.deepEqual(await api.listAssignableAdsContent(A.id, B.id, signal), [{ id: B.id, label: 'Ad', assigned: true }]);
   await api.assignAdsContent(B.id, A.id, signal); await api.unassignAdsContent(B.id, A.id, signal);
   await api.reassignAdsContent(B.id, A.id, B.id, signal);
-  assert.equal(calls.length, 12);
-  assert.equal(calls.at(-1).method, "PATCH");
-  assert.deepEqual(JSON.parse(calls.at(-1).body), { from_company_id: A.id, to_company_id: B.id });
-  for (const call of calls) { assert.equal(call.credentials, "same-origin"); assert.equal(call.cache, "no-store"); assert.ok(call.signal); }
-  const paginated = createCompanyApi(async (url) => new Response(JSON.stringify({ items: [url.includes("after") ? B : A], next_cursor: url.includes("after") ? null : "next" })));
-  assert.deepEqual(await paginated.listCompanies(signal), [A, B]);
+  const base = `/api/companies/${A.id}`;
+  assert.deepEqual(calls.map(c => [c.method, c.url, c.body ? JSON.parse(c.body) : null]), [
+    ['GET', '/api/companies?include_archived=true', null], ['GET', base, null],
+    ['POST', '/api/companies', {name:'A'}], ['PATCH', base, {name:'Renamed'}],
+    ['POST', `${base}/archive`, null], ['POST', `${base}/restore`, null], ['GET', '/api/meta/accounts', null],
+    ['PUT', `${base}/accounts/${B.id}`, null], ['DELETE', `${base}/accounts/${B.id}`, null],
+    ['GET', `${base}/accounts/${B.id}/ads`, null], ['PUT', `${base}/ads/${B.id}`, null], ['DELETE', `${base}/ads/${B.id}`, null],
+    ['POST', `${base}/ads/${B.id}/reassign`, {target_company_id:B.id}]
+  ]);
+  for (const call of calls) { assert.equal(call.credentials, 'same-origin'); assert.equal(call.cache, 'no-store'); assert.ok(call.signal); }
 });
 test("adapter rejects malformed records and exposes HTTP status", async () => {
   const signal = new AbortController().signal;

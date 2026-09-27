@@ -1,7 +1,7 @@
 # V4 company state and data access
 
 `src/company/CompanyProvider.tsx` installs one store at the application root.
-There is no selector or management UI in this branch. No new dependencies.
+The production selector and management UI consume this store through `useCompanyUI`. No new dependencies.
 
 ## State contract
 
@@ -19,7 +19,7 @@ performance or ideas are persisted. Missing/inaccessible/archived/invalid IDs ar
 removed. Network/5xx errors expose no scope, retain the UUID for an explicit retry,
 and surface `error`. HTTP 401/403/404 clears selection and persistence. Storage
 failures do not crash the app: state remains session-local; operation failures are
-exposed in `persistenceError` (unavailable localStorage itself uses session-only
+exposed in `persistenceError` (unavailable localStorage also reports this session-only
 mode). Persistence is across refreshes, not a promise of cross-tab synchronization.
 
 A refresh hides the active scope until revalidation succeeds. Refresh on known
@@ -63,53 +63,42 @@ On account/content mutations, invalidate the affected current scope (checking a
 captured scope first); refresh companies when accessibility may have changed.
 Management lists can use the API without an active company.
 
-## Narrow adapter / provisional wire contract
+## Backend adapter
 
-`CompanyApi` is the stable frontend interface. All management paths, methods,
-bodies, pagination and response parsing live in `src/company/companyApi.ts`.
-The backend management branch is separate: the paths below are explicit
-integration assumptions, **not verified live backend endpoints**.
+`src/company/companyApi.ts` implements the authoritative [company API](../backend/COMPANY_API.md).
+It requests `/api/companies?include_archived=true` for management, normalizes
+`company_id`, `account_id`, `ad_item_id` and friendly display names, and retains
+company account links. Lists are unpaginated `{companies}`, `{accounts}`, and
+`{ads}` envelopes. The assignable-ad request includes both the inspected company
+and linked Ads-account UUID. Ownership mutations use the company-specific routes;
+reassignment is one atomic POST, never an unlink/link pair.
 
-| Operation | Provisional request |
-| --- | --- |
-| List accessible companies (including archived) | `GET /api/companies` |
-| Create | `POST /api/companies` with `{name}` |
-| Rename | `PATCH /api/companies/:id` with `{name}` |
-| Archive / restore | `POST /api/companies/:id/archive` or `/restore` |
-| Available Meta accounts | `GET /api/companies/available-meta-accounts` |
-| Link / unlink internal account UUID | `PUT` / `DELETE /api/companies/:id/accounts/:accountId` |
-| Assignable Ads content | `GET /api/companies/ads-content?after=...` |
-| Assign | `PUT /api/companies/ads-content/:id/assignment` with `{company_id}` |
-| Unassign | `DELETE` same path with `{company_id}` |
-| Reassign atomically | `PATCH` same path with `{from_company_id,to_company_id}` |
+Requests carry the same-origin session cookie, no-store policy, cancellation and
+20-second timeout. Parsers project supported fields and validate UUIDs. Failures
+retain HTTP status and render safe operation-specific copy, including 409 organic
+ownership and blocked Ads unlink messages. Raw server error payloads are not shown.
 
-List pages use `{items, next_cursor}`. Companies and accounts are fully paginated
-before returning; Ads content exposes `Page<AdsContent>` for incremental loading.
-Company responses are `{id,name,archived}`; accounts `{id,name,platform}`; Ads content
-`{id,label,company_id}` (nullable assignment). IDs are internal UUIDs. Company
-records are projected to these fields and frozen. Malformed wire data raises a
-502 `ServiceError`; HTTP statuses are preserved. Requests use same-origin cookies,
-`no-store`, caller cancellation and a 20-second timeout. No token storage.
-Reassignment requires one atomic backend operation, never unlink-then-link.
+`useCompanyUI` serializes through shell actions and applies successful backend
+responses to the global store. The inspected management company is distinct from
+active selection. Discovery results are keyed by inspection, scope, account links
+and request revision; render-time checks and cancellation reject stale results.
+Ownership changes invalidate scoped state. Restoring never selects a company.
 
-## Integration work remaining
+## Wave 2 boundary and checks
 
-Reconcile the provisional adapter with the company-management branch, especially
-archive representation, pagination, account IDs and assignment conflict behavior.
-A missing management endpoint leaves the provider in error without a selected
-company. Connect future selector/management UI to the actions above and render
-appropriate loading, no-company, error and persistence-error states.
+Production does not mount the unscoped V2 library, background library polling,
+processing or recommendation controls. The legacy browser regression fixture is
+under `tests/legacy.html` and is excluded from the production build. Account links
+are not treated as proof of content presence. Empty companies remain valid.
 
-The existing V3 `App`/`VideoLibrary` and their unscoped endpoints are unchanged;
-they are not converted into company-aware consumers by merely adding a provider.
-Before showing those views as company-scoped V4 UI, migrate their API loaders to
-company-scoped endpoints and put their content/selection/idea state inside the
-boundary or use the scope subscription. This branch deliberately does not add
-idea-generation/history features or alter the legacy visual flow.
+Wave 2 must adapt content reads to the V3 ownership helpers, add the minimal
+company-scoped HTTP routes, and integrate processing/generation with the scope
+boundary and switch guards before enabling those screens. No generation, history,
+feedback, lifecycle, publication, profile-settings or V5 redesign is included.
 
-Run `npm run typecheck`, `npm run test:company`, `npm run test:e2e`, `npm run build`.
-The company tests cover store/adapter contracts and real Chromium React lifecycle
-behavior with fixtures (including StrictMode); they do not prove live company
-backend authorization, PostgreSQL ownership or Meta provider access. No lint
-script is configured. The backend integration suite is outside this frontend-only
-contract verification and requires its own database/media setup.
+Run `npm run test:company`, `npm run test:companies`, `npm run test:e2e`,
+`npm run typecheck`, and `npm run build`. Run `npm run test:company-integration`
+with `TEST_DATABASE_URL` pointing to disposable UTF-8 PostgreSQL for the real
+browser/FastAPI/database flow. `npm run test:integration` preserves V2's real
+media/database regression. No lint script is configured. External Meta status and
+provider boundaries are fixtures; these tests do not establish live Meta access.

@@ -30,7 +30,7 @@ def main():
     directory = Path(os.environ["META_E2E_DIRECTORY"])
     dbname = "meta_browser_" + uuid4().hex
     admin = psycopg.connect(admin_url, autocommit=True)
-    admin.execute(sql.SQL("CREATE DATABASE {}").format(sql.Identifier(dbname)))
+    admin.execute(sql.SQL("CREATE DATABASE {} TEMPLATE template0 ENCODING 'UTF8'").format(sql.Identifier(dbname)))
     params = conninfo_to_dict(admin_url)
     params["dbname"] = dbname
     database_url = make_conninfo(**params)

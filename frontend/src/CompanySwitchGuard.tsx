@@ -17,9 +17,11 @@ export function useCompanySwitchGuard({ unsavedEdits = false, generationInProgre
     register?.(id, { unsavedEdits, generationInProgress });
     return () => register?.(id, null);
   }, [register, id, unsavedEdits, generationInProgress]);
+  return id;
 }
 export function useCompanySwitchReasons() {
   const context = useContext(Context);
   const guards = [...(context?.guards.values() ?? [])];
-  return { unsavedEdits: guards.some(g => g.unsavedEdits), generationInProgress: guards.some(g => g.generationInProgress) };
+  const excluding = (id?: string) => [...(context?.guards.entries() ?? [])].filter(([key]) => key !== id).map(([, guard]) => guard);
+  return { excluding, unsavedEdits: guards.some(g => g.unsavedEdits), generationInProgress: guards.some(g => g.generationInProgress) };
 }

@@ -4,8 +4,11 @@ import { CompanyStore } from "./companyStore";
 
 const Context = createContext<CompanyStore | null>(null);
 function browserStore() {
-  let storage: Storage | null = null;
-  try { storage = window.localStorage; } catch { /* Blocked storage: session-only state. */ }
+  let storage: Pick<Storage, "getItem" | "setItem" | "removeItem"> | null = null;
+  try { storage = window.localStorage; } catch (error) {
+    const unavailable = () => { throw error; };
+    storage = { getItem: unavailable, setItem: unavailable, removeItem: unavailable };
+  }
   return new CompanyStore(companyApi, storage);
 }
 export function CompanyProvider({ children, store: supplied }: { children: ReactNode; store?: CompanyStore }) {

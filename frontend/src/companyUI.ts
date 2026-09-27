@@ -3,7 +3,7 @@ export interface Company {
   id: string;
   name: string;
   archived: boolean;
-  hasContent: boolean;
+  hasLinkedAccounts: boolean;
 }
 export interface CompanyAccount {
   id: string;
@@ -23,8 +23,13 @@ export interface CompanyUIProps {
   status: 'loading' | 'ready' | 'error';
   accounts: readonly CompanyAccount[];
   adsContent: readonly AdsContent[];
+  discoveryCompanyId: string | null;
   discoveryStatus: 'loading' | 'ready' | 'error';
   metaConnected: boolean;
+  error?: string;
+  discoveryError?: string;
+  onInspect(companyId: string | null): void;
+  onAdsReassign(companyId: string, contentId: string, targetCompanyId: string): Promise<void>;
   onRetry(): void;
   onRetryDiscovery(): void;
   onSwitch(companyId: string): Promise<void> | void;

@@ -256,3 +256,24 @@ migration 007, asynchronous refresh APIs, scoped evidence, invalidation hooks an
 The real adapter is bound by default; apply both migrations before company operations.
 The background worker remains opt-in via `COMPANY_PROFILE_WORKER_ENABLED=true`.
 Existing Meta sessions must reconnect once to receive the `/api` cookie used by company routes.
+
+## V4 Wave 1 company integration
+
+The app uses one global company selection, persisted as an internal UUID and
+validated against accessible active companies at startup. Create requires only a
+name; account setup is optional. Manage companies supports rename/archive/restore,
+manual Facebook/Instagram/Ads-account linking, and individual ad assignment,
+unassignment and reassignment. Meta connects once for the existing session.
+
+The legacy unscoped content/generation UI is gated in production until Wave 2
+connects company-scoped content routes and processing. The selector never labels
+all-company library data as belonging to the selected company. See
+[company state](frontend/COMPANY_STATE.md), [UI contract](frontend/COMPANY_UI_CONTRACT.md),
+and [API contract](backend/COMPANY_API.md).
+
+From `frontend`, run `npm run test:company`, `npm run test:companies`, and
+`TEST_DATABASE_URL=postgresql://USER@localhost:PORT/DISPOSABLE_DB npm run test:company-integration`.
+Use a disposable UTF-8 PostgreSQL database; the integration fixture creates and
+drops its own schema. Company routes, session authorization, and ownership are real;
+Meta status is a controlled external-provider fixture. No live OAuth or provider
+access is established by these tests.

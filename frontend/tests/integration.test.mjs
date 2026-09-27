@@ -41,7 +41,7 @@ test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-vid
     browser = await chromium.launch({ headless: true });
     const context = await browser.newContext();
     // A real backend-issued session, scoped to the same route as the production cookie.
-    await context.addCookies([{ ...session, domain: "127.0.0.1", path: "/api/meta", httpOnly: true, secure: true, sameSite: "Lax" }]);
+    await context.addCookies([{ ...session, domain: "127.0.0.1", path: "/api", httpOnly: true, secure: true, sameSite: "Lax" }]);
     const page = await context.newPage(); page.setDefaultTimeout(60000);
     page.on("request", (request) => {
       const path = new URL(request.url()).pathname;
@@ -52,7 +52,7 @@ test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-vid
       if (response.url().includes("/api/") && response.status() >= 400) failures.push(`${response.status()} ${new URL(response.url()).pathname}`);
     });
     // No page.route / context.route: all application requests reach the real server.
-    await page.goto(origin);
+    await page.goto(`${origin}/tests/legacy.html`);
     await page.getByRole("checkbox", { name: "Select Facebook video", exact: true }).waitFor();
     await page.waitForFunction(() => {
       const cards = [...document.querySelectorAll(".video-card")];

@@ -52,7 +52,7 @@ async function withApp(options, run) {
   const page = await context.newPage(); page.setDefaultTimeout(8000);
   page.on("pageerror", (error) => errors.push(error.message));
   try {
-    await page.goto(origin); await run(page, calls, context);
+    await page.goto(`${origin}/tests/legacy.html`); await run(page, calls, context);
     assert.deepEqual(errors, []);
     assert.equal(calls.some((call) => call.path.includes("/discovery/") || call.path === "/api/meta/library/sync" || call.path === "/api/meta/library/recommendations" || call.path === "/api/videos"), false);
     assert.equal(calls.some((call) => call.url.searchParams.has("sources")), false);

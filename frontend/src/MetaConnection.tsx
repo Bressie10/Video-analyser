@@ -1,9 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 import { friendlyError, isUUID } from "./metaLibrary";
 
 type Status = "checking" | "disconnected" | "connecting" | "connected" | "error";
 
-export function MetaConnection({ onConnectionChange, disconnected = false, disabled = false, onSyncStarted }: { onSyncStarted: (id: string | null) => void; onConnectionChange: (connected: boolean) => void; disconnected?: boolean; disabled?: boolean }) {
+export function MetaConnection({ onConnectionChange, disconnected = false, disabled = false, onSyncStarted, connectAction }: { connectAction?: RefObject<() => void>; onSyncStarted: (id: string | null) => void; onConnectionChange: (connected: boolean) => void; disconnected?: boolean; disabled?: boolean }) {
   const [status, setStatus] = useState<Status>("checking");
   const [error, setError] = useState("");
   const stopWatching = useRef<(() => void) | null>(null);
@@ -88,6 +88,8 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
         });
     }, 400);
   }
+
+  useEffect(() => { if (connectAction) connectAction.current = connect; });
 
   return <section className="connection" aria-labelledby="meta-title">
     <h2 id="meta-title">Meta account</h2>
