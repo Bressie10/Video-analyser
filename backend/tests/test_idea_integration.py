@@ -31,7 +31,7 @@ class IdeaIntegrationTests(unittest.TestCase):
 
     def post(self, company=None, ids=None, body=None):
         return self.client.post(f'/api/meta/companies/{company or self.f.a}/recommendations',
-            json=body or {'request_id': str(uuid4()), 'video_ids': list(map(str, ids or [self.f.creative]))})
+            json=body or {'request_id': str(uuid4()), 'target_platforms': ['facebook'], 'video_ids': list(map(str, ids or [self.f.creative]))})
 
     def generate(self, **kwargs):
         response = self.post(**kwargs)
@@ -77,7 +77,7 @@ class IdeaIntegrationTests(unittest.TestCase):
         self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM ideas').fetchone()['n'], 0)
 
     def test_history_is_company_scoped_and_replay_survives_unlink(self):
-        body = {'request_id': str(uuid4()), 'video_ids': [str(self.f.creative)]}
+        body = {'request_id': str(uuid4()), 'target_platforms': ['facebook'], 'video_ids': [str(self.f.creative)]}
         saved = self.generate(body=body)
         ownership.unassign_ad(self.f.db, self.f.connection, self.f.a, self.f.ad_a)
         self.assertEqual(self.generate(body=body)['id'], saved['id'])

@@ -24,7 +24,7 @@ class GenerationRequest(BaseModel):
     request_id: UUID
     video_ids: list[UUID] = Field(min_length=1, max_length=20)
     generation_brief: str | None = Field(default=None, max_length=10000)
-    target_platforms: list[Literal['instagram', 'facebook']] = Field(default_factory=list, max_length=2)
+    target_platforms: list[Literal['instagram', 'facebook']] = Field(min_length=1, max_length=2)
     history_limit: int = Field(default=20, ge=0, le=20)
 
     @field_validator('video_ids', 'target_platforms')

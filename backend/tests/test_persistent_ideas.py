@@ -127,7 +127,7 @@ class PersistentIdeasTests(unittest.TestCase):
             return identity
 
     def body(self, **kwargs):
-        return {'request_id': str(uuid4()), 'video_ids': list(map(str, self.sources)), **kwargs}
+        return {'request_id': str(uuid4()), 'target_platforms': ['facebook'], 'video_ids': list(map(str, self.sources)), **kwargs}
 
     def post(self, body=None):
         return self.api.post(self.base+'/recommendations', json=body or self.body(),
@@ -208,12 +208,12 @@ class PersistentIdeasTests(unittest.TestCase):
             self.assertEqual(self.post(self.body(video_ids=ids)).status_code, 422)
 
     def test_target_platforms_and_canonical_request_hash(self):
-        for targets in ([], ['instagram'], ['facebook'], ['instagram','facebook']):
+        for targets in (['instagram'], ['facebook'], ['instagram','facebook']):
             body = self.body(target_platforms=targets)
             result = self.generated(body)
             self.assertEqual(result['target_platforms'], sorted(targets))
             self.assertEqual(self.generated({**body, 'target_platforms': list(reversed(targets))})['id'], result['id'])
-        for targets in (['tiktok'], ['instagram','instagram']):
+        for targets in ([], ['meta_ads'], ['tiktok'], ['instagram','instagram']):
             self.assertEqual(self.post(self.body(target_platforms=targets)).status_code, 422)
 
     def test_frozen_after_refresh_replacement_profile_change_and_unlink(self):
@@ -327,7 +327,7 @@ class PersistentIdeasTests(unittest.TestCase):
             "DELETE FROM idea_source_performance", "UPDATE ideas SET model='changed'",
             "UPDATE ideas SET company_id='%s'" % self.other_company,
             "UPDATE ideas SET evidence_sealed=false", "UPDATE ideas SET prior_idea_evidence='[]'::jsonb,request_hash=repeat('0',64)",
-            "INSERT INTO idea_target_platforms VALUES ('%s','facebook')" % result['id'],
+            "INSERT INTO idea_target_platforms VALUES ('%s','instagram')" % result['id'],
         ]
         for statement in statements:
             with self.subTest(statement=statement), self.assertRaises(psycopg.IntegrityError):

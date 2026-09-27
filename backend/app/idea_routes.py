@@ -1,4 +1,5 @@
-"""V3 company-scoped generation, history, evidence and in-place editing."""
+"""Company-scoped persistent idea workflow, backed by the V3 services."""
+from typing import Literal
 from uuid import UUID
 
 import psycopg
@@ -6,10 +7,11 @@ from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from openai import OpenAIError
-from pydantic import ValidationError
+from pydantic import AwareDatetime, ValidationError
 
 from app import idea_repository as ideas, idea_service, meta
 from app import meta_library_repository as library
+from app import company_ownership_repository as ownership
 from app.idea_company_access import company_access
 from app.idea_generation import InvalidGeneration
 from app.idea_models import GenerationRequest, IdeaEdit, IdeaFeedback
@@ -25,6 +27,8 @@ def respond(operation):
         response = JSONResponse(jsonable_encoder(result))
     except HTTPException as error:
         response = JSONResponse({'detail': error.detail}, status_code=error.status_code)
+    except ownership.OwnershipNotFound:
+        response = JSONResponse({'detail': 'Publication cursor was not found.'}, status_code=404)
     except MissingAPIKeyError:
         response = JSONResponse({'detail': 'OpenAI API key is not configured.'}, status_code=503)
     except (OpenAIError, InvalidGeneration, ValidationError):
@@ -52,8 +56,27 @@ def read_or_edit(request, access, company_id, operation, *, write=False):
 
 @router.get('/ideas')
 def history(request: Request, company_id: UUID, limit: int = Query(25, ge=1, le=100),
-            after: UUID | None = None, access=Depends(company_access)):
-    return read_or_edit(request, access, company_id, lambda db: ideas.history(db, company_id, limit, after))
+            after: UUID | None = None, search: str | None = Query(None, max_length=200),
+            status: Literal['draft', 'used', 'published', 'discarded'] | None = None,
+            feedback: Literal['none', 'liked', 'disliked'] | None = None,
+            target_platform: Literal['instagram', 'facebook'] | None = None,
+            created_from: AwareDatetime | None = None, created_to: AwareDatetime | None = None,
+            access=Depends(company_access)):
+    def query(db):
+        if created_from is not None and created_to is not None and created_from >= created_to:
+            raise HTTPException(422, 'created_from must precede created_to.')
+        return ideas.history(db, company_id, limit, after, search=search, status=status,
+                             feedback=feedback, target_platform=target_platform,
+                             created_from=created_from, created_to=created_to)
+    return read_or_edit(request, access, company_id, query)
+
+
+@router.get('/publication-options')
+def publication_options(request: Request, company_id: UUID,
+                        limit: int = Query(25, ge=1, le=100), after: UUID | None = None,
+                        access=Depends(company_access)):
+    return read_or_edit(request, access, company_id,
+                        lambda db: ownership.publication_options(db, company_id, limit, after))
 
 
 @router.get('/ideas/{idea_id}')
@@ -77,6 +100,13 @@ def feedback(request: Request, company_id: UUID, idea_id: UUID, body: IdeaFeedba
              access=Depends(company_access)):
     return read_or_edit(request, access, company_id,
                         lambda db: ideas.set_feedback(db, company_id, idea_id, body.feedback, body.reason), write=True)
+
+
+@router.get('/ideas/{idea_id}/publications')
+def publications(request: Request, company_id: UUID, idea_id: UUID, access=Depends(company_access)):
+    # Historical UUID associations do not confer access to current item metadata.
+    return read_or_edit(request, access, company_id,
+                        lambda db: {'items': ideas.idea(db, company_id, idea_id)['publications']})
 
 
 @router.put('/ideas/{idea_id}/publications/{library_item_id}')

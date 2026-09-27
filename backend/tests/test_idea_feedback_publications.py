@@ -27,7 +27,7 @@ class IdeaFeedbackPublicationTests(unittest.TestCase):
         self.fixture.setUp()
         self.f = self.fixture.f
         self.client = self.fixture.client
-        self.body = {'request_id': str(uuid4()), 'video_ids': [str(self.f.creative)]}
+        self.body = {'request_id': str(uuid4()), 'target_platforms': ['facebook'], 'video_ids': [str(self.f.creative)]}
         self.saved = self.fixture.generate(body=self.body)
         self.id = self.saved['id']
         self.base = f'/api/meta/companies/{self.f.a}/ideas/{self.id}'

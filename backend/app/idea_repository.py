@@ -22,18 +22,42 @@ def idea(db, company_id, idea_id):
     return row
 
 
-def history(db, company_id, limit, after=None):
+def history(db, company_id, limit, after=None, *, search=None, status=None,
+            feedback=None, target_platform=None, created_from=None, created_to=None):
     cursor = None
     if after is not None:
         cursor = db.execute('SELECT created_at,id FROM ideas WHERE company_id=%s AND id=%s',
                             (company_id, after)).fetchone()
         if cursor is None:
             raise HTTPException(404, 'History cursor was not found.')
-    rows = db.execute('''SELECT id,title,concept,status,feedback,feedback_reason,created_at,updated_at FROM ideas
-        WHERE company_id=%s AND (%s::timestamptz IS NULL OR (created_at,id)<(%s,%s))
-        ORDER BY created_at DESC,id DESC LIMIT %s''',
-        (company_id, cursor['created_at'] if cursor else None,
-         cursor['created_at'] if cursor else None, after, limit + 1)).fetchall()
+    clauses = ['i.company_id=%s']
+    params = [company_id]
+    if cursor:
+        clauses.append('(i.created_at,i.id)<(%s,%s)')
+        params.extend([cursor['created_at'], after])
+    if search and search.strip():
+        # Literal case-insensitive substring search; SQL wildcard characters
+        # carry no special meaning. Search includes the explicitly saved script.
+        clauses.append("strpos(lower(i.title || ' ' || i.concept || ' ' || i.script), lower(%s))>0")
+        params.append(search.strip())
+    for field, value in (('status', status), ('feedback', feedback)):
+        if value is not None:
+            clauses.append(f'i.{field}=%s')
+            params.append(value)
+    if target_platform is not None:
+        clauses.append('EXISTS (SELECT 1 FROM idea_target_platforms t WHERE t.idea_id=i.id AND t.platform=%s)')
+        params.append(target_platform)
+    if created_from is not None:
+        clauses.append('i.created_at>=%s')
+        params.append(created_from)
+    if created_to is not None:
+        clauses.append('i.created_at<%s')
+        params.append(created_to)
+    rows = db.execute(f'''SELECT i.id,i.title,i.concept,i.status,i.feedback,i.feedback_reason,
+        i.created_at,i.updated_at,ARRAY(SELECT t.platform FROM idea_target_platforms t
+            WHERE t.idea_id=i.id ORDER BY t.platform) AS target_platforms
+        FROM ideas i WHERE {' AND '.join(clauses)}
+        ORDER BY i.created_at DESC,i.id DESC LIMIT %s''', (*params, limit + 1)).fetchall()
     return {'items': rows[:limit], 'next_cursor': rows[limit-1]['id'] if len(rows) > limit else None}
 
 

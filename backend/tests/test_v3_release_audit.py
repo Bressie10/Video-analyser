@@ -151,7 +151,7 @@ class ReleaseAuditTests(unittest.TestCase):
             return RESULT
         with patch('app.idea_service.generate_idea', side_effect=revoke) as generated:
             response = self.fixture.client.post(f'/api/meta/companies/{self.f.a}/recommendations',
-                json={'request_id': str(uuid4()), 'video_ids': [str(self.f.organic)]})
+                json={'request_id': str(uuid4()), 'target_platforms': ['facebook'], 'video_ids': [str(self.f.organic)]})
         generated.assert_called_once()
         self.assertEqual(response.status_code, 409, response.text)
         self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM ideas').fetchone()['n'], 0)

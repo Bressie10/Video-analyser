@@ -352,3 +352,9 @@ URLs). Search cannot match suppressed labels. There is no safe thumbnail/media
 proxy in this contract, and no thumbnail URL is returned. Frontend should render
 plain text and a placeholder image, clear selections on company change, and use
 `analyzed` to determine source eligibility. This wave makes no frontend changes.
+## V4 Wave 2 idea API
+
+The company-scoped persistent generation and history API is documented in
+[the idea API contract](backend/IDEA_API.md), including explicit source/target
+selection, filters, cursor pagination, Save, feedback and publication associations.
+This backend change requires no new migration and does not enable frontend workflows.

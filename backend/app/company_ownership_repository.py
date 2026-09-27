@@ -474,3 +474,32 @@ def list_assignable_ads(db, connection_id, company_id, account_id):
         (connection_id, account_id, company_id)).fetchall()
     return [{'ad_item_id': row['id'], 'display_name': _display_name(row, 'Meta ad'),
              'assigned': row['company_id'] is not None} for row in rows]
+
+
+def publication_options(db, company_id, limit, after=None):
+    """Caller holds authenticated company access locks for this transaction.
+
+    Only directly owned, dated organic posts are picker candidates. Shared ad
+    creatives grant content access, not access to another company's post metadata.
+    """
+    connection_id = db.execute('SELECT connection_id FROM companies WHERE id=%s',
+                               (company_id,)).fetchone()['connection_id']
+    scope = COMPANY_SCOPE_SQL + ''', candidates AS (
+        SELECT id,platform,content_type,label,external_id,published_at FROM direct_items
+        WHERE platform IN ('instagram','facebook') AND content_type<>'ad'
+        AND published_at IS NOT NULL
+    ) '''
+    params = _params(connection_id, company_id, after=after, limit=limit+1)
+    cursor = None
+    if after is not None:
+        cursor = db.execute(scope + 'SELECT published_at FROM candidates WHERE id=%(after)s',
+                            params).fetchone()
+        if cursor is None:
+            raise OwnershipNotFound('Publication cursor was not found.')
+    params['published_at'] = cursor['published_at'] if cursor else None
+    rows = db.execute(scope + '''SELECT * FROM candidates
+        WHERE (%(published_at)s::timestamptz IS NULL OR (published_at,id)<(%(published_at)s,%(after)s))
+        ORDER BY published_at DESC,id DESC LIMIT %(limit)s''', params).fetchall()
+    items = [{key: row[key] for key in ('id', 'platform', 'content_type', 'published_at')}
+             | {'label': _display_name(row, 'Published post')} for row in rows[:limit]]
+    return {'items': items, 'next_cursor': rows[limit-1]['id'] if len(rows) > limit else None}
