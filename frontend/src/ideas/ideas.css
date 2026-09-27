@@ -1,0 +1,19 @@
+.ideas-workspace { min-width: 0; }
+.idea-filters { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr)); gap: 14px; margin: 20px 0; }
+.ideas-workspace label, .idea-picker label { display: grid; gap: 6px; font-weight: 600; margin-bottom: 12px; min-width: 0; }
+.ideas-workspace input, .ideas-workspace select, .ideas-workspace textarea, .idea-picker input { display: block; width: 100%; min-width: 0; max-width: 100%; border: 1px solid var(--line); border-radius: 6px; padding: 10px; font: inherit; color: var(--ink); background: var(--surface); }
+.ideas-workspace textarea { resize: vertical; }
+.idea-list { list-style: none; padding: 0; display: grid; gap: 12px; }
+.idea-list li { border: 1px solid var(--line); border-radius: 8px; padding: 16px; overflow-wrap: anywhere; min-width: 0; }
+.idea-open { text-align: left; color: var(--accent); max-width: 100%; overflow-wrap: anywhere; }
+.idea-actions { display: flex; flex-wrap: wrap; gap: 10px; }
+.idea-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.idea-section { border-top: 1px solid var(--line); margin-top: 28px; padding-top: 18px; }
+.idea-section legend { font-size: 1rem; color: var(--ink); }
+.idea-discard { margin-top: 24px; display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+.idea-discard button { border-color: #a11d20; color: #a11d20; }
+.ideas-workspace button[aria-pressed=true] { background: var(--soft-accent); box-shadow: inset 0 0 0 2px var(--accent); }
+.idea-picker { width: min(640px, calc(100% - 24px)); max-height: 85vh; overflow: auto; border: 1px solid var(--line); border-radius: 12px; padding: 24px; color: var(--ink); }
+.idea-picker::backdrop { background: #18233080; }
+.idea-picker button { max-width: 100%; overflow-wrap: anywhere; }
+@media (max-width: 600px) { .idea-picker { padding: 16px; } .idea-filters { grid-template-columns: 1fr; } }

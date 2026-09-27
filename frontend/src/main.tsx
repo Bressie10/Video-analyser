@@ -6,6 +6,7 @@ import { useCompanyUI } from './company/useCompanyUI';
 import { CompanyShell } from './CompanyShell';
 import { GenerateIdea } from './generation/GenerateIdea';
 import './style.css';
+import { IdeasPage } from './ideas/IdeasPage';
 
 export function App() {
   const [connected, setConnected] = useState(false);
@@ -22,8 +23,8 @@ export function App() {
   return <main>
     <header className="page-heading"><p className="eyebrow">Your next video starts here</p><h1>Turn your content into your next idea.</h1></header>
     <MetaConnection onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} connectAction={connect} />
-    <CompanyShell companyUI={model}>
-      {onSetup => <GenerateIdea onSetup={onSetup} />}
+    <CompanyShell companyUI={model} allowUnlinkedWorkspace>
+      {onSetup => <><GenerateIdea onSetup={onSetup} /><IdeasPage /></>}
     </CompanyShell>
   </main>;
 }
