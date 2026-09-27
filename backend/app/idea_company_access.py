@@ -3,11 +3,12 @@ from dataclasses import dataclass
 from typing import Protocol
 from uuid import UUID
 
-from fastapi import HTTPException, Request
+from fastapi import Depends, HTTPException, Request
+from app.auth import AuthenticatedUser, require_authenticated_user
+from app.company_authorization import authorize
 
 from app import company_ownership_repository as ownership
 from app import company_profile_repository as profiles
-from app import meta_library_repository as library
 
 
 @dataclass(frozen=True)
@@ -17,9 +18,9 @@ class ProfileEvidence:
 
 
 class CompanyAccess(Protocol):
-    def authorize(self, db, session: str | None, company_id: UUID,
+    def authorize(self, db, user: AuthenticatedUser, company_id: UUID,
                   item_ids: list[UUID], *, write: bool) -> None:
-        """Lock live session/company/content access until the supplied db commits."""
+        """Lock membership/company/content access until the supplied db commits."""
         ...
 
     def performance(self, db, company_id: UUID, item_id: UUID) -> list[dict]:
@@ -36,21 +37,12 @@ class CompanyAccess(Protocol):
 
 
 class OwnershipIdeaAccess:
-    def authorize(self, db, session, company_id, item_ids, *, write):
-        # 006 has one connection-level owner, with identical read/write rights.
-        # Both locks conflict with disconnect/session deletion. Ownership mutations
-        # take the connection FOR UPDATE before changing company/account/ad rows.
-        connection = db.execute('''SELECT c.id FROM meta_connections c
-            JOIN meta_sessions s ON s.connection_id=c.id
-            WHERE s.token_hash=%s AND s.expires_at>clock_timestamp()
-            AND c.status='connected' AND c.expires_at>clock_timestamp()
-            FOR SHARE OF c,s''', (library.token_hash(session or ''),)).fetchone()
-        if connection is None:
-            raise HTTPException(401, 'Reconnect Meta to continue.')
+    def authorize(self, db, user, company_id, item_ids, *, write):
+        company = authorize(db, user, company_id, write=write)
         try:
-            ownership.require_active_company(db, connection['id'], company_id)
+            ownership.require_active_company(db, company['connection_id'], company_id)
             for identity in sorted(set(item_ids), key=str):
-                item = ownership.get_item(db, connection['id'], company_id, identity)
+                item = ownership.get_item(db, company['connection_id'], company_id, identity)
                 # A legacy FK to another connection's analysis is never evidence.
                 raw = db.execute('SELECT video_id FROM meta_library_items WHERE id=%s', (identity,)).fetchone()
                 if raw['video_id'] and not item['video_id']:
@@ -102,7 +94,9 @@ class OwnershipIdeaAccess:
 _default_access = OwnershipIdeaAccess()
 
 
-def company_access(request: Request) -> CompanyAccess:
+def company_access(request: Request,
+                   user: AuthenticatedUser = Depends(require_authenticated_user)) -> CompanyAccess:
+    request.state.company_user = user
     adapter = getattr(request.app.state, 'idea_company_access', _default_access)
     if adapter is None:
         raise HTTPException(503, 'Company authorization integration is not configured.')

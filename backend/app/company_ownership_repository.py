@@ -1,7 +1,7 @@
 """Explicit company ownership and fail-closed company content readers.
 
-Callers supply the connection ID obtained from existing Meta authentication, never
-from an untrusted company payload. No provider discovery or inference happens here.
+Company API callers first authorize verified user membership, then supply the
+persisted company connection ID, never one from an untrusted request payload. No provider discovery or inference happens here.
 Public operations are transactional; connection locks serialize ownership changes
 and keep multi-query reads stable against unlink/reassignment/archive/disconnect.
 
@@ -39,6 +39,8 @@ def _transaction(operation):
 
 
 def _lock(db, connection_id, *, write=False):
+    if connection_id is None:
+        return  # Disconnected V6 companies have no provider row to lock.
     # Fixed SQL fragments only. Read locks also serialize against disconnect.
     mode = 'UPDATE' if write else 'SHARE'
     if db.execute(
@@ -51,7 +53,7 @@ def _lock(db, connection_id, *, write=False):
 def _company(db, connection_id, company_id, *, active=True, write=False):
     _lock(db, connection_id, write=write)
     row = db.execute(
-        'SELECT * FROM companies WHERE id=%s AND connection_id=%s',
+        'SELECT * FROM companies WHERE id=%s AND connection_id IS NOT DISTINCT FROM %s',
         (company_id, connection_id),
     ).fetchone()
     if row is None or (active and row['archived_at'] is not None):

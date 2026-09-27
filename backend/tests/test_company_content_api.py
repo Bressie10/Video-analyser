@@ -135,10 +135,10 @@ class CompanyContentAPITests(unittest.TestCase):
 
     def test_archived_foreign_and_auth_fail_closed(self):
         for company in (self.f.foreign_company, uuid4()):
-            self.browse(company, status=404)
+            self.browse(company, status=403)
         ownership.set_company_archived(self.f.db, self.f.connection, self.f.a)
-        self.browse(status=404)
-        self.client.cookies.clear()
+        self.browse(status=403)
+        self.client.headers.pop('Authorization')
         self.browse(status=401)
 
     def test_cross_connection_assets_and_analysis_fail_closed(self):

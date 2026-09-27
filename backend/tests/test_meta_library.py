@@ -821,9 +821,9 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             for path in sorted((Path(__file__).resolve().parents[1] / 'migrations').glob('00[6-9]_*.sql')):
                 db.execute(path.read_text())
             company = ownership.create_company(db, self.connection_id, 'OAuth company')['id']
-        # The cookie obtained from the real callback reaches company routes too.
-        self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 200)
-        self.assertEqual(self.api.get(f'/api/meta/companies/{company}/ideas').status_code, 200)
+        # A real provider cookie alone never grants V6 company application access.
+        self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 401)
+        self.assertEqual(self.api.get(f'/api/meta/companies/{company}/ideas').status_code, 401)
         disconnected = self.api.post('/api/meta/disconnect')
         self.assertEqual(disconnected.status_code, 200)
         deleted = disconnected.headers.get_list('set-cookie')

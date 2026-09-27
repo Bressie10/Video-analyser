@@ -186,16 +186,16 @@ class V4IdeaAPITests(unittest.TestCase):
                 self.client.delete(endpoint + '/publications/' + str(self.f.organic)),
                 self.client.get(endpoint), self.client.get(endpoint + '/publications'),
             ):
-                self.assertEqual(response.status_code, 404, response.text)
-        self.assertEqual(self.fixture.post().status_code, 404)
-        self.assertEqual(self.client.get(self.base + '/ideas').status_code, 404)
-        self.assertEqual(self.client.get(self.base + '/publication-options').status_code, 404)
+                self.assertEqual(response.status_code, 404 if company == self.f.b else 403, response.text)
+        self.assertEqual(self.fixture.post().status_code, 403)
+        self.assertEqual(self.client.get(self.base + '/ideas').status_code, 403)
+        self.assertEqual(self.client.get(self.base + '/publication-options').status_code, 403)
         ownership.set_company_archived(self.f.db, self.f.connection, self.f.a, archived=False)
         self.assertEqual(self.client.get(base).json()['title'], saved['title'])
         self.assertEqual(len(self.client.get(base + '/publications').json()['items']), 1)
 
     def test_signed_out_new_reads_fail_closed(self):
         saved = self.generate()
-        self.client.cookies.clear()
+        self.client.headers.pop('Authorization')
         for path in ('/ideas', '/publication-options', '/ideas/' + saved['id'] + '/publications'):
             self.assertEqual(self.client.get(self.base + path).status_code, 401)

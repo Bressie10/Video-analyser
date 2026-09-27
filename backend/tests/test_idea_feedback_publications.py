@@ -110,20 +110,20 @@ class IdeaFeedbackPublicationTests(unittest.TestCase):
                              self.client.put(base + f'/publications/{self.f.organic}'),
                              self.client.delete(base + f'/publications/{self.f.organic}'),
                              self.client.get(base)):
-                self.assertEqual(response.status_code, 404, response.text)
+                self.assertEqual(response.status_code, 404 if company == self.f.b else 403, response.text)
         self.assertEqual(self.client.get(self.base).json(), self.saved)
 
-    def test_signed_out_and_foreign_connection_fail_closed(self):
-        self.client.cookies.clear()
+    def test_signed_out_and_unrelated_user_fail_closed(self):
+        self.client.headers.pop('Authorization')
         self.assertEqual(self.status('used').status_code, 401)
         self.assertEqual(self.feedback('liked').status_code, 401)
         self.assertEqual(self.link(self.f.organic).status_code, 401)
         self.f.db.execute("INSERT INTO meta_sessions VALUES (%s,%s,now()+interval '1 day')",
                           (library.token_hash('foreign-session'), self.f.foreign_connection))
-        self.client.cookies.set(meta.SESSION_COOKIE, 'foreign-session', path='/api')
-        self.assertEqual(self.status('used').status_code, 404)
-        self.assertEqual(self.feedback('liked').status_code, 404)
-        self.assertEqual(self.link(self.f.organic).status_code, 404)
+        self.client.headers['Authorization'] = 'Bearer ' + self.fixture.fixture.auth.token(sub=str(uuid4()))
+        self.assertEqual(self.status('used').status_code, 403)
+        self.assertEqual(self.feedback('liked').status_code, 403)
+        self.assertEqual(self.link(self.f.organic).status_code, 403)
 
     def test_multiple_publications_and_duplicate_idempotency(self):
         first = self.assert_ok(self.link(self.f.organic))
@@ -167,13 +167,13 @@ class IdeaFeedbackPublicationTests(unittest.TestCase):
         other = self.client.get(f'/api/meta/companies/{self.f.b}/ideas').json()
         self.assertEqual(other['items'], [])
 
-    def test_meta_disconnect_preserves_records_without_granting_access(self):
+    def test_meta_disconnect_preserves_membership_based_access(self):
         self.assert_ok(self.link(self.f.organic))
         self.assert_ok(self.feedback('liked'))
         library.disconnect(self.f.connection)
-        self.assertEqual(self.client.get(self.base).status_code, 401)
-        self.assertEqual(self.status('used').status_code, 401)
-        self.assertEqual(self.link(self.f.organic).status_code, 401)
+        self.assertEqual(self.client.get(self.base).status_code, 200)
+        self.assertEqual(self.status('used').status_code, 200)
+        self.assertEqual(self.link(self.f.organic).status_code, 200)
         self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM idea_publications').fetchone()['n'], 1)
         self.assertEqual(self.f.db.execute('SELECT feedback FROM ideas WHERE id=%s', (self.id,)).fetchone()['feedback'], 'liked')
 
@@ -184,7 +184,7 @@ class IdeaFeedbackPublicationTests(unittest.TestCase):
         ownership.set_company_archived(self.f.db, self.f.connection, self.f.a)
         for response in (self.status('published'), self.feedback('liked'), self.link(self.f.instagram),
                          self.client.delete(self.publication_url(self.f.organic))):
-            self.assertEqual(response.status_code, 404)
+            self.assertEqual(response.status_code, 403)
         self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM idea_publications').fetchone()['n'], 1)
         ownership.set_company_archived(self.f.db, self.f.connection, self.f.a, archived=False)
         self.assertEqual(self.client.get(self.base).json(), before)

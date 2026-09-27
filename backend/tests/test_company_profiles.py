@@ -26,6 +26,7 @@ from app import meta_library_repository as library
 from app.company_profile_generator import OpenAIProfileGenerator, InvalidProfile, validate
 from app.company_profile_types import ProfileDocument
 from app.company_profile_routes import router
+from company_auth_fixtures import sign_in, grant
 
 
 class FakeGenerator:
@@ -82,6 +83,9 @@ class CompanyProfileTests(unittest.TestCase):
         app = FastAPI()
         app.include_router(router)
         self.client = TestClient(app)
+        self.auth = sign_in(self, self.client)
+        with repo.database() as db:
+            grant(db, [self.company, self.other], connection=self.connection)
         self.client.cookies.set(meta.SESSION_COOKIE, self.session, path='/api')
         self.headers = {}
         self.base = f'/api/companies/{self.company}/profiles'

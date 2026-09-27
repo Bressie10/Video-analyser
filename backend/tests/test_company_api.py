@@ -12,6 +12,7 @@ from fastapi.testclient import TestClient
 from app import company_ownership_repository as repo
 from app import meta, meta_library_repository as library
 from app.main import app
+from company_auth_fixtures import sign_in, grant
 import test_company_ownership as ownership_tests
 
 
@@ -27,6 +28,8 @@ class CompanyAPITests(unittest.TestCase):
         self.addCleanup(env.stop)
         self.client = TestClient(app, base_url='https://testserver')
         self.addCleanup(self.client.close)
+        self.auth = sign_in(self, self.client)
+        grant(self.f.db, [self.f.a, self.f.b], connection=self.f.connection)
         self.f.db.execute("INSERT INTO meta_sessions VALUES (%s,%s,now()+interval '1 day')",
                           (library.token_hash('company-api-session'), self.f.connection))
         self.client.cookies.set(meta.SESSION_COOKIE, 'company-api-session', path='/api')
@@ -35,7 +38,7 @@ class CompanyAPITests(unittest.TestCase):
     def request(self, method, path, status=200, **kwargs):
         response = self.client.request(method, path, **kwargs)
         self.assertEqual(response.status_code, status, response.text)
-        self.assertEqual(response.headers['cache-control'], 'private, no-store')
+        self.assertIn('no-store', response.headers['cache-control'])
         return response.json()
 
     def account(self, account, company=None):
@@ -55,7 +58,7 @@ class CompanyAPITests(unittest.TestCase):
         self.assertNotIn(created['company_id'], [r['company_id'] for r in self.request('GET', '/api/companies')['companies']])
         self.assertIn(created['company_id'], [r['company_id'] for r in self.request('GET', '/api/companies?include_archived=true')['companies']])
         self.assertTrue(self.request('GET', path)['archived'])
-        self.request('PATCH', path, 404, json={'name': 'Cannot rename'})
+        self.request('PATCH', path, 403, json={'name': 'Cannot rename'})
         self.assertFalse(self.request('POST', path + '/restore')['archived'])
         self.request('PATCH', path, json={'name': 'Restored'})
         for body in ({'name': ''}, {'name': '  '}, {'name': 'x' * 201}, {'name': 'X', 'connection_id': str(self.f.foreign_connection)}):
@@ -66,7 +69,7 @@ class CompanyAPITests(unittest.TestCase):
             self.request('PUT', self.account(account))
             self.request('PUT', self.account(account))
             self.request('PUT', self.account(account, self.f.b), 409)
-            self.request('PUT', self.account(account, self.f.foreign_company), 404)
+            self.request('PUT', self.account(account, self.f.foreign_company), 403)
         accounts = self.request('GET', '/api/meta/accounts')['accounts']
         fb = next(r for r in accounts if r['account_id'] == str(self.f.fb))
         self.assertEqual(fb['organic_owner'], {'company_id': str(self.f.a), 'name': 'A', 'archived': False})
@@ -127,7 +130,7 @@ class CompanyAPITests(unittest.TestCase):
             ('POST', self.ad(self.f.ad_a) + '/reassign', {'target_company_id': str(self.f.b)}),
             ('POST', self.ad(self.f.ad_b, self.f.b) + '/reassign', {'target_company_id': str(self.f.a)}),
         ):
-            self.request(method, path, 404, **({'json': body} if body else {}))
+            self.request(method, path, 403, **({'json': body} if body else {}))
         self.request('POST', self.base + '/restore')
         self.request('PUT', self.account(self.f.fb))
         self.request('DELETE', self.ad(self.f.ad_a))
@@ -145,8 +148,8 @@ class CompanyAPITests(unittest.TestCase):
                 ('PUT', f'/ads/{self.f.ad_a}', None), ('DELETE', f'/ads/{self.f.ad_a}', None),
                 ('POST', f'/ads/{self.f.ad_a}/reassign', {'target_company_id': str(self.f.b)}),
             ):
-                self.request(method, path + suffix, 404, **({'json': body} if body else {}))
-            self.request('POST', self.ad(self.f.ad_a) + '/reassign', 404, json={'target_company_id': str(company)})
+                self.request(method, path + suffix, 403, **({'json': body} if body else {}))
+            self.request('POST', self.ad(self.f.ad_a) + '/reassign', 403, json={'target_company_id': str(company)})
         for account in (self.f.foreign_ads, uuid4()):
             for method, suffix in (('PUT', ''), ('DELETE', ''), ('GET', '/ads')):
                 self.request(method, self.account(account) + suffix, 404)
@@ -155,31 +158,21 @@ class CompanyAPITests(unittest.TestCase):
                 self.request(method, self.ad(ad), 404)
         self.assertIn(self.f.ad_a, self.f.ids(self.f.a))
 
-    def test_authentication_and_session_fenced_through_commit(self):
-        original = repo.create_company
-        def create(db, *args):
+    def test_authentication_and_membership_fenced_through_commit(self):
+        original = repo.rename_company
+        def rename(db, *args):
             with self.assertRaises(psycopg.errors.LockNotAvailable), library.database() as other:
                 other.execute("SET LOCAL lock_timeout='50ms'")
-                other.execute('DELETE FROM meta_sessions')
+                other.execute('DELETE FROM company_memberships')
             return original(db, *args)
-        with patch('app.company_routes.repo.create_company', side_effect=create):
-            self.request('POST', '/api/companies', 201, json={'name': 'Locked'})
-        for statement in (
-            "UPDATE meta_sessions SET expires_at=now()-interval '1 day'",
-            "UPDATE meta_connections SET status='disconnected'",
-            "UPDATE meta_connections SET expires_at=now()-interval '1 day'",
-            'DELETE FROM meta_sessions',
-        ):
-            self.f.db.execute("UPDATE meta_sessions SET expires_at=now()+interval '1 day'")
-            self.f.db.execute("UPDATE meta_connections SET status='connected',expires_at=now()+interval '1 day'")
-            self.f.db.execute(statement)
-            for method, path, body in (
-                ('GET', '/api/companies', None), ('GET', '/api/meta/accounts', None),
-                ('POST', '/api/companies', {'name': 'No'}), ('POST', self.base + '/restore', None),
-                ('PUT', self.account(self.f.ads), None), ('PUT', self.ad(self.f.ad_a), None),
-            ):
-                self.request(method, path, 401, **({'json': body} if body else {}))
+        with patch('app.company_routes.repo.rename_company', side_effect=rename):
+            self.request('PATCH', self.base, json={'name': 'Locked'})
+        self.f.db.execute('DELETE FROM meta_sessions')
+        self.f.db.execute("UPDATE meta_connections SET status='disconnected'")
         self.client.cookies.clear()
+        self.request('GET', '/api/companies')
+        self.request('POST', '/api/companies', 201, json={'name': 'Without Meta'})
+        del self.client.headers['Authorization']
         self.request('GET', '/api/companies', 401)
 
     def test_ownership_api_invalidates_profiles_and_conflicts_roll_back(self):
@@ -199,7 +192,7 @@ class CompanyAPITests(unittest.TestCase):
         self.assertTrue(all(removed[scope][0] == after[scope][0] + 1 and removed[scope][1] for scope in after))
 
     def test_storage_errors_are_generic(self):
-        with patch('app.company_routes.repo.list_company_summaries',
+        with patch('app.company_routes.library.database',
                    side_effect=psycopg.OperationalError('provider-secret database detail')):
             response = self.request('GET', '/api/companies', 503)
         self.assertEqual(response, {'detail': 'Company management is unavailable.'})

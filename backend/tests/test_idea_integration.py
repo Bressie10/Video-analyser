@@ -57,7 +57,7 @@ class IdeaIntegrationTests(unittest.TestCase):
         for company, ids in ((self.f.foreign_company, [self.f.creative]),
                              (self.f.a, [self.fixture.b_facebook]),
                              (self.f.a, [self.f.ad_b]), (self.f.a, [self.f.unassigned])):
-            self.assertEqual(self.post(company, ids).status_code, 404)
+            self.assertEqual(self.post(company, ids).status_code, 403 if company == self.f.foreign_company else 404)
         self.model.assert_not_called()
 
     def test_reassignment_during_generation_rejects_persistence(self):
@@ -85,13 +85,13 @@ class IdeaIntegrationTests(unittest.TestCase):
         for suffix in ('', '/evidence'):
             self.assertEqual(self.client.get(f"/api/meta/companies/{self.f.b}/ideas/{saved['id']}"+suffix).status_code, 404)
 
-    def test_final_persistence_locks_ownership_and_session(self):
+    def test_final_persistence_locks_ownership_and_membership(self):
         from app import idea_repository
         original = idea_repository.persist
         def persist(db, *args, **kwargs):
             for mutate in (
                 lambda other: ownership.reassign_ad(other, self.f.connection, self.f.a, self.f.b, self.f.ad_a),
-                lambda other: other.execute('DELETE FROM meta_sessions'),
+                lambda other: other.execute('DELETE FROM company_memberships'),
             ):
                 with self.assertRaises(psycopg.errors.LockNotAvailable), library.database() as other:
                     other.execute("SET LOCAL lock_timeout='50ms'")
@@ -100,12 +100,12 @@ class IdeaIntegrationTests(unittest.TestCase):
         with patch('app.idea_service.ideas.persist', side_effect=persist):
             self.generate()
 
-    def test_session_revocation_during_model_call(self):
+    def test_membership_revocation_during_model_call(self):
         def revoke(*args, **kwargs):
-            self.f.db.execute('DELETE FROM meta_sessions')
+            self.f.db.execute('DELETE FROM company_memberships')
             return RESULT
         self.model.side_effect = revoke
-        self.assertEqual(self.post().status_code, 401)
+        self.assertEqual(self.post().status_code, 403)
         self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM ideas').fetchone()['n'], 0)
 
     def test_archive_during_model_call(self):
@@ -113,7 +113,7 @@ class IdeaIntegrationTests(unittest.TestCase):
             ownership.set_company_archived(self.f.db, self.f.connection, self.f.a)
             return RESULT
         self.model.side_effect = archive
-        self.assertEqual(self.post().status_code, 404)
+        self.assertEqual(self.post().status_code, 403)
         self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM ideas').fetchone()['n'], 0)
 
     def test_suppressed_profile_is_omitted_and_saved_evidence_stays_frozen(self):

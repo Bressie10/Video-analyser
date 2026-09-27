@@ -3,15 +3,17 @@
 from uuid import UUID
 
 import psycopg
-from fastapi import APIRouter, Header, HTTPException, Request
+from fastapi import APIRouter, Depends, Header, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 
 from app import company_profile_repository as repo
 from app.company_profile_company import get_company_adapter, CompanyLayerUnavailable
 from app.company_profile_types import SCOPES, Scope
+from app.company_authorization import authenticated_request
 
-router = APIRouter(prefix='/api/companies/{company_id}/profiles', tags=['company profiles'])
+router = APIRouter(prefix='/api/companies/{company_id}/profiles', tags=['company profiles'],
+                   dependencies=[Depends(authenticated_request)])
 
 
 def respond(request, company_id, operation, *, write=False):
@@ -19,8 +21,7 @@ def respond(request, company_id, operation, *, write=False):
         adapter = get_company_adapter()
         with repo.database() as db:
             adapter.authorize(db, request, company_id, write=write)
-            # Authentication takes the connection lock first; retain that lock
-            # through the company lock and read/refresh to fence ownership changes.
+            # Membership and ownership locks remain held through read/refresh.
             repo.lock_company(db, company_id)
             result = operation(db)
         response = JSONResponse(jsonable_encoder(result), status_code=202 if write else 200)

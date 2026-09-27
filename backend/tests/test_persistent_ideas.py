@@ -25,6 +25,7 @@ from app.idea_company_access import ProfileEvidence
 from app.idea_generation import InvalidGeneration, generate_idea
 from app.idea_models import GeneratedIdea, GenerationRequest
 from app.main import app
+from company_auth_fixtures import sign_in
 from app.video_repository import save_analysis
 from test_recommendations_api import ANALYSIS
 
@@ -35,6 +36,8 @@ RESULT = GeneratedIdea(title='One idea', concept='A supported exploratory concep
 class FixtureAccess:
     """Test-only 006 locking semantics. Production adapter must implement these."""
     def authorize(self, db, session, company_id, item_ids, *, write):
+        # Deliberately old repository contract fixture, behind real JWT auth.
+        session = 'test-session'
         connection = db.execute('''SELECT c.id FROM meta_connections c JOIN meta_sessions s ON s.connection_id=c.id
             WHERE s.token_hash=%s AND s.expires_at>clock_timestamp() AND c.expires_at>clock_timestamp()
             AND c.status='connected' FOR SHARE OF c,s''', (library.token_hash(session or ''),)).fetchone()
@@ -83,6 +86,7 @@ class PersistentIdeasTests(unittest.TestCase):
         app.state.idea_company_access = self.access
         self.addCleanup(lambda: delattr(app.state, 'idea_company_access'))
         self.api = TestClient(app, base_url='https://testserver')
+        self.auth = sign_in(self, self.api)
         self.api.cookies.set(meta.SESSION_COOKIE, self.session, path='/api/meta')
         self.base = f'/api/meta/companies/{self.company}'
         with library.database() as db:

@@ -45,8 +45,8 @@ def publication(item):
     return {key: item[key] for key in ('platform', 'content_type', 'published_at')}
 
 
-def capture_evidence(db, access, session, company_id, body):
-    access.authorize(db, session, company_id, body.video_ids, write=True)
+def capture_evidence(db, access, user, company_id, body):
+    access.authorize(db, user, company_id, body.video_ids, write=True)
     captured_at = db.execute('SELECT transaction_timestamp() AS at').fetchone()['at']
     rows = db.execute('SELECT * FROM meta_library_items WHERE id=ANY(%s)',
                       (body.video_ids,)).fetchall()
@@ -71,7 +71,7 @@ def capture_evidence(db, access, session, company_id, body):
                     ('metadata', 'audio', 'scenes', 'on_screen_text', 'motion_events')}
         snapshots = access.performance(db, company_id, identity)
         owners = [s['item_id'] for s in snapshots]
-        access.authorize(db, session, company_id, owners, write=True)
+        access.authorize(db, user, company_id, owners, write=True)
         for snapshot in snapshots:
             owner = snapshot['item_id']
             owner_item = db.execute('SELECT platform,content_type,published_at FROM meta_library_items WHERE id=%s',
@@ -105,10 +105,10 @@ def capture_evidence(db, access, session, company_id, body):
             'authorized_ids': sorted(set(body.video_ids) | {UUID(key) for key in performance}, key=str)}
 
 
-def generate(access, session, company_id, body, api_key=None):
+def generate(access, user, company_id, body, api_key=None):
     digest = request_hash(body)
     with library.database() as db:
-        access.authorize(db, session, company_id, [], write=True)
+        access.authorize(db, user, company_id, [], write=True)
         claim, saved = ideas.claim_request(db, company_id, body.request_id, digest)
     if saved is not None:
         # Replays need company access, not access to sources that may have unlinked.
@@ -116,12 +116,12 @@ def generate(access, session, company_id, body, api_key=None):
     try:
         with library.database() as db:
             db.execute('SET TRANSACTION ISOLATION LEVEL REPEATABLE READ')
-            capture = capture_evidence(db, access, session, company_id, body)
+            capture = capture_evidence(db, access, user, company_id, body)
         model = os.environ.get('OPENAI_MODEL', 'gpt-6-sol')
         result = GeneratedIdea.model_validate(generate_idea(capture['payload'], model=model, api_key=api_key))
         with library.database() as db:
             # 006's locks serialize this check + insert against access revocation.
-            access.authorize(db, session, company_id, capture['authorized_ids'], write=True)
+            access.authorize(db, user, company_id, capture['authorized_ids'], write=True)
             access.revalidate(db, company_id, capture)
             return ideas.persist(db, company_id, body, digest, claim, capture, result, model,
                                  RECOMMENDATION_VERSION, EVIDENCE_SCHEMA_VERSION)

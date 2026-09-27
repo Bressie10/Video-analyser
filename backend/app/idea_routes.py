@@ -9,7 +9,7 @@ from fastapi.responses import JSONResponse
 from openai import OpenAIError
 from pydantic import AwareDatetime, ValidationError
 
-from app import idea_repository as ideas, idea_service, meta
+from app import idea_repository as ideas, idea_service
 from app import meta_library_repository as library
 from app import company_ownership_repository as ownership
 from app.idea_company_access import company_access
@@ -42,14 +42,14 @@ def respond(operation):
 def generate(request: Request, company_id: UUID, body: GenerationRequest,
              access=Depends(company_access),
              api_key: str | None = Header(default=None, alias='X-OpenAI-API-Key')):
-    return respond(lambda: idea_service.generate(access, request.cookies.get(meta.SESSION_COOKIE),
+    return respond(lambda: idea_service.generate(access, request.state.company_user,
                                                 company_id, body, api_key))
 
 
 def read_or_edit(request, access, company_id, operation, *, write=False):
     def run():
         with library.database() as db:
-            access.authorize(db, request.cookies.get(meta.SESSION_COOKIE), company_id, [], write=write)
+            access.authorize(db, request.state.company_user, company_id, [], write=write)
             return operation(db)
     return respond(run)
 
@@ -114,7 +114,7 @@ def add_publication(request: Request, company_id: UUID, idea_id: UUID, library_i
                     access=Depends(company_access)):
     def link(db):
         ideas.idea(db, company_id, idea_id)
-        access.authorize(db, request.cookies.get(meta.SESSION_COOKIE), company_id, [library_item_id], write=True)
+        access.authorize(db, request.state.company_user, company_id, [library_item_id], write=True)
         return ideas.add_publication(db, company_id, idea_id, library_item_id)
     return read_or_edit(request, access, company_id, link, write=True)
 

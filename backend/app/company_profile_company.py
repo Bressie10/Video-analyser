@@ -6,10 +6,7 @@ from dataclasses import dataclass
 from typing import Protocol
 from uuid import UUID
 
-from fastapi import HTTPException
-
-from app import meta
-from app import meta_library_repository as library
+from app.company_authorization import authorize
 from app import company_ownership_repository as ownership
 
 
@@ -26,7 +23,7 @@ class CompanyEvidenceAccess:
 
 class CompanyAdapter(Protocol):
     def authorize(self, db, request, company_id: UUID, *, write: bool) -> None:
-        """Raise 404 for missing/foreign/archived companies; 401 if signed out."""
+        """Require a verified user and active membership; members may refresh."""
         ...
 
     def evidence_access(self, db, company_id: UUID) -> CompanyEvidenceAccess:
@@ -41,22 +38,7 @@ class CompanyAdapter(Protocol):
 
 class OwnershipCompanyAdapter:
     def authorize(self, db, request, company_id, *, write):
-        session = request.cookies.get(meta.SESSION_COOKIE)
-        if not session:
-            raise HTTPException(401, 'Reconnect Meta to continue.')
-        # The same persisted sessions and connection boundary as V2, in the
-        # supplied transaction. No new application-user or membership system.
-        connection = db.execute('''SELECT c.id FROM meta_connections c
-            JOIN meta_sessions s ON s.connection_id=c.id
-            WHERE s.token_hash=%s AND s.expires_at>now()
-            AND c.status='connected' AND c.expires_at>now() FOR SHARE OF c''',
-            (library.token_hash(session),)).fetchone()
-        if connection is None:
-            raise HTTPException(401, 'Reconnect Meta to continue.')
-        try:
-            ownership.require_active_company(db, connection['id'], company_id)
-        except ownership.CompanyNotFound:
-            raise HTTPException(404, 'Company was not found.') from None
+        authorize(db, request.state.company_user, company_id, write=write)
 
     def evidence_access(self, db, company_id):
         # HTTP callers must authorize first; the worker receives the company UUID

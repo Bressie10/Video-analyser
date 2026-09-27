@@ -21,6 +21,7 @@ from app.company_profile_company import (
     OwnershipCompanyAdapter, get_company_adapter, bind_company_adapter, CompanyLayerUnavailable,
 )
 from app.main import app
+from company_auth_fixtures import sign_in, grant
 import test_company_ownership as ownership_tests
 from test_company_profiles import FakeGenerator
 
@@ -47,6 +48,8 @@ class CompanyProfileIntegrationTests(unittest.TestCase):
         self.addCleanup(bind_company_adapter, old)
         self.client = TestClient(app, base_url='https://testserver')
         self.addCleanup(self.client.close)
+        self.auth = sign_in(self, self.client)
+        grant(self.f.db, [self.f.a, self.f.b], connection=self.f.connection)
         session = 'integration-session'
         f.db.execute("INSERT INTO meta_sessions VALUES (%s,%s,now()+interval '1 day')",
                      (library.token_hash(session), f.connection))
@@ -215,11 +218,11 @@ class CompanyProfileIntegrationTests(unittest.TestCase):
         self.assertEqual(self.states(f.b), before_b)
         for scope in policy.SCOPES:
             response = self.client.get(self.url(f.a, scope))
-            self.assertEqual(response.status_code, 404)
+            self.assertEqual(response.status_code, 403)
             self.assertNotIn('document', response.json())
             self.assertEqual(self.client.post(self.url(f.a, scope) + '/refresh',
-                headers={'Idempotency-Key': str(uuid4())}).status_code, 404)
-        self.assertEqual(self.client.get(f'/api/companies/{f.a}/profiles').status_code, 404)
+                headers={'Idempotency-Key': str(uuid4())}).status_code, 403)
+        self.assertEqual(self.client.get(f'/api/companies/{f.a}/profiles').status_code, 403)
         with self.assertRaises(CompanyLayerUnavailable):
             self.adapter.evidence_access(f.db, f.a)
         self.assertIsNone(profiles.claim())
@@ -249,16 +252,17 @@ class CompanyProfileIntegrationTests(unittest.TestCase):
         f = self.f
         self.assertEqual(self.client.get(self.url(f.a)).status_code, 200)
         self.assertEqual(self.client.get(self.url(f.b)).status_code, 200)
-        self.assertEqual(self.client.get(self.url(f.foreign_company)).status_code, 404)
+        self.assertEqual(self.client.get(self.url(f.foreign_company)).status_code, 403)
         self.assertEqual(self.client.post(self.url(f.foreign_company) + '/refresh',
-            headers={'Idempotency-Key': 'foreign'}).status_code, 404)
+            headers={'Idempotency-Key': 'foreign'}).status_code, 403)
+        token = self.client.headers.pop('Authorization')
         self.client.cookies.clear()
         self.assertEqual(self.client.get(self.url(f.a)).status_code, 401)
-        self.client.cookies.set(meta.SESSION_COOKIE, 'forged', path='/api')
+        self.client.headers['Authorization'] = 'Bearer forged'
         self.assertEqual(self.client.get(self.url(f.a)).status_code, 401)
-        self.client.cookies.set(meta.SESSION_COOKIE, 'integration-session', path='/api')
+        self.client.headers['Authorization'] = token
         library.disconnect(f.connection)
-        self.assertEqual(self.client.get(self.url(f.a)).status_code, 401)
+        self.assertEqual(self.client.get(self.url(f.a)).status_code, 200)
         self.assertEqual(len(ownership.list_companies(f.db, f.connection)), 2)
 
     def test_concurrent_refresh_and_transfer_have_consistent_lock_order(self):
