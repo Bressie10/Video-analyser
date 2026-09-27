@@ -4,13 +4,14 @@ import re
 from typing import Annotated, Literal
 from urllib.parse import urlsplit
 
-from fastapi import APIRouter, Path, Query, Request
+from fastapi import APIRouter, Depends, Path, Query, Request
 from fastapi.responses import JSONResponse
 
 from app import meta
+from app.meta_auth_dependencies import require_meta_session
 from app.meta_routes import _private
 
-router = APIRouter(deprecated=True, prefix="/api/meta/discovery")
+router = APIRouter(dependencies=[Depends(require_meta_session)], deprecated=True, prefix="/api/meta/discovery")
 Identifier = Annotated[str, Path(pattern=r"^[0-9]{1,30}$")]
 AdAccount = Annotated[str, Path(pattern=r"^act_[0-9]{1,30}$")]
 Cursor = Annotated[str | None, Query(max_length=2048)]

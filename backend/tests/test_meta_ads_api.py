@@ -1,3 +1,5 @@
+from app.main import app
+from app.meta_auth_dependencies import require_meta_session
 from contextlib import contextmanager
 from datetime import date
 import json
@@ -58,6 +60,8 @@ def graph_transport(row=None, payload=None, ad=None, error=None):
 @patch.dict(os.environ, CONFIG)
 class MetaAdsTests(unittest.TestCase):
     def setUp(self):
+        app.dependency_overrides[require_meta_session] = lambda: None
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_meta_session, None))
         self.api = authenticated_api()
 
     def tearDown(self):

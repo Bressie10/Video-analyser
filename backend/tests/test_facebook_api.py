@@ -1,3 +1,5 @@
+from app.main import app
+from app.meta_auth_dependencies import require_meta_session
 from contextlib import contextmanager
 from copy import deepcopy
 import hashlib
@@ -70,6 +72,8 @@ def graph_transport(media=None, metrics=None, error=None, pages=None, kind='reel
 @patch.dict(os.environ, CONFIG)
 class FacebookAPITests(unittest.TestCase):
     def setUp(self):
+        app.dependency_overrides[require_meta_session] = lambda: None
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_meta_session, None))
         meta._sessions.clear()
         self.api = authenticated_api()
 

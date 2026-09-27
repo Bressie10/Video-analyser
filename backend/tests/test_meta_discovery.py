@@ -1,3 +1,5 @@
+from app.main import app
+from app.meta_auth_dependencies import require_meta_session
 from contextlib import contextmanager
 import os
 import unittest
@@ -32,6 +34,8 @@ ACCOUNT = {'instagram_business_account': {'id': '234', 'username': 'bakery'}}
 @patch.dict(os.environ, CONFIG)
 class DiscoveryTests(unittest.TestCase):
     def setUp(self):
+        app.dependency_overrides[require_meta_session] = lambda: None
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_meta_session, None))
         self.api = authenticated_api()
 
     def tearDown(self):

@@ -4,7 +4,7 @@ import json
 from uuid import UUID
 
 import psycopg
-from fastapi import APIRouter, Header, HTTPException, Query, Request
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from openai import OpenAIError
@@ -12,11 +12,12 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from app import meta
 from app import meta_library_repository as repo
+from app.meta_auth_dependencies import require_meta_session
 from app.meta_routes import _private
 from app.recommendations import MissingAPIKeyError, recommend_videos
 from app.video_repository import get_analysis
 
-router = APIRouter(prefix="/api/meta")
+router = APIRouter(dependencies=[Depends(require_meta_session)], prefix="/api/meta")
 
 
 class Selection(BaseModel):

@@ -12,6 +12,8 @@ from uuid import UUID, uuid4
 
 import httpx
 import psycopg
+from app.auth import require_authenticated_user, AuthenticatedUser
+from auth_fixtures import USER_ID
 from app import instagram, meta
 from app import meta_library_repository as repo
 from app import meta_library_worker as worker
@@ -188,6 +190,8 @@ class GraphFixture:
 )
 class MetaLibraryDatabaseTests(unittest.TestCase):
     def setUp(self):
+        app.dependency_overrides[require_authenticated_user] = lambda: AuthenticatedUser(USER_ID)
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_authenticated_user, None))
         self.schema = "meta_library_" + uuid4().hex
         self.admin = psycopg.connect(os.environ["TEST_DATABASE_URL"], autocommit=True)
         self.admin.execute(f"CREATE SCHEMA {self.schema}")
@@ -206,7 +210,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         self.env.start()
         with repo.database() as db:
             for migration in sorted(
-                (Path(__file__).resolve().parents[1] / "migrations").glob("00[1-5]_*.sql")
+                (Path(__file__).resolve().parents[1] / "migrations").glob("*.sql")
             ):
                 db.execute(migration.read_text())
         self.graph = GraphFixture()
@@ -215,7 +219,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         )
         self.client_patch.start()
         self.session, self.run_id = repo.connect_identity(
-            "123", meta.UserToken("private-token", time.time() + 86400 * 30)
+            "123", meta.UserToken("private-token", time.time() + 86400 * 30), owner_user_id=USER_ID
         )
         self.connection_id = repo.session_connection(self.session)["id"]
         self.api = TestClient(app, base_url="https://testserver")
@@ -550,7 +554,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             404,
         )
         other, _ = repo.connect_identity(
-            "999", meta.UserToken("other-secret", time.time() + 1000)
+            "999", meta.UserToken("other-secret", time.time() + 1000), owner_user_id=USER_ID
         )
         self.api.cookies.set(meta.SESSION_COOKIE, other, path="/api/meta")
         self.assertEqual(
@@ -578,7 +582,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             repo.session_connection(self.session)["id"], self.connection_id
         )
         renewed, _ = repo.connect_identity(
-            "123", meta.UserToken("renewed", time.time() + 1000), self.session
+            "123", meta.UserToken("renewed", time.time() + 1000), self.session, owner_user_id=USER_ID
         )
         self.assertEqual(repo.session_connection(renewed)["id"], self.connection_id)
         with self.assertRaises(meta.MetaNotConnected):
@@ -735,7 +739,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             )
         self.assertIsNone(worker.claim_job(False))
         self.graph.fail_edges.clear()
-        repo.connect_identity("123", meta.UserToken("new-token", time.time() + 10000))
+        repo.connect_identity("123", meta.UserToken("new-token", time.time() + 10000), owner_user_id=USER_ID)
         self.drain()
         self.assertEqual(self.item("100")["analysis_state"], "completed")
 
@@ -816,10 +820,6 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         self.assertTrue(any('Path=/api/meta;' in value and 'Max-Age=0' in value for value in session_headers))
         from app import company_ownership_repository as ownership
         with repo.database() as db:
-            # This callback check crosses into V3; the remaining V2 fixtures
-            # deliberately keep testing the original 001-005 schema.
-            for path in sorted((Path(__file__).resolve().parents[1] / 'migrations').glob('00[6-9]_*.sql')):
-                db.execute(path.read_text())
             company = ownership.create_company(db, self.connection_id, 'OAuth company')['id']
         # A real provider cookie alone never grants V6 company application access.
         self.assertEqual(self.api.get(f'/api/companies/{company}/profiles/shared').status_code, 401)

@@ -40,8 +40,8 @@ after(async () => {
   if (directory) await rm(directory, { recursive: true, force: true });
 });
 async function context(persisted) {
-  const c = await browser.newContext({ extraHTTPHeaders: { Cookie: `${session.name}=${session.value}` } });
-  await c.addCookies([{ ...session, domain: '127.0.0.1', path: '/api', httpOnly: true, secure: true, sameSite: 'Lax' }]);
+  const c = await browser.newContext({ extraHTTPHeaders: { Cookie: `${session.name}=${session.value}`, Authorization: `Bearer ${session.jwt}` } });
+  await c.addCookies([{ name: session.name, value: session.value, domain: '127.0.0.1', path: '/api', httpOnly: true, secure: true, sameSite: 'Lax' }]);
   if (persisted !== undefined) await c.addInitScript(({ KEY, persisted }) => { if (!sessionStorage.initialized) { localStorage.setItem(KEY, persisted); sessionStorage.initialized = 'true'; } }, { KEY, persisted });
   return c;
 }

@@ -2,6 +2,7 @@
 
 import hashlib
 import os
+import re
 import secrets
 from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
@@ -57,22 +58,37 @@ def token_hash(value):
     return hashlib.sha256(value.encode()).hexdigest()
 
 
-def connect_identity(external_id, token, previous=None):
+class MetaOwnershipConflict(Exception):
+    """Provider identity is already owned or reserved by legacy data."""
+
+
+def connect_identity(external_id, token, previous=None, *, owner_user_id):
+    from uuid import UUID
+    from app.auth_repository import ensure_profile
+    if not isinstance(owner_user_id, UUID):
+        raise ValueError("Authenticated owner required.")
+    if not isinstance(external_id, str) or not re.fullmatch(r"[0-9]{1,30}", external_id):
+        raise meta.MetaError("Invalid Meta identity.")
     encrypted = cipher().encrypt(token.access_token.encode()).decode()
     session = secrets.token_urlsafe(32)
     expires = datetime.fromtimestamp(token.expires_at, timezone.utc)
     with database() as db:
+        ensure_profile(db, owner_user_id)
         row = db.execute(
-            """INSERT INTO meta_connections(external_user_id,token_ciphertext,expires_at)
-            VALUES (%s,%s,%s) ON CONFLICT(external_user_id) DO UPDATE SET
+            """INSERT INTO meta_connections(external_user_id,token_ciphertext,expires_at,owner_user_id)
+            VALUES (%s,%s,%s,%s) ON CONFLICT(external_user_id) DO UPDATE SET
             token_ciphertext=EXCLUDED.token_ciphertext, expires_at=EXCLUDED.expires_at,
-            status='connected',next_sync_at=now() RETURNING id""",
-            (external_id, encrypted, expires),
+            status='connected',next_sync_at=now()
+            WHERE meta_connections.owner_user_id=EXCLUDED.owner_user_id RETURNING id""",
+            (external_id, encrypted, expires, owner_user_id),
         ).fetchone()
+        if row is None:
+            raise MetaOwnershipConflict()
         connection_id = row["id"]
         if previous:
             db.execute(
-                "DELETE FROM meta_sessions WHERE token_hash=%s", (token_hash(previous),)
+                "DELETE FROM meta_sessions WHERE token_hash=%s AND connection_id=%s",
+                (token_hash(previous), connection_id),
             )
         db.execute("DELETE FROM meta_sessions WHERE expires_at<=now()")
         db.execute(
@@ -380,3 +396,20 @@ def new_batch(db, connection_id, kind, items):
                 )
     finalize_runs(db)
     return run
+
+
+def list_meta_connections_for_user(db, user_id):
+    """Safe projection; supports multiple provider identities per app user."""
+    return db.execute("""SELECT id,status,expires_at FROM meta_connections
+        WHERE owner_user_id=%s ORDER BY id""", (user_id,)).fetchall()
+
+
+def require_meta_connection_owner(db, user_id, connection_id):
+    from app.auth_repository import require_owned_meta_connection
+    return require_owned_meta_connection(db, user_id, connection_id)
+
+
+def list_meta_accounts_for_user(db, user_id, connection_id):
+    require_meta_connection_owner(db, user_id, connection_id)
+    return db.execute("""SELECT id,platform,label FROM meta_accounts
+        WHERE connection_id=%s ORDER BY id""", (connection_id,)).fetchall()

@@ -1,4 +1,4 @@
-"""Real company HTTP/session/PostgreSQL fixture; only Meta status is stubbed."""
+"""Real company HTTP/session/PostgreSQL fixture; Meta status and JWKS transport are stubbed."""
 import json
 import os
 import signal
@@ -24,12 +24,23 @@ def main():
     try:
         fixture.setUp()
         f = fixture.f
+        from auth_fixtures import LocalAuth, USER_ID
+        from app.auth import get_token_verifier
+        from app.auth_repository import ensure_profile
+        auth = LocalAuth()
+        jwks = auth.serve_jwks()
+        jwks.start()
+        fixture.addCleanup(jwks.stop)
+        app.dependency_overrides[get_token_verifier] = lambda: auth.verifier
+        fixture.addCleanup(lambda: app.dependency_overrides.pop(get_token_verifier, None))
+        ensure_profile(f.db, USER_ID)
+        f.db.execute('UPDATE meta_connections SET owner_user_id=%s WHERE id=%s', (USER_ID, f.connection))
         for account, label in [(f.fb, 'Facebook Page'), (f.ig, 'Instagram Business'), (f.ads, 'Ads Business')]:
             f.db.execute('UPDATE meta_accounts SET label=%s WHERE id=%s', (label, account))
         for ad, label in [(f.ad_a, 'Summer ad'), (f.ad_b, 'Winter ad'), (f.unassigned, 'Unused ad')]:
             f.db.execute('UPDATE meta_library_items SET label=%s WHERE id=%s', (label, ad))
         # Foreign company/account/ad and raw provider IDs stay in the fixture to test redaction.
-        (directory / 'session.json').write_text(json.dumps({'name': meta.SESSION_COOKIE, 'value': 'company-api-session'}))
+        (directory / 'session.json').write_text(json.dumps({'name': meta.SESSION_COOKIE, 'value': 'company-api-session', 'jwt': auth.token()}))
         (directory / 'session.json').chmod(0o600)
         class Server(uvicorn.Server):
             @contextmanager
@@ -39,7 +50,7 @@ def main():
                     yield
                 finally:
                     signal.signal(signal.SIGTERM, previous)
-        with patch('app.meta.session_client') as client:
+        with patch('app.meta_library_repository.connection_client') as client:
             client.return_value.test_connection.return_value = {'connected': True}
             Server(uvicorn.Config(app, host='127.0.0.1', port=8062, log_level='warning', access_log=False)).run()
         rows = f.db.execute('SELECT name,archived_at FROM companies WHERE connection_id=%s ORDER BY name', (f.connection,)).fetchall()

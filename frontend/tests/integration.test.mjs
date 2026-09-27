@@ -39,9 +39,9 @@ test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-vid
     await waitForServer(origin, vite);
     const session = JSON.parse(await readFile(join(directory, "session.json"), "utf8"));
     browser = await chromium.launch({ headless: true });
-    const context = await browser.newContext();
+    const context = await browser.newContext({ extraHTTPHeaders: { Authorization: `Bearer ${session.jwt}` } });
     // A real backend-issued session, scoped to the same route as the production cookie.
-    await context.addCookies([{ ...session, domain: "127.0.0.1", path: "/api", httpOnly: true, secure: true, sameSite: "Lax" }]);
+    await context.addCookies([{ name: session.name, value: session.value, domain: "127.0.0.1", path: "/api", httpOnly: true, secure: true, sameSite: "Lax" }]);
     const page = await context.newPage(); page.setDefaultTimeout(60000);
     page.on("request", (request) => {
       const path = new URL(request.url()).pathname;
@@ -81,7 +81,7 @@ test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-vid
       page.getByRole("button", { name: "Generate a new video idea", exact: true }).click(),
     ]);
     assert.equal(calls.filter((call) => call.path === "/api/meta/library/analyze").length, 1);
-    const unauthorized = await browser.newContext();
+    const unauthorized = await browser.newContext({ extraHTTPHeaders: { Authorization: `Bearer ${session.jwt}` } });
     assert.equal((await unauthorized.request.get(`${origin}/api/meta/library`)).status(), 401);
     await unauthorized.close();
     assert.deepEqual(failures, []);

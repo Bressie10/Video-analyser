@@ -10,6 +10,7 @@ import threading
 import time
 import psycopg
 from dataclasses import dataclass, field
+from uuid import UUID
 from urllib.parse import urlencode, urlsplit
 
 import httpx
@@ -60,7 +61,7 @@ class UserToken:
 
 
 _sessions: dict[str, UserToken] = {}
-_states: dict[str, tuple[float, MetaSettings]] = {}
+_states: dict[str, tuple[float, MetaSettings, UUID]] = {}
 _lock = threading.Lock()
 
 
@@ -108,15 +109,17 @@ def settings() -> MetaSettings:
     return MetaSettings(app_id, app_secret, redirect_uri, config_id, version)
 
 
-def begin_login(config: MetaSettings) -> tuple[str, str]:
+def begin_login(config: MetaSettings, owner_user_id: UUID) -> tuple[str, str]:
+    if not isinstance(owner_user_id, UUID):
+        raise MetaError("Authenticated owner required.")
     state = secrets.token_urlsafe(32)
     with _lock:
-        for key, (expires, _) in list(_states.items()):
+        for key, (expires, _, _) in list(_states.items()):
             if expires <= time.time():
                 del _states[key]
         if len(_states) >= 1024:
             raise MetaError("Too many pending Meta logins. Try again later.")
-        _states[state] = (time.time() + STATE_MAX_AGE, config)
+        _states[state] = (time.time() + STATE_MAX_AGE, config, owner_user_id)
     query = urlencode({
         "client_id": config.app_id, "redirect_uri": config.redirect_uri,
         "response_type": "code", "config_id": config.login_config_id, "state": state,
@@ -124,14 +127,14 @@ def begin_login(config: MetaSettings) -> tuple[str, str]:
     return state, f"https://www.facebook.com/{config.api_version}/dialog/oauth?{query}"
 
 
-def consume_state(state: str | None, cookie: str | None) -> MetaSettings:
+def consume_state(state: str | None, cookie: str | None) -> tuple[MetaSettings, UUID]:
     if not state or not cookie or not hmac.compare_digest(state.encode(), cookie.encode()):
         raise MetaError("Invalid Meta authorization state.")
     with _lock:
         pending = _states.pop(state, None)
     if pending is None or pending[0] <= time.time():
         raise MetaError("Invalid Meta authorization state.")
-    return pending[1]
+    return pending[1], pending[2]
 
 
 def _get(config: MetaSettings, path: str, params: dict, token: str | None = None) -> dict:

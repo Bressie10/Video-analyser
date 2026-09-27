@@ -23,6 +23,17 @@ def main():
     try:
         fixture.setUp()
         f = fixture.f
+        from auth_fixtures import LocalAuth, USER_ID
+        from app.auth import get_token_verifier
+        from app.auth_repository import ensure_profile
+        auth = LocalAuth()
+        jwks = auth.serve_jwks()
+        jwks.start()
+        fixture.addCleanup(jwks.stop)
+        app.dependency_overrides[get_token_verifier] = lambda: auth.verifier
+        fixture.addCleanup(lambda: app.dependency_overrides.pop(get_token_verifier, None))
+        ensure_profile(f.db, USER_ID)
+        f.db.execute('UPDATE meta_connections SET owner_user_id=%s WHERE id=%s', (USER_ID, f.connection))
         # 25 eligible A items, with distinct library/video IDs; unrelated B rows exist too.
         f.db.execute("UPDATE meta_library_items SET published_at='2026-01-01T00:00:00Z'")
         for index in range(22):
@@ -43,7 +54,7 @@ def main():
                 analysis_version=1,published_at=%s WHERE id=%s""", (f.video, f'2026-03-{index+1:02}T00:00:00Z', identity))
             f.db.execute('DELETE FROM meta_library_performance WHERE item_id=%s', (identity,))
         f.item(fb, 'release-pending', 'video', 'facebook')
-        (directory / 'session.json').write_text(json.dumps({'name': meta.SESSION_COOKIE, 'value': 'integration-session'}))
+        (directory / 'session.json').write_text(json.dumps({'name': meta.SESSION_COOKIE, 'value': 'integration-session', 'jwt': auth.token()}))
         (directory / 'session.json').chmod(0o600)
         class Server(uvicorn.Server):
             @contextmanager
@@ -53,7 +64,7 @@ def main():
                     yield
                 finally:
                     signal.signal(signal.SIGTERM, previous)
-        with patch('app.meta.session_client') as client, \
+        with patch('app.meta_library_repository.connection_client') as client, \
                 patch('app.company_profile_worker.OpenAIProfileGenerator', return_value=fixture.fixture.generator), \
                 patch.dict(os.environ, {'COMPANY_PROFILE_WORKER_ENABLED': 'true'}):
             client.return_value.test_connection.return_value = {'connected': True}

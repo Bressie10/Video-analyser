@@ -1,6 +1,6 @@
 """Disposable real FastAPI/worker/PostgreSQL server for browser integration tests.
 
-Only external Meta, media delivery and OpenAI boundaries are controlled fixtures.
+Only external Meta, JWKS, media delivery and OpenAI boundaries are controlled fixtures.
 Routes, validation, sessions, queues, processing and persistence are production code.
 Run only through frontend/tests/integration.test.mjs with TEST_DATABASE_URL.
 """
@@ -57,11 +57,16 @@ def main():
     try:
         fixture.setUp()
         setup_done = True
-        # Exercise the V2 browser contract on the complete integrated V3 schema.
-        # The base fixture intentionally retains a 001-005-only regression path.
-        with repo.database() as db:
-            for migration in sorted((ROOT / 'migrations').glob('*.sql'))[5:]:
-                db.execute(migration.read_text())
+        # Base library fixture now applies 001–011. Verify real signed browser JWTs.
+        from auth_fixtures import LocalAuth
+        from app.auth import get_token_verifier, require_authenticated_user
+        auth = LocalAuth()
+        jwks = auth.serve_jwks()
+        jwks.start()
+        fixture.addCleanup(jwks.stop)
+        app.dependency_overrides.pop(require_authenticated_user, None)
+        app.dependency_overrides[get_token_verifier] = lambda: auth.verifier
+        fixture.addCleanup(lambda: app.dependency_overrides.pop(get_token_verifier, None))
         MediaPipelineTests.setUpClass()
         media_done = True
         fixture.graph.test_connection = lambda: {"connected": True}
@@ -95,7 +100,7 @@ def main():
         os.environ["META_WORKER_ENABLED"] = "true"
         # The fixture session uses the real encrypted persistent connection and hashed session.
         session_file = directory / "session.json"
-        session_file.write_text(json.dumps({"name": meta.SESSION_COOKIE, "value": fixture.session}))
+        session_file.write_text(json.dumps({"name": meta.SESSION_COOKIE, "value": fixture.session, "jwt": auth.token()}))
         session_file.chmod(0o600)
         class TestServer(uvicorn.Server):
             @contextmanager
@@ -120,6 +125,7 @@ def main():
     finally:
         if setup_done:
             fixture.tearDown()
+            fixture.doCleanups()
         if media_done:
             MediaPipelineTests.tearDownClass()
         admin.execute(sql.SQL("DROP DATABASE {} WITH (FORCE)").format(sql.Identifier(dbname)))

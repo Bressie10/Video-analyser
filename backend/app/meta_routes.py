@@ -1,13 +1,15 @@
 """Backend-only Meta authorization and connection check routes."""
 
+from typing import Literal
 import time
-import os
 import psycopg
 
-from fastapi import APIRouter, Request
+from fastapi import APIRouter, Depends, Request
 from fastapi.responses import JSONResponse, RedirectResponse
 
 from app import meta
+from app.auth import AuthenticatedUser, require_authenticated_user
+from app.meta_auth_dependencies import owned_session_connection
 
 router = APIRouter(prefix="/api/meta")
 
@@ -19,14 +21,18 @@ def _private(response):
 
 
 @router.get("/connect")
-def connect():
+def connect(user: AuthenticatedUser = Depends(require_authenticated_user),
+            response_mode: Literal["redirect", "json"] = "redirect"):
     try:
-        state, url = meta.begin_login(meta.settings())
+        from app.meta_library_repository import cipher
+        cipher()
+        state, url = meta.begin_login(meta.settings(), user.user_id)
     except meta.MetaConfigurationError:
         return _private(JSONResponse({"detail": "Meta is not configured correctly."}, status_code=503))
     except meta.MetaError:
         return _private(JSONResponse({"detail": "Meta login is unavailable. Try again later."}, status_code=503))
-    response = RedirectResponse(url, status_code=302)
+    response = (JSONResponse({"authorization_url": url}) if response_mode == "json"
+                else RedirectResponse(url, status_code=302))
     response.set_cookie(
         meta.STATE_COOKIE, state, max_age=meta.STATE_MAX_AGE,
         secure=True, httponly=True, samesite="lax", path="/api/meta/callback",
@@ -37,7 +43,7 @@ def connect():
 @router.get("/callback")
 def callback(request: Request):
     try:
-        config = meta.consume_state(request.query_params.get("state"), request.cookies.get(meta.STATE_COOKIE))
+        config, owner_user_id = meta.consume_state(request.query_params.get("state"), request.cookies.get(meta.STATE_COOKIE))
     except meta.MetaError:
         response = JSONResponse({"detail": "Invalid Meta authorization state."}, status_code=400)
     else:
@@ -47,8 +53,7 @@ def callback(request: Request):
         else:
             try:
                 token = meta.exchange_code(config, code)
-                if os.environ.get('META_TOKEN_ENCRYPTION_KEY'):
-                    token = meta.extend_token(config,token)
+                token = meta.extend_token(config,token)
                 client = meta.MetaClient(config, token)
                 client.verify_permissions()
                 result = client.test_connection()
@@ -57,39 +62,42 @@ def callback(request: Request):
             except meta.MetaError:
                 response = JSONResponse({"detail": "Meta authorization failed. Connect again."}, status_code=502)
             else:
-                if os.environ.get('META_TOKEN_ENCRYPTION_KEY'):
-                    from app import meta_library_repository as library
-                    try:
-                        identity = client.get('me', {'fields':'id'})['id']
-                        session_id, job_id = library.connect_identity(identity, token, request.cookies.get(meta.SESSION_COOKIE))
-                        result = {**result, 'job_id':job_id}
-                    except (psycopg.Error, ValueError, meta.MetaError):
-                        response = JSONResponse({'detail':'Persistent Meta connection could not be saved.'},status_code=503)
-                        response.delete_cookie(meta.STATE_COOKIE,path='/api/meta/callback',secure=True,httponly=True,samesite='lax')
-                        return _private(response)
-                else:
-                    session_id = meta.create_session(token, request.cookies.get(meta.SESSION_COOKIE))
+                from app import meta_library_repository as library
+                try:
+                    identity = client.get('me', {'fields': 'id'})['id']
+                    session_id, job_id = library.connect_identity(
+                        identity, token, request.cookies.get(meta.SESSION_COOKIE),
+                        owner_user_id=owner_user_id)
+                    result = {**result, 'job_id': job_id}
+                except library.MetaOwnershipConflict:
+                    response = JSONResponse({'detail': 'This Meta identity is already reserved by an existing connection.'}, status_code=409)
+                    response.delete_cookie(meta.STATE_COOKIE, path='/api/meta/callback', secure=True, httponly=True, samesite='lax')
+                    return _private(response)
+                except (psycopg.Error, ValueError, meta.MetaError, KeyError):
+                    response = JSONResponse({'detail': 'Persistent Meta connection could not be saved.'}, status_code=503)
+                    response.delete_cookie(meta.STATE_COOKIE, path='/api/meta/callback', secure=True, httponly=True, samesite='lax')
+                    return _private(response)
                 response = JSONResponse(result)
-                # Persistent sessions authorize both the V2 library and V3
-                # company routes. Remove the narrower cookie on reconnection.
-                persistent = bool(os.environ.get('META_TOKEN_ENCRYPTION_KEY'))
-                if persistent:
-                    response.delete_cookie(meta.SESSION_COOKIE, path='/api/meta',
-                                           secure=True, httponly=True, samesite='lax')
+                # Cookie selects provider state only; JWT ownership authorizes access.
+                # Remove the narrower legacy cookie on reconnection.
+                response.delete_cookie(meta.SESSION_COOKIE, path='/api/meta',
+                                       secure=True, httponly=True, samesite='lax')
                 response.set_cookie(
                     meta.SESSION_COOKIE, session_id, max_age=max(1, int(token.expires_at - time.time())),
-                    secure=True, httponly=True, samesite="lax", path="/api" if persistent else "/api/meta",
+                    secure=True, httponly=True, samesite="lax", path="/api",
                 )
     response.delete_cookie(meta.STATE_COOKIE, path="/api/meta/callback", secure=True, httponly=True, samesite="lax")
     return _private(response)
 
 
 @router.get("/test")
-def test_connection(request: Request):
+def test_connection(request: Request, user: AuthenticatedUser = Depends(require_authenticated_user)):
     """Report connection status; absence is normal, provider failures are errors."""
     session_id = request.cookies.get(meta.SESSION_COOKIE)
     try:
-        result = meta.session_client(session_id).test_connection()
+        from app import meta_library_repository as library
+        connection = owned_session_connection(request, user)
+        result = library.connection_client(connection).test_connection()
     except meta.MetaConfigurationError:
         response = JSONResponse({"detail": "Meta is not configured correctly."}, status_code=503)
     except meta.MetaNotConnected:

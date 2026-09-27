@@ -17,6 +17,12 @@ from test_recommendations_api import ANALYSIS
 
 @unittest.skipUnless(os.environ.get("TEST_DATABASE_URL"), "requires disposable PostgreSQL")
 class InstagramDatabaseTests(unittest.TestCase):
+    def setUp(self):
+        from app.main import app
+        from app.meta_auth_dependencies import require_meta_session
+        app.dependency_overrides[require_meta_session] = lambda: None
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_meta_session, None))
+
     def test_reel_fetch_attach_refresh_and_readback_for_correct_video(self):
         schema = "instagram_test_" + uuid4().hex
         migrations = Path(__file__).resolve().parents[1] / "migrations"

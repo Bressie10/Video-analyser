@@ -1,3 +1,6 @@
+from app.auth import require_authenticated_user, AuthenticatedUser
+from app.meta_auth_dependencies import require_meta_session
+from auth_fixtures import USER_ID
 import hashlib
 import hmac
 import logging
@@ -26,6 +29,23 @@ CODE = "private-oauth-code"
 @patch.dict(os.environ, CONFIG)
 class MetaAPITests(unittest.TestCase):
     def setUp(self):
+        app.dependency_overrides[require_authenticated_user] = lambda: AuthenticatedUser(USER_ID)
+        app.dependency_overrides[require_meta_session] = lambda: None
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_authenticated_user, None))
+        self.addCleanup(lambda: app.dependency_overrides.pop(require_meta_session, None))
+        # Provider-unit fixture only; persistence and ownership run against PostgreSQL separately.
+        def save(identity, token, previous, *, owner_user_id):
+            self.assertEqual(owner_user_id, USER_ID)
+            return meta.create_session(token, previous), 'job'
+        for target, kwargs in (
+            ('app.meta_library_repository.cipher', {}),
+            ('app.meta_library_repository.connect_identity', {'side_effect': save}),
+            ('app.meta_routes.owned_session_connection', {'side_effect': lambda request, user: request.cookies.get(meta.SESSION_COOKIE)}),
+            ('app.meta_library_repository.connection_client', {'side_effect': lambda session: meta.session_client(session)}),
+        ):
+            mock = patch(target, **kwargs)
+            mock.start()
+            self.addCleanup(mock.stop)
         meta._sessions.clear()
         meta._states.clear()
         self.api = TestClient(app, base_url="https://testserver")
@@ -83,13 +103,13 @@ class MetaAPITests(unittest.TestCase):
             checked = self.api.get("/api/meta/test")
         self.assertEqual(callback.status_code, 200)
         self.assertEqual(checked.status_code, 200)
-        self.assertEqual(callback.json(), {"connected": True})
-        self.assertEqual(checked.json(), callback.json())
+        self.assertEqual(callback.json(), {"connected": True, "job_id": "job"})
+        self.assertEqual(checked.json(), {"connected": True})
         self.assertEqual(len(meta._sessions), 1)
         self.assertEqual(self.outbound[0].url.params["client_secret"], CONFIG["META_APP_SECRET"])
         self.assertEqual(self.outbound[0].url.params["code"], CODE)
         self.assertEqual(self.outbound[0].url.params["redirect_uri"], CONFIG["META_REDIRECT_URI"])
-        for request in self.outbound[1:]:
+        for request in self.outbound[2:]:
             self.assertEqual(request.headers["authorization"], f"Bearer {TOKEN}")
             self.assertNotIn(TOKEN, str(request.url))
             self.assertEqual(request.url.params["appsecret_proof"], hmac.new(
@@ -106,7 +126,7 @@ class MetaAPITests(unittest.TestCase):
         self.api.cookies.set(meta.STATE_COOKIE, state, path="/api/meta/callback")
         with self.transport():
             self.assertEqual(self.callback(state).status_code, 400)
-        self.assertEqual(len(self.outbound), 4)
+        self.assertEqual(len(self.outbound), 6)
 
     def test_wrong_expired_and_unicode_states_cannot_exchange(self):
         state = self.begin()

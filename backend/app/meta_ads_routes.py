@@ -4,15 +4,16 @@ from datetime import date
 from uuid import UUID
 
 import psycopg
-from fastapi import APIRouter, Path, Request
+from fastapi import APIRouter, Depends, Path, Request
 from fastapi.responses import JSONResponse
 from pydantic import BaseModel, ConfigDict, model_validator
 
 from app import meta_ads, meta
+from app.meta_auth_dependencies import require_meta_session
 from app.meta_routes import _private
 from app.video_repository import PerformanceSourceConflict, get_analysis, save_performance
 
-router = APIRouter(deprecated=True, prefix="/api/meta/ads")
+router = APIRouter(dependencies=[Depends(require_meta_session)], deprecated=True, prefix="/api/meta/ads")
 
 
 class AdMetricsRequest(BaseModel):
