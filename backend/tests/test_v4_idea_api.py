@@ -157,6 +157,20 @@ class V4IdeaAPITests(unittest.TestCase):
         self.assertEqual(self.client.get(self.base + '/publication-options',
                                         params={'after':str(self.f.organic)}).status_code, 404)
 
+    def test_publication_picker_suppresses_legacy_sibling_ad_labels(self):
+        # Discovery can overwrite an owned organic video's legacy label with
+        # the name of a sibling company's ad that uses it as a creative.
+        self.f.db.execute("UPDATE meta_library_items SET published_at=now(),label='Sibling campaign private' WHERE id=%s", (self.f.organic,))
+        self.f.db.execute('INSERT INTO meta_ad_assets VALUES (%s,%s)', (self.f.ad_b, self.f.organic))
+        for linked in (True, False):
+            response = self.client.get(self.base + '/publication-options')
+            self.assertEqual(response.status_code, 200, response.text)
+            self.assertIn(str(self.f.organic), response.text)
+            self.assertNotIn('Sibling campaign private', response.text)
+            if linked:
+                # Removing the edge does not clean contaminated historical labels.
+                self.f.db.execute('DELETE FROM meta_ad_assets WHERE video_item_id=%s', (self.f.organic,))
+
     def test_archive_and_sibling_deny_every_mutation_and_new_reads(self):
         saved = self.generate()
         base = self.base + '/ideas/' + saved['id']

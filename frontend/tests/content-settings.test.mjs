@@ -14,6 +14,7 @@ async function fixture(intercept){
     if(u.pathname==='/api/companies')return route.fulfill({json:{companies:[A,B].map((company_id,i)=>({company_id,name:i?'Beta':'Alpha',archived:false,accounts:[]}))}});
     if(u.pathname.endsWith('/ideas'))return route.fulfill({json:{items:[],next_cursor:null}});
     if(u.pathname.endsWith('/content'))return route.fulfill({json:{items:[],next_offset:null}});
+    if(u.pathname.endsWith('/profiles'))return route.fulfill({json:{profiles:[{scope:'shared',freshness:'fresh',job:{state:'completed'}}]}});
     return route.fulfill({json:{accounts:[],connected:false}});
   });
   const p=await c.newPage();p.setDefaultTimeout(5000);await p.goto(origin);return {p,close:()=>c.close()};
@@ -38,4 +39,34 @@ test('settings refresh safely retries transport uncertainty with same key and se
 for(const status of [401,404,409])test(`settings refresh ${status} shows safe error`,async()=>{
   const f=await fixture(async(route,u)=>{if(!u.pathname.endsWith('/refresh'))return false;await route.fulfill({status,json:{detail:'SECRET'}});return true;});
   try{await manage(f.p);await button(f.p,'Refresh company intelligence').click();await f.p.getByRole('alert').waitFor();assert.equal((await f.p.locator('body').innerText()).includes('SECRET'),false);}finally{await f.close();}
+});
+test('settings tracks queued, running, completed and failed refresh jobs without rendering provider details',async()=>{
+  let state='queued';const f=await fixture(async(route,u)=>{
+    if(u.pathname.endsWith('/refresh')){await route.fulfill({status:202,json:{job_id:id(90)}});return true;}
+    if(u.pathname.endsWith('/profiles')){await route.fulfill({json:{profiles:[{scope:'shared',freshness:'fresh',job:{id:id(90),state,error:'PRIVATE PROVIDER DETAIL'}}]}});return true;}
+    return false;
+  });
+  try{await manage(f.p);await button(f.p,'Refresh company intelligence').click();await f.p.getByText('Company intelligence refresh queued.',{exact:true}).waitFor();
+    state='running';await f.p.getByText('Company intelligence refresh in progress.',{exact:true}).waitFor();
+    state='completed';await f.p.getByText('Company intelligence refreshed.',{exact:true}).waitFor();
+    state='failed';await button(f.p,'Refresh company intelligence').click();await f.p.getByRole('alert').filter({hasText:'Company intelligence refresh failed. Try again.'}).waitFor();
+    assert.equal((await f.p.locator('body').innerText()).includes('PRIVATE PROVIDER DETAIL'),false);
+  }finally{await f.close();}
+});
+test('refresh status network failure retries only the read and does not submit another job',async()=>{
+  let posts=0,reads=0;const f=await fixture(async(route,u)=>{
+    if(u.pathname.endsWith('/refresh')){posts++;await route.fulfill({status:202,json:{job_id:id(90)}});return true;}
+    if(u.pathname.endsWith('/profiles')){reads++;if(reads===1){await route.abort();return true;}}
+    return false;
+  });
+  try{await manage(f.p);await button(f.p,'Refresh company intelligence').click();await button(f.p,'Retry refresh status').click();await f.p.getByText('Company intelligence refreshed.',{exact:true}).waitFor();assert.equal(posts,1);assert.equal(reads,2);}finally{await f.close();}
+});
+test('late refresh status cannot populate another company even if transport ignores abort',async()=>{
+  let release,began;const gate=new Promise(r=>release=r),started=new Promise(r=>began=r);
+  const f=await fixture(async(route,u)=>{
+    if(u.pathname.endsWith('/refresh')){await route.fulfill({status:202,json:{job_id:id(90)}});return true;}
+    if(u.pathname.includes(A)&&u.pathname.endsWith('/profiles')){began();await gate;await route.fulfill({json:{profiles:[{scope:'shared',freshness:'fresh',job:{state:'completed'}}]}}).catch(()=>{});return true;}
+    return false;
+  });
+  try{await manage(f.p);await button(f.p,'Refresh company intelligence').click();await started;await switchB(f.p);release();await f.p.waitForTimeout(100);assert.equal((await f.p.locator('body').innerText()).includes('Company intelligence refreshed.'),false);}finally{release();await f.close();}
 });

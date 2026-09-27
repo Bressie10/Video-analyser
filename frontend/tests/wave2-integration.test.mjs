@@ -65,11 +65,19 @@ async function check(p, name, checked) {
 test('browser → React → FastAPI → PostgreSQL: content, generation, history, explicit save, feedback, lifecycle and publications', {timeout:90000}, async () => {
   const c = await context(); const p = await pageFor(c); const calls = []; const errors = [];
   p.on('request', r => { if (r.url().includes('/api/')) calls.push(r); }); p.on('pageerror', e => errors.push(e.message));
-  const a = companies.find(c => c.name === 'A'), b = companies.find(c => c.name === 'B');
-  const base = `/api/meta/companies/${a.company_id}`;
+  const b = companies.find(c => c.name === 'B');
   const get = async path => { const r = await c.request.get(origin + path); assert.equal(r.status(),200,await r.text()); return r.json(); };
   try {
-    await select(p, 'A'); await selected(p, 'A');
+    await manage(p);
+    await p.getByLabel('New company name').fill('Release studio');
+    await p.getByRole('button',{name:'Create company',exact:true}).click();
+    await selected(p,'Release studio');
+    const a = {company_id:await p.evaluate(KEY=>localStorage.getItem(KEY),KEY),name:'Release studio'};
+    companies.push(a);
+    const base = `/api/meta/companies/${a.company_id}`;
+    await manage(p);
+    await check(p,'Release Facebook',true); await check(p,'Release Instagram',true);
+    await p.getByRole('button',{name:'Back to workspace',exact:true}).click();
     const allA = await get(`/api/companies/${a.company_id}/content?analyzed_only=true&limit=100`);
     const allB = await get(`/api/companies/${b.company_id}/content?analyzed_only=true&limit=100`);
     assert.equal(allA.items.length,25);
@@ -95,8 +103,15 @@ test('browser → React → FastAPI → PostgreSQL: content, generation, history
     await p.getByRole('button',{name:'Save',exact:true}).click();
     const saved = () => p.getByRole('status').filter({hasText:/^Saved\.$/}).waitFor(); await saved();
     await p.getByRole('button',{name:'👍 Like',exact:true}).click(); await saved();
+    await p.getByRole('button',{name:'👎 Dislike',exact:true}).click();
+    await p.getByLabel('Dislike reason (optional)').fill('Needs a stronger hook');
+    await p.getByRole('button',{name:'Save dislike',exact:true}).click(); await saved();
+    assert.equal((await get(base+'/ideas/'+id)).feedback_reason,'Needs a stronger hook');
+    await p.getByRole('button',{name:'👍 Like',exact:true}).click(); await saved();
+    assert.equal((await get(base+'/ideas/'+id)).feedback_reason,null);
     await p.getByRole('button',{name:'Used',exact:true}).click(); await saved();
     await p.getByRole('button',{name:'Link published content',exact:true}).click();
+    await p.getByRole('dialog').locator('time').first().waitFor();
     await p.getByRole('dialog').getByRole('button',{name:/^Link /}).first().click();
     await p.getByRole('status').filter({hasText:'1 linked'}).waitFor();
     await p.getByRole('dialog').getByRole('button',{name:/^Link /}).first().click();
@@ -106,9 +121,13 @@ test('browser → React → FastAPI → PostgreSQL: content, generation, history
     detail = await get(base+'/ideas/'+id); assert.equal(detail.publications.length,1);
     await p.getByText('Live availability is not verified.',{exact:false}).waitFor();
     await p.reload(); await p.getByRole('button',{name:'Wave 2 saved Title',exact:true}).click(); await p.getByText('Wave 2 saved Script',{exact:true}).waitFor();
-    await manage(p); await p.getByText('Company intelligence · A',{exact:true}).click();
+    await manage(p); await p.getByText('Company intelligence · Release studio',{exact:true}).click();
     await p.getByRole('button',{name:'Refresh company intelligence',exact:true}).click(); await p.getByText('Refresh requested.',{exact:false}).waitFor();
+    await p.getByText('Company intelligence refreshed.',{exact:true}).waitFor();
     await select(p,'B'); await selected(p,'B'); await p.getByText('No saved ideas yet for this company.').waitFor();
+    assert.equal((await p.locator('body').innerText()).includes('Wave 2 saved'),false);
+    await p.reload(); await selected(p,'B'); await stored(p,b.company_id);
+    await p.getByText('No saved ideas yet for this company.').waitFor();
     assert.equal((await p.locator('body').innerText()).includes('Wave 2 saved'),false);
     assert.equal(calls.some(r=>/^\/api\/meta\/(library|jobs|sync|recommendations)/.test(new URL(r.url()).pathname)),false);
     assert.deepEqual(errors,[]);
@@ -116,7 +135,7 @@ test('browser → React → FastAPI → PostgreSQL: content, generation, history
 });
 
 test('real archived-company mutation shows safe failure and preserves saved data',async()=>{
-  const a=companies.find(c=>c.name==='A'); const c=await context(a.company_id); const p=await pageFor(c);
+  const a=companies.find(c=>c.name==='Release studio'); const c=await context(a.company_id); const p=await pageFor(c);
   try {
     await p.getByRole('button',{name:'Wave 2 saved Title',exact:true}).click(); await p.getByRole('button',{name:'Edit',exact:true}).click(); await p.getByLabel('Title',{exact:true}).fill('Must not save');
     assert.equal((await c.request.post(`${origin}/api/companies/${a.company_id}/archive`)).status(),200);

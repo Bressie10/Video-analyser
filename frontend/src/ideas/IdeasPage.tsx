@@ -139,7 +139,7 @@ function PublicationPicker({ api, linked, busy, error, onClose, onLink }: { api:
   return <dialog ref={dialog} className="idea-picker" aria-labelledby="publication-picker-title" onCancel={e => { e.preventDefault(); onClose(); }}>
     <h2 id="publication-picker-title">Link published content</h2><p>Choose posts accessible in this company to record their association with this idea. You can link more than one.</p>
     {error != null && <ErrorNotice error={error} />}<p role="status">{busy ? 'Saving link…' : `${linked.length} linked`}</p>
-    <Results<Publication> load={load} empty="No accessible published content found." more="Load more publications" render={p => <><strong>{p.title}</strong><p>{label(p.platform)}</p><button disabled={busy || linked.includes(p.id) || p.available === false} onClick={() => onLink(p.id)}>{linked.includes(p.id) ? 'Linked' : p.available === false ? 'Unavailable' : `Link ${p.title}`}</button></>} />
+    <Results<Publication> load={load} empty="No accessible published content found." more="Load more publications" render={p => <><strong>{p.title}</strong><p>{label(p.platform)}{p.publishedAt && <> · <time dateTime={p.publishedAt}>{date(p.publishedAt)}</time></>}</p><button disabled={busy || linked.includes(p.id) || p.available === false} onClick={() => onLink(p.id)}>{linked.includes(p.id) ? 'Linked' : p.available === false ? 'Unavailable' : `Link ${p.title}`}</button></>} />
     <button onClick={onClose}>Done</button>
   </dialog>;
 }

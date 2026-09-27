@@ -16,5 +16,5 @@ test('feedback adapter clears reason and never sends internal fields', async () 
 test('publication picker uses exact backend option projection and cursor without invented search',async()=>{
   const original=globalThis.fetch; const calls=[];
   globalThis.fetch=async(url,options)=>{calls.push({url,...options});return new Response(JSON.stringify({items:[{id:id(7),label:'Published post',platform:'instagram',content_type:'reel',published_at:'2026-09-01T00:00:00Z'}],next_cursor:id(7)}));};
-  try {const result=await api.ideaApi.publications(id(1),id(8),new AbortController().signal);assert.equal(calls[0].url,`/api/meta/companies/${id(1)}/publication-options?limit=25&after=${id(8)}`);assert.equal(result.items[0].id,id(7));assert.equal(result.items[0].title,'Published post');assert.equal(result.items[0].available,true);}finally{globalThis.fetch=original;}
+  try {const result=await api.ideaApi.publications(id(1),id(8),new AbortController().signal);assert.equal(calls[0].url,`/api/meta/companies/${id(1)}/publication-options?limit=25&after=${id(8)}`);assert.equal(result.items[0].id,id(7));assert.equal(result.items[0].title,'Published post');assert.equal(result.items[0].available,true);assert.equal(result.items[0].publishedAt,'2026-09-01T00:00:00Z');}finally{globalThis.fetch=original;}
 });

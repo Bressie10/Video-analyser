@@ -6,7 +6,7 @@ export type Status = typeof statuses[number];
 export type Feedback = typeof feedbackValues[number];
 export type Filters = { search: string; status: string; feedback: string; platform: string; from: string; to: string };
 export const emptyFilters: Filters = { search: '', status: '', feedback: '', platform: '', from: '', to: '' };
-export type Publication = { id: string; title: string; platform: string; available: boolean | null; createdAt: string | null };
+export type Publication = { id: string; title: string; platform: string; available: boolean | null; createdAt: string | null; publishedAt?: string };
 export type Summary = { id: string; title: string; concept: string; status: Status; feedback: Feedback; reason: string | null; createdAt: string; updatedAt: string; platforms: string[] };
 export type Idea = Summary & { companyId: string; script: string; publications: Publication[]; brief: string | null };
 export type Page<T> = { items: T[]; nextCursor: string | null };
@@ -68,7 +68,7 @@ export const ideaApi: IdeaApi = {
   feedback: async (c, id, feedback, reason, s) => parseIdea(await request(`${path(c, id)}/feedback`, s, 'PUT', { feedback, reason: feedback === 'disliked' ? reason?.trim() || null : null }), c),
   publications: async (c, after, s) => {
     const q = new URLSearchParams({ limit: '25' }); if (after) q.set('after', after);
-    return page(await request(`${root(c)}/publication-options?${q}`, s), value => { const v = record(value); return { id: uuid(v.id), title: str(v.label), platform: str(v.platform), available: true, createdAt: null }; });
+    return page(await request(`${root(c)}/publication-options?${q}`, s), value => { const v = record(value); return { id: uuid(v.id), title: str(v.label), platform: str(v.platform), available: true, createdAt: null, publishedAt: date(v.published_at) }; });
   },
   link: async (c, id, publication, linked, s) => parseIdea(await request(`${path(c, id)}/publications/${encodeURIComponent(publication)}`, s, linked ? 'PUT' : 'DELETE'), c),
 };

@@ -485,7 +485,7 @@ def publication_options(db, company_id, limit, after=None):
     connection_id = db.execute('SELECT connection_id FROM companies WHERE id=%s',
                                (company_id,)).fetchone()['connection_id']
     scope = COMPANY_SCOPE_SQL + ''', candidates AS (
-        SELECT id,platform,content_type,label,external_id,published_at FROM direct_items
+        SELECT id,platform,content_type,published_at FROM direct_items
         WHERE platform IN ('instagram','facebook') AND content_type<>'ad'
         AND published_at IS NOT NULL
     ) '''
@@ -501,5 +501,8 @@ def publication_options(db, company_id, limit, after=None):
         WHERE (%(published_at)s::timestamptz IS NULL OR (published_at,id)<(%(published_at)s,%(after)s))
         ORDER BY published_at DESC,id DESC LIMIT %(limit)s''', params).fetchall()
     items = [{key: row[key] for key in ('id', 'platform', 'content_type', 'published_at')}
-             | {'label': _display_name(row, 'Published post')} for row in rows[:limit]]
+             # Discovery may have copied a sibling ad name into an organic
+             # label, even after its creative edge was removed. No safe label
+             # provenance exists in V2; match the content browser's suppression.
+             | {'label': 'Published post'} for row in rows[:limit]]
     return {'items': items, 'next_cursor': rows[limit-1]['id'] if len(rows) > limit else None}

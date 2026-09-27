@@ -31,6 +31,18 @@ def main():
                 analysis_version=1,published_at=%s WHERE id=%s""", (f.video, f'2026-02-{index+1:02}T00:00:00Z', identity))
             f.db.execute('DELETE FROM meta_library_performance WHERE item_id=%s', (identity,))
         pending = f.item(f.fb, 'pending-no-video', 'video', 'facebook')
+        # Unassigned accounts let the release flow start with a name-only company.
+        fb = f.account('facebook', 'release-fb')
+        ig = f.account('instagram', 'release-ig')
+        f.db.execute("UPDATE meta_accounts SET label='Release Facebook' WHERE id=%s", (fb,))
+        f.db.execute("UPDATE meta_accounts SET label='Release Instagram' WHERE id=%s", (ig,))
+        for index in range(25):
+            identity = f.item(ig if index == 0 else fb, f'release-{index}',
+                              'reel' if index == 0 else 'video', 'instagram' if index == 0 else 'facebook')
+            f.db.execute("""UPDATE meta_library_items SET video_id=%s,analysis_state='completed',
+                analysis_version=1,published_at=%s WHERE id=%s""", (f.video, f'2026-03-{index+1:02}T00:00:00Z', identity))
+            f.db.execute('DELETE FROM meta_library_performance WHERE item_id=%s', (identity,))
+        f.item(fb, 'release-pending', 'video', 'facebook')
         (directory / 'session.json').write_text(json.dumps({'name': meta.SESSION_COOKIE, 'value': 'integration-session'}))
         (directory / 'session.json').chmod(0o600)
         class Server(uvicorn.Server):
@@ -41,7 +53,9 @@ def main():
                     yield
                 finally:
                     signal.signal(signal.SIGTERM, previous)
-        with patch('app.meta.session_client') as client:
+        with patch('app.meta.session_client') as client, \
+                patch('app.company_profile_worker.OpenAIProfileGenerator', return_value=fixture.fixture.generator), \
+                patch.dict(os.environ, {'COMPANY_PROFILE_WORKER_ENABLED': 'true'}):
             client.return_value.test_connection.return_value = {'connected': True}
             Server(uvicorn.Config(app, host='127.0.0.1', port=8063, log_level='warning', access_log=False)).run()
         (directory / 'report.json').write_text(json.dumps({

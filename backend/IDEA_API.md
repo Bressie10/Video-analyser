@@ -114,7 +114,7 @@ Candidates are currently **directly owned**, dated Instagram/Facebook organic po
 ordered by `published_at DESC, id DESC`. Company scope is applied before pagination.
 No completed-analysis requirement applies. Undated content, ads and shared creatives
 are excluded from this picker; existing V3 publication-add ownership rules remain
-unchanged. Legacy labels containing provider IDs/URLs use a neutral display fallback. Limits are 1–100, default 25; inaccessible/noncandidate
+unchanged. All legacy post labels use the neutral `Published post` fallback because ad discovery may have overwritten them with sibling-company metadata, even after a creative edge is removed. The picker displays the authorized platform and publication timestamp to distinguish posts. Limits are 1–100, default 25; inaccessible/noncandidate
 cursors return 404. Candidates are local library records, not a live Meta fetch.
 
 Associations are manual, allow multiple posts, and add/remove are idempotent. They
