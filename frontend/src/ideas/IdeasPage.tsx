@@ -34,14 +34,14 @@ function Results<T extends { id: string }>({ load, render, empty, more, after = 
     {next && (expanded ? <Results load={load} render={render} empty={empty} more={more} after={next} seen={nextSeen} /> : <button className="load-more" onClick={() => expand(true)}>{more}</button>)}
   </>;
 }
-export function IdeasPage({ api = ideaApi }: { api?: IdeaApi }) {
+export function IdeasPage({ api = ideaApi, refreshToken = 0 }: { api?: IdeaApi; refreshToken?: number }) {
   const { activeCompany, status } = useCompany();
   if (status !== 'ready') return <p role="status">Loading company…</p>;
   if (!activeCompany) return <p role="status">Select a company to see its saved ideas.</p>;
   if (activeCompany.archived) return <p role="status">This company is archived. Restore it in Manage companies to manage ideas.</p>;
-  return <CompanyScopeBoundary><Workspace api={api} companyName={activeCompany.name} /></CompanyScopeBoundary>;
+  return <CompanyScopeBoundary><Workspace api={api} companyName={activeCompany.name} refreshToken={refreshToken} /></CompanyScopeBoundary>;
 }
-function Workspace({ api, companyName }: { api: IdeaApi; companyName: string }) {
+function Workspace({ api, companyName, refreshToken }: { api: IdeaApi; companyName: string; refreshToken: number }) {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [selected, select] = useState<string | null>(null);
   const [revision, revise] = useState(0);
@@ -54,14 +54,14 @@ function Workspace({ api, companyName }: { api: IdeaApi; companyName: string }) 
     {selected ? <Detail key={selected} id={selected} api={api} onBack={() => select(null)} onChanged={() => revise(v => v + 1)} /> : <>
       <h2 ref={heading} tabIndex={-1}>Saved idea history</h2><p>Search and manage ideas saved for {companyName}.</p>
       <div className="idea-filters">
-        <label>Search ideas<input type="search" value={filters.search} onChange={e => field('search', e.target.value)} /></label>
+        <label>Search ideas<input type="search" maxLength={200} value={filters.search} onChange={e => field('search', e.target.value)} /></label>
         <label>Status<select aria-label="Status" value={filters.status} onChange={e => field('status', e.target.value)}><option value="">All statuses</option>{statuses.map(s => <option key={s} value={s}>{label(s)}</option>)}</select></label>
         <label>Feedback<select aria-label="Feedback" value={filters.feedback} onChange={e => field('feedback', e.target.value)}><option value="">All feedback</option>{['none', 'liked', 'disliked'].map(f => <option key={f} value={f}>{label(f)}</option>)}</select></label>
         <label>Target platform<select aria-label="Target platform" value={filters.platform} onChange={e => field('platform', e.target.value)}><option value="">All platforms</option><option value="facebook">Facebook</option><option value="instagram">Instagram</option></select></label>
         <label>Created from (UTC)<input type="date" value={filters.from} onChange={e => field('from', e.target.value)} /></label>
         <label>Created through (UTC)<input type="date" value={filters.to} onChange={e => field('to', e.target.value)} /></label>
       </div><button onClick={() => setFilters({ ...emptyFilters })}>Clear filters</button>
-      {invalidDates ? <p role="alert">The end date must be on or after the start date.</p> : <Results<Summary> key={`${JSON.stringify(filters)}:${revision}`} load={load} more="Load more ideas"
+      {invalidDates ? <p role="alert">The end date must be on or after the start date.</p> : <Results<Summary> key={`${JSON.stringify(filters)}:${revision}:${refreshToken}`} load={load} more="Load more ideas"
         empty={Object.values(filters).some(Boolean) ? 'No ideas match these filters.' : 'No saved ideas yet for this company.'}
         render={idea => <><button className="idea-open" onClick={() => select(idea.id)}>{idea.title}</button><p>{idea.concept}</p><p className="muted">{label(idea.status)} · {label(idea.feedback)} · {date(idea.createdAt)}</p></>} />}
     </>}
@@ -133,14 +133,13 @@ function Editor({ initial, api, onBack, onChanged, onReload }: { initial: Idea; 
   </>;
 }
 function PublicationPicker({ api, linked, busy, error, onClose, onLink }: { api: IdeaApi; linked: string[]; busy: boolean; error: unknown; onClose(): void; onLink(id: string): void }) {
-  const dialog = useRef<HTMLDialogElement>(null); const [search, setSearch] = useState('');
+  const dialog = useRef<HTMLDialogElement>(null);
   useEffect(() => { const focus = document.activeElement as HTMLElement; const modal = dialog.current; modal?.showModal(); return () => { modal?.close(); focus?.focus(); }; }, []);
-  const load = useCallback((c: string, after: string | null, s: AbortSignal) => api.publications(c, search, after, s), [api, search]);
+  const load = useCallback((c: string, after: string | null, s: AbortSignal) => api.publications(c, after, s), [api]);
   return <dialog ref={dialog} className="idea-picker" aria-labelledby="publication-picker-title" onCancel={e => { e.preventDefault(); onClose(); }}>
     <h2 id="publication-picker-title">Link published content</h2><p>Choose posts accessible in this company to record their association with this idea. You can link more than one.</p>
-    <label>Search published content<input autoFocus type="search" value={search} onChange={e => setSearch(e.target.value)} /></label>
     {error != null && <ErrorNotice error={error} />}<p role="status">{busy ? 'Saving link…' : `${linked.length} linked`}</p>
-    <Results<Publication> key={search} load={load} empty="No accessible published content found." more="Load more publications" render={p => <><strong>{p.title}</strong><p>{label(p.platform)}</p><button disabled={busy || linked.includes(p.id) || p.available === false} onClick={() => onLink(p.id)}>{linked.includes(p.id) ? 'Linked' : p.available === false ? 'Unavailable' : `Link ${p.title}`}</button></>} />
+    <Results<Publication> load={load} empty="No accessible published content found." more="Load more publications" render={p => <><strong>{p.title}</strong><p>{label(p.platform)}</p><button disabled={busy || linked.includes(p.id) || p.available === false} onClick={() => onLink(p.id)}>{linked.includes(p.id) ? 'Linked' : p.available === false ? 'Unavailable' : `Link ${p.title}`}</button></>} />
     <button onClick={onClose}>Done</button>
   </dialog>;
 }

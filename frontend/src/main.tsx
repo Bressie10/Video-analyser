@@ -6,10 +6,13 @@ import { useCompanyUI } from './company/useCompanyUI';
 import { CompanyShell } from './CompanyShell';
 import { GenerateIdea } from './generation/GenerateIdea';
 import './style.css';
+import { CompanyContent } from './company/CompanyContent';
+import { ProfileRefresh } from './company/ProfileRefresh';
 import { IdeasPage } from './ideas/IdeasPage';
 
 export function App() {
   const [connected, setConnected] = useState(false);
+  const [historyRevision, refreshHistory] = useState(0);
   const store = useCompanyStore();
   const connect = useRef<() => void>(() => {});
   const previous = useRef(false);
@@ -23,8 +26,8 @@ export function App() {
   return <main>
     <header className="page-heading"><p className="eyebrow">Your next video starts here</p><h1>Turn your content into your next idea.</h1></header>
     <MetaConnection onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} connectAction={connect} />
-    <CompanyShell companyUI={model} allowUnlinkedWorkspace>
-      {onSetup => <><GenerateIdea onSetup={onSetup} /><IdeasPage /></>}
+    <CompanyShell companyUI={model} allowUnlinkedWorkspace settings={<ProfileRefresh />}>
+      {onSetup => <><CompanyContent /><GenerateIdea onSetup={onSetup} onSaved={() => refreshHistory(v => v + 1)} /><IdeasPage refreshToken={historyRevision} /></>}
     </CompanyShell>
   </main>;
 }

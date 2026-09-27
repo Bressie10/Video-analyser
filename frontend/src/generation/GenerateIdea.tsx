@@ -3,22 +3,22 @@ import { CompanyScopeBoundary, useCompany, useCompanyQuery, useCompanyStore } fr
 import { useCompanySwitchGuard } from '../CompanySwitchGuard';
 import { generationApi, generationError, latestSources, type GenerationApi, type PersistedIdea, type TargetPlatform } from './generationApi';
 
-export function GenerateIdea({ onSetup, api = generationApi }: { onSetup(): void; api?: GenerationApi }) {
+export function GenerateIdea({ onSetup, onSaved, api = generationApi }: { onSetup(): void; onSaved?(): void; api?: GenerationApi }) {
   return <CompanyScopeBoundary fallback={<section><h2>Select a company to generate an idea</h2><p>Select or create a company in the app shell.</p><button onClick={onSetup}>Company setup</button></section>}>
-    <Workflow api={api} onSetup={onSetup} />
+    <Workflow api={api} onSetup={onSetup} onSaved={onSaved} />
   </CompanyScopeBoundary>;
 }
-function Workflow({ api, onSetup }: { api: GenerationApi; onSetup(): void }) {
+function Workflow({ api, onSetup, onSaved }: { api: GenerationApi; onSetup(): void; onSaved?(): void }) {
   const { activeCompany } = useCompany();
   const store = useCompanyStore();
   const [revision, revise] = useState(0);
-  const load = useCallback((id: string, signal: AbortSignal) => api.listSources(id, signal), [api]);
-  const sources = useCompanyQuery(`generation-sources:${revision}`, load);
   const [mode, setMode] = useState<'all' | 'manual'>('all');
+  const load = useCallback((id: string, signal: AbortSignal) => api.listSources(id, signal, mode === 'manual'), [api, mode]);
+  const sources = useCompanyQuery(`generation-sources:${revision}:${mode}`, load);
   const [selection, select] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const [platform, setPlatform] = useState('all');
-  const available = [...new Set((activeCompany?.accounts ?? []).map(a => a.platform).filter((p): p is TargetPlatform => p !== 'meta_ads'))];
+  const available = [...new Set((activeCompany?.accounts ?? []).map(a => a.platform).filter((p): p is TargetPlatform => p === 'instagram' || p === 'facebook'))];
   const [targets, setTargets] = useState<TargetPlatform[]>(available);
   const [brief, setBrief] = useState('');
   const [busy, setBusy] = useState(false);
@@ -46,7 +46,7 @@ function Workflow({ api, onSetup }: { api: GenerationApi; onSetup(): void }) {
     const signal = AbortSignal.any([scope.signal, lifetime.current.signal]);
     try {
       const saved = await api.generate({ ...input, idempotencyKey: attempt.current.key }, signal);
-      if (!signal.aborted && scope.isCurrent()) { setResult(saved); attempt.current = undefined; }
+      if (!signal.aborted && scope.isCurrent()) { setResult(saved); attempt.current = undefined; onSaved?.(); }
     } catch (caught) {
       if (!signal.aborted && scope.isCurrent()) { setError(generationError(caught)); void store.handleScopeError(scope, caught); }
     } finally {
@@ -73,7 +73,7 @@ function Workflow({ api, onSetup }: { api: GenerationApi; onSetup(): void }) {
             {!visible.length && <p>No analyzed content matches your search or platform filter.</p>}
             <div className="generation-sources">{visible.map(item => <label className="source-choice" key={item.id}>
               <input type="checkbox" checked={sourceIds.includes(item.id)} disabled={!sourceIds.includes(item.id) && sourceIds.length >= 20} onChange={e => select(current => e.target.checked ? current.length < 20 ? [...current, item.id] : current : current.filter(id => id !== item.id))} />
-              <span>{item.title}<small>{item.platform === 'meta_ads' ? 'Meta Ads' : item.platform} · {new Date(item.publishedAt).toLocaleDateString()}</small></span>
+              <span>{item.title}<small>{item.platform === 'meta_ads' ? 'Meta Ads' : item.platform} · {item.publishedAt ? new Date(item.publishedAt).toLocaleDateString() : 'Date unavailable'}</small></span>
             </label>)}</div>
           </div>}
         </fieldset>

@@ -16,7 +16,7 @@ export interface IdeaApi {
   detail(company: string, id: string, signal: AbortSignal): Promise<Idea>;
   edit(company: string, id: string, changes: Edit | { status: Status }, signal: AbortSignal): Promise<Idea>;
   feedback(company: string, id: string, feedback: Feedback, reason: string | null, signal: AbortSignal): Promise<Idea>;
-  publications(company: string, search: string, after: string | null, signal: AbortSignal): Promise<Page<Publication>>;
+  publications(company: string, after: string | null, signal: AbortSignal): Promise<Page<Publication>>;
   link(company: string, id: string, publication: string, linked: boolean, signal: AbortSignal): Promise<Idea>;
 }
 const invalid = () => new ServiceError(502, 'Invalid ideas response.');
@@ -45,7 +45,7 @@ export function parseIdea(value: unknown, company: string): Idea {
   return { ...parseSummary(v), companyId: uuid(v.company_id), script: str(v.script), publications: list(v.publications, parsePublication), brief: nullable(v.generation_brief) };
 }
 function page<T>(value: unknown, parse: (item: unknown) => T): Page<T> { const v = record(value); return { items: list(v.items, parse), nextCursor: nullable(v.next_cursor) }; }
-/** All pending Wave 2 route and wire-format assumptions live here. Never request evidence or dereference historical links. */
+/** Safe projections only: never request evidence or dereference historical links. */
 const root = (company: string) => `/api/meta/companies/${encodeURIComponent(company)}`;
 const path = (company: string, id: string) => `${root(company)}/ideas/${encodeURIComponent(id)}`;
 async function request(url: string, signal: AbortSignal, method = 'GET', body?: unknown): Promise<unknown> {
@@ -58,7 +58,7 @@ export function historyQuery(filters: Filters, after: string | null): string {
   const q = new URLSearchParams({ limit: '25' });
   for (const [key, value] of Object.entries({ search: filters.search.trim(), status: filters.status, feedback: filters.feedback,
     target_platform: filters.platform, created_from: filters.from ? `${filters.from}T00:00:00.000Z` : '',
-    created_to: filters.to ? `${filters.to}T23:59:59.999Z` : '', after })) if (value) q.set(key, value);
+    created_to: filters.to ? new Date(Date.parse(`${filters.to}T00:00:00.000Z`) + 86400000).toISOString() : '', after })) if (value) q.set(key, value);
   return q.toString();
 }
 export const ideaApi: IdeaApi = {
@@ -66,15 +66,15 @@ export const ideaApi: IdeaApi = {
   detail: async (c, id, s) => parseIdea(await request(path(c, id), s), c),
   edit: async (c, id, changes, s) => parseIdea(await request(path(c, id), s, 'PATCH', changes), c),
   feedback: async (c, id, feedback, reason, s) => parseIdea(await request(`${path(c, id)}/feedback`, s, 'PUT', { feedback, reason: feedback === 'disliked' ? reason?.trim() || null : null }), c),
-  publications: async (c, search, after, s) => {
-    const q = new URLSearchParams({ limit: '25', search }); if (after) q.set('after', after);
-    return page(await request(`${root(c)}/published-content?${q}`, s), parsePublication);
+  publications: async (c, after, s) => {
+    const q = new URLSearchParams({ limit: '25' }); if (after) q.set('after', after);
+    return page(await request(`${root(c)}/publication-options?${q}`, s), value => { const v = record(value); return { id: uuid(v.id), title: str(v.label), platform: str(v.platform), available: true, createdAt: null }; });
   },
   link: async (c, id, publication, linked, s) => parseIdea(await request(`${path(c, id)}/publications/${encodeURIComponent(publication)}`, s, linked ? 'PUT' : 'DELETE'), c),
 };
 export function ideaError(error: unknown): string {
   if (error instanceof ServiceError) {
-    if (error.status === 404) return 'Idea or published content not found. It may have been removed or become unavailable.';
+    if (error.status === 404) return 'This company, idea or published content is unavailable. Check Manage companies to restore an archived company or select another company.';
     if (error.status === 409) return 'This change conflicts with the current saved state. Your edits are kept. Cancel editing and reload the idea before trying again.';
     if (error.status === 403) return 'This company may be archived or no longer accessible. Select another company or check Manage companies.';
     if (error.status === 401) return 'Your session has expired. Reconnect and try again.';

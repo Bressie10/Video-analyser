@@ -13,10 +13,10 @@ export function CompanyEmptyState({ name, onManage, onSkip, skipped }: { name: s
     {skipped && <p>You can link accounts later in Manage companies.</p>}
   </section>;
 }
-export function CompanyShell({ companyUI, children, allowUnlinkedWorkspace = false }: { companyUI: CompanyUIProps; children: ReactNode | ((onManage: () => void) => ReactNode); allowUnlinkedWorkspace?: boolean }) {
-  return <CompanySwitchGuardProvider><Shell companyUI={companyUI} allowUnlinkedWorkspace={allowUnlinkedWorkspace}>{children}</Shell></CompanySwitchGuardProvider>;
+export function CompanyShell({ companyUI, children, settings, allowUnlinkedWorkspace = false }: { companyUI: CompanyUIProps; children: ReactNode | ((onManage: () => void) => ReactNode); allowUnlinkedWorkspace?: boolean; settings?: ReactNode }) {
+  return <CompanySwitchGuardProvider><Shell companyUI={companyUI} settings={settings} allowUnlinkedWorkspace={allowUnlinkedWorkspace}>{children}</Shell></CompanySwitchGuardProvider>;
 }
-function Shell({ companyUI: model, children, allowUnlinkedWorkspace = false }: { companyUI: CompanyUIProps; children: ReactNode | ((onManage: () => void) => ReactNode); allowUnlinkedWorkspace?: boolean }) {
+function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = false }: { companyUI: CompanyUIProps; children: ReactNode | ((onManage: () => void) => ReactNode); allowUnlinkedWorkspace?: boolean; settings?: ReactNode }) {
   const [management, setManagement] = useState(false);
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
@@ -63,6 +63,7 @@ function Shell({ companyUI: model, children, allowUnlinkedWorkspace = false }: {
       : !active ? <section className="welcome"><h2>No company selected</h2><p>Create or select a company to start your workspace.</p><button onClick={manage}>Manage companies</button></section>
       : active.archived ? <section className="welcome"><h2>{active.name} is archived</h2><p>Restore it in Manage companies or select another company.</p><button onClick={manage}>Manage companies</button></section>
       : !active.hasLinkedAccounts ? <CompanyEmptyState name={active.name} onManage={manage} skipped={skipped.includes(active.id)} onSkip={() => setSkipped(current => [...current, active.id])} /> : null}
+    {management && settings}
     {(model.status === 'ready' && active && !active.archived && (active.hasLinkedAccounts || allowUnlinkedWorkspace)) && <div hidden={management}>{typeof children === 'function' ? children(manage) : children}</div>}
     <dialog className="company-confirm" ref={dialog} aria-labelledby="company-confirm-title" onCancel={event => { event.preventDefault(); setPending(null); }}>
       <h2 id="company-confirm-title">Switch company?</h2>

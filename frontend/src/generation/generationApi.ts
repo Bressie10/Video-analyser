@@ -1,23 +1,23 @@
 import { isUUID, ServiceError } from '../metaLibrary';
 
 export type TargetPlatform = 'instagram' | 'facebook';
-export type SourceItem = { id: string; title: string; platform: TargetPlatform | 'meta_ads'; publishedAt: string };
+export type SourceItem = { id: string; title: string; platform: TargetPlatform | 'meta_ads'; publishedAt: string | null };
 export type PersistedIdea = { id: string; companyId: string; title: string; concept: string; script: string; targetPlatforms: TargetPlatform[] };
 export type GenerationInput = { companyId: string; sourceIds: string[]; brief?: string; targetPlatforms: TargetPlatform[]; idempotencyKey: string };
 export interface GenerationApi {
-  listSources(companyId: string, signal: AbortSignal): Promise<SourceItem[]>;
+  listSources(companyId: string, signal: AbortSignal, manual?: boolean): Promise<SourceItem[]>;
   generate(input: GenerationInput, signal: AbortSignal): Promise<PersistedIdea>;
 }
 const object = (v: unknown): v is Record<string, unknown> => !!v && typeof v === 'object' && !Array.isArray(v);
 const invalid = () => new ServiceError(502, 'Invalid generation service response.');
 const uuid = (id: string) => { if (!isUUID(id)) throw new ServiceError(422, 'Invalid identifier.'); return encodeURIComponent(id); };
-// Keep all endpoint assumptions here for Wave 2 backend reconciliation.
+// Company-authorized backend contracts; default resolution is exactly one page.
 export const generationPaths = {
   sources: (id: string) => `/api/companies/${uuid(id)}/content`,
   generate: (id: string) => `/api/meta/companies/${uuid(id)}/recommendations`,
 };
 export function latestSources(items: readonly SourceItem[]): SourceItem[] {
-  return [...items].sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt) || b.id.localeCompare(a.id)).slice(0, 20);
+  return [...items].sort((a, b) => (b.publishedAt ? Date.parse(b.publishedAt) : -Infinity) - (a.publishedAt ? Date.parse(a.publishedAt) : -Infinity) || b.id.localeCompare(a.id)).slice(0, 20);
 }
 export function generationError(error: unknown): string {
   if (error instanceof ServiceError) {
@@ -38,26 +38,24 @@ export function createGenerationApi(fetcher: typeof fetch = (...args) => fetch(.
     try { return await response.json(); } catch { throw invalid(); }
   }
   return {
-    async listSources(companyId, signal) {
+    async listSources(companyId, signal, manual = false) {
       const items = new Map<string, SourceItem>();
-      const cursors = new Set<string>();
-      let cursor: string | null = null;
+      let offset: number | null = 0;
       do {
-        const query = new URLSearchParams({ analysis_status: 'analyzed', limit: '100', order: 'published_at_desc' });
-        if (cursor) query.set('after', cursor);
+        const query = new URLSearchParams({ analyzed_only: 'true', limit: '20', order: 'desc' });
+        if (offset) query.set('offset', String(offset));
         const page = await request(`${generationPaths.sources(companyId)}?${query}`, signal);
-        if (!object(page) || !Array.isArray(page.items) || !(page.next_cursor === null || typeof page.next_cursor === 'string')) throw invalid();
+        if (!object(page) || !Array.isArray(page.items) || !(page.next_offset === null || (Number.isInteger(page.next_offset) && Number(page.next_offset) > offset))) throw invalid();
         for (const value of page.items) {
           if (!object(value)) throw invalid();
-          // Fail closed: pending/failed items are never offered as sources.
-          if (value.analysis_status !== 'analyzed') continue;
-          if (!isUUID(value.id) || typeof value.title !== 'string' || !['instagram', 'facebook', 'meta_ads'].includes(String(value.platform)) || typeof value.published_at !== 'string' || !Number.isFinite(Date.parse(value.published_at))) throw invalid();
-          items.set(value.id, { id: value.id, title: value.title || 'Untitled content', platform: value.platform as SourceItem['platform'], publishedAt: value.published_at });
+          if (value.analyzed !== true) continue;
+          if (!isUUID(value.library_item_id) || typeof value.display_title !== 'string' || !['instagram', 'facebook', 'meta_ads'].includes(String(value.platform)) || !(value.published_at === null || (typeof value.published_at === 'string' && Number.isFinite(Date.parse(value.published_at))))) throw invalid();
+          // video_ids in the generation body means library IDs, never nullable video_id.
+          items.set(value.library_item_id, { id: value.library_item_id, title: value.display_title || 'Untitled content', platform: value.platform as SourceItem['platform'], publishedAt: value.published_at as string | null });
         }
-        cursor = page.next_cursor as string | null;
-        if (cursor !== null) { if (!cursor || cursors.has(cursor)) throw invalid(); cursors.add(cursor); }
-      } while (cursor !== null);
-      return [...items.values()].sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt) || b.id.localeCompare(a.id));
+        offset = page.next_offset as number | null;
+      } while (manual && offset !== null);
+      return [...items.values()];
     },
     async generate(input, signal) {
       if (input.sourceIds.length < 1 || input.sourceIds.length > 20 || new Set(input.sourceIds).size !== input.sourceIds.length || !input.sourceIds.every(isUUID) || !isUUID(input.idempotencyKey) || !input.targetPlatforms.length || input.targetPlatforms.some(p => !['instagram', 'facebook'].includes(p)) || new Set(input.targetPlatforms).size !== input.targetPlatforms.length || (input.brief?.length ?? 0) > 10000) throw new ServiceError(422, 'Invalid generation input.');
