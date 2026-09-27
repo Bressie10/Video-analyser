@@ -1,0 +1,33 @@
+* { box-sizing: border-box; }
+:root { font-family: var(--font-family); font-size: 16px; color: var(--color-text); background: var(--color-app); }
+body { margin: 0; font-size: var(--text-body); line-height: 1.6; }
+[hidden] { display: none !important; }
+main { max-width: 1160px; margin: 0 auto; padding: var(--space-10) var(--space-6) var(--space-16); }
+h1, h2, h3, p { overflow-wrap: anywhere; }
+h1 { font-size: var(--text-page); line-height: 1.2; letter-spacing: -.035em; margin: 0 0 var(--space-3); font-weight: 650; }
+h2 { font-size: var(--text-section); line-height: 1.35; letter-spacing: -.02em; margin: 0; font-weight: 650; }
+h3 { font-size: var(--text-card); line-height: 1.4; font-weight: 650; }
+p { line-height: 1.6; }
+a { color: var(--color-accent); text-underline-offset: 3px; }
+button { display: inline-flex; align-items: center; justify-content: center; gap: var(--space-2); max-width: 100%; min-height: 44px; padding: 10px 16px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-control); background: var(--color-surface); color: var(--color-text); font: inherit; font-size: var(--text-button); font-weight: 600; line-height: 1.4; cursor: pointer; overflow-wrap: anywhere; }
+button:hover:not(:disabled) { background: var(--color-hover); border-color: var(--color-border-strong); }
+button.primary, .ui-button--primary { background: var(--color-accent); border-color: var(--color-accent); color: var(--color-on-accent); }
+button.primary:hover:not(:disabled), .ui-button--primary:hover:not(:disabled) { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+button:disabled { cursor: not-allowed; opacity: .45; }
+:focus-visible { outline: 3px solid var(--color-accent); outline-offset: 3px; }
+:where(input:not([type=checkbox]):not([type=radio]), select, textarea) { width: 100%; min-width: 0; max-width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--color-border-strong); border-radius: var(--radius-control); font: inherit; color: var(--color-text); background: var(--color-surface); }
+textarea { resize: vertical; line-height: 1.6; }
+input::placeholder, textarea::placeholder { color: var(--color-text-muted); opacity: 1; }
+input:disabled, select:disabled, textarea:disabled { background: var(--color-subtle); color: var(--color-text-muted); cursor: not-allowed; }
+[aria-invalid=true] { border-color: var(--color-danger); }
+input[type=checkbox], input[type=radio] { width: 20px; height: 20px; flex-shrink: 0; accent-color: var(--color-accent); cursor: pointer; }
+label, legend { font-size: var(--text-label); }
+fieldset { min-width: 0; border: 0; padding: 0; margin: 0; }
+legend { color: var(--color-text-secondary); font-weight: 600; margin-bottom: var(--space-2); }
+/* V4 compatibility only. New pages use open layout or Panel. */
+section, .welcome { background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-card); padding: var(--space-6); margin: var(--space-6) 0; }
+section section { border: 0; border-top: 1px solid var(--color-border); border-radius: 0; padding-inline: 0; }
+dialog { background: var(--color-elevated); border: 1px solid var(--color-border); border-radius: var(--radius-surface); color: var(--color-text); padding: var(--space-6); max-width: min(640px, calc(100% - 32px)); max-height: calc(100dvh - 48px); box-shadow: var(--shadow-popover); }
+dialog::backdrop { background: var(--color-backdrop); }
+@media (max-width: 600px) { main { padding: var(--space-6) var(--space-3) var(--space-10); } section { padding: var(--space-4); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; animation: none !important; transition: none !important; } }

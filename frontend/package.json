@@ -16,9 +16,12 @@
     "test:ideas": "node --test tests/ideas-api.test.mjs tests/ideas.test.mjs",
     "test:wave2-integration": "node --test tests/wave2-integration.test.mjs",
     "test:content-settings": "node --test tests/content-settings.test.mjs",
-    "test:legal": "node --test tests/legal.test.mjs"
+    "test:legal": "node --test tests/legal.test.mjs",
+    "test:foundation": "node --test tests/foundation.test.mjs",
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs"
   },
   "dependencies": {
+    "lucide-react": "^1.48.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },

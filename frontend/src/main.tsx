@@ -13,9 +13,14 @@ import { IdeasPage } from './ideas/IdeasPage';
 import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 import { DataDeletionPage } from './pages/DataDeletionPage';
-import { LegalFooter } from './pages/LegalLayout';
+import { AppShell } from './shell/AppShell';
+import { navigate, useAppPage } from './shell/navigation';
+import { WorkspaceOverview } from './shell/WorkspaceOverview';
 
 export function App() {
+  const page = useAppPage();
+  const previousWorkflow = useRef<Exclude<typeof page, 'settings'>>('overview');
+  if (page !== 'settings') previousWorkflow.current = page;
   const [connected, setConnected] = useState(false);
   const [historyRevision, refreshHistory] = useState(0);
   const store = useCompanyStore();
@@ -28,13 +33,17 @@ export function App() {
     previous.current = value;
   }, [store]);
   const model = useCompanyUI(connected, () => connect.current());
-  return <main>
-    <header className="page-heading"><p className="eyebrow">Your next video starts here</p><h1>Turn your content into your next idea.</h1></header>
-    <MetaConnection onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} connectAction={connect} />
-    <CompanyShell companyUI={model} allowUnlinkedWorkspace settings={<ProfileRefresh />}>
-      {onSetup => <><CompanyContent /><GenerateIdea onSetup={onSetup} onSaved={() => refreshHistory(v => v + 1)} /><IdeasPage refreshToken={historyRevision} /></>}
-    </CompanyShell>
-  </main>;
+  return <CompanyShell companyUI={model} allowUnlinkedWorkspace showOnboarding={page === 'overview'}
+    managementPage={page === 'settings'} onManagementChange={open => navigate(open ? 'settings' : previousWorkflow.current)}
+    layout={(selector, content) => <AppShell page={page} companySelector={selector}>{content}</AppShell>}
+    settings={<><MetaConnection onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} connectAction={connect} /><ProfileRefresh /></>}>
+    {onSetup => <>
+      <div hidden={page !== 'overview'}><WorkspaceOverview /></div>
+      <div hidden={page !== 'content'}><CompanyContent /></div>
+      <div hidden={page !== 'generate'}><GenerateIdea onSetup={onSetup} onSaved={() => refreshHistory(v => v + 1)} /></div>
+      <div hidden={page !== 'ideas'}><IdeasPage refreshToken={historyRevision} /></div>
+    </>}
+  </CompanyShell>;
 }
 const root = document.getElementById('root');
 if (!root) throw new Error('Application root element is missing.');
@@ -44,4 +53,4 @@ const pathname = window.location.pathname.replace(/\/+$/, '') || '/';
 const legalPage = pathname === '/privacy' ? <PrivacyPage />
   : pathname === '/terms' ? <TermsPage />
   : pathname === '/data-deletion' ? <DataDeletionPage /> : null;
-createRoot(root).render(<StrictMode>{legalPage ?? <><CompanyProvider><App /></CompanyProvider><LegalFooter /></>}</StrictMode>);
+createRoot(root).render(<StrictMode>{legalPage ?? <CompanyProvider><App /></CompanyProvider>}</StrictMode>);

@@ -48,7 +48,7 @@ async function fixture(options = {}) {
     if (parts[7] === 'publications') { if (method === 'DELETE') item.publications = item.publications.filter(p => p.library_item_id !== parts[8]); else if (!item.publications.some(p => p.library_item_id === parts[8])) item.publications.push(pub(Number(parts[8].slice(-12)))); }
     return send(item);
   });
-  await p.goto(origin);
+  await p.goto(`${origin}#ideas`);
   return { p, state, close: async () => { assert.deepEqual(state.errors, []); await p.close(); } };
 }
 const button = (p, name) => p.getByRole('button', { name, exact: true });

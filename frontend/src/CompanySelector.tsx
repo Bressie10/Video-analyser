@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { ChevronDown } from 'lucide-react';
 import type { CompanyUIProps } from './companyUI';
 
 type Props = Pick<CompanyUIProps, 'companies' | 'activeCompanyId' | 'status' | 'onRetry'> & {
@@ -20,9 +21,9 @@ export function CompanySelector({ companies, activeCompanyId, status, onRetry, b
   return <nav className="company-navigation" aria-label="Company" ref={container} onKeyDown={event => {
     if (event.key === 'Escape' && open) { event.preventDefault(); close(); }
   }} onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
-    <span className="eyebrow">Company workspace</span>
+    <span className="company-selector-label">Workspace</span>
     <button ref={trigger} aria-expanded={open} aria-controls={id} disabled={busy || status === 'loading'} onClick={() => setOpen(!open)}>
-      {status === 'loading' ? 'Loading companies…' : active ? `${active.name}${active.archived ? ' (archived)' : ''}` : 'Select company'} <span aria-hidden="true">▾</span>
+      <span className="company-active-name" title={active?.name}>{status === 'loading' ? 'Loading companies…' : active ? `${active.name}${active.archived ? ' (archived)' : ''}` : 'Select company'}</span><ChevronDown aria-hidden="true" size={16} />
     </button>
     {status === 'error' && <p role="alert">Could not load companies. <button onClick={onRetry}>Retry companies</button></p>}
     {open && <div id={id} className="company-switcher">

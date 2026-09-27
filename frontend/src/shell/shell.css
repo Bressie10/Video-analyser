@@ -1,0 +1,58 @@
+.app-shell { min-height: 100dvh; display: grid; grid-template-columns: var(--sidebar-width) minmax(0, 1fr); grid-template-rows: var(--header-height) 1fr; }
+.app-header { grid-column: 1 / -1; display: flex; align-items: center; position: sticky; top: 0; height: var(--header-height); background: var(--color-surface); border-bottom: 1px solid var(--color-border); z-index: 20; }
+.app-brand { display: flex; align-items: center; gap: var(--space-2); flex-shrink: 0; width: var(--sidebar-width); padding-inline: var(--space-5); color: var(--color-text); text-decoration: none; font-size: 18px; font-weight: 700; letter-spacing: -.04em; }
+.app-brand-mark { display: grid; place-items: center; width: 28px; height: 28px; background: var(--color-accent); color: var(--color-on-accent); border-radius: var(--radius-control); font-size: 20px; font-weight: 600; }
+.app-company { min-width: 0; width: min(340px, 100%); padding-inline: var(--space-6); border-left: 1px solid var(--color-border); }
+.app-header .company-navigation { position: relative; z-index: auto; margin: 0; padding: 0; border: 0; border-radius: 0; background: transparent; }
+.company-selector-label { display: block; font-size: var(--text-caption); color: var(--color-text-secondary); line-height: 1.2; margin-bottom: var(--space-1); }
+.app-header .company-navigation > button { display: flex; justify-content: space-between; width: 100%; min-height: 32px; font-weight: 500; padding: 4px 8px; gap: var(--space-2); text-align: left; }
+.app-header .company-active-name { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.app-header .company-navigation > button svg { flex-shrink: 0; }
+.app-header .company-switcher { position: absolute; top: calc(100% + 12px); left: 0; width: 320px; max-width: calc(100vw - 32px); padding: var(--space-2); border: 1px solid var(--color-border); border-radius: var(--radius-card); background: var(--color-elevated); box-shadow: var(--shadow-popover); max-height: min(60dvh, 480px); overflow-y: auto; }
+.app-header .company-switcher p { margin: var(--space-2); }
+.app-header .company-switcher ul { gap: var(--space-1); margin: var(--space-2) 0; }
+.app-header .company-switcher button { justify-content: flex-start; width: 100%; border-color: transparent; }
+.app-header .company-switcher > button { border-top-color: var(--color-border); border-radius: 0; }
+.app-header .company-navigation > p { position: absolute; top: calc(100% + 12px); left: 0; width: 280px; max-width: calc(100vw - 32px); background: var(--color-elevated); box-shadow: var(--shadow-popover); padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-card); font-size: var(--text-secondary); }
+.app-sidebar { position: sticky; top: var(--header-height); height: calc(100dvh - var(--header-height)); background: var(--color-surface); border-right: 1px solid var(--color-border); padding: var(--space-5) var(--space-3); display: flex; flex-direction: column; justify-content: space-between; overflow-y: auto; }
+.app-sidebar nav { display: grid; gap: var(--space-1); }
+.app-nav-link { display: flex; align-items: center; gap: var(--space-3); min-height: 44px; padding: 10px 12px; font-size: var(--text-nav); font-weight: 500; color: var(--color-text-secondary); text-decoration: none; border-radius: var(--radius-control); }
+.app-nav-link:hover { background: var(--color-hover); color: var(--color-text); }
+.app-nav-link[aria-current=page] { background: var(--color-active); color: var(--color-accent); font-weight: 650; }
+.app-nav-settings { margin-top: var(--space-6); position: relative; }
+.app-nav-settings::before { content: ''; position: absolute; top: calc(-1 * var(--space-3)); left: var(--space-2); right: var(--space-2); height: 1px; background: var(--color-border); }
+.app-sidebar-caption { padding: var(--space-2) var(--space-3); color: var(--color-text-muted); font-size: var(--text-caption); }
+.app-body { min-width: 0; display: flex; flex-direction: column; }
+.app-main { width: 100%; max-width: var(--page-width); margin: 0 auto; padding: var(--space-8); flex: 1; min-width: 0; }
+.app-main:focus { outline: none; }
+.app-body > .legal-footer { width: 100%; max-width: var(--page-width); padding: var(--space-4) var(--space-8); font-size: var(--text-caption); }
+.app-menu-toggle { display: none; }
+.skip-link { position: fixed; top: -100px; left: var(--space-4); padding: var(--space-3) var(--space-4); background: var(--color-surface); z-index: 40; }
+.skip-link:focus { top: var(--space-3); }
+.workspace-overview { padding-block: var(--space-6); }
+.workspace-links { display: grid; margin-top: var(--space-8); border-top: 1px solid var(--color-border); }
+.workspace-links a { display: flex; align-items: center; gap: var(--space-4); padding: var(--space-5) var(--space-2); text-decoration: none; border-bottom: 1px solid var(--color-border); color: var(--color-text); }
+.workspace-links a:hover { background: var(--color-hover); }
+.workspace-links a > span { flex: 1; min-width: 0; }
+.workspace-links strong { display: block; font-size: var(--text-card); }
+.workspace-links span span { color: var(--color-text-secondary); font-size: var(--text-secondary); }
+.workspace-links svg { flex-shrink: 0; color: var(--color-accent); }
+@media (min-width: 701px) and (max-width: 1100px) { .app-shell { --sidebar-width: 184px; } .app-brand { font-size: 16px; padding-inline: var(--space-3); } .app-main { padding: var(--space-6); } }
+@media (max-width: 700px) {
+  .app-shell { display: flex; flex-direction: column; --header-height: 112px; }
+  .app-header { display: grid; grid-template-columns: minmax(0, 1fr) 44px; gap: var(--space-1) var(--space-2); height: var(--header-height); padding: var(--space-2) var(--space-4); }
+  .app-brand { width: auto; font-size: 17px; padding: 0; }
+  .app-brand-mark { width: 26px; height: 26px; font-size: 18px; }
+  .app-company { grid-column: 1 / -1; grid-row: 2; width: 100%; padding: 0; border: 0; }
+  .company-selector-label { display: none; }
+  .app-header .company-navigation > button { min-height: 44px; }
+  .app-header .company-switcher { width: 100%; }
+  .app-menu-toggle { display: inline-flex; grid-column: 2; grid-row: 1; }
+  .app-sidebar { display: none; position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--color-border); padding: var(--space-3) var(--space-4); }
+  .app-sidebar.is-open { display: block; }
+  .app-sidebar-caption { display: none; }
+  .app-body { flex: 1; }
+  .app-main { padding: var(--space-6) var(--space-4); }
+  .app-body > .legal-footer { padding: var(--space-4); }
+  .app-main .ui-page-header h1 { font-size: 1.625rem; }
+}

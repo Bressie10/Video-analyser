@@ -80,11 +80,26 @@ test('real browser → FastAPI → PostgreSQL lifecycle, ownership, Ads, guards 
   const calls = [], responseChecks = [], errors = [];
   p.on('pageerror', e => errors.push(e.message));
   p.on('request', r => { if (new URL(r.url()).pathname.startsWith('/api/')) calls.push(new URL(r.url()).pathname); });
-  p.on('requestfinished', request => {
-    const path = new URL(request.url()).pathname;
-    if (path.startsWith('/api/companies') || path === '/api/meta/accounts') responseChecks.push(request.response().then(response => response.text()).then(text => {
-      for (const forbidden of ['external_id', 'connection_id', 'encrypted', 'access_token', 'provider.invalid', 'a-secret', 'b-secret', 'foreign-ads']) assert.equal(text.includes(forbidden), false, forbidden);
-    }));
+  // Observe real fetch bodies before delivering them to the app. Chromium can
+  // discard unconsumed error bodies (or bodies from a cancelled company scope)
+  // before requestfinished/response.text can read them. No requests are mocked.
+  await p.exposeFunction('checkCompanyResponsePrivacy', ({ path, status, text }) => {
+    responseChecks.push({ path, status });
+    for (const forbidden of ['external_id', 'connection_id', 'encrypted', 'access_token', 'provider.invalid', 'a-secret', 'b-secret', 'foreign-ads']) {
+      if (text.includes(forbidden)) errors.push(`Response contains ${forbidden}`);
+    }
+  });
+  await p.addInitScript(() => {
+    const fetch = window.fetch.bind(window);
+    window.fetch = async (...args) => {
+      const response = await fetch(...args);
+      const path = new URL(response.url).pathname;
+      if (path.startsWith('/api/companies') || path === '/api/meta/accounts') {
+        const text = await response.clone().text();
+        await window.checkCompanyResponsePrivacy({ path, status: response.status, text });
+      }
+      return response;
+    };
   });
   try {
     await p.goto(origin); await p.getByRole('heading', { name: 'No company selected' }).waitFor();
@@ -143,7 +158,9 @@ test('real browser → FastAPI → PostgreSQL lifecycle, ownership, Ads, guards 
       await p.screenshot({ path: `/tmp/wave1-company-${width}.png`, fullPage: true });
     }
     assert.equal(calls.some(path => /^\/api\/meta\/(library|jobs|sync|recommendations)/.test(path)), false);
-    await Promise.all(responseChecks); assert.deepEqual(errors, []);
+    assert.ok(responseChecks.some(response => response.status === 200));
+    assert.equal(responseChecks.filter(response => response.status === 409).length, 2);
+    assert.deepEqual(errors, []);
     const saved = await (await c.request.get(`${origin}/api/companies/${id}`)).json();
     assert.equal(saved.name, 'Renamed studio'); assert.equal(saved.archived, false); assert.deepEqual(saved.accounts, []);
     const text = await p.locator('body').innerText();

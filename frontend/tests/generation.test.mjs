@@ -27,7 +27,7 @@ async function app(options = {}) {
     if (path === '/api/meta/test') return route.fulfill({ json: { connected: false } });
     return route.fulfill({ json: { accounts: [] } });
   });
-  const page = await context.newPage(); page.setDefaultTimeout(5000); page.on('pageerror', e => errors.push(e.message)); await page.goto(origin);
+  const page = await context.newPage(); page.setDefaultTimeout(5000); page.on('pageerror', e => errors.push(e.message)); await page.goto(`${origin}#generate`);
   return { page, calls, errors, close: () => context.close() };
 }
 const generate = p => p.getByRole('button', { name: 'Generate idea', exact: true });
@@ -43,7 +43,7 @@ for (const count of [1, 7, 20, 25]) test(`default All mode resolves latest ${cou
     await p.getByRole('heading', { name: saved.title }).waitFor();
     assert.deepEqual(f.calls[0].video_ids, Array.from({ length: Math.min(20, count) }, (_, i) => uuid(count-i)));
     assert.equal(f.calls[0].generation_brief, null); assert.deepEqual(f.calls[0].target_platforms, ['instagram']); assert.match(f.calls[0].request_id, /^[a-f0-9-]{36}$/);
-    assert.equal(p.url(), origin); assert.equal(await p.locator('.concept').textContent(), saved.concept); assert.equal(await p.locator('.script').textContent(), saved.script); assert.deepEqual(f.errors, []);
+    assert.equal(p.url(), `${origin}#generate`); assert.equal(await p.locator('.concept').textContent(), saved.concept); assert.equal(await p.locator('.script').textContent(), saved.script); assert.deepEqual(f.errors, []);
   } finally { await f.close(); }
 });
 test('manual search, filter, max 20, deselection, optional brief, no-target block and keyboard', async () => {

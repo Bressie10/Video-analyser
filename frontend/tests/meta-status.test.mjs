@@ -37,7 +37,7 @@ for (const connected of [false, true]) {
       return route.fulfill({ json });
     });
     try {
-      await page.goto(origin);
+      await page.goto(`${origin}#settings`);
       await page.getByText(connected ? "Meta connected successfully." : "Meta is not connected.", { exact: true }).waitFor();
       await page.waitForTimeout(100);
       assert.equal(probes.length, 1);
@@ -55,7 +55,7 @@ for (const status of [401, 403, 502, 503]) {
     await context.route("**/api/meta/test", (route) => route.fulfill({ status, json: { detail: "Failure" } }));
     const page = await context.newPage();
     try {
-      await page.goto(origin);
+      await page.goto(`${origin}#settings`);
       await page.getByText("Meta connection could not be confirmed.", { exact: true }).waitFor();
       await page.getByRole("alert").getByText("Could not check the Meta connection. Try connecting again.", { exact: true }).waitFor();
     } finally { await context.close(); }

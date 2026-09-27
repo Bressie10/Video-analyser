@@ -1,0 +1,24 @@
+:root {
+  color-scheme: light;
+  --color-app: #f6f7f9; --color-surface: #fff; --color-subtle: #eef1f3; --color-elevated: #fff;
+  --color-text: #202932; --color-text-secondary: #52616c; --color-text-muted: #64727d;
+  --color-border: #dce2e6; --color-border-strong: #b6c2ca;
+  --color-accent: #17665e; --color-accent-hover: #104f49; --color-hover: #edf2f2; --color-active: #e5f1ee;
+  --color-success: #25623f; --color-success-subtle: #eaf4ed;
+  --color-warning: #805711; --color-warning-subtle: #fff5df;
+  --color-danger: #a12c32; --color-danger-subtle: #fcedee;
+  --color-info: #285c8c; --color-info-subtle: #ecf3fa;
+  --color-on-accent: #fff; --color-backdrop: #20293266;
+  --font-family: system-ui, sans-serif;
+  --text-page: 1.875rem; --text-section: 1.25rem; --text-card: 1rem; --text-body: .9375rem;
+  --text-secondary: .875rem; --text-label: .875rem; --text-caption: .75rem; --text-nav: .875rem; --text-button: .875rem;
+  --space-1: 4px; --space-2: 8px; --space-3: 12px; --space-4: 16px; --space-5: 20px;
+  --space-6: 24px; --space-8: 32px; --space-10: 40px; --space-12: 48px; --space-16: 64px;
+  --radius-control: 6px; --radius-card: 8px; --radius-surface: 10px;
+  --shadow-popover: 0 8px 24px #20293214, 0 2px 6px #2029320a;
+  --header-height: 72px; --sidebar-width: 216px;
+  --page-width: 1600px; --reading-width: 800px; --form-width: 640px;
+  /* Compatibility aliases for unchanged V4 feature pages. */
+  --surface: var(--color-surface); --ink: var(--color-text); --muted: var(--color-text-secondary);
+  --line: var(--color-border); --accent: var(--color-accent); --soft-accent: var(--color-active); --radius: var(--radius-card);
+}

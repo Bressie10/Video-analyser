@@ -3,6 +3,9 @@ import { CompanyManagement } from './CompanyManagement';
 import { CompanySelector } from './CompanySelector';
 import { CompanySwitchGuardProvider, useCompanySwitchReasons } from './CompanySwitchGuard';
 import { companyError } from './company/companyApi';
+import { Building2 } from 'lucide-react';
+import { Button } from './ui/controls';
+import { EmptyState, LoadingState } from './ui/layout';
 import type { CompanyUIProps } from './companyUI';
 
 export function CompanyEmptyState({ name, onManage, onSkip, skipped }: { name: string; onManage(): void; onSkip(): void; skipped: boolean }) {
@@ -13,11 +16,23 @@ export function CompanyEmptyState({ name, onManage, onSkip, skipped }: { name: s
     {skipped && <p>You can link accounts later in Manage companies.</p>}
   </section>;
 }
-export function CompanyShell({ companyUI, children, settings, allowUnlinkedWorkspace = false }: { companyUI: CompanyUIProps; children: ReactNode | ((onManage: () => void) => ReactNode); allowUnlinkedWorkspace?: boolean; settings?: ReactNode }) {
-  return <CompanySwitchGuardProvider><Shell companyUI={companyUI} settings={settings} allowUnlinkedWorkspace={allowUnlinkedWorkspace}>{children}</Shell></CompanySwitchGuardProvider>;
+type ShellProps = {
+  companyUI: CompanyUIProps;
+  children: ReactNode | ((onManage: () => void) => ReactNode);
+  allowUnlinkedWorkspace?: boolean;
+  settings?: ReactNode;
+  managementPage?: boolean;
+  onManagementChange?: (open: boolean) => void;
+  layout?: (selector: ReactNode, content: ReactNode) => ReactNode;
+  showOnboarding?: boolean;
+};
+export function CompanyShell(props: ShellProps) {
+  return <CompanySwitchGuardProvider><Shell {...props} /></CompanySwitchGuardProvider>;
 }
-function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = false }: { companyUI: CompanyUIProps; children: ReactNode | ((onManage: () => void) => ReactNode); allowUnlinkedWorkspace?: boolean; settings?: ReactNode }) {
-  const [management, setManagement] = useState(false);
+function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = false, managementPage, onManagementChange, layout, showOnboarding = true }: ShellProps) {
+  const [localManagement, setLocalManagement] = useState(false);
+  const management = managementPage ?? localManagement;
+  const setManagement = (open: boolean) => { setLocalManagement(open); onManagementChange?.(open); };
   const [busy, setBusy] = useState(false);
   const lock = useRef(false);
   const created = useRef<{ name: string; id: string } | null>(null);
@@ -44,9 +59,9 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
     else void run(action);
   };
   const manage = () => setManagement(true);
-  return <>
-    <CompanySelector companies={model.companies} activeCompanyId={model.activeCompanyId} status={model.status} onRetry={model.onRetry} busy={busy}
-      onManage={manage} onSelect={id => { if (id === model.activeCompanyId) return; guarded(async () => { await model.onSwitch(id); setManagement(false); }); }} />
+  const selector = <CompanySelector companies={model.companies} activeCompanyId={model.activeCompanyId} status={model.status} onRetry={model.onRetry} busy={busy}
+      onManage={manage} onSelect={id => { if (id === model.activeCompanyId) return; guarded(async () => { await model.onSwitch(id); if (management) setManagement(false); }); }} />;
+  const content = <>
     {model.error && <p className="notice error" role="alert">{model.error}</p>}
     {error && <p className="notice error" role="alert">{error}</p>}
     {busy && <p role="status">Saving company changes…</p>}
@@ -58,12 +73,12 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
       };
       if (reasons.excluding(ownGuard).some(g => g.unsavedEdits || g.generationInProgress)) setPending(() => create); else void run(create);
     }} />
-      : model.status === 'loading' ? <p role="status">Loading your workspace…</p>
+      : model.status === 'loading' ? <LoadingState label="Loading your workspace…" />
       : model.status === 'error' ? <p>Your workspace will appear when companies can be loaded.</p>
-      : !active ? <section className="welcome"><h2>No company selected</h2><p>Create or select a company to start your workspace.</p><button onClick={manage}>Manage companies</button></section>
+      : !active ? <EmptyState title="No company selected" icon={<Building2 size={32} />} action={<Button variant="primary" onClick={manage}>Manage companies</Button>}><p>Create or select a company to start your workspace.</p></EmptyState>
       : active.archived ? <section className="welcome"><h2>{active.name} is archived</h2><p>Restore it in Manage companies or select another company.</p><button onClick={manage}>Manage companies</button></section>
-      : !active.hasLinkedAccounts ? <CompanyEmptyState name={active.name} onManage={manage} skipped={skipped.includes(active.id)} onSkip={() => setSkipped(current => [...current, active.id])} /> : null}
-    {management && settings}
+      : !active.hasLinkedAccounts && showOnboarding ? <CompanyEmptyState name={active.name} onManage={manage} skipped={skipped.includes(active.id)} onSkip={() => setSkipped(current => [...current, active.id])} /> : null}
+    <div hidden={!management}>{settings}</div>
     {(model.status === 'ready' && active && !active.archived && (active.hasLinkedAccounts || allowUnlinkedWorkspace)) && <div hidden={management}>{typeof children === 'function' ? children(manage) : children}</div>}
     <dialog className="company-confirm" ref={dialog} aria-labelledby="company-confirm-title" onCancel={event => { event.preventDefault(); setPending(null); }}>
       <h2 id="company-confirm-title">Switch company?</h2>
@@ -73,4 +88,5 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
       <button className="primary" onClick={() => { const action = pending; setPending(null); if (action) void run(action); }}>Continue and switch</button>
     </dialog>
   </>;
+  return layout ? layout(selector, content) : <>{selector}{content}</>;
 }

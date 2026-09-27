@@ -49,7 +49,7 @@ async function context(persisted) {
   if (persisted !== undefined) await c.addInitScript(({ KEY, persisted }) => { if (!sessionStorage.initialized) { localStorage.setItem(KEY, persisted); sessionStorage.initialized = 'true'; } }, { KEY, persisted });
   return c;
 }
-async function pageFor(c) { const p = await c.newPage(); p.setDefaultTimeout(10000); await p.goto(origin); return p; }
+async function pageFor(c) { const p = await c.newPage(); p.setDefaultTimeout(10000); await p.goto(`${origin}#ideas`); return p; }
 const nav = p => p.getByRole('navigation', { name: 'Company', exact: true });
 async function manage(p) { await nav(p).getByRole('button').first().click(); await nav(p).getByRole('button', { name: 'Manage companies', exact: true }).click(); await p.getByRole('heading', { name: 'Manage companies', exact: true }).waitFor(); }
 async function select(p, name) { await nav(p).getByRole('button').first().click(); await nav(p).getByRole('button', { name, exact: true }).click(); }
@@ -84,11 +84,13 @@ test('browser → React → FastAPI → PostgreSQL: content, generation, history
     // Shared creative may legitimately belong to both; direct organic B content must not leak.
     for (const item of allB.items.filter(i => i.content_type === 'reel')) assert.equal(allA.items.some(a => a.library_item_id === item.library_item_id),false);
     assert.ok((await get(`/api/companies/${a.company_id}/content?limit=100`)).items.some(i => i.video_id === null && !i.analyzed));
+    await p.getByRole('navigation', {name:'Primary'}).getByRole('link', {name:'Content',exact:true}).click();
     const library = p.getByRole('region',{name:'Company content library'});
     await library.getByText('Facebook video',{exact:true}).first().waitFor();
     await library.getByLabel('Content platform').selectOption('instagram'); await library.getByText('Instagram reel',{exact:true}).waitFor();
     assert.equal(await library.getByText('Facebook video',{exact:true}).count(),0);
     await library.getByLabel('Content platform').selectOption('');
+    await p.getByRole('navigation', {name:'Primary'}).getByRole('link', {name:'Generate',exact:true}).click();
     await p.getByRole('button',{name:'Generate idea',exact:true}).click();
     await p.locator('.idea-result h2').waitFor();
     const generation = calls.find(r => r.url().endsWith('/recommendations')).postDataJSON();
@@ -97,6 +99,7 @@ test('browser → React → FastAPI → PostgreSQL: content, generation, history
     assert.deepEqual([...generation.target_platforms].sort(),['facebook','instagram']);
     const history = await get(base+'/ideas'); assert.equal(history.items.length,1);
     const id = history.items[0].id; const title = history.items[0].title;
+    await p.getByRole('navigation', {name:'Primary'}).getByRole('link', {name:'Ideas',exact:true}).click();
     await p.getByRole('button',{name:title,exact:true}).click();
     await p.getByRole('button',{name:'Edit',exact:true}).click();
     for (const field of ['Title','Concept','Script']) await p.getByLabel(field,{exact:true}).fill(`Wave 2 saved ${field}`);

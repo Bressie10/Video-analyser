@@ -17,7 +17,7 @@ async function fixture(intercept){
     if(u.pathname.endsWith('/profiles'))return route.fulfill({json:{profiles:[{scope:'shared',freshness:'fresh',job:{state:'completed'}}]}});
     return route.fulfill({json:{accounts:[],connected:false}});
   });
-  const p=await c.newPage();p.setDefaultTimeout(5000);await p.goto(origin);return {p,close:()=>c.close()};
+  const p=await c.newPage();p.setDefaultTimeout(5000);await p.goto(`${origin}#content`);return {p,close:()=>c.close()};
 }
 const button=(p,name)=>p.getByRole('button',{name,exact:true});
 async function manage(p){const nav=p.getByRole('navigation',{name:'Company',exact:true});await nav.getByRole('button').first().click();await button(nav,'Manage companies').click();await p.getByText('Company intelligence · Alpha',{exact:true}).click();}
