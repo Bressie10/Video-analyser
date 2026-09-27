@@ -1,3 +1,4 @@
+import { authAlias } from './authenticated.vite.mjs';
 import assert from 'node:assert/strict';
 import { test, before, after } from 'node:test';
 import { mkdir } from 'node:fs/promises';
@@ -10,7 +11,7 @@ const idea = { id: id(90), title: 'Show the craft behind the final result', conc
 const populated = [item(10, { display_title: 'Instagram reel' }), item(11, { platform: 'facebook', content_type: 'video', display_title: 'Facebook video', analysis_state: 'processing', analyzed: false }), item(12, { display_title: 'September launch campaign', platform: 'meta_ads', content_type: 'ad', analysis_state: 'failed', analyzed: false }), item(13, { display_title: '', analysis_state: 'discovered', analyzed: false, published_at: null, summary: null })];
 let server, browser, origin;
 before(async () => {
-  server = await createServer({ server: { host: '127.0.0.1', port: 5196 }, logLevel: 'error' });
+  server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 5296 }, logLevel: 'error' });
   await server.listen(); origin = server.resolvedUrls.local[0]; browser = await chromium.launch();
   if (process.env.V5_SCREENSHOT_DIR) await mkdir(process.env.V5_SCREENSHOT_DIR, { recursive: true });
 });
@@ -25,6 +26,7 @@ async function fixture({ page = 'content', width = 1440, selected = A, linked = 
   await context.route('**/api/**', async route => {
     const url = new URL(route.request().url()); calls.push(url);
     if (await intercept?.(route, url)) return;
+    if (new URL(route.request().url()).pathname === '/api/me/companies') return route.fulfill({ json: { companies: [A, B].map(value => ({ id: typeof value === 'string' ? value : value.id, archived_at: null })) } });
     if (url.pathname === '/api/companies') return route.fulfill({ json: { companies: [A, B].map((company_id, i) => ({ company_id, name: i ? 'Beta' : 'Northline Studio', archived: false, accounts: linked ? [{ account_id: id(i + 3), platform: 'instagram', display_name: 'Studio Instagram' }] : [] })) } });
     if (url.pathname.endsWith('/content')) return route.fulfill({ json: { items: (url.searchParams.get('analyzed_only') === 'true' ? content.filter(c => c.analyzed) : content).slice(0, Number(url.searchParams.get('limit') || 20)), next_offset: null } });
     if (url.pathname.endsWith('/ideas')) return route.fulfill({ json: { items: ideas, next_cursor: null } });

@@ -1,0 +1,19 @@
+.auth-layout { min-height: 100dvh; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: var(--space-8); padding: var(--space-8) var(--space-4); }
+.auth-brand { display: flex; align-items: center; gap: var(--space-3); color: var(--color-text); font-size: 20px; font-weight: 650; text-decoration: none; }
+.auth-panel { width: 100%; max-width: 440px; padding: var(--space-8); background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-surface); overflow-wrap: anywhere; }
+.auth-panel h1 { font-size: var(--text-page); margin: 0 0 var(--space-3); }
+.auth-intro { color: var(--color-text-secondary); margin: 0 0 var(--space-6); }
+.auth-panel form { display: grid; gap: var(--space-4); }
+.auth-panel label { display: grid; gap: var(--space-2); font-size: 14px; font-weight: 600; }
+.auth-panel input { width: 100%; min-width: 0; }
+.auth-hint { margin: 0; font-size: 14px; color: var(--color-text-secondary); }
+.auth-error { padding: var(--space-3); background: var(--color-danger-subtle); color: var(--color-danger); border-radius: var(--radius-control); }
+.auth-divider { display: flex; align-items: center; gap: var(--space-3); margin: var(--space-5) 0; color: var(--color-text-muted); }
+.auth-divider::before, .auth-divider::after { content: ''; height: 1px; flex: 1; background: var(--color-border); }
+.auth-google { width: 100%; }
+.auth-links { display: grid; gap: var(--space-4); margin: var(--space-5) 0 0; text-align: center; font-size: 14px; }
+.auth-legal { display: flex; justify-content: center; flex-wrap: wrap; gap: var(--space-4); font-size: 14px; }
+.auth-legal a { color: var(--color-text-secondary); padding: var(--space-2) 0; }
+.auth-account { padding: var(--space-4); border-top: 1px solid var(--color-border); display: grid; gap: var(--space-2); font-size: 14px; overflow-wrap: anywhere; }
+.auth-account p { margin: 0; }
+@media (max-width: 480px) { .auth-layout { gap: var(--space-6); } .auth-panel { padding: var(--space-5); } .auth-panel h1 { font-size: 26px; } }

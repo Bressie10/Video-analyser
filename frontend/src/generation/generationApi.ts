@@ -1,3 +1,4 @@
+import { apiFetch } from "../auth/apiFetch";
 import { isUUID, ServiceError } from '../metaLibrary';
 
 export type TargetPlatform = 'instagram' | 'facebook';
@@ -29,7 +30,7 @@ export function generationError(error: unknown): string {
   }
   return 'Could not reach the service. Check your connection and retry.';
 }
-export function createGenerationApi(fetcher: typeof fetch = (...args) => fetch(...args)): GenerationApi {
+export function createGenerationApi(fetcher: typeof fetch = (...args) => apiFetch(...args)): GenerationApi {
   async function request(path: string, signal: AbortSignal, body?: unknown): Promise<unknown> {
     const response = await fetcher(path, { method: body ? 'POST' : 'GET', credentials: 'same-origin', cache: 'no-store',
       signal: AbortSignal.any([signal, AbortSignal.timeout(body ? 180000 : 20000)]),

@@ -6,7 +6,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { chromium } from "playwright";
 
-const origin = "http://127.0.0.1:5178";
+const origin = "http://127.0.0.1:5278";
 async function waitForServer(url, child, timeout = 45000) {
   const end = Date.now() + timeout;
   while (Date.now() < end) {
@@ -32,9 +32,9 @@ test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-vid
   const calls = [], failures = [];
   try {
     backend = spawn(".venv/bin/python", ["tests/frontend_integration_server.py"], {
-      cwd: "../backend", env: { ...process.env, META_E2E_DIRECTORY: directory, META_E2E_PORT: "8061" }, stdio: "inherit",
+      cwd: "../backend", env: { ...process.env, META_E2E_DIRECTORY: directory, META_E2E_PORT: "8161" }, stdio: "inherit",
     });
-    await waitForServer("http://127.0.0.1:8061/health", backend);
+    await waitForServer("http://127.0.0.1:8161/health", backend);
     vite = spawn("./node_modules/.bin/vite", ["--config", "tests/integration.vite.mjs"], { stdio: "inherit" });
     await waitForServer(origin, vite);
     const session = JSON.parse(await readFile(join(directory, "session.json"), "utf8"));

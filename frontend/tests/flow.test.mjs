@@ -3,11 +3,11 @@ import assert from "node:assert/strict";
 import { test as nodeTest, before, after } from "node:test";
 import { chromium } from "playwright";
 const test = (name, run) => nodeTest(name, { timeout: 30000 }, run);
-const port = process.env.FLOW_TEST_PORT ?? "5179";
+const port = process.env.FLOW_TEST_PORT ?? "5279";
 const origin = `http://127.0.0.1:${port}`;
 let server, browser;
 before(async () => {
-  server = spawn("./node_modules/.bin/vite", ["--host", "127.0.0.1", "--port", port, "--strictPort"], { stdio: "inherit" });
+  server = spawn("./node_modules/.bin/vite", ["--config", "tests/authenticated.vite.mjs", "--host", "127.0.0.1", "--port", port, "--strictPort"], { stdio: "inherit" });
   for (let i = 0; i < 70; i++) { try { if ((await fetch(origin)).ok) break; } catch {} await new Promise((resolve) => setTimeout(resolve, 100)); }
   browser = await chromium.launch({ headless: true });
 });

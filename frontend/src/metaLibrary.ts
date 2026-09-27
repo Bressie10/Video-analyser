@@ -1,3 +1,4 @@
+import { apiFetch } from "./auth/apiFetch";
 /** Wire types mirror the authenticated FastAPI Meta library, not the old discovery API. */
 export type Platform = "facebook" | "instagram" | "meta_ads";
 export type AnalysisState = "discovered" | "deferred" | "queued" | "processing" | "completed" | "failed" | "unavailable" | "unsupported";
@@ -46,7 +47,7 @@ export function friendlyError(status: number, context: "library" | "generation" 
 }
 export const errorMessage = (error: unknown, context: "library" | "generation" | "accounts" = "library") => error instanceof ServiceError ? error.message : friendlyError(0, context);
 async function request(path: string, signal: AbortSignal, method = "GET", body?: unknown, context: "library" | "generation" = "library"): Promise<unknown> {
-  const response = await fetch(path, {
+  const response = await apiFetch(path, {
     method, credentials: "same-origin", cache: "no-store",
     signal: AbortSignal.any([signal, AbortSignal.timeout(context === "generation" ? 90000 : 20000)]),
     ...(body === undefined ? {} : { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }),

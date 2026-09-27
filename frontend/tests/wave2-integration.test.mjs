@@ -5,7 +5,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
-const origin = 'http://127.0.0.1:5188', KEY = 'video-analyzer.active-company-id';
+const origin = 'http://127.0.0.1:5288', KEY = 'video-analyzer.active-company-id';
 let backend, vite, browser, directory, session, companies;
 async function wait(url, child) {
   for (let i = 0; i < 200; i++) {
@@ -25,8 +25,8 @@ async function stop(child) {
 before(async () => {
   assert.ok(process.env.TEST_DATABASE_URL, 'TEST_DATABASE_URL must point to disposable PostgreSQL');
   directory = await mkdtemp(join(tmpdir(), 'company-browser-'));
-  backend = spawn('.venv/bin/python', ['tests/wave2_browser_server.py'], { cwd: '../backend', env: { ...process.env, COMPANY_E2E_DIRECTORY: directory }, stdio: 'inherit' });
-  await wait('http://127.0.0.1:8063/health', backend);
+  backend = spawn('.venv/bin/python', ['tests/wave2_browser_server.py'], { cwd: '../backend', env: { ...process.env, FRONTEND_E2E_PORT: "8163", COMPANY_E2E_DIRECTORY: directory }, stdio: 'inherit' });
+  await wait('http://127.0.0.1:8163/health', backend);
   vite = spawn('./node_modules/.bin/vite', ['--config', 'tests/wave2-integration.vite.mjs'], { stdio: 'inherit' });
   await wait(origin, vite);
   session = JSON.parse(await readFile(join(directory, 'session.json'), 'utf8'));

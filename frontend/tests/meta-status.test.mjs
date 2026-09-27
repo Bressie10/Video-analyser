@@ -3,11 +3,11 @@ import assert from "node:assert/strict";
 import { test, before, after } from "node:test";
 import { chromium } from "playwright";
 
-const port = process.env.META_STATUS_TEST_PORT ?? "5181";
+const port = process.env.META_STATUS_TEST_PORT ?? "5281";
 const origin = `http://127.0.0.1:${port}`;
 let server, browser;
 before(async () => {
-  server = spawn("./node_modules/.bin/vite", ["--host", "127.0.0.1", "--port", port, "--strictPort"], { stdio: "inherit" });
+  server = spawn("./node_modules/.bin/vite", ["--config", "tests/authenticated.vite.mjs", "--host", "127.0.0.1", "--port", port, "--strictPort"], { stdio: "inherit" });
   for (let i = 0; i < 70; i++) {
     try { if ((await fetch(origin)).ok) break; } catch {}
     await new Promise((resolve) => setTimeout(resolve, 100));
@@ -30,7 +30,7 @@ for (const connected of [false, true]) {
       const path = new URL(route.request().url()).pathname;
       const id = "00000000-0000-4000-8000-000000000001";
       const json = path === "/api/meta/test" ? { connected }
-        : path === "/api/companies" ? { companies: [] }
+        : ["/api/companies", "/api/me/companies"].includes(path) ? { companies: [] }
         : path === "/api/meta/sync" ? { job_id: id }
         : path.startsWith("/api/meta/jobs/") ? { id, kind: "sync", state: "completed", counts: {}, items: [], next_cursor: null }
         : { items: [], next_cursor: null };
@@ -51,11 +51,13 @@ for (const connected of [false, true]) {
 for (const status of [401, 403, 502, 503]) {
   test(`status probe ${status} remains an error instead of disconnected`, async () => {
     const context = await browser.newContext();
+    await context.route("**/api/me/companies", (route) => route.fulfill({ json: { companies: [] } }));
     await context.route("**/api/companies*", (route) => route.fulfill({ json: { companies: [] } }));
     await context.route("**/api/meta/test", (route) => route.fulfill({ status, json: { detail: "Failure" } }));
     const page = await context.newPage();
     try {
       await page.goto(`${origin}#settings`);
+      if (status === 401) { await page.getByRole("heading", { name: "Welcome back", exact: true }).waitFor(); return; }
       await page.getByText("Meta connection could not be confirmed.", { exact: true }).waitFor();
       await page.getByRole("alert").getByText("Could not check the Meta connection. Try connecting again.", { exact: true }).waitFor();
     } finally { await context.close(); }

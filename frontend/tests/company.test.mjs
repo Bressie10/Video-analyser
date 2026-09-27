@@ -2,10 +2,10 @@ import { spawn } from 'node:child_process';
 import assert from 'node:assert/strict';
 import { test, before, after } from 'node:test';
 import { chromium } from 'playwright';
-const origin = 'http://127.0.0.1:5183';
+const origin = 'http://127.0.0.1:5283';
 let server, browser;
 before(async () => {
-  server = spawn('./node_modules/.bin/vite', ['--host', '127.0.0.1', '--port', '5183', '--strictPort'], { stdio: 'inherit' });
+  server = spawn('./node_modules/.bin/vite', ['--config', 'tests/authenticated.vite.mjs', '--host', '127.0.0.1', '--port', '5283', '--strictPort'], { stdio: 'inherit' });
   for (let i = 0; i < 70; i++) { try { if ((await fetch(origin)).ok) break; } catch {} await new Promise(r => setTimeout(r, 100)); }
   browser = await chromium.launch({ headless: true });
 });

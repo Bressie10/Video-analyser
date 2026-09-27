@@ -1,3 +1,4 @@
+import { authAlias } from './authenticated.vite.mjs';
 import assert from 'node:assert/strict';
 import { test, before, after } from 'node:test';
 import { createServer } from 'vite';
@@ -9,7 +10,7 @@ const item = n => ({ library_item_id: uuid(n), video_id: n % 2 ? null : uuid(n+5
 const company = (id, name, platforms = ['instagram', 'facebook', 'meta_ads']) => ({ company_id: id, name, archived: false, accounts: platforms.map((platform, i) => ({ account_id: uuid(3000+i), display_name: platform, platform })) });
 const saved = { id: uuid(9000), company_id: A, title: 'Persisted winter idea', concept: 'Help homeowners prepare.', script: 'Start with the roof.\nThen check the windows.', target_platforms: ['instagram'] };
 before(async () => {
-  server = await createServer({ server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0];
+  server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0];
   apiModule = await server.ssrLoadModule('/src/generation/generationApi.ts'); browser = await chromium.launch();
 });
 after(async () => { await browser?.close(); await server?.close(); });
@@ -23,6 +24,7 @@ async function app(options = {}) {
     if (path.endsWith('/content') && new URL(route.request().url()).searchParams.get('analyzed_only') !== 'true') return route.fulfill({ json: {items:[],next_offset:null} });
     if (path.endsWith('/ideas')) return route.fulfill({ json: {items:[],next_cursor:null} });
     if (path.endsWith('/content')) { if (options.sources) return options.sources(route, path); const q = new URL(route.request().url()).searchParams; const offset = Number(q.get('offset') || 0); const rows = Array.from({ length: options.count ?? 25 }, (_, i) => item(i+1)).reverse(); return route.fulfill({ json: { items: rows.slice(offset, offset+20), next_offset: offset+20 < rows.length ? offset+20 : null } }); }
+    if (new URL(route.request().url()).pathname === '/api/me/companies') return route.fulfill({ json: { companies: [A, B].map(value => ({ id: typeof value === 'string' ? value : value.id, archived_at: null })) } });
     if (path === '/api/companies') return route.fulfill({ json: { companies: [company(A, 'Alpha', options.platforms), company(B, 'Beta')] } });
     if (path === '/api/meta/test') return route.fulfill({ json: { connected: false } });
     return route.fulfill({ json: { accounts: [] } });

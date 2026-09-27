@@ -1,3 +1,5 @@
+import { AuthProvider } from './auth/AuthProvider';
+import { AuthGate } from './auth/AuthGate';
 import { StrictMode, useCallback, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 import { MetaConnection } from './MetaConnection';
@@ -53,4 +55,4 @@ const pathname = window.location.pathname.replace(/\/+$/, '') || '/';
 const legalPage = pathname === '/privacy' ? <PrivacyPage />
   : pathname === '/terms' ? <TermsPage />
   : pathname === '/data-deletion' ? <DataDeletionPage /> : null;
-createRoot(root).render(<StrictMode>{legalPage ?? <CompanyProvider><App /></CompanyProvider>}</StrictMode>);
+createRoot(root).render(<StrictMode>{legalPage ?? <AuthProvider><AuthGate><CompanyProvider><App /></CompanyProvider></AuthGate></AuthProvider>}</StrictMode>);

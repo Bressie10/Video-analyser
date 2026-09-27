@@ -1,3 +1,4 @@
+import { authAlias } from './authenticated.vite.mjs';
 import assert from 'node:assert/strict';
 import { test, before, after } from 'node:test';
 import { mkdir, readFile } from 'node:fs/promises';
@@ -10,7 +11,7 @@ const B = '00000000-0000-4000-8000-000000000002';
 const pages = ['Overview', 'Content', 'Generate', 'Ideas', 'Settings'];
 let server, browser, origin;
 before(async () => {
-  server = await createServer({ server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' });
+  server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' });
   await server.listen(); origin = server.resolvedUrls.local[0]; browser = await chromium.launch();
   if (process.env.V5_SCREENSHOT_DIR) await mkdir(process.env.V5_SCREENSHOT_DIR, { recursive: true });
 });
@@ -21,6 +22,7 @@ async function fixture({ selected = A, width = 1440, archived = false, inaccessi
   const calls = [], errors = [];
   await context.route('**/api/**', route => {
     const path = new URL(route.request().url()).pathname; calls.push(path);
+    if (new URL(route.request().url()).pathname === '/api/me/companies') return route.fulfill({ json: { companies: [A, B].map(value => ({ id: typeof value === 'string' ? value : value.id, archived_at: null })) } });
     if (path === '/api/companies') return route.fulfill({ status: fail ? 503 : 200, json: { companies: [
       ...(!inaccessible ? [{ company_id: A, name: companyName, archived, accounts: [{ account_id: B, platform: 'instagram', display_name: 'Northline Instagram' }] }] : []),
       { company_id: B, name: 'Beta', archived: false, accounts: [] },

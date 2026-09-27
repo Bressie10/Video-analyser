@@ -63,8 +63,8 @@ for (const [route, heading, title] of routes) {
       }
       assert.deepEqual(calls, []); assert.deepEqual(errors, []);
       await page.getByRole('link', { name: 'Back to ContentMetric', exact: true }).click();
-      await page.getByRole('heading', { name: 'Overview', exact: true }).waitFor();
-      assert.equal(new URL(page.url()).pathname, '/'); assert.equal(await page.title(), 'ContentMetric');
+      await page.getByRole('heading', { name: 'Welcome back', exact: true }).waitFor();
+      assert.equal(new URL(page.url()).pathname, '/login'); assert.equal(await page.title(), 'ContentMetric');
       await page.getByRole('navigation', { name: 'Legal', exact: true }).getByRole('link', { name: 'Privacy', exact: true }).click();
       await page.getByRole('heading', { name: 'Privacy Policy', exact: true }).waitFor();
     } finally { await context.close(); }

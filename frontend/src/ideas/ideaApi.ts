@@ -1,3 +1,4 @@
+import { apiFetch } from "../auth/apiFetch";
 import { isUUID, ServiceError } from '../metaLibrary';
 
 export const statuses = ['draft', 'used', 'published', 'discarded'] as const;
@@ -49,7 +50,7 @@ function page<T>(value: unknown, parse: (item: unknown) => T): Page<T> { const v
 const root = (company: string) => `/api/meta/companies/${encodeURIComponent(company)}`;
 const path = (company: string, id: string) => `${root(company)}/ideas/${encodeURIComponent(id)}`;
 async function request(url: string, signal: AbortSignal, method = 'GET', body?: unknown): Promise<unknown> {
-  const response = await fetch(url, { method, signal: AbortSignal.any([signal, AbortSignal.timeout(20000)]), credentials: 'same-origin', cache: 'no-store',
+  const response = await apiFetch(url, { method, signal: AbortSignal.any([signal, AbortSignal.timeout(20000)]), credentials: 'same-origin', cache: 'no-store',
     headers: body === undefined ? undefined : { 'Content-Type': 'application/json' }, body: body === undefined ? undefined : JSON.stringify(body) });
   if (!response.ok) throw new ServiceError(response.status, 'Ideas request failed.');
   return response.json();

@@ -1,3 +1,4 @@
+import { authAlias } from './authenticated.vite.mjs';
 import assert from 'node:assert/strict';
 import { before, after, test } from 'node:test';
 import { mkdir } from 'node:fs/promises';
@@ -6,7 +7,7 @@ import { chromium } from 'playwright';
 const id = n => `00000000-0000-4000-8000-${String(n).padStart(12, '0')}`;
 const A = id(1), B = id(2), ADS = id(5), AD = id(6);
 let server, browser, origin;
-before(async () => { server = await createServer({ server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0]; browser = await chromium.launch(); if (process.env.V5_SCREENSHOT_DIR) await mkdir(process.env.V5_SCREENSHOT_DIR, { recursive: true }); });
+before(async () => { server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0]; browser = await chromium.launch(); if (process.env.V5_SCREENSHOT_DIR) await mkdir(process.env.V5_SCREENSHOT_DIR, { recursive: true }); });
 after(async () => { await browser?.close(); await server?.close(); });
 async function fixture({ width = 1440, connected = true, empty = false, conflict = false, accounts = true } = {}) {
   const context = await browser.newContext({ viewport: { width, height: 900 } });
@@ -23,6 +24,7 @@ async function fixture({ width = 1440, connected = true, empty = false, conflict
     if (method !== 'GET') mutations.push({ path, method });
     if (path === '/api/meta/test') return route.fulfill({ json: { connected } });
     if (path === '/api/meta/accounts') return route.fulfill({ json: { accounts: accountList } });
+    if (new URL(route.request().url()).pathname === '/api/me/companies') return route.fulfill({ json: { companies: [A, B].map(value => ({ id: typeof value === 'string' ? value : value.id, archived_at: null })) } });
     if (path === '/api/companies') return route.fulfill({ json: { companies } });
     if (path.endsWith(`/ads/${AD}`)) { if (conflict) return route.fulfill({ status: 409, json: { detail: 'PRIVATE_PROVIDER_SECRET' } }); assigned = method === 'PUT'; return route.fulfill({ json: { ok: true } }); }
     if (path.endsWith('/reassign')) { assigned = false; return route.fulfill({ json: { ok: true } }); }

@@ -1,3 +1,4 @@
+import { authAlias } from './authenticated.vite.mjs';
 import assert from "node:assert/strict";
 import { test, before, after } from "node:test";
 import { createServer } from "vite";
@@ -13,7 +14,7 @@ function fixture(id = null, list = async () => [A, B]) {
   return { store: new CompanyStore({ listCompanies: list }, storage), values, writes };
 }
 before(async () => {
-  server = await createServer({ server: { host: "127.0.0.1", port: 0 }, logLevel: "error" });
+  server = await createServer({ resolve: { alias: authAlias }, server: { host: "127.0.0.1", port: 0 }, logLevel: "error" });
   ({ CompanyStore, ACTIVE_COMPANY_KEY: KEY } = await server.ssrLoadModule("/src/company/companyStore.ts"));
   ({ ServiceError } = await server.ssrLoadModule("/src/metaLibrary.ts"));
   ({ createCompanyApi } = await server.ssrLoadModule("/src/company/companyApi.ts"));

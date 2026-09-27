@@ -1,16 +1,18 @@
+import { authAlias } from './authenticated.vite.mjs';
 import assert from 'node:assert/strict';
 import { test,before,after } from 'node:test';
 import { createServer } from 'vite';
 import { chromium } from 'playwright';
 const id=n=>`00000000-0000-4000-8000-${String(n).padStart(12,'0')}`;
 const A=id(1), B=id(2); let server,browser,origin;
-before(async()=>{server=await createServer({server:{host:'127.0.0.1',port:0},logLevel:'error'});await server.listen();origin=server.resolvedUrls.local[0];browser=await chromium.launch();});
+before(async()=>{server=await createServer({ resolve: { alias: authAlias },server:{host:'127.0.0.1',port:0},logLevel:'error'});await server.listen();origin=server.resolvedUrls.local[0];browser=await chromium.launch();});
 after(async()=>{await browser?.close();await server?.close();});
 async function fixture(intercept){
   const c=await browser.newContext();await c.addInitScript(A=>{localStorage.setItem('video-analyzer.active-company-id',A);const original=window.fetch.bind(window);window.fetch=(url,options)=>original(url,{...options,signal:undefined});},A);
   await c.route('**/api/**',async route=>{
     const u=new URL(route.request().url());
     if(await intercept?.(route,u))return;
+    if (new URL(route.request().url()).pathname === '/api/me/companies') return route.fulfill({ json: { companies: [A, B].map(value => ({ id: typeof value === 'string' ? value : value.id, archived_at: null })) } });
     if(u.pathname==='/api/companies')return route.fulfill({json:{companies:[A,B].map((company_id,i)=>({company_id,name:i?'Beta':'Alpha',archived:false,accounts:[]}))}});
     if(u.pathname.endsWith('/ideas'))return route.fulfill({json:{items:[],next_cursor:null}});
     if(u.pathname.endsWith('/content'))return route.fulfill({json:{items:[],next_offset:null}});

@@ -52,7 +52,7 @@ def main():
                     signal.signal(signal.SIGTERM, previous)
         with patch('app.meta_library_repository.connection_client') as client:
             client.return_value.test_connection.return_value = {'connected': True}
-            Server(uvicorn.Config(app, host='127.0.0.1', port=8062, log_level='warning', access_log=False)).run()
+            Server(uvicorn.Config(app, host='127.0.0.1', port=int(os.environ.get("FRONTEND_E2E_PORT", "8062")), log_level='warning', access_log=False)).run()
         rows = f.db.execute('SELECT name,archived_at FROM companies WHERE connection_id=%s ORDER BY name', (f.connection,)).fetchall()
         (directory / 'report.json').write_text(json.dumps(rows, default=str))
     finally:

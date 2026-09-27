@@ -1,3 +1,4 @@
+import { apiFetch } from "../auth/apiFetch";
 import { isUUID, ServiceError } from "../metaLibrary";
 
 export type MetaAccount = Readonly<{ id: string; name: string; platform: "facebook" | "instagram" | "meta_ads" }>;
@@ -58,7 +59,8 @@ function uuid(id: string) {
 }
 export function companyError(error: unknown): string {
   if (error instanceof ServiceError) {
-    if (error.status === 401) return "Your session has expired. Reconnect Meta, then retry companies.";
+    if (error.status === 401) return "Your session has expired. Please sign in again.";
+    if (error.status === 403) return "You do not have access to this company. Reload companies to continue.";
     if (error.status === 404) return "This company or resource is unavailable or archived. Reload companies and try again.";
     if (error.status === 409) return error.message;
     if (error.status === 422) return "Check the company name (1–200 characters) and try again.";
@@ -66,7 +68,7 @@ export function companyError(error: unknown): string {
   }
   return "Could not complete the company action. Check your connection and try again.";
 }
-export function createCompanyApi(fetcher: typeof fetch = (...args) => fetch(...args)): CompanyApi {
+export function createCompanyApi(fetcher: typeof fetch = (...args) => apiFetch(...args)): CompanyApi {
   async function request(path: string, signal: AbortSignal, method = "GET", body?: unknown): Promise<unknown> {
     const response = await fetcher(path, { method, signal: AbortSignal.any([signal, AbortSignal.timeout(20000)]), credentials: "same-origin", cache: "no-store",
       ...(body === undefined ? {} : { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }) });

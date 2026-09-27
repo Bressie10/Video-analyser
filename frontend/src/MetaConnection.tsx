@@ -1,3 +1,4 @@
+import { apiFetch } from "./auth/apiFetch";
 import { useEffect, useRef, useState, type RefObject } from "react";
 import { friendlyError, isUUID } from "./metaLibrary";
 
@@ -7,7 +8,7 @@ import "./settings.css";
 
 type Status = "checking" | "disconnected" | "connecting" | "connected" | "error";
 
-export function MetaConnection({ onConnectionChange, disconnected = false, disabled = false, onSyncStarted, connectAction }: { connectAction?: RefObject<() => void>; onSyncStarted: (id: string | null) => void; onConnectionChange: (connected: boolean) => void; disconnected?: boolean; disabled?: boolean }) {
+export function MetaConnection({ onConnectionChange, disconnected = false, disabled = false, onSyncStarted, connectAction, beginAuthorization }: { beginAuthorization?: (signal: AbortSignal) => Promise<string>; connectAction?: RefObject<() => void>; onSyncStarted: (id: string | null) => void; onConnectionChange: (connected: boolean) => void; disconnected?: boolean; disabled?: boolean }) {
   const [status, setStatus] = useState<Status>("checking");
   const [error, setError] = useState("");
   const stopWatching = useRef<(() => void) | null>(null);
@@ -16,7 +17,7 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
   useEffect(() => { if (disconnected) { setStatus("disconnected"); setError(""); } }, [disconnected]);
 
   async function checkConnection(signal: AbortSignal, afterLogin = false) {
-    const response = await fetch("/api/meta/test", { credentials: "same-origin", cache: "no-store", signal });
+    const response = await apiFetch("/api/meta/test", { credentials: "same-origin", cache: "no-store", signal });
     const body = await response.json();
     if (response.ok && body?.connected === false && !afterLogin) return "disconnected" as const;
     if (!response.ok || body?.connected !== true) {
@@ -44,7 +45,7 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
 
   function connect() {
     setError("");
-    const popup = window.open("/api/meta/connect", "meta-authorization", "popup,width=600,height=760");
+    const popup = window.open(beginAuthorization ? "about:blank" : "/api/meta/connect", "meta-authorization", "popup,width=600,height=760");
     if (!popup) {
       setError("Allow popups for this site, then select Connect Meta again.");
       setStatus("error");
@@ -56,6 +57,13 @@ export function MetaConnection({ onConnectionChange, disconnected = false, disab
     const controller = new AbortController();
     const stop = () => { window.clearInterval(timer); controller.abort(); popup.close(); };
     stopWatching.current = stop;
+    // Agent C supplies the authenticated initiation adapter once its contract is final.
+    // Open synchronously to preserve popup permission; never put a bearer token in a URL.
+    if (beginAuthorization) void Promise.resolve().then(() => beginAuthorization(controller.signal)).then(url => {
+      if (controller.signal.aborted) return;
+      if (new URL(url).protocol !== 'https:') throw new Error('Invalid authorization destination');
+      popup.location.replace(url);
+    }).catch(() => { if (!controller.signal.aborted) fail('We couldn’t start Meta authorization. Please try again.'); });
     const fail = (message: string) => { stop(); setError(message); setStatus("error"); };
     const timer = window.setInterval(() => {
       if (popup.closed) {

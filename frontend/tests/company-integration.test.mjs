@@ -5,7 +5,7 @@ import { mkdtemp, readFile, rm } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { chromium } from 'playwright';
-const origin = 'http://127.0.0.1:5184', KEY = 'video-analyzer.active-company-id';
+const origin = 'http://127.0.0.1:5284', KEY = 'video-analyzer.active-company-id';
 let backend, vite, browser, directory, session, companies;
 async function wait(url, child) {
   for (let i = 0; i < 200; i++) {
@@ -25,8 +25,8 @@ async function stop(child) {
 before(async () => {
   assert.ok(process.env.TEST_DATABASE_URL, 'TEST_DATABASE_URL must point to disposable PostgreSQL');
   directory = await mkdtemp(join(tmpdir(), 'company-browser-'));
-  backend = spawn('.venv/bin/python', ['tests/company_browser_server.py'], { cwd: '../backend', env: { ...process.env, COMPANY_E2E_DIRECTORY: directory }, stdio: 'inherit' });
-  await wait('http://127.0.0.1:8062/health', backend);
+  backend = spawn('.venv/bin/python', ['tests/company_browser_server.py'], { cwd: '../backend', env: { ...process.env, FRONTEND_E2E_PORT: "8162", COMPANY_E2E_DIRECTORY: directory }, stdio: 'inherit' });
+  await wait('http://127.0.0.1:8162/health', backend);
   vite = spawn('./node_modules/.bin/vite', ['--config', 'tests/company-integration.vite.mjs'], { stdio: 'inherit' });
   await wait(origin, vite);
   session = JSON.parse(await readFile(join(directory, 'session.json'), 'utf8'));
@@ -174,7 +174,9 @@ for (const failure of [401, 404, 503, 'network']) test(`startup ${failure} expos
   const c = await context(companies[0].company_id);
   try {
     await c.route('**/api/companies?*', route => failure === 'network' ? route.abort('failed') : route.fulfill({ status: failure, json: { detail: 'secret-provider-payload' } }));
-    const p = await pageFor(c); await p.getByRole('button', { name: 'Retry companies' }).waitFor();
+    const p = await pageFor(c);
+    if (failure === 401) { await p.getByRole('heading', { name: 'Welcome back', exact: true }).waitFor(); await stored(p, null); return; }
+    await p.getByRole('button', { name: 'Retry companies' }).waitFor();
     assert.equal(await p.getByRole('heading', { name: 'Company workspace', exact: true }).count(), 0);
     assert.equal((await p.locator('body').innerText()).includes('secret-provider-payload'), false);
     if (failure === 401 || failure === 404) await stored(p, null);

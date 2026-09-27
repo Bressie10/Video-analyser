@@ -1,3 +1,4 @@
+import { apiFetch } from "../auth/apiFetch";
 import { isUUID, ServiceError } from '../metaLibrary';
 
 export type ContentItem = {
@@ -14,7 +15,7 @@ export async function loadContent(company: string, signal: AbortSignal, filters 
     published_from: filters.from ? `${filters.from}T00:00:00.000Z` : '', published_to: filters.to ? `${filters.to}T23:59:59.999Z` : '' })) {
     if (value) query.set(key, value);
   }
-  const response = await fetch(`/api/companies/${company}/content?${query}`, { signal: AbortSignal.any([signal, AbortSignal.timeout(20000)]), credentials: 'same-origin', cache: 'no-store' });
+  const response = await apiFetch(`/api/companies/${company}/content?${query}`, { signal: AbortSignal.any([signal, AbortSignal.timeout(20000)]), credentials: 'same-origin', cache: 'no-store' });
   if (!response.ok) throw new ServiceError(response.status, 'Content request failed.');
   const page = await response.json();
   if (!page || !Array.isArray(page.items) || !(page.next_offset === null || (Number.isInteger(page.next_offset) && page.next_offset > offset)) ||

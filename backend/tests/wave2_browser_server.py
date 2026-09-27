@@ -68,7 +68,7 @@ def main():
                 patch('app.company_profile_worker.OpenAIProfileGenerator', return_value=fixture.fixture.generator), \
                 patch.dict(os.environ, {'COMPANY_PROFILE_WORKER_ENABLED': 'true'}):
             client.return_value.test_connection.return_value = {'connected': True}
-            Server(uvicorn.Config(app, host='127.0.0.1', port=8063, log_level='warning', access_log=False)).run()
+            Server(uvicorn.Config(app, host='127.0.0.1', port=int(os.environ.get("FRONTEND_E2E_PORT", "8063")), log_level='warning', access_log=False)).run()
         (directory / 'report.json').write_text(json.dumps({
             'ideas': f.db.execute('SELECT title,script,status,feedback FROM ideas').fetchall(),
             'model_calls': fixture.model.call_count,

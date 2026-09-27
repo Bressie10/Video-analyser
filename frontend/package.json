@@ -18,9 +18,11 @@
     "test:content-settings": "node --test tests/content-settings.test.mjs",
     "test:legal": "node --test tests/legal.test.mjs",
     "test:foundation": "node --test tests/foundation.test.mjs",
-    "test": "node --test --test-concurrency=1 tests/*.test.mjs"
+    "test": "node --test --test-concurrency=1 tests/*.test.mjs",
+    "test:auth": "node --test tests/auth.test.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
     "lucide-react": "^1.48.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

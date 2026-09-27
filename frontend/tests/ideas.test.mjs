@@ -1,3 +1,4 @@
+import { authAlias } from './authenticated.vite.mjs';
 import assert from 'node:assert/strict';
 import { test as nodeTest, before, after } from 'node:test';
 import { createServer } from 'vite';
@@ -8,7 +9,7 @@ const A = id(1), B = id(2);
 const idea = (n, extra = {}) => ({ id: id(n), company_id: A, title: `Idea ${n}`, concept: `Concept ${n}`, script: `Script ${n}`, status: 'draft', feedback: 'none', feedback_reason: null, target_platforms: ['facebook'], created_at: '2026-09-20T10:00:00Z', updated_at: '2026-09-21T10:00:00Z', publications: [], generation_brief: 'Our brief', profile_evidence: 'PRIVATE EVIDENCE', ...extra });
 const pub = n => ({ library_item_id: id(n), title: `Post ${n}`, platform: 'facebook', available: true, created_at: '2026-09-20T10:00:00Z' });
 let server, browser, origin;
-before(async () => { server = await createServer({ server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0].replace(/\/$/, ''); browser = await chromium.launch({ headless: true }); });
+before(async () => { server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0].replace(/\/$/, ''); browser = await chromium.launch({ headless: true }); });
 after(async () => { await browser?.close(); await server?.close(); });
 async function fixture(options = {}) {
   const p = await browser.newPage(); p.setDefaultTimeout(5000);
@@ -21,6 +22,7 @@ async function fixture(options = {}) {
     state.calls.push({ path, method, query: Object.fromEntries(u.searchParams), body: req.postDataJSON() });
     const send = (json, status = 200) => route.fulfill({ status, json });
     if (path === '/api/meta/test') return send({ connected: false });
+    if (new URL(route.request().url()).pathname === '/api/me/companies') return route.fulfill({ json: { companies: [A, B].map(value => ({ id: typeof value === 'string' ? value : value.id, archived_at: null })) } });
     if (path === '/api/companies') return send({ companies: [A, B].map((c, i) => ({ company_id: c, name: i ? 'Beta' : 'Alpha', archived: !!options.archived && !i, accounts: [] })) });
     if (path.endsWith('/content')) return send({items:[],next_offset:null});
     if (options.intercept && await options.intercept(route, state)) return;

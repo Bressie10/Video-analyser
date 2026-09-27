@@ -1,3 +1,4 @@
+import { apiFetch } from "../auth/apiFetch";
 import { useEffect, useRef, useState } from 'react';
 import { CompanyScopeBoundary, useCompany, useCompanyStore } from './CompanyProvider';
 import { ServiceError } from '../metaLibrary';
@@ -20,7 +21,7 @@ function Refresh() {
     async function poll() {
       try {
         // The list endpoint omits the profile document and immutable evidence.
-        const response = await fetch(`/api/companies/${scope!.companyId}/profiles`, { credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.any([scope!.signal, controller.signal, AbortSignal.timeout(20000)]) });
+        const response = await apiFetch(`/api/companies/${scope!.companyId}/profiles`, { credentials: 'same-origin', cache: 'no-store', signal: AbortSignal.any([scope!.signal, controller.signal, AbortSignal.timeout(20000)]) });
         if (!response.ok) throw new ServiceError(response.status, 'Refresh status unavailable.');
         const result = await response.json();
         const profile = Array.isArray(result.profiles) ? result.profiles.find((p: { scope: string }) => p.scope === 'shared') : null;
@@ -45,7 +46,7 @@ function Refresh() {
     lock.current = true; setBusy(true); setMessage(''); setError(''); setStatus(''); setStatusError(''); key.current ??= crypto.randomUUID();
     const signal = AbortSignal.any([scope.signal, lifetime.current.signal, AbortSignal.timeout(20000)]);
     try {
-      const response = await fetch(`/api/companies/${scope.companyId}/profiles/shared/refresh`, { method: 'POST', credentials: 'same-origin', cache: 'no-store', signal, headers: { 'Idempotency-Key': key.current } });
+      const response = await apiFetch(`/api/companies/${scope.companyId}/profiles/shared/refresh`, { method: 'POST', credentials: 'same-origin', cache: 'no-store', signal, headers: { 'Idempotency-Key': key.current } });
       if (!response.ok) throw new ServiceError(response.status, 'Refresh unavailable.');
       if (scope.isCurrent() && !lifetime.current.signal.aborted) { setMessage('Refresh requested.'); setTracking(true); key.current = undefined; }
     } catch (caught) { if (scope.isCurrent() && !lifetime.current.signal.aborted) setError(companyError(caught)); }

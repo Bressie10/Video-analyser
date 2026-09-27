@@ -1,3 +1,4 @@
+import { AccountControl } from '../auth/AuthGate';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { Menu, X } from 'lucide-react';
 import { IconButton } from '../ui/controls';
@@ -37,7 +38,7 @@ export function AppShell({ page, companySelector, children }: { page: AppPage; c
       <nav id="app-navigation" aria-label="Primary" ref={navigationRef}>
         {navigation.map(({ id, label, icon: Icon }) => <a key={id} className={`app-nav-link ${id === 'settings' ? 'app-nav-settings' : ''}`} href={`#${id}`} aria-current={page === id ? 'page' : undefined} onClick={() => { setMobileOpen(false); if (page === id) main.current?.focus(); }}><Icon aria-hidden="true" size={20} strokeWidth={1.75} /><span>{label}</span></a>)}
       </nav>
-      <p className="app-sidebar-caption">ContentMetric</p>
+      <AccountControl />
     </aside>
     <div className="app-body">
       <main id="main-content" className="app-main" ref={main} tabIndex={-1}>
