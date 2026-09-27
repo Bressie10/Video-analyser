@@ -105,12 +105,12 @@ test('browser → React → FastAPI → PostgreSQL: content, generation, history
     for (const field of ['Title','Concept','Script']) await p.getByLabel(field,{exact:true}).fill(`Wave 2 saved ${field}`);
     await p.getByRole('button',{name:'Save',exact:true}).click();
     const saved = () => p.getByRole('status').filter({hasText:/^Saved\.$/}).waitFor(); await saved();
-    await p.getByRole('button',{name:'👍 Like',exact:true}).click(); await saved();
-    await p.getByRole('button',{name:'👎 Dislike',exact:true}).click();
+    await p.getByRole('button',{name:'Like',exact:true}).click(); await saved();
+    await p.getByRole('button',{name:'Dislike',exact:true}).click();
     await p.getByLabel('Dislike reason (optional)').fill('Needs a stronger hook');
     await p.getByRole('button',{name:'Save dislike',exact:true}).click(); await saved();
     assert.equal((await get(base+'/ideas/'+id)).feedback_reason,'Needs a stronger hook');
-    await p.getByRole('button',{name:'👍 Like',exact:true}).click(); await saved();
+    await p.getByRole('button',{name:'Like',exact:true}).click(); await saved();
     assert.equal((await get(base+'/ideas/'+id)).feedback_reason,null);
     await p.getByRole('button',{name:'Used',exact:true}).click(); await saved();
     await p.getByRole('button',{name:'Link published content',exact:true}).click();

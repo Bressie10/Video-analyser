@@ -8,7 +8,7 @@ const A = id(1), B = id(2);
 const idea = (n, extra = {}) => ({ id: id(n), company_id: A, title: `Idea ${n}`, concept: `Concept ${n}`, script: `Script ${n}`, status: 'draft', feedback: 'none', feedback_reason: null, target_platforms: ['facebook'], created_at: '2026-09-20T10:00:00Z', updated_at: '2026-09-21T10:00:00Z', publications: [], generation_brief: 'Our brief', profile_evidence: 'PRIVATE EVIDENCE', ...extra });
 const pub = n => ({ library_item_id: id(n), title: `Post ${n}`, platform: 'facebook', available: true, created_at: '2026-09-20T10:00:00Z' });
 let server, browser, origin;
-before(async () => { server = await createServer({ server: { host: '127.0.0.1', port: 5187, strictPort: true }, logLevel: 'error' }); await server.listen(); origin = 'http://127.0.0.1:5187'; browser = await chromium.launch({ headless: true }); });
+before(async () => { server = await createServer({ server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0].replace(/\/$/, ''); browser = await chromium.launch({ headless: true }); });
 after(async () => { await browser?.close(); await server?.close(); });
 async function fixture(options = {}) {
   const p = await browser.newPage(); p.setDefaultTimeout(5000);
@@ -62,7 +62,7 @@ for (const [name, field, value, extra] of [
 test('load more keeps earlier ideas and filter changes reset pagination', async () => { const f = await fixture({ items: [idea(10), idea(12), idea(13)] }); try { await button(f.p, 'Load more ideas').click(); await button(f.p, 'Idea 13').waitFor(); assert.equal(await button(f.p, 'Idea 10').count(), 1); await f.p.getByLabel('Search ideas').fill('Idea 10'); await button(f.p, 'Idea 13').waitFor({ state: 'detached' }); } finally { await f.close(); } });
 test('explicit edit Save persists all fields, Cancel restores saved values without autosave', async () => { const f = await fixture(); try { await open(f.p); await button(f.p, 'Edit').click(); for (const name of ['Title', 'Concept', 'Script']) await f.p.getByLabel(name, { exact: true }).fill(`New ${name}`); assert.equal(f.state.calls.filter(c => c.method === 'PATCH').length, 0); await button(f.p, 'Save').click(); await saved(f.p); assert.equal(f.state.items[0].title, 'New Title'); assert.equal(f.state.items[0].concept, 'New Concept'); assert.equal(f.state.items[0].script, 'New Script'); await button(f.p, 'Edit').click(); await f.p.getByLabel('Title', { exact: true }).fill('Throw away'); await button(f.p, 'Cancel edit').click(); await button(f.p, 'Edit').click(); assert.equal(await f.p.getByLabel('Title', { exact: true }).inputValue(), 'New Title'); } finally { await f.close(); } });
 test('unsaved editing uses global company switch guard and confirmed switch clears detail', async () => { const f = await fixture(); try { await open(f.p); await button(f.p, 'Edit').click(); await f.p.getByLabel('Title', { exact: true }).fill('Unsaved'); await switchB(f.p); await f.p.getByRole('dialog').waitFor(); await button(f.p, 'Stay here').click(); assert.equal(await f.p.getByLabel('Title', { exact: true }).inputValue(), 'Unsaved'); await switchB(f.p); await button(f.p, 'Continue and switch').click(); await button(f.p, 'B idea').waitFor(); assert.equal(await f.p.getByLabel('Title', { exact: true }).count(), 0); } finally { await f.close(); } });
-test('Like, Dislike with and without reason, clear feedback', async () => { const f = await fixture(); try { await open(f.p); await button(f.p, '👍 Like').click(); await saved(f.p); assert.equal(f.state.items[0].feedback, 'liked'); for (const reason of ['Too generic', '']) { await button(f.p, '👎 Dislike').click(); await f.p.getByLabel('Dislike reason (optional)').fill(reason); await button(f.p, 'Save dislike').click(); await saved(f.p); assert.equal(f.state.items[0].feedback, 'disliked'); assert.equal(f.state.items[0].feedback_reason, reason || null); } await button(f.p, 'Clear feedback').click(); await saved(f.p); assert.equal(f.state.items[0].feedback, 'none'); assert.equal(f.state.items[0].feedback_reason, null); } finally { await f.close(); } });
+test('Like, Dislike with and without reason, clear feedback', async () => { const f = await fixture(); try { await open(f.p); await button(f.p, 'Like').click(); await saved(f.p); assert.equal(f.state.items[0].feedback, 'liked'); for (const reason of ['Too generic', '']) { await button(f.p, 'Dislike').click(); await f.p.getByLabel('Dislike reason (optional)').fill(reason); await button(f.p, 'Save dislike').click(); await saved(f.p); assert.equal(f.state.items[0].feedback, 'disliked'); assert.equal(f.state.items[0].feedback_reason, reason || null); } await button(f.p, 'Clear feedback').click(); await saved(f.p); assert.equal(f.state.items[0].feedback, 'none'); assert.equal(f.state.items[0].feedback_reason, null); } finally { await f.close(); } });
 test('all lifecycle statuses allow backward transitions', async () => { const f = await fixture(); try { await open(f.p); for (const status of ['Used', 'Published', 'Draft', 'Discarded', 'Used', 'Draft']) { await button(f.p, status).click(); await saved(f.p); assert.equal(f.state.items[0].status, status.toLowerCase()); assert.equal(await button(f.p, status).getAttribute('aria-pressed'), 'true'); } } finally { await f.close(); } });
 test('link one then multiple company-scoped publications and unlink', async () => { const f = await fixture(); try { await open(f.p); await button(f.p, 'Link published content').click(); await button(f.p, 'Link Post 30').click(); await f.p.getByRole('status').filter({ hasText: '1 linked' }).waitFor(); await button(f.p, 'Link Post 31').click(); await f.p.getByRole('status').filter({ hasText: '2 linked' }).waitFor(); await button(f.p, 'Done').click(); assert.equal(f.state.items[0].publications.length, 2); await button(f.p, 'Unlink Post 30').click(); await saved(f.p); assert.deepEqual(f.state.items[0].publications.map(p => p.library_item_id), [id(31)]); assert.ok(f.state.calls.filter(c => c.path.includes('publication-options')).every(c => c.path.includes(A))); } finally { await f.close(); } });
 test('unavailable historical links display without fetching inaccessible content', async () => { const f = await fixture({ items: [idea(10, { publications: [{ ...pub(30), available: false }] })] }); try { await open(f.p); await f.p.getByText(/Content unavailable for live metrics/).waitFor(); assert.equal(f.state.calls.some(c => c.path.includes(id(30))), false); await button(f.p, 'Unlink Post 30').click(); await saved(f.p); assert.equal(f.state.items[0].publications.length, 0); } finally { await f.close(); } });
@@ -74,7 +74,7 @@ for (const resource of ['history', 'detail', 'mutation']) test(`late Company A $
   const f = await fixture({ ignoreAbort: true, intercept: async route => { const path = new URL(route.request().url()).pathname; const matches = resource === 'history' ? path === `/api/meta/companies/${A}/ideas` : path === `/api/meta/companies/${A}/ideas/${id(10)}` && route.request().method() === (resource === 'mutation' ? 'PATCH' : 'GET'); if (!matches) return false; began(); await gate; try { await route.fulfill({ json: resource === 'history' ? { items: [idea(10)], next_cursor: null } : idea(10) }); } catch {} return true; } });
   try { if (resource === 'detail') await button(f.p, 'Idea 10').click(); if (resource === 'mutation') { await open(f.p); await button(f.p, 'Used').click(); } await started; await switchB(f.p); await button(f.p, 'B idea').waitFor(); release(); await f.p.waitForTimeout(100); assert.equal((await f.p.locator('body').innerText()).includes('Idea 10'), false); assert.equal(await f.p.getByRole('alert').count(), 0); } finally { release(); await f.close(); }
 });
-for (const width of [320, 600, 1280]) test(`responsive ${width}px and keyboard focus through editor and picker`, async () => { const f = await fixture(); try { await f.p.setViewportSize({ width, height: 900 }); await button(f.p, 'Idea 10').waitFor(); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await button(f.p, 'Idea 10').focus(); await f.p.keyboard.press('Enter'); await button(f.p, 'Edit').waitFor(); await button(f.p, 'Edit').focus(); await f.p.keyboard.press('Enter'); assert.equal(await f.p.getByLabel('Title', { exact: true }).evaluate(e => e === document.activeElement), true); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.keyboard.press('Tab'); assert.equal(await f.p.getByLabel('Concept', { exact: true }).evaluate(e => e === document.activeElement), true); await button(f.p, 'Cancel edit').click(); await button(f.p, 'Link published content').focus(); await f.p.keyboard.press('Enter'); await f.p.getByRole('dialog').waitFor(); await button(f.p, 'Link Post 30').waitFor(); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.screenshot({ path: `/tmp/v4-ideas-picker-${width}.png`, fullPage: true }); await f.p.keyboard.press('Escape'); assert.equal(await button(f.p, 'Link published content').evaluate(e => e === document.activeElement), true); await f.p.screenshot({ path: `/tmp/v4-ideas-detail-${width}.png`, fullPage: true }); } finally { await f.close(); } });
+for (const width of [1440, 1280, 1024, 768, 390, 320]) test(`responsive ${width}px and keyboard focus through editor and picker`, async () => { const f = await fixture(); try { await f.p.setViewportSize({ width, height: 900 }); await button(f.p, 'Idea 10').waitFor(); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.screenshot({ path: `/tmp/v5-ideas-history-${width}.png`, fullPage: true }); await button(f.p, 'Idea 10').focus(); await f.p.keyboard.press('Enter'); await button(f.p, 'Edit').waitFor(); await button(f.p, 'Edit').focus(); await f.p.keyboard.press('Enter'); assert.equal(await f.p.getByLabel('Title', { exact: true }).evaluate(e => e === document.activeElement), true); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.keyboard.press('Tab'); assert.equal(await f.p.getByLabel('Concept', { exact: true }).evaluate(e => e === document.activeElement), true); await button(f.p, 'Cancel edit').click(); await button(f.p, 'Link published content').focus(); await f.p.keyboard.press('Enter'); await f.p.getByRole('dialog').waitFor(); await button(f.p, 'Link Post 30').waitFor(); assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true); await f.p.screenshot({ path: `/tmp/v5-ideas-picker-${width}.png`, fullPage: true }); await f.p.keyboard.press('Escape'); assert.equal(await button(f.p, 'Link published content').evaluate(e => e === document.activeElement), true); await f.p.screenshot({ path: `/tmp/v5-ideas-detail-${width}.png`, fullPage: true }); } finally { await f.close(); } });
 
 test('history network failure retries without presenting an empty history', async () => {
   let failed = false;
@@ -84,4 +84,71 @@ test('history network failure retries without presenting an empty history', asyn
 test('content unavailable during linking reports an error and keeps existing associations', async () => {
   const f = await fixture({ items: [idea(10, { publications: [pub(30)] })] });
   try { await open(f.p); await button(f.p, 'Link published content').click(); await button(f.p, 'Link Post 31').waitFor(); f.state.failure = 404; await button(f.p, 'Link Post 31').click(); await f.p.getByRole('dialog').getByRole('alert').waitFor(); assert.equal(f.state.items[0].publications.length, 1); await button(f.p, 'Done').click(); await button(f.p, 'Unlink Post 30').waitFor(); } finally { await f.close(); }
+});
+
+test('V5 compact history exposes platforms and hides full scripts; no matches can be cleared', async () => {
+  const f = await fixture(); try {
+    await button(f.p, 'Idea 10').waitFor();
+    await f.p.locator('.idea-row').getByText('Facebook', { exact: true }).waitFor();
+    assert.equal(await f.p.getByText('Script 10', { exact: true }).count(), 0);
+    await f.p.getByLabel('Search ideas').fill('No such idea');
+    await f.p.getByRole('heading', { name: 'No ideas match these filters.' }).waitFor();
+    await button(f.p, 'Clear filters').click(); await button(f.p, 'Idea 10').waitFor();
+    await f.p.getByRole('link', { name: 'Generate idea', exact: true }).click();
+    assert.equal(new URL(f.p.url()).hash, '#generate');
+  } finally { await f.close(); }
+});
+test('V5 navigation preserves unsaved edits and back is protected until cancel', async () => {
+  const f = await fixture(); try {
+    await open(f.p); await button(f.p, 'Edit').click();
+    await f.p.getByLabel('Title', { exact: true }).fill('Keep my draft');
+    assert.equal(await button(f.p, 'Back to history').isDisabled(), true);
+    await f.p.getByRole('link', { name: 'Content', exact: true }).click();
+    await f.p.getByRole('link', { name: 'Ideas', exact: true }).click();
+    assert.equal(await f.p.getByLabel('Title', { exact: true }).inputValue(), 'Keep my draft');
+    await button(f.p, 'Cancel edit').click(); await button(f.p, 'Back to history').click();
+    await button(f.p, 'Idea 10').waitFor();
+  } finally { await f.close(); }
+});
+test('V5 empty publication options and keyboard filter disclosure', async () => {
+  const f = await fixture({ intercept: async route => {
+    if (!new URL(route.request().url()).pathname.endsWith('/publication-options')) return false;
+    await route.fulfill({ json: { items: [], next_cursor: null } }); return true;
+  } }); try {
+    await button(f.p, 'Idea 10').waitFor();
+    const disclosure = f.p.locator('.idea-filter-disclosure summary');
+    await disclosure.focus(); await f.p.keyboard.press('Enter');
+    assert.equal(await f.p.getByLabel('Status', { exact: true }).isVisible(), false);
+    await f.p.keyboard.press('Enter'); assert.equal(await f.p.getByLabel('Status', { exact: true }).isVisible(), true);
+    await open(f.p); await button(f.p, 'Link published content').click();
+    await f.p.getByText('No accessible published content found.').waitFor();
+    await f.p.keyboard.press('Escape'); assert.equal(await button(f.p, 'Link published content').evaluate(e => e === document.activeElement), true);
+  } finally { await f.close(); }
+});
+
+test('V5 long-form workspace is readable at every required viewport', async () => {
+  const title = 'Show the craft behind your morning coffee';
+  const script = 'HOOK — Start with the sound of coffee beans pouring into the grinder.\n\n“Your morning coffee starts long before the first sip.”\n\nSTORY — Follow the barista from weighing the beans to pouring a slow, deliberate latte. Use close-up shots of the grind, the extraction and the milk texture. Let the natural café sounds carry the scene.\n\n“Every small detail changes what ends up in your cup. Here is how we make yours.”\n\nCLOSE — Hand the finished cup across the counter.\n\n“Come find your new morning ritual. Save this for your next coffee stop.”';
+  const f = await fixture({ items: [idea(10, { title, concept: 'A behind-the-scenes look at the care that goes into every cup. Bring the audience into the café and give them a reason to visit.', script, target_platforms: ['facebook', 'instagram'] }), idea(12, { title: 'Meet the people behind the counter', status: 'used', feedback: 'liked' })] });
+  try {
+    for (const width of [1440, 1280, 1024, 768, 390, 320]) {
+      await f.p.setViewportSize({ width, height: 900 });
+      await button(f.p, title).waitFor();
+      const filters = f.p.locator('.idea-filter-disclosure');
+      if (width <= 390 && await filters.getAttribute('open') !== null) await filters.locator('summary').click();
+      await f.p.evaluate(() => { document.activeElement?.blur(); window.scrollTo(0, 0); });
+      assert.equal(await f.p.title(), 'ContentMetric');
+      assert.equal(await f.p.locator('vite-error-overlay').count(), 0);
+      await f.p.screenshot({ path: `/tmp/v5-ideas-review-history-${width}.png`, fullPage: true });
+      await open(f.p, title);
+      const text = f.p.locator('.script');
+      assert.equal(await text.innerText(), script);
+      const typography = await text.evaluate(el => ({ size: parseFloat(getComputedStyle(el).fontSize), height: parseFloat(getComputedStyle(el).lineHeight) }));
+      assert.ok(typography.size >= 15 && typography.height >= typography.size * 1.6);
+      assert.equal(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+      await f.p.evaluate(() => { document.activeElement?.blur(); window.scrollTo(0, 0); });
+      await f.p.screenshot({ path: `/tmp/v5-ideas-review-detail-${width}.png`, fullPage: true });
+      await button(f.p, 'Back to history').click();
+    }
+  } finally { await f.close(); }
 });
