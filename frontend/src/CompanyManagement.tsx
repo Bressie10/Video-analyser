@@ -5,7 +5,7 @@ import { Button, Input, Select } from './ui/controls';
 import { Badge, EmptyState } from './ui/layout';
 import './settings.css';
 
-type Props = CompanyUIProps & { busy: boolean; run(action: () => Promise<void> | void): void; onCreateAndEnter(name: string, ownGuard: string): void; onBack(): void };
+type Props = CompanyUIProps & { busy: boolean; run(action: () => Promise<void> | void): void; onCreateAndEnter(name: string, ownGuard: string): void; onBack(): void; onAccountLinked?: () => void };
 function Rename({ company, busy, onSave }: { company: Company; busy: boolean; onSave(name: string): void }) {
   const [name, setName] = useState(company.name);
   useCompanySwitchGuard({ unsavedEdits: name !== company.name });
@@ -52,7 +52,7 @@ export function CompanyManagement(props: Props) {
             {props.accounts.filter(a => a.kind === kind).map(account => {
               const linked = account.linkedCompanyIds.includes(company.id);
               const otherOwner = account.ownerName ?? props.companies.find(c => c.id !== company.id && account.linkedCompanyIds.includes(c.id))?.name;
-              return <div className="settings-row" key={account.id}><label className="settings-check"><input type="checkbox" checked={linked} onChange={event => props.run(() => props.onAccountLink(company.id, account.id, event.target.checked))} /><span>{account.name}</span></label><Badge tone={linked ? 'success' : kind !== 'ads' && otherOwner ? 'warning' : 'neutral'}>{linked ? 'Linked' : kind !== 'ads' && otherOwner ? `Linked to ${otherOwner}` : 'Not linked'}</Badge></div>;
+              return <div className="settings-row" key={account.id}><label className="settings-check"><input type="checkbox" checked={linked} onChange={event => props.run(async () => { await props.onAccountLink(company.id, account.id, event.target.checked); props.onAccountLinked?.(); })} /><span>{account.name}</span></label><Badge tone={linked ? 'success' : kind !== 'ads' && otherOwner ? 'warning' : 'neutral'}>{linked ? 'Linked' : kind !== 'ads' && otherOwner ? `Linked to ${otherOwner}` : 'Not linked'}</Badge></div>;
             })}
             {!props.accounts.some(a => a.kind === kind) && <p>No eligible accounts available.</p>}
           </fieldset>)}

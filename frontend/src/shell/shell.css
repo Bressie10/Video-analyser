@@ -56,3 +56,4 @@
   .app-body > .legal-footer { padding: var(--space-4); }
   .app-main .ui-page-header h1 { font-size: 1.625rem; }
 }
+.app-setup-link{display:flex;align-items:center;justify-content:space-between;width:calc(100% - 24px);margin:16px 12px;padding:10px 12px;border:1px solid var(--color-border);border-radius:var(--radius-control);background:var(--color-surface);color:var(--color-text);font:inherit;font-size:14px;text-align:left;cursor:pointer}.app-setup-link strong{color:var(--color-accent)}.app-setup-link:hover{background:var(--color-hover)}.app-setup-link:focus-visible{outline:3px solid var(--color-accent);outline-offset:3px}

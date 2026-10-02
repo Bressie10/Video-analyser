@@ -7,7 +7,7 @@ import { LegalFooter } from '../pages/LegalLayout';
 import { navigation, type AppPage } from './navigation';
 import './shell.css';
 
-export function AppShell({ page, companySelector, children }: { page: AppPage; companySelector: ReactNode; children: ReactNode }) {
+export function AppShell({ page, companySelector, children, setup }: { page: AppPage; companySelector: ReactNode; children: ReactNode; setup?: { progress: number; onResume(): void } }) {
   const [mobileOpen, setMobileOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const navigationRef = useRef<HTMLElement>(null);
@@ -38,6 +38,7 @@ export function AppShell({ page, companySelector, children }: { page: AppPage; c
       <nav id="app-navigation" aria-label="Primary" ref={navigationRef}>
         {navigation.map(({ id, label, icon: Icon }) => <a key={id} className={`app-nav-link ${id === 'settings' ? 'app-nav-settings' : ''}`} href={`#${id}`} aria-current={page === id ? 'page' : undefined} onClick={() => { setMobileOpen(false); if (page === id) main.current?.focus(); }}><Icon aria-hidden="true" size={20} strokeWidth={1.75} /><span>{label}</span></a>)}
       </nav>
+      {setup && <button className="app-setup-link" type="button" onClick={() => { setMobileOpen(false); setup.onResume(); }}><span>Finish setup</span><strong>{setup.progress}%</strong></button>}
       <AccountControl />
     </aside>
     <div className="app-body">

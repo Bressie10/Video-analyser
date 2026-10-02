@@ -23,13 +23,15 @@ type ShellProps = {
   settings?: ReactNode;
   managementPage?: boolean;
   onManagementChange?: (open: boolean) => void;
-  layout?: (selector: ReactNode, content: ReactNode) => ReactNode;
+  layout?: (selector: ReactNode, content: ReactNode, switchCompany: (id: string) => void, manage: () => void) => ReactNode;
   showOnboarding?: boolean;
+  onCompanyCreated?: (id: string) => void;
+  onAccountLinked?: () => void;
 };
 export function CompanyShell(props: ShellProps) {
   return <CompanySwitchGuardProvider><Shell {...props} /></CompanySwitchGuardProvider>;
 }
-function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = false, managementPage, onManagementChange, layout, showOnboarding = true }: ShellProps) {
+function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = false, managementPage, onManagementChange, layout, showOnboarding = true, onCompanyCreated, onAccountLinked }: ShellProps) {
   const [localManagement, setLocalManagement] = useState(false);
   const management = managementPage ?? localManagement;
   const setManagement = (open: boolean) => { setLocalManagement(open); onManagementChange?.(open); };
@@ -65,11 +67,11 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
     {model.error && <p className="notice error" role="alert">{model.error}</p>}
     {error && <p className="notice error" role="alert">{error}</p>}
     {busy && <p role="status">Saving company changes…</p>}
-    {management ? <CompanyManagement {...model} busy={busy} run={run} onBack={() => setManagement(false)} onCreateAndEnter={(name, ownGuard) => {
+    {management ? <CompanyManagement {...model} busy={busy} run={run} onBack={() => setManagement(false)} onAccountLinked={onAccountLinked} onCreateAndEnter={(name, ownGuard) => {
       // Submitting this create form consumes its own edits; other pending work still requires confirmation.
       const create = async () => {
         if (!created.current || created.current.name !== name) { const company = await model.onCreate(name); created.current = { name, id: company.id }; }
-        await model.onSwitch(created.current.id); created.current = null; setManagement(false);
+        await model.onSwitch(created.current.id); onCompanyCreated?.(created.current.id); created.current = null; setManagement(false);
       };
       if (reasons.excluding(ownGuard).some(g => g.unsavedEdits || g.generationInProgress)) setPending(() => create); else void run(create);
     }} />
@@ -88,5 +90,5 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
       <button className="primary" onClick={() => { const action = pending; setPending(null); if (action) void run(action); }}>Continue and switch</button>
     </dialog>
   </>;
-  return layout ? layout(selector, content) : <>{selector}{content}</>;
+  return layout ? layout(selector, content, id => guarded(async () => { await model.onSwitch(id); }), manage) : <>{selector}{content}</>;
 }

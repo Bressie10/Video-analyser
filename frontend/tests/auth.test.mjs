@@ -41,6 +41,7 @@ async function fixture(options={}) {
    if(options.companyDelay)await new Promise(r=>setTimeout(r,options.companyDelay));
    return route.fulfill({json:{companies:options.inaccessible?[]:companies.map(c=>({id:c.company_id,archived_at:c.archived?'2026-01-01':null}))}});
   }
+  if(path==='/api/me/onboarding')return route.fulfill({json:{company_id:null,welcome_seen:true,skipped:false,progress:100,complete:true,next_step:null,steps:{workspace:true,meta:true,account:true,analysis:true,idea:true}}});
   if(path==='/api/companies' && request.method()==='POST')return route.fulfill({json:{company_id:B,name:request.postDataJSON().name,role: "owner", archived: false,accounts:[]}});
   if(path==='/api/companies')return route.fulfill({json:{companies}});
   if(options.apiStatus && path==='/api/probe')return route.fulfill({status:options.apiStatus,json:{}});
