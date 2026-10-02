@@ -42,9 +42,10 @@ export function IdeasPage({ api = ideaApi, refreshToken = 0 }: { api?: IdeaApi; 
   if (status !== 'ready') return <p role="status">Loading company…</p>;
   if (!activeCompany) return <p role="status">Select a company to see its saved ideas.</p>;
   if (activeCompany.archived) return <p role="status">This company is archived. Restore it in Manage companies to manage ideas.</p>;
-  return <CompanyScopeBoundary><Workspace api={api} companyName={activeCompany.name} refreshToken={refreshToken} /></CompanyScopeBoundary>;
+  const publishingLinked = activeCompany.accounts.some(account => account.platform === 'instagram' || account.platform === 'facebook');
+  return <CompanyScopeBoundary><Workspace api={api} companyName={activeCompany.name} publishingLinked={publishingLinked} refreshToken={refreshToken} /></CompanyScopeBoundary>;
 }
-function Workspace({ api, companyName, refreshToken }: { api: IdeaApi; companyName: string; refreshToken: number }) {
+function Workspace({ api, companyName, publishingLinked, refreshToken }: { api: IdeaApi; companyName: string; publishingLinked: boolean; refreshToken: number }) {
   const [filters, setFilters] = useState<Filters>(emptyFilters);
   const [selected, select] = useState<string | null>(null);
   const [revision, revise] = useState(0);
@@ -65,7 +66,7 @@ function Workspace({ api, companyName, refreshToken }: { api: IdeaApi; companyNa
         <label>Created through (UTC)<Input type="date" value={filters.to} onChange={e => field('to', e.target.value)} /></label>
       </div><Button variant="ghost" onClick={() => setFilters({ ...emptyFilters })}>Clear filters</Button></details>
       {invalidDates ? <p role="alert">The end date must be on or after the start date.</p> : <Results<Summary> key={`${JSON.stringify(filters)}:${revision}:${refreshToken}`} load={load} more="Load more ideas"
-        empty={Object.values(filters).some(Boolean) ? <EmptyState title="No ideas match these filters."><p>Try another search or clear the filters to see your saved work.</p></EmptyState> : <EmptyState title="No saved ideas yet for this company."><p>Generate your first idea to start a lasting creative library.</p></EmptyState>}
+        empty={Object.values(filters).some(Boolean) ? <EmptyState title="No ideas match these filters."><p>Try another search or clear the filters to see your saved work.</p></EmptyState> : <EmptyState title="Your ideas will appear here" action={<a className="idea-generate" href={publishingLinked ? '#generate' : '#content'}>{publishingLinked ? 'Generate an idea' : 'Go to Content'} <ArrowUpRight size={18} aria-hidden="true" /></a>}><p>{publishingLinked ? 'Once ContentMetric has analyzed your content, generate an idea. It will be saved here for editing, feedback and publication tracking.' : 'Start in Content to link a publishing account and see what content is available for analysis.'}</p></EmptyState>}
         render={idea => <article className="idea-row"><div className="idea-row-content"><Button variant="ghost" className="idea-open" onClick={() => select(idea.id)}>{idea.title}</Button><p className="idea-excerpt">{idea.concept}</p><span className="idea-platforms">{idea.platforms.map(label).join(' · ') || 'No target platform'}</span></div><div className="idea-row-meta"><LifecycleBadge status={idea.status} /><span>{idea.feedback === 'none' ? 'No feedback' : label(idea.feedback)}</span><time dateTime={idea.createdAt}>{new Date(idea.createdAt).toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })}</time></div></article>} />}
     </>}
   </section>;

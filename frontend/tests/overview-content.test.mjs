@@ -119,12 +119,12 @@ test('Content applies supported filters, coalesces search requests, validates da
 test('Content distinguishes empty library from no filter matches with useful recovery actions', async () => {
   const f = await fixture({ content: [] });
   try {
-    const list = library(f.p); await list.getByRole('heading', { name: 'Your content library starts here' }).waitFor();
+    const list = library(f.p); await list.getByRole('heading', { name: 'No content here yet' }).waitFor();
     await list.getByLabel('Search content').fill('nothing');
     await list.getByRole('heading', { name: 'No matching content' }).waitFor();
     await screenshot(f.p, 'content-no-matches');
     await list.getByRole('button', { name: 'Clear filters', exact: true }).last().click();
-    await list.getByRole('heading', { name: 'Your content library starts here' }).waitFor();
+    await list.getByRole('heading', { name: 'No content here yet' }).waitFor();
   } finally { await f.close(); }
 });
 test('Content loading, safe API error and retry', async () => {

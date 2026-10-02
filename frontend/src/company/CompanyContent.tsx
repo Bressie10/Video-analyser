@@ -25,6 +25,12 @@ function Content() {
   const load = useCallback((company: string, signal: AbortSignal) => invalidDates ? Promise.resolve({ items: [], next_offset: null }) : loadContent(company, signal, filters, offset), [filters, offset, invalidDates]);
   const result = useCompanyQuery(`content:${revision}`, load);
   const filtered = Boolean(filters.search || filters.platform || filters.type || filters.analyzed || filters.from || filters.to);
+  const publishingLinked = activeCompany?.accounts.some(account => account.platform === 'instagram' || account.platform === 'facebook') ?? false;
+  const allItems = result.data?.items ?? [];
+  const completeUnfilteredPage = !filtered && offset === 0 && result.data?.next_offset === null;
+  const noAnalysis = completeUnfilteredPage && allItems.length > 0 && allItems.every(item => !item.analyzed);
+  const processing = allItems.some(item => ['queued', 'pending', 'processing', 'running', 'downloading', 'analyzing'].includes(item.analysis_state));
+  const failed = allItems.some(item => item.analysis_state === 'failed');
   const reset = () => { setSearch(''); setFilters(defaultFilters); setOffset(0); };
   return <PageLayout className="cm-library" role="region" aria-label="Company content library">
     <SectionHeader title="Content library" description="Browse the content linked to this company. Analysed videos can inform your next idea."
@@ -50,12 +56,17 @@ function Content() {
       {result.status === 'loading' && <LoadingState label="Loading company content…" />}
       {result.status === 'error' && <Alert tone="danger"><p>{contentError(result.error)}</p><Button onClick={() => revise(v => v + 1)}>Retry content</Button></Alert>}
       {result.data && (result.data.items.length ? <>
+        {completeUnfilteredPage && (noAnalysis || processing || failed) && <div className="cm-content-guidance">
+          <h2>{processing ? 'Analysis is in progress' : failed ? 'Some analysis needs attention' : 'Analyze content to inform your ideas'}</h2>
+          <p>{processing ? 'Some content is queued or being processed. Check the status below before using it to generate ideas.' : failed ? 'Some items could not be analyzed. You can refresh their status; failed items are not ready as idea sources.' : 'ContentMetric needs analyzed content to understand what performs and how your content is structured. Review the item statuses below.'}</p>
+          {(processing || failed) && <Button onClick={() => revise(v => v + 1)}>Refresh analysis status</Button>}
+        </div>}
         <div className="cm-content-results"><p role="status">Showing {offset + 1}–{offset + result.data.items.length}{filtered ? ' matching items' : ' items'}</p><span>Published date · Analysis status</span></div>
         <ContentList items={result.data.items} />
         <nav className="cm-content-pagination" aria-label="Content pagination"><Button disabled={!offset} onClick={() => setOffset(Math.max(0, offset - 20))}>Previous content</Button><span>Page {Math.floor(offset / 20) + 1}</span><Button disabled={result.data.next_offset === null} onClick={() => setOffset(result.data!.next_offset!)}>Next content</Button></nav>
-      </> : <EmptyState title={filtered ? 'No matching content' : 'Your content library starts here'} icon={filtered ? <Search size={28} /> : <Library size={28} />}
-        action={filtered ? <Button onClick={reset}>Clear filters</Button> : <a className="cm-feature-link" href="#settings">{activeCompany?.accounts.length ? 'Review linked accounts' : 'Link Meta accounts'} <ArrowRight size={16} aria-hidden="true" /></a>}>
-        <p>{filtered ? 'Try a different search or clear your filters to see more content.' : activeCompany?.accounts.length ? 'No content is available from your linked accounts yet. Check your account setup in Settings.' : 'Link your company’s Meta accounts to bring your social content together.'}</p>
+      </> : <EmptyState title={filtered ? 'No matching content' : !publishingLinked ? 'Connect your content source' : 'No content here yet'} icon={filtered ? <Search size={28} /> : <Library size={28} />}
+        action={filtered ? <Button onClick={reset}>Clear filters</Button> : <a className="cm-feature-link cm-feature-link--primary" href="#settings">{publishingLinked ? 'Review linked accounts' : 'Go to Settings'} <ArrowRight size={16} aria-hidden="true" /></a>}>
+        <p>{filtered ? 'Try a different search or clear your filters to see more content.' : !publishingLinked ? 'Link an Instagram or Facebook account in Settings so ContentMetric can load its published content.' : 'Published content from your linked accounts will appear here after discovery. Check your account setup in Settings if you expected to see posts.'}</p>
       </EmptyState>)}
     </div>}
   </PageLayout>;

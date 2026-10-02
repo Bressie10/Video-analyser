@@ -89,7 +89,8 @@ for (const scenario of ['noCompany', 'empty', 'adsOnly']) test(`empty state ${sc
   const f = await app(scenario === 'noCompany' ? { noCompany: true } : scenario === 'empty' ? { count: 0 } : { platforms: ['meta_ads'] });
   try {
     if (scenario === 'noCompany') await f.page.getByRole('heading', { name: 'No company selected' }).waitFor();
-    else { await f.page.getByText(scenario === 'empty' ? 'No analysed source content available' : 'No linked publishing platforms.', { exact: false }).waitFor(); assert.equal(await generate(f.page).isDisabled(), true); await f.page.getByRole('button', { name: scenario === 'empty' ? 'Company and account setup' : 'Company setup', exact: true }).click(); await f.page.getByRole('heading', { name: 'Manage companies', exact: true }).waitFor(); }
+    else if (scenario === 'empty') { await f.page.getByRole('heading', { name: 'Analyze some content first' }).waitFor(); assert.equal(await f.page.locator('.generation form').count(), 0); await f.page.getByRole('link', { name: 'Go to Content' }).click(); await f.page.getByRole('heading', { name: 'Content library' }).waitFor(); }
+    else { await f.page.getByText('No linked publishing platforms.', { exact: false }).waitFor(); assert.equal(await generate(f.page).isDisabled(), true); await f.page.getByRole('button', { name: 'Company setup', exact: true }).click(); await f.page.getByRole('heading', { name: 'Manage companies', exact: true }).waitFor(); }
   } finally { await f.close(); }
 });
 test('source error retry and loading state', async () => {
@@ -120,7 +121,7 @@ test('successful generations get fresh keys and release switch guard', async () 
 test('loading disables generation and changed retry payload gets a new key', async () => {
   let release; const gate=new Promise(r=>release=r);
   const f=await app({sources:async route=>{await gate; await route.fulfill({json:{items:[item(1)],next_offset:null}});},generate:route=>route.abort()}); const p=f.page;
-  try { await p.getByText('Loading analysed source content…').waitFor(); assert.equal(await generate(p).isDisabled(),true); release(); await generate(p).click(); await p.getByRole('alert').waitFor(); await p.getByLabel('Brief (optional)').fill('A different brief'); await generate(p).click(); await p.getByRole('alert').waitFor(); assert.equal(f.calls.length,2); assert.notEqual(f.calls[0].request_id,f.calls[1].request_id); await p.getByRole('button',{name:'Reload sources'}).click(); await p.getByText('Using 1 source item',{exact:false}).waitFor(); } finally {release(); await f.close();}
+  try { await p.getByText('Loading analysed source content…').waitFor(); assert.equal(await p.locator('.generation form').count(), 0); release(); await generate(p).click(); await p.getByRole('alert').waitFor(); await p.getByLabel('Brief (optional)').fill('A different brief'); await generate(p).click(); await p.getByRole('alert').waitFor(); assert.equal(f.calls.length,2); assert.notEqual(f.calls[0].request_id,f.calls[1].request_id); await p.getByRole('button',{name:'Reload sources'}).click(); await p.getByText('Using 1 source item',{exact:false}).waitFor(); } finally {release(); await f.close();}
 });
 test('default source resolution fetches only latest page 20 and uses library IDs despite null/different video IDs', async () => {
   const calls=[];

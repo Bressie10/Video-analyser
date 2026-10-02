@@ -16,7 +16,7 @@ before(async () => {
   if (process.env.V5_SCREENSHOT_DIR) await mkdir(process.env.V5_SCREENSHOT_DIR, { recursive: true });
 });
 after(async () => { await browser?.close(); await server?.close(); });
-async function fixture({ selected = A, width = 1440, archived = false, inaccessible = false, fail = false, companyName = 'Northline Studio' } = {}) {
+async function fixture({ selected = A, width = 1440, archived = false, inaccessible = false, fail = false, companyName = 'Northline Studio', sources = false } = {}) {
   const context = await browser.newContext({ viewport: { width, height: 900 } });
   if (selected) await context.addInitScript(({ KEY, selected }) => localStorage.setItem(KEY, selected), { KEY, selected });
   const calls = [], errors = [];
@@ -27,7 +27,7 @@ async function fixture({ selected = A, width = 1440, archived = false, inaccessi
       ...(!inaccessible ? [{ company_id: A, name: companyName, archived, accounts: [{ account_id: B, platform: 'instagram', display_name: 'Northline Instagram' }] }] : []),
       { company_id: B, name: 'Beta', role: "owner", archived: false, accounts: [] },
     ] } });
-    if (path.endsWith('/content')) return route.fulfill({ json: { items: [], next_offset: null } });
+    if (path.endsWith('/content')) return route.fulfill({ json: { items: sources && new URL(route.request().url()).searchParams.get('analyzed_only') === 'true' ? [{ library_item_id: B, display_title: 'Northline source', platform: 'instagram', published_at: null, analyzed: true }] : [], next_offset: null } });
     if (path.endsWith('/ideas')) return route.fulfill({ json: { items: [], next_cursor: null } });
     return route.fulfill({ json: { connected: false, accounts: [] } });
   });
@@ -118,7 +118,7 @@ test('company load failure leaves Settings and retry accessible', async () => {
 });
 
 test('workflow draft survives navigation to another page', async () => {
-  const f = await fixture(); const p = f.page;
+  const f = await fixture({ sources: true }); const p = f.page;
   try {
     await destination(p, 'Generate');
     await p.getByLabel('Brief (optional)').fill('Keep this draft across navigation');
@@ -161,7 +161,7 @@ test('integrated navigation preserves filters, sources and unsaved idea edits un
     await company(p).getByRole('button').first().click();
     await company(p).getByRole('button', { name: 'Beta', exact: true }).click();
     await p.getByRole('button', { name: 'Continue and switch', exact: true }).click();
-    await p.getByRole('heading', { name: 'No saved ideas yet for this company.', exact: true }).waitFor();
+    await p.getByRole('heading', { name: 'Your ideas will appear here', exact: true }).waitFor();
     assert.equal(await p.getByLabel('Title', { exact: true }).count(), 0);
     await destination(p, 'Content');
     assert.equal(await p.getByLabel('Content platform', { exact: true }).inputValue(), '');

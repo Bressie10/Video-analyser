@@ -128,10 +128,10 @@ test('browser → React → FastAPI → PostgreSQL: content, generation, history
     await manage(p); await p.getByText('Company intelligence · Release studio',{exact:true}).click();
     await p.getByRole('button',{name:'Refresh company intelligence',exact:true}).click(); await p.getByText('Refresh requested.',{exact:false}).waitFor();
     await p.getByText('Company intelligence refreshed.',{exact:true}).waitFor();
-    await select(p,'B'); await selected(p,'B'); await p.getByText('No saved ideas yet for this company.').waitFor();
+    await select(p,'B'); await selected(p,'B'); await p.getByText('Your ideas will appear here').waitFor();
     assert.equal((await p.locator('body').innerText()).includes('Wave 2 saved'),false);
     await p.reload(); await selected(p,'B'); await stored(p,b.company_id);
-    await p.getByText('No saved ideas yet for this company.').waitFor();
+    await p.getByText('Your ideas will appear here').waitFor();
     assert.equal((await p.locator('body').innerText()).includes('Wave 2 saved'),false);
     assert.equal(calls.some(r=>/^\/api\/meta\/(library|jobs|sync|recommendations)/.test(new URL(r.url()).pathname)),false);
     assert.deepEqual(errors,[]);

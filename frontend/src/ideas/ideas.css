@@ -1,4 +1,5 @@
 .ideas-workspace { min-width: 0; padding: 0; border: 0; background: transparent; }
+.ideas-workspace .ui-empty-state { min-height: 280px; }
 .ideas-workspace h2, .ideas-workspace h3 { margin-top: 0; }
 .ideas-index-header { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-6); margin-bottom: var(--space-6); }
 .ideas-index-header p { margin: var(--space-2) 0 0; color: var(--color-text-secondary); }
@@ -47,5 +48,5 @@
 .idea-picker button, .ideas-workspace button { max-width: 100%; overflow-wrap: anywhere; white-space: normal; }
 @media (max-width: 1280px) { .idea-filters { grid-template-columns: repeat(3, minmax(0, 1fr)); } .idea-detail-grid { gap: var(--space-5); } .idea-document { padding: var(--space-5); } }
 @media (max-width: 1000px) { .idea-detail-grid { grid-template-columns: minmax(0, 1fr); } .idea-context { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-6); } .idea-context > .idea-section { margin-top: 0; } }
-@media (max-width: 700px) { .ideas-index-header { flex-direction: column; gap: var(--space-4); } .idea-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .idea-row { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); } .idea-row-meta { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: var(--space-3); } .idea-context { display: block; } .idea-context > .idea-section { margin-top: var(--space-6); } .idea-detail-header h2 { font-size: 26px; } }
+@media (max-width: 700px) { .ideas-workspace .ui-empty-state { min-height: 0; padding: var(--space-6) var(--space-2); } .ideas-index-header { flex-direction: column; gap: var(--space-4); } .idea-filters { grid-template-columns: repeat(2, minmax(0, 1fr)); } .idea-row { grid-template-columns: minmax(0, 1fr); gap: var(--space-3); } .idea-row-meta { flex-direction: row; flex-wrap: wrap; align-items: center; justify-content: flex-start; gap: var(--space-3); } .idea-context { display: block; } .idea-context > .idea-section { margin-top: var(--space-6); } .idea-detail-header h2 { font-size: 26px; } }
 @media (max-width: 420px) { .idea-filters { grid-template-columns: minmax(0, 1fr); } .idea-picker, .idea-document, .ideas-workspace .idea-list li { padding: var(--space-4); } .ideas-workspace .script { padding: var(--space-3); } }

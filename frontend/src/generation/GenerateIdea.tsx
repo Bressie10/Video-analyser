@@ -63,8 +63,8 @@ function Workflow({ api, onSetup, onSaved }: { api: GenerationApi; onSetup(): vo
       <header className="generate-intro"><h2 id="generate-heading">Generate an idea</h2><p>Use your analysed content to create a new concept.</p></header>
       {sources.status === 'loading' && <LoadingState label="Loading analysed source content…" />}
       {sources.status === 'error' && <Alert tone="danger"><p>{generationError(sources.error)}</p><Button onClick={() => revise(v => v + 1)}>Retry sources</Button></Alert>}
-      {sources.status === 'success' && !items.length && <EmptyState title="No analysed source content available" action={<Button onClick={onSetup}>Company and account setup</Button>}><p>Link accounts and analyse content for this company before generating an idea.</p><a href="#content">View company content</a></EmptyState>}
-      <form onSubmit={e => { e.preventDefault(); void generate(); }} aria-busy={busy}>
+      {sources.status === 'success' && !items.length && <EmptyState title="Analyze some content first" action={<a className="generate-prerequisite-link" href="#content">Go to Content <ArrowRight size={16} aria-hidden="true" /></a>}><p>ContentMetric uses your analyzed content as evidence when creating new ideas. Check Content to see what is available and its analysis status.</p></EmptyState>}
+      {sources.status === 'success' && items.length > 0 && <form onSubmit={e => { e.preventDefault(); void generate(); }} aria-busy={busy}>
         <fieldset className="generate-step" disabled={busy || sources.status !== 'success' || !items.length} aria-describedby="source-help source-count source-validation">
           <legend>Sources</legend>
           <p id="source-help">Start with what you already know. Choose the content that will inform your idea.</p>
@@ -95,7 +95,7 @@ function Workflow({ api, onSetup, onSaved }: { api: GenerationApi; onSetup(): vo
         <div className="generate-step generate-brief"><label htmlFor="generate-brief">Brief (optional)</label><p id="brief-help">What do you want this idea to focus on? Share a goal, audience or message.</p><Textarea id="generate-brief" disabled={busy} aria-describedby="brief-help" rows={3} maxLength={10000} placeholder="For example, help homeowners prepare for winter." value={brief} onChange={e => setBrief(e.target.value)} /></div>
         {error && <Alert tone="danger"><p>{error}</p><Button disabled={busy} onClick={() => { setError(''); revise(v => v + 1); }}>Reload sources</Button></Alert>}
         <div className="generate-action"><Button variant="primary" type="submit" disabled={busy || sources.status !== 'success' || !sourceIds.length || sourceIds.length > 20 || missingSelection.length > 0 || !chosenTargets.length}><Sparkles size={18} aria-hidden="true" />{busy ? 'Generating…' : 'Generate idea'}</Button><p>One idea, saved to your company’s Ideas.</p></div>
-      </form>
+      </form>}
         {busy && <Alert><strong>Generating and saving your idea. This may take a moment.</strong><p>We’re using your selected content and brief. You can stay here while your idea is prepared.</p></Alert>}
     </section>
     {result && <article className="idea-result generate-document" aria-labelledby="generated-title"><header><div className="generate-document-meta"><Badge tone="success"><Check aria-hidden="true" size={14} /> Saved idea</Badge><span>{result.targetPlatforms.map(p => p === 'instagram' ? 'Instagram' : 'Facebook').join(' · ')}</span></div><h2 id="generated-title" ref={resultHeading} tabIndex={-1}>{result.title}</h2><p>Saved to {activeCompany?.name}’s Ideas. Ready to review and develop.</p></header><div className="generate-document-body"><h3>Concept</h3><p className="concept">{result.concept}</p><h3>Script</h3><div className="script">{result.script}</div></div><footer><a href="#ideas">View in Ideas <ArrowRight size={16} aria-hidden="true" /></a></footer></article>}
