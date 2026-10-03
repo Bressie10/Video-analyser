@@ -24,6 +24,13 @@ export async function loadContent(company: string, signal: AbortSignal, filters 
   }
   return page;
 }
+export async function analyzeContent(company: string, itemId: string, signal: AbortSignal): Promise<void> {
+  const response = await apiFetch(`/api/companies/${company}/content/analyze`, {
+    method: 'POST', signal, credentials: 'same-origin', cache: 'no-store',
+    headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item_id: itemId }),
+  });
+  if (!response.ok) throw new ServiceError(response.status, 'Analysis could not be started.');
+}
 export const platformLabel = (value: string) => ({ instagram: 'Instagram', facebook: 'Facebook', meta_ads: 'Meta Ads' })[value] ?? 'Social content';
 export const typeLabel = (value: string) => ({ reel: 'Reel', video: 'Video', ad: 'Ad' })[value] ?? 'Content';
 export function publicationDate(value: string | null) {

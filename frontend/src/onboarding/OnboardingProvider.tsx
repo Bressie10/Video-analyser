@@ -28,9 +28,9 @@ export function OnboardingProvider({ children, onAccessError }: { children: Reac
       const next = await onboardingApi.get();
       if (!mounted.current || request !== revision.current) return null;
       setData(next); setError(''); setLoading(false);
-      if (next.complete) setMode(current => current === 'guided' ? 'complete' : 'normal');
+      if (next.complete) setMode(current => current === 'guided' || current === 'complete' ? 'complete' : 'normal');
       else if (modeRef.current === 'complete') setMode('normal');
-      else if (!next.welcome_seen && !next.skipped) setMode('welcome');
+      else if (!next.welcome_seen && !next.skipped && next.progress === 0) setMode('welcome');
       return next;
     } catch (caught) {
       if (!mounted.current || request !== revision.current) return null;
@@ -49,7 +49,7 @@ export function OnboardingProvider({ children, onAccessError }: { children: Reac
   async function action(run: () => Promise<void>, destination: State['mode']) {
     if (busy) return;
     setBusy(true); setError('');
-    try { await run(); const next = await refresh(); if (mounted.current) setMode(next?.complete ? 'complete' : destination); }
+    try { await run(); const next = await refresh(); if (mounted.current && next) setMode(next.complete ? 'complete' : destination); }
     catch (caught) { if (mounted.current) { setError(message(caught)); if (caught instanceof OnboardingError && [403, 404].includes(caught.status)) void onAccessError?.(); } }
     finally { if (mounted.current) setBusy(false); }
   }

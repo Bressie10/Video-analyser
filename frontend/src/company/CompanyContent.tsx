@@ -1,19 +1,24 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { ArrowRight, Library, Search } from 'lucide-react';
 import { CompanyScopeBoundary, useCompany, useCompanyQuery } from './CompanyProvider';
 import { Button, Checkbox, Input, Select } from '../ui/controls';
 import { Alert, EmptyState, LoadingState, PageLayout, Panel, SectionHeader } from '../ui/layout';
 import { ContentList } from '../content/ContentList';
-import { contentError, defaultFilters, loadContent, type ContentFilters } from '../content/contentApi';
+import { analyzeContent, contentError, defaultFilters, loadContent, type ContentFilters } from '../content/contentApi';
 import '../content/content.css';
 
-export function CompanyContent() { return <CompanyScopeBoundary><Content /></CompanyScopeBoundary>; }
-function Content() {
+export function CompanyContent({ onAnalysisChange }: { onAnalysisChange?: () => void }) { return <CompanyScopeBoundary><Content onAnalysisChange={onAnalysisChange} /></CompanyScopeBoundary>; }
+function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   const { activeCompany } = useCompany();
   const [filters, setFilters] = useState(defaultFilters);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const [revision, revise] = useState(0);
+  const [analyzing, setAnalyzing] = useState<string | null>(null);
+  const [actionError, setActionError] = useState('');
+  const actionController = useRef<AbortController | null>(null);
+  const lastStatuses = useRef('');
+  useEffect(() => () => actionController.current?.abort(), []);
   // Coalesce typing; other filters apply immediately and always reset pagination.
   useEffect(() => {
     if (search.trim() === filters.search) return;
@@ -27,6 +32,26 @@ function Content() {
   const filtered = Boolean(filters.search || filters.platform || filters.type || filters.analyzed || filters.from || filters.to);
   const publishingLinked = activeCompany?.accounts.some(account => account.platform === 'instagram' || account.platform === 'facebook') ?? false;
   const allItems = result.data?.items ?? [];
+  const statuses = result.data?.items.map(item => `${item.library_item_id}:${item.analysis_state}:${item.analyzed}`).join('|') ?? '';
+  useEffect(() => {
+    if (!result.data || statuses === lastStatuses.current) return;
+    lastStatuses.current = statuses;
+    onAnalysisChange?.();
+  }, [result.data, statuses, onAnalysisChange]);
+  const startAnalysis = async (id: string) => {
+    if (!activeCompany || analyzing) return;
+    const controller = new AbortController();
+    actionController.current = controller;
+    setAnalyzing(id); setActionError('');
+    try {
+      await analyzeContent(activeCompany.id, id, controller.signal);
+      if (!controller.signal.aborted) { revise(v => v + 1); onAnalysisChange?.(); }
+    } catch {
+      if (!controller.signal.aborted) setActionError('Analysis could not be started. Try again or check your access in Settings.');
+    } finally {
+      if (!controller.signal.aborted) setAnalyzing(null);
+    }
+  };
   const completeUnfilteredPage = !filtered && offset === 0 && result.data?.next_offset === null;
   const noAnalysis = completeUnfilteredPage && allItems.length > 0 && allItems.every(item => !item.analyzed);
   const processing = allItems.some(item => ['queued', 'pending', 'processing', 'running', 'downloading', 'analyzing'].includes(item.analysis_state));
@@ -53,6 +78,7 @@ function Content() {
       {invalidDates && <Alert tone="danger" id="content-date-error">Choose an end date on or after the start date.</Alert>}
     </Panel>
     {!invalidDates && <div aria-busy={result.status === 'loading'}>
+      {actionError && <Alert tone="danger" role="alert">{actionError}</Alert>}
       {result.status === 'loading' && <LoadingState label="Loading company content…" />}
       {result.status === 'error' && <Alert tone="danger"><p>{contentError(result.error)}</p><Button onClick={() => revise(v => v + 1)}>Retry content</Button></Alert>}
       {result.data && (result.data.items.length ? <>
@@ -62,7 +88,7 @@ function Content() {
           {(processing || failed) && <Button onClick={() => revise(v => v + 1)}>Refresh analysis status</Button>}
         </div>}
         <div className="cm-content-results"><p role="status">Showing {offset + 1}–{offset + result.data.items.length}{filtered ? ' matching items' : ' items'}</p><span>Published date · Analysis status</span></div>
-        <ContentList items={result.data.items} />
+        <ContentList items={result.data.items} onAnalyze={activeCompany?.role === 'owner' ? id => { void startAnalysis(id); } : undefined} analyzing={analyzing} />
         <nav className="cm-content-pagination" aria-label="Content pagination"><Button disabled={!offset} onClick={() => setOffset(Math.max(0, offset - 20))}>Previous content</Button><span>Page {Math.floor(offset / 20) + 1}</span><Button disabled={result.data.next_offset === null} onClick={() => setOffset(result.data!.next_offset!)}>Next content</Button></nav>
       </> : <EmptyState title={filtered ? 'No matching content' : !publishingLinked ? 'Connect your content source' : 'No content here yet'} icon={filtered ? <Search size={28} /> : <Library size={28} />}
         action={filtered ? <Button onClick={reset}>Clear filters</Button> : <a className="cm-feature-link cm-feature-link--primary" href="#settings">{publishingLinked ? 'Review linked accounts' : 'Go to Settings'} <ArrowRight size={16} aria-hidden="true" /></a>}>

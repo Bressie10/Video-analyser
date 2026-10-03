@@ -7,23 +7,28 @@ import { CompanyScopeBoundary, useCompany, useCompanyQuery, useCompanyStore } fr
 import { useCompanySwitchGuard } from '../CompanySwitchGuard';
 import { generationApi, generationError, latestSources, type GenerationApi, type PersistedIdea, type TargetPlatform } from './generationApi';
 
-export function GenerateIdea({ onSetup, onSaved, api = generationApi }: { onSetup(): void; onSaved?(): void; api?: GenerationApi }) {
+export function GenerateIdea({ onSetup, onSaved, api = generationApi, refreshToken = 0 }: { onSetup(): void; onSaved?(): void; api?: GenerationApi; refreshToken?: number }) {
   return <CompanyScopeBoundary fallback={<EmptyState title="Select a company to generate an idea" action={<Button onClick={onSetup}>Company setup</Button>}><p>Select or create a company to use its analysed content.</p></EmptyState>}>
-    <Workflow api={api} onSetup={onSetup} onSaved={onSaved} />
+    <Workflow api={api} onSetup={onSetup} onSaved={onSaved} refreshToken={refreshToken} />
   </CompanyScopeBoundary>;
 }
-function Workflow({ api, onSetup, onSaved }: { api: GenerationApi; onSetup(): void; onSaved?(): void }) {
+function Workflow({ api, onSetup, onSaved, refreshToken }: { api: GenerationApi; onSetup(): void; onSaved?(): void; refreshToken: number }) {
   const { activeCompany } = useCompany();
   const store = useCompanyStore();
   const [revision, revise] = useState(0);
   const [mode, setMode] = useState<'all' | 'manual'>('all');
   const load = useCallback((id: string, signal: AbortSignal) => api.listSources(id, signal, mode === 'manual'), [api, mode]);
-  const sources = useCompanyQuery(`generation-sources:${revision}:${mode}`, load);
+  const sources = useCompanyQuery(`generation-sources:${revision}:${mode}:${refreshToken}`, load);
   const [selection, select] = useState<string[]>([]);
   const [search, setSearch] = useState('');
   const [platform, setPlatform] = useState('all');
   const available = [...new Set((activeCompany?.accounts ?? []).map(a => a.platform).filter((p): p is TargetPlatform => p === 'instagram' || p === 'facebook'))];
   const [targets, setTargets] = useState<TargetPlatform[]>(available);
+  const hadPublishingAccount = useRef(available.length > 0);
+  useEffect(() => {
+    if (!hadPublishingAccount.current && available.length) setTargets(available);
+    hadPublishingAccount.current = available.length > 0;
+  }, [available.join(',')]);
   const [brief, setBrief] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');

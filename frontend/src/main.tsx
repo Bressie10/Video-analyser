@@ -34,6 +34,7 @@ export function App() {
   if (page !== 'settings') previousWorkflow.current = page;
   const [connected, setConnected] = useState(false);
   const [historyRevision, refreshHistory] = useState(0);
+  const [analysisRevision, refreshAnalysisSources] = useState(0);
   const store = useCompanyStore();
   const onboarding = useOnboarding();
   const connect = useRef<() => void>(() => {});
@@ -47,7 +48,7 @@ export function App() {
   useEffect(() => { void onboarding.refresh(); }, [page]);
   const model = useCompanyUI(connected, () => connect.current());
   return <CompanyShell companyUI={model} allowUnlinkedWorkspace showOnboarding={page === 'overview' && onboarding.mode === 'normal'}
-    onCompanyCreated={id => { void onboarding.selectCompany(id); }} onAccountLinked={() => { void onboarding.refresh(); }}
+    onCompanyCreated={id => { if (onboarding.mode === 'guided') void onboarding.selectCompany(id); else void onboarding.refresh(); }} onAccountLinked={() => { void onboarding.refresh(); }}
     managementPage={page === 'settings'} onManagementChange={open => navigate(open ? 'settings' : previousWorkflow.current)}
     layout={(selector, content, switchCompany, manage) => <AppShell page={page} companySelector={selector} setup={onboarding.data && !onboarding.data.complete && onboarding.data.welcome_seen ? { progress: onboarding.data.progress, onResume: () => { navigate('overview'); onboarding.resume(); } } : undefined}>
       <OnboardingScreen page={page} onManage={manage} onSwitchCompany={switchCompany} onConnect={() => connect.current()} />
@@ -56,8 +57,8 @@ export function App() {
     settings={<><MetaConnection beginAuthorization={beginMetaAuthorization} onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} connectAction={connect} /><ProfileRefresh /></>}>
     {onSetup => <>
       <div hidden={page !== 'overview'}><WorkspaceOverview /></div>
-      <div hidden={page !== 'content'}><CompanyContent /></div>
-      <div hidden={page !== 'generate'}><GenerateIdea onSetup={onSetup} onSaved={() => { refreshHistory(v => v + 1); void onboarding.refresh(); }} /></div>
+      <div hidden={page !== 'content'}><CompanyContent onAnalysisChange={() => { refreshAnalysisSources(v => v + 1); void onboarding.refresh(); }} /></div>
+      <div hidden={page !== 'generate'}><GenerateIdea onSetup={onSetup} refreshToken={analysisRevision} onSaved={() => { refreshHistory(v => v + 1); void onboarding.refresh(); }} /></div>
       <div hidden={page !== 'ideas'}><IdeasPage refreshToken={historyRevision} /></div>
     </>}
   </CompanyShell>;

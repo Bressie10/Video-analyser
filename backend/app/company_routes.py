@@ -34,6 +34,11 @@ class Reassignment(BaseModel):
     target_company_id: UUID
 
 
+class AnalysisSelection(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    item_id: UUID
+
+
 def respond(request, operation, *, write=False, status=200, company_id=None,
             owner=False, include_archived=False, target_company_id=None, account_id=None):
     try:
@@ -232,3 +237,21 @@ def content(request: Request, company_id: UUID, analyzed_only: bool = False,
                             published_from=published_from, published_to=published_to,
                             limit=limit, offset=offset, order=order)
     return respond(request, operation, company_id=company_id)
+
+
+@router.post('/companies/{company_id}/content/analyze', status_code=202)
+def analyze_company_content(request: Request, company_id: UUID, body: AnalysisSelection):
+    def operation(db, connection):
+        if connection is None:
+            raise HTTPException(409, 'Connect Meta and link a publishing account first.')
+        try:
+            auth.require_owned_meta_connection(db, request.state.company_user.user_id, connection)
+        except auth.CompanyAccessDenied:
+            raise HTTPException(403, 'Meta connection access denied.') from None
+        item = repo._selected(db, connection, company_id, body.item_id)
+        if item['content_type'] == 'ad':
+            raise HTTPException(422, 'Choose a Facebook or Instagram video.')
+        return {'job_id': library.new_batch(db, connection, 'analysis', [item])}
+
+    return respond(request, operation, write=True, status=202,
+                   company_id=company_id, owner=True)

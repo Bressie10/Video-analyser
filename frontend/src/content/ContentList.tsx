@@ -1,9 +1,10 @@
 import { Clapperboard, Film, Megaphone } from 'lucide-react';
 import { Badge } from '../ui/layout';
+import { Button } from '../ui/controls';
 import { analysisStatus, platformLabel, publicationDate, typeLabel, type ContentItem } from './contentApi';
 
 /** The company-safe API has no preview URLs. Use a format marker, never a fabricated thumbnail. */
-export function ContentList({ items, compact = false }: { items: ContentItem[]; compact?: boolean }) {
+export function ContentList({ items, compact = false, onAnalyze, analyzing }: { items: ContentItem[]; compact?: boolean; onAnalyze?: (id: string) => void; analyzing?: string | null }) {
   return <ul className={`cm-content-list${compact ? ' cm-content-list--compact' : ''}`} aria-label="Content items">
     {items.map(item => {
       const Icon = item.content_type === 'reel' ? Clapperboard : item.content_type === 'ad' ? Megaphone : Film;
@@ -19,7 +20,10 @@ export function ContentList({ items, compact = false }: { items: ContentItem[]; 
           </p>
         </div>
         <div className="cm-content-date">{publicationDate(item.published_at)}</div>
-        <div className="cm-content-status"><Badge tone={status.tone}>{status.label}</Badge></div>
+        <div className="cm-content-status"><Badge tone={status.tone}>{status.label}</Badge>
+          {!compact && onAnalyze && item.content_type !== 'ad' && !item.analyzed && !['queued', 'pending', 'processing', 'running', 'downloading', 'analyzing'].includes(item.analysis_state) &&
+            <Button disabled={Boolean(analyzing)} onClick={() => onAnalyze(item.library_item_id)}>{analyzing === item.library_item_id ? 'Starting…' : item.analysis_state === 'failed' ? 'Retry analysis' : 'Analyze'}</Button>}
+        </div>
       </li>;
     })}
   </ul>;

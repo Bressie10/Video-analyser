@@ -200,6 +200,50 @@ class OnboardingTests(unittest.TestCase):
         legacy = self.db.execute("INSERT INTO companies(name) VALUES ('Legacy') RETURNING id").fetchone()['id']
         self.assertEqual(self.request('PUT','/api/me/onboarding/company',json={'company_id':str(legacy)}).status_code,403)
 
+    def test_one_user_activation_progression_and_other_user_isolation(self):
+        self.assertEqual(self.state()['progress'], 0)
+        self.assertEqual(self.request('POST', '/api/me/onboarding/welcome').status_code, 200)
+        self.assertEqual(self.request('POST', '/api/me/onboarding/skip').status_code, 200)
+        self.assertFalse(self.state()['complete'])
+        created = self.request('POST', '/api/companies', json={'name': 'First workspace'})
+        self.assertEqual(created.status_code, 201, created.text)
+        company = created.json()['company_id']
+        self.assertEqual(self.request('PUT', '/api/me/onboarding/company',
+                                      json={'company_id': company}).status_code, 200)
+        self.assertEqual(self.state()['progress'], 20)
+        connection = self.connection()
+        self.assertEqual(self.state()['progress'], 40)
+        account = self.db.execute('''INSERT INTO meta_accounts(connection_id,platform,external_id,label)
+            VALUES (%s,'instagram',%s,'First Instagram') RETURNING id''',
+            (connection, str(uuid4()))).fetchone()['id']
+        linked = self.request('PUT', f'/api/companies/{company}/accounts/{account}')
+        self.assertEqual(linked.status_code, 200, linked.text)
+        self.assertEqual(self.state()['progress'], 60)
+        item = self.item(connection, account)
+        video = self.db.execute('SELECT video_id FROM meta_library_items WHERE id=%s',
+                                (item,)).fetchone()['video_id']
+        self.db.execute('''UPDATE meta_library_items SET video_id=NULL,analysis_version=NULL,
+            analysis_state='discovered' WHERE id=%s''', (item,))
+        self.assertEqual(self.state()['progress'], 60)
+        started = self.request('POST', f'/api/companies/{company}/content/analyze',
+                               json={'item_id': str(item)})
+        self.assertEqual(started.status_code, 202, started.text)
+        self.assertEqual(self.db.execute('SELECT kind FROM meta_sync_runs WHERE id=%s',
+                                         (started.json()['job_id'],)).fetchone()['kind'], 'analysis')
+        self.db.execute('''UPDATE meta_library_items SET video_id=%s,analysis_version=%s,
+            analysis_state='completed' WHERE id=%s''', (video, ANALYSIS_VERSION, item))
+        self.assertEqual(self.state()['progress'], 80)
+        self.idea(company, item)
+        self.assertEqual(self.state()['progress'], 100)
+        self.assertTrue(self.state()['complete'])
+        self.assertEqual(self.state(OTHER_USER_ID)['progress'], 0)
+        self.assertEqual(self.state()['progress'], 100)
+        self.db.execute("UPDATE meta_connections SET status='disconnected' WHERE id=%s", (connection,))
+        regressed = self.state()
+        self.assertEqual((regressed['progress'], regressed['next_step']), (80, 'meta'))
+        self.assertEqual(regressed['steps'], dict(workspace=True, meta=False,
+                         account=True, analysis=True, idea=True))
+
     def test_migration_rollback_and_rls(self):
         row = self.db.execute('''SELECT relrowsecurity FROM pg_class
             WHERE relnamespace=%s::regnamespace AND relname='user_onboarding_state' ''',

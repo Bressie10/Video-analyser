@@ -11,14 +11,15 @@ let server, browser, origin;
 before(async () => { server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0]; browser = await chromium.launch(); });
 after(async () => { await browser?.close(); await server?.close(); });
 
-async function app({ accounts = [], items = [], ideas = [], sources = [], contentError = false } = {}, page = 'content') {
+async function app({ accounts = [], items = [], ideas = [], sources = [], contentError = false, role = 'owner' } = {}, page = 'content') {
   const context = await browser.newContext();
-  const errors = []; let contentReads = 0;
+  const errors = []; let contentReads = 0; const analysisCalls = [];
   await context.addInitScript(companyId => localStorage.setItem('video-analyzer.active-company-id', companyId), companyId);
   await context.route('**/api/**', route => {
     const url = new URL(route.request().url()); const path = url.pathname;
     if (path === '/api/me/companies') return route.fulfill({ json: { companies: [{ id: companyId, archived_at: null }] } });
-    if (path === '/api/companies') return route.fulfill({ json: { companies: [{ company_id: companyId, name: 'Alpha', role: 'owner', archived: false, accounts: accounts.map((platform, i) => ({ account_id: id(10 + i), display_name: platform, platform })) }] } });
+    if (path === '/api/companies') return route.fulfill({ json: { companies: [{ company_id: companyId, name: 'Alpha', role, archived: false, accounts: accounts.map((platform, i) => ({ account_id: id(10 + i), display_name: platform, platform })) }] } });
+    if (path.endsWith('/content/analyze')) { analysisCalls.push(route.request().postDataJSON()); items = items.map(item => ({ ...item, analysis_state: 'queued' })); return route.fulfill({ status: 202, json: { job_id: id(40) } }); }
     if (path.endsWith('/content')) {
       if (url.searchParams.get('analyzed_only') === 'true') return route.fulfill({ json: { items: sources, next_offset: null } });
       contentReads++;
@@ -32,8 +33,45 @@ async function app({ accounts = [], items = [], ideas = [], sources = [], conten
   const p = await context.newPage(); p.setDefaultTimeout(5000);
   p.on('pageerror', error => errors.push(error.message));
   await p.goto(`${origin}#${page}`);
-  return { p, errors, contentReads: () => contentReads, close: () => context.close() };
+  return { p, errors, analysisCalls, contentReads: () => contentReads,
+    completeAnalysis() { items = items.map(item => ({ ...item, analysis_state: 'completed', analyzed: true })); sources = [...items]; },
+    close: () => context.close() };
 }
+
+test('Content starts existing analysis batch and keeps member controls hidden', async () => {
+  const owner = await app({ accounts: ['instagram'], items: [content('discovered')] });
+  try {
+    for (const width of [1440, 1024, 768, 390, 320]) {
+      await owner.p.setViewportSize({ width, height: 900 });
+      assert.equal(await owner.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true, `analysis action overflow at ${width}`);
+    }
+    await owner.p.getByRole('button', { name: 'Analyze', exact: true }).focus();
+    assert.equal(await owner.p.evaluate(() => getComputedStyle(document.activeElement).outlineStyle), 'solid');
+    await owner.p.getByRole('button', { name: 'Analyze', exact: true }).click();
+    await owner.p.getByText('Processing', { exact: true }).waitFor();
+    assert.deepEqual(owner.analysisCalls, [{ item_id: id(2) }]);
+    assert.deepEqual(owner.errors, []);
+  } finally { await owner.close(); }
+  const member = await app({ accounts: ['instagram'], items: [content('discovered')], role: 'member' });
+  try {
+    await member.p.getByText('Not yet analysed').waitFor();
+    assert.equal(await member.p.getByRole('button', { name: 'Analyze', exact: true }).count(), 0);
+  } finally { await member.close(); }
+});
+
+test('completed Content analysis refreshes Generate sources on navigation', async () => {
+  const f = await app({ accounts: ['instagram'], items: [content('discovered')] });
+  try {
+    await f.p.getByRole('button', { name: 'Analyze', exact: true }).click();
+    await f.p.getByText('Processing', { exact: true }).waitFor();
+    f.completeAnalysis();
+    await f.p.getByRole('button', { name: 'Refresh analysis status' }).click();
+    await f.p.getByText('Analysed', { exact: true }).waitFor();
+    await f.p.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Generate' }).click();
+    await f.p.getByRole('button', { name: 'Generate idea', exact: true }).waitFor();
+    assert.deepEqual(f.errors, []);
+  } finally { await f.close(); }
+});
 
 test('Content separates no publishing source from linked but empty, with keyboard navigation', async () => {
   for (const [accounts, title, action] of [[['meta_ads'], 'Connect your content source', 'Go to Settings'], [['instagram'], 'No content here yet', 'Review linked accounts']]) {

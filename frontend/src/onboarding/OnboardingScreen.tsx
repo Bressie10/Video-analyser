@@ -45,7 +45,7 @@ export function OnboardingScreen({ page, onManage, onSwitchCompany, onConnect }:
     if (action === 'analysis') return <Button variant="primary" onClick={() => navigateTo('content')}>Analyze your first content</Button>;
     return <Button variant="primary" onClick={() => navigateTo('generate')}>Generate your first idea</Button>;
   };
-  const companyPicker = available.length > 0 && (!state.company_id || !setupCompany) && <div className="onboarding-company-picker"><label htmlFor="onboarding-company">Choose a company for setup</label>
+  const companyPicker = available.length > 0 && <div className="onboarding-company-picker"><label htmlFor="onboarding-company">Choose a company for setup</label>
     <div><Select id="onboarding-company" value={choice} onChange={event => setChoice(event.target.value)} disabled={onboarding.busy}><option value="">Select a company</option>{available.map(c => <option key={c.id} value={c.id}>{c.name}</option>)}</Select>
       <Button disabled={!choice || onboarding.busy} onClick={() => void onboarding.selectCompany(choice)}>Use for setup</Button></div></div>;
   if (onboarding.mode === 'welcome') return <section className="onboarding-welcome" aria-labelledby="onboarding-title"><div className="onboarding-eyebrow">GET STARTED</div>
@@ -74,6 +74,6 @@ export function OnboardingScreen({ page, onManage, onSwitchCompany, onConnect }:
         {action === 'idea' && <p>Use your analyzed content to generate and save your first idea.</p>}
         {companyPicker}{onboarding.error && <Alert tone="danger" id="onboarding-error">{onboarding.error}</Alert>}
         <div className="onboarding-actions">{actionButton()}<Button onClick={() => void onboarding.refresh()} disabled={onboarding.busy}>Refresh progress</Button></div>
-        {state.company_id && setupCompany && <p className="onboarding-company-note">Setup workspace: <strong>{setupCompany.name}</strong></p>}
+        {state.company_id && setupCompany && <p className="onboarding-company-note">Suggested setup workspace: <strong>{setupCompany.name}</strong></p>}
       </Panel></div></section>;
 }

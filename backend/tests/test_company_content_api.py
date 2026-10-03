@@ -7,6 +7,7 @@ from uuid import uuid4
 from app import company_ownership_repository as ownership
 from app import meta_library_repository as library
 import test_company_api as company_tests
+from auth_fixtures import USER_ID
 
 
 @unittest.skipUnless(os.environ.get('TEST_DATABASE_URL'), 'requires disposable PostgreSQL')
@@ -35,6 +36,24 @@ class CompanyContentAPITests(unittest.TestCase):
         self.f.link(self.f.b, self.f.ig)
         self.assertEqual(self.ids(), {str(self.f.organic)})
         self.assertEqual(self.ids(self.f.b), {str(self.f.instagram)})
+
+    def test_analysis_batch_uses_company_scope_and_owner_permissions(self):
+        self.f.link(self.f.a, self.f.fb)
+        self.f.link(self.f.b, self.f.ig)
+        path = f'/api/companies/{self.f.a}/content/analyze'
+        response = self.request('POST', path, 202, json={'item_id': str(self.f.organic)})
+        job = self.f.db.execute('SELECT connection_id,kind FROM meta_sync_runs WHERE id=%s',
+                                (response['job_id'],)).fetchone()
+        self.assertEqual((job['connection_id'], job['kind']), (self.f.connection, 'analysis'))
+        self.assertEqual(self.f.db.execute('SELECT analysis_state FROM meta_library_items WHERE id=%s',
+                                           (self.f.organic,)).fetchone()['analysis_state'], 'queued')
+        self.request('POST', path, 404, json={'item_id': str(self.f.instagram)})
+        self.request('POST', path, 404, json={'item_id': str(self.f.unassigned)})
+        self.request('POST', f'/api/companies/{self.f.foreign_company}/content/analyze',
+                     403, json={'item_id': str(self.f.organic)})
+        self.f.db.execute("UPDATE company_memberships SET role='member' WHERE company_id=%s AND user_id=%s",
+                          (self.f.a, USER_ID))
+        self.request('POST', path, 403, json={'item_id': str(self.f.organic)})
 
     def test_shared_ads_and_safe_creative_projection(self):
         self.f.link(self.f.a, self.f.ads)
