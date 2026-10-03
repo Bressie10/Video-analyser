@@ -25,7 +25,9 @@ class IntegrationSecurityTests(unittest.TestCase):
         self.api.headers['Authorization'] = 'Bearer '+self.f.auth.token(sub=str(user))
 
     def test_all_application_routes_require_identity(self):
-        public = {'/health', '/health/db', '/api/meta/callback', '/api/tiktok/callback'}
+        # Stripe authenticates its public callback with the raw-body signature.
+        public = {'/health', '/health/db', '/api/meta/callback', '/api/tiktok/callback',
+                  '/api/stripe/webhook'}
         # Real route requests, including valid UUID syntax; authentication precedes body validation.
         import re
         for template, methods in app.openapi()['paths'].items():

@@ -26,6 +26,7 @@ from app.company_routes import router as company_router
 from app.idea_routes import router as idea_router
 from app.auth_routes import router as auth_router
 from app.onboarding_routes import router as onboarding_router
+from app.billing_routes import router as billing_router
 
 from app.video_processing import (
     SUPPORTED_EXTENSIONS,
@@ -44,6 +45,7 @@ load_dotenv(Path(__file__).resolve().parents[2] / ".env", override=False)
 app = FastAPI(title="Video Analyzer API", lifespan=lifespan)
 app.include_router(auth_router)
 app.include_router(onboarding_router)
+app.include_router(billing_router)
 app.include_router(company_profile_router)
 app.include_router(company_router)
 app.include_router(meta_library_router)
