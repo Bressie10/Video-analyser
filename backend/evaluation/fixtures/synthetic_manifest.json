@@ -1,0 +1,12 @@
+{
+  "schema_version": 1,
+  "fixtures": [
+    {
+      "id": "synthetic_observation_example",
+      "analysis": "synthetic_analysis.json",
+      "truth": "synthetic_truth.json",
+      "boundary_tolerance_seconds": 0.25,
+      "minimum_interval_iou": 0.5
+    }
+  ]
+}

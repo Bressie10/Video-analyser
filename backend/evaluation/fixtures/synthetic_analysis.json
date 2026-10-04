@@ -1,0 +1,7 @@
+{
+  "metadata": {"duration_seconds": 4.02, "video": {"resolution": {"width": 640, "height": 360}}, "audio": {"codec": null}},
+  "audio": {"text": "", "segments": []},
+  "scenes": [{"cut_timestamp_seconds": null}, {"cut_timestamp_seconds": 2.08}],
+  "on_screen_text": [{"text": "VIDEO TEST", "appearance_timestamp_seconds": 0.5, "disappearance_timestamp_seconds": 4.0}],
+  "motion_events": [{"type": "local_motion", "start_seconds": 0.5, "end_seconds": 1.5}]
+}
