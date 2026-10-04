@@ -120,6 +120,37 @@ test('new user browser activation reaches 100% through real FastAPI and PostgreS
     assert.equal(await page.getByRole('heading', { name: 'Finish setting up ContentMetric' }).count(), 0);
     assert.ok(seeded.item_id);
 
+    const limited = await fixture('limits');
+    await page.reload();
+    await nav('Settings');
+    const [accountLimit] = await Promise.all([
+      page.waitForResponse(response => response.request().method() === 'PUT' && response.url().includes('/accounts/')),
+      page.getByRole('checkbox', { name: 'Second Instagram' }).click(),
+    ]);
+    assert.equal(accountLimit.status(), 402);
+    assert.equal((await accountLimit.json()).detail.code, 'organic_account_limit_reached');
+    await page.getByText('Publishing account limit reached.').waitFor();
+    await nav('Content');
+    const analysisLimit = await page.evaluate(async ({ jwt, companyId, itemId }) => {
+      const response = await fetch(`/api/companies/${companyId}/content/analyze`, {
+        method: 'POST', headers: { Authorization: `Bearer ${jwt}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ item_id: itemId }),
+      });
+      return { status: response.status, body: await response.json() };
+    }, { jwt: session.user_a, companyId, itemId: limited.item_id });
+    assert.equal(analysisLimit.status, 402);
+    assert.equal(analysisLimit.body.detail.code, 'analysis_limit_reached');
+    await page.getByText("You've used this period's analysis allowance.").first().waitFor();
+    await nav('Generate');
+    const [ideaLimit] = await Promise.all([
+      page.waitForResponse(response => response.request().method() === 'POST' && response.url().includes('/recommendations')),
+      page.getByRole('button', { name: 'Generate idea', exact: true }).click(),
+    ]);
+    assert.equal(ideaLimit.status(), 402);
+    assert.equal((await ideaLimit.json()).detail.code, 'idea_generation_limit_reached');
+    await page.getByText("You've used this period's idea allowance.").first().waitFor();
+    await nav('Overview');
+
     await page.evaluate(jwt => window.__changeAuth({ access_token: jwt,
       user: { id: '22222222-2222-4222-8222-222222222222', email: 'b@example.com' } }), session.user_b);
     await page.getByText('b@example.com').waitFor();

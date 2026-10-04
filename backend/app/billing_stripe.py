@@ -22,7 +22,7 @@ def configured(name):
     return value
 
 
-def request(method, path, *, data=None, idempotency_key=None):
+def request(method, path, *, data=None, params=None, idempotency_key=None):
     headers = {'Stripe-Version': API_VERSION}
     if idempotency_key:
         headers['Idempotency-Key'] = idempotency_key
@@ -30,7 +30,7 @@ def request(method, path, *, data=None, idempotency_key=None):
         with httpx.Client(timeout=10) as client:
             response = client.request(method, 'https://api.stripe.com/v1/' + path,
                                       auth=(configured('STRIPE_SECRET_KEY'), ''),
-                                      headers=headers, data=data)
+                                      headers=headers, data=data, params=params)
             response.raise_for_status()
             return response.json()
     except (httpx.HTTPError, ValueError) as exc:
@@ -55,6 +55,24 @@ def create_checkout(company_id, customer_id, price_id, origin, *, idempotency_ke
         data['automatic_tax[enabled]'] = 'true'
     return request('POST', 'checkout/sessions', data=data,
                    idempotency_key=idempotency_key)
+
+
+def open_checkout_sessions(customer_id):
+    result = request('GET', 'checkout/sessions', params={
+        'customer': customer_id, 'status': 'open', 'limit': 100,
+    })
+    if result.get('has_more') or not isinstance(result.get('data'), list):
+        raise StripeError('Checkout sessions could not be fully checked.')
+    return result['data']
+
+
+def current_subscriptions(customer_id):
+    result = request('GET', 'subscriptions', params={
+        'customer': customer_id, 'limit': 100,
+    })
+    if result.get('has_more') or not isinstance(result.get('data'), list):
+        raise StripeError('Subscriptions could not be fully checked.')
+    return result['data']
 
 
 def create_portal(customer_id, origin):

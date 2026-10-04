@@ -81,19 +81,23 @@ children. The frontend reads `detail.code` from the real FastAPI shape.
 
 ## Checkout, Portal, webhooks and subscription state
 
-Only an owner can POST Checkout or Portal. The backend supplies the existing
-company Stripe customer, configured monthly Pro Price and `APP_ORIGIN`.
+Only an owner can POST Checkout or Portal. The backend checks ownership before
+reading billing configuration and supplies the existing company Stripe
+customer, configured monthly Pro Price and `APP_ORIGIN`.
 Neither Price nor customer nor subscription IDs are accepted from the browser.
 An already effective Pro subscription returns 409 with Portal guidance.
-Concurrent or rapid duplicate Checkout calls use the same deterministic
-Stripe idempotency key under the billing-row lock. This reuses a session within
-Stripe's idempotency retention window. After that window, the current design
-can issue another completable Checkout Session while an earlier session is
-still completable and local billing is Free. This is a residual duplicate
-subscription risk requiring a staging Stripe check and operational monitoring;
-the integration does not claim that Stripe idempotency prevents it indefinitely.
+Concurrent Checkout calls serialize on the billing row. Before creating a
+Session, the server checks Stripe for open Sessions and non-ended subscriptions
+on the company's customer. It reuses an open company Session, including one
+created before Stripe's idempotency retention window, and blocks a new purchase
+while Stripe has a subscription even if the webhook has not yet arrived. Once
+the old Session has expired and no subscription exists, a new attempt receives
+a new idempotency key. Stripe list behavior and Checkout completion races still
+require a live staging test before release.
 
-The frontend validates the returned Stripe HTTPS host and navigates. Returning
+The frontend validates the returned Stripe HTTPS host and navigates. An
+effective-Free company with a non-ended subscription directs its owner to
+Portal rather than offering a Checkout that the backend would reject. Returning
 from Checkout or Portal triggers a fresh billing read and bounded retries;
 the return marker changes messaging only. It cannot activate Pro. Members
 have no management control, and direct backend POSTs remain owner-gated.
@@ -152,12 +156,12 @@ Supabase, Meta, model, worker or production deployment behavior.
 
 ## Local validation
 
-The final sequential backend run passed 392 tests with zero failures and zero
+The final sequential backend run passed 395 tests with zero failures and zero
 skips using disposable PostgreSQL, provider fixtures and local media. It covers
 fresh and populated V7-to-014 migration paths, rollback, RLS, webhook replay,
 last-slot concurrency, V6 authorization and V7 onboarding. The final frontend
-run passed 319 tests with zero failures and zero skips, including browser
-integration with real FastAPI/PostgreSQL, a real workspace 402, billing usage
+run passed 320 tests with zero failures and zero skips, including browser
+integration with real FastAPI/PostgreSQL, all four real limit-code 402 responses, billing usage
 reads, foreign-user denial, company switching, keyboard and width checks at
 1440, 1024, 768, 390 and 320 pixels. Python compilation, TypeScript typecheck,
 production build and `git diff --check` passed. These local tests use mocked

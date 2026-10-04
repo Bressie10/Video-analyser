@@ -6,6 +6,7 @@ import { useBilling, type BillingState } from './BillingProvider';
 import './billing.css';
 
 export function billingDate(value: string) { return new Date(value).toLocaleDateString('en-IE', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' }); }
+function checkoutAvailable(billing: Billing) { return billing.effective_plan === 'free' && (!billing.subscription_status || ['canceled', 'incomplete_expired'].includes(billing.subscription_status)); }
 export function UsageIndicator({ label, used, limit }: { label: string; used: number; limit: number }) {
   const atLimit = used >= limit;
   return <div className="billing-usage"><div><strong>{label}</strong><span>{used} of {limit} used</span></div>
@@ -21,8 +22,8 @@ export function LimitNotice({ code, billing, onUpgrade }: { code: LimitCode; bil
     {code === 'free_workspace_limit_reached' && <p>Upgrade an existing workspace to Pro before creating another Free workspace.</p>}
     {code === 'organic_account_limit_reached' && <p>Existing accounts stay linked. Your plan limits new Instagram and Facebook links; Ads accounts are separate.</p>}
     {!free && billing && <p>Resets {billingDate(billing.period.ends_at)}.</p>}
-    {free && billing?.can_manage_billing && onUpgrade && <Button onClick={onUpgrade}>Upgrade to Pro</Button>}
-    {(!free || !billing?.can_manage_billing) && <a href="#settings">View Billing in Settings</a>}
+    {billing && checkoutAvailable(billing) && billing.can_manage_billing && onUpgrade && <Button onClick={onUpgrade}>Upgrade to Pro</Button>}
+    {(!billing || !checkoutAvailable(billing) || !billing.can_manage_billing) && <a href="#settings">View Billing in Settings</a>}
   </Alert>;
 }
 export function BillingSection({ companyId, activeCompanyId }: { companyId: string; activeCompanyId: string | null }) {
@@ -64,7 +65,7 @@ export function BillingSection({ companyId, activeCompanyId }: { companyId: stri
     {data && <>
       <div className="billing-plan"><div><span>Plan</span><strong>{data.effective_plan === 'pro' ? 'Pro' : 'Free'}</strong><span>{data.effective_plan === 'pro' ? '€19/month per workspace' : '€0'}</span></div></div>
       {data.effective_plan === 'pro' && data.subscription_status === 'past_due' && data.grace_until && <Alert tone="warning"><strong>Payment needs attention</strong><p>Your Pro access is temporarily still active. Update your payment method before {billingDate(data.grace_until)} to avoid returning to Free limits.</p></Alert>}
-      {data.effective_plan === 'free' && data.subscription_status && !['canceled'].includes(data.subscription_status) && <Alert tone="warning"><strong>Subscription needs attention</strong><p>Free limits apply until your subscription is active. You can review billing or try upgrading again.</p></Alert>}
+      {data.effective_plan === 'free' && data.subscription_status && !['canceled', 'incomplete_expired'].includes(data.subscription_status) && <Alert tone="warning"><strong>Subscription needs attention</strong><p>Free limits apply until your subscription is active. Use Manage subscription to review billing.</p></Alert>}
       {data.cancel_at_period_end && data.effective_plan === 'pro' && <p className="settings-note">Your Pro subscription is scheduled to end on {billingDate(data.period.ends_at)}.</p>}
       <h3>Usage this period</h3>
       <div className="billing-usage-grid"><UsageIndicator label="Analyses" used={data.usage.analyses} limit={data.entitlements.analysis_limit} /><UsageIndicator label="Ideas" used={data.usage.idea_generations} limit={data.entitlements.idea_generation_limit} /></div>
@@ -72,7 +73,7 @@ export function BillingSection({ companyId, activeCompanyId }: { companyId: stri
       {data.effective_plan === 'free' && <p>Free includes one owned workspace.</p>}
       <p>{data.entitlements.organic_account_limit} organic Instagram/Facebook {data.entitlements.organic_account_limit === 1 ? 'account' : 'accounts'} included. Existing accounts remain visible after a downgrade.</p>
       {data.can_manage_billing && <div className="billing-actions">
-        {data.effective_plan === 'free' && <Button variant="primary" disabled={busy} onClick={() => void act('checkout')}>Upgrade to Pro</Button>}
+        {checkoutAvailable(data) && <Button variant="primary" disabled={busy} onClick={() => void act('checkout')}>Upgrade to Pro</Button>}
         {(data.effective_plan === 'pro' || data.subscription_status) && <Button disabled={busy} onClick={() => void act('portal')}>Manage subscription</Button>}
       </div>}
       {actionError && <Alert tone="danger">{actionError}</Alert>}

@@ -10,7 +10,7 @@ The parser accepts the foundation's `plan`, `effective_plan`, `subscription_stat
 
 Settings adds a compact Billing section using V5 controls, alerts, spacing and tokens. Free shows €0, current usage, period reset, an owner-only Upgrade action, and a short Pro comparison: €19/month per workspace, 50 analyses, 150 idea generations, 5 organic publishing accounts. Pro shows €19/month, current usage and period end with an owner-only Manage subscription action. `UsageIndicator` always prints the numbers and an explicit at-limit message alongside its progress element. Members can read billing but get no management controls. Only `can_manage_billing` enables those controls.
 
-The backend's `past_due` plus effective Pro and `grace_until` produce a payment warning with the backend date. Cancellation keeps Pro visible until the effective plan changes and names the scheduled end date. If stored subscription metadata exists but effective access is Free, Settings displays Free limits and a restrained subscription notice. A downgrade never hides old content, analyses, ideas, profiles or linked accounts.
+The backend's `past_due` plus effective Pro and `grace_until` produce a payment warning with the backend date. Cancellation keeps Pro visible until the effective plan changes and names the scheduled end date. If stored subscription metadata exists but effective access is Free, Settings displays Free limits and a restrained subscription notice. While a non-ended subscription remains, the owner uses Manage subscription rather than starting another Checkout. A downgrade never hides old content, analyses, ideas, profiles or linked accounts.
 
 ## Hosted billing flows and returns
 

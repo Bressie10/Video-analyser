@@ -14,6 +14,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path[:0] = [str(ROOT), str(ROOT / 'tests')]
 os.environ.update(META_WORKER_ENABLED='false', COMPANY_PROFILE_WORKER_ENABLED='false')
 from app.main import app
+from app import billing_repository as billing
 from app.auth import get_token_verifier
 from app.video_repository import save_analysis
 from test_meta_v6_auth import MetaV6Tests
@@ -67,9 +68,29 @@ def main():
             fixture.db.execute("UPDATE meta_connections SET status='disconnected' WHERE id=%s", (connection_id(),))
             return {'disconnected': True}
 
+        def seed_limits():
+            company_id = fixture.db.execute('''SELECT company_id FROM company_memberships
+                WHERE user_id=%s AND role='owner' ''', (USER_ID,)).fetchone()['company_id']
+            connection = connection_id()
+            second = fixture.db.execute('''INSERT INTO meta_accounts(connection_id,platform,external_id,label)
+                VALUES (%s,'instagram',%s,'Second Instagram') RETURNING id''',
+                (connection, str(uuid4()))).fetchone()['id']
+            item = fixture.db.execute('''INSERT INTO meta_library_items
+                (connection_id,account_id,platform,external_id,content_type,label,published_at,analysis_state)
+                VALUES (%s,%s,'instagram',%s,'reel','Second reel',now(),'discovered') RETURNING id''',
+                (connection, state['account'], str(uuid4()))).fetchone()['id']
+            with fixture.db.transaction():
+                for kind, count in (('analysis', 2), ('idea_generation', 4)):
+                    for index in range(count):
+                        source = f'v8-browser-limit-{kind}-{index}'
+                        billing.record_usage(fixture.db, company_id, kind, 1, source,
+                                             'browser_fixture', source, 'reserve')
+            return {'account_id': str(second), 'item_id': str(item)}
+
         app.add_api_route('/__v7_fixture/content', seed_content, methods=['POST'], include_in_schema=False)
         app.add_api_route('/__v7_fixture/complete-analysis', finish_analysis, methods=['POST'], include_in_schema=False)
         app.add_api_route('/__v7_fixture/disconnect', disconnect, methods=['POST'], include_in_schema=False)
+        app.add_api_route('/__v7_fixture/limits', seed_limits, methods=['POST'], include_in_schema=False)
 
         class Server(uvicorn.Server):
             @contextmanager

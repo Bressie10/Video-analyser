@@ -95,7 +95,16 @@ class BillingTests(unittest.TestCase):
     def test_checkout_and_portal_authorization_and_server_values(self):
         self.assertEqual(self.call('POST', self.path('/checkout'), user=OTHER_USER_ID).status_code, 403)
         self.assertEqual(self.call('POST', self.path('/portal'), user=OTHER_USER_ID).status_code, 403)
+        with patch.dict(os.environ, {'STRIPE_PRO_MONTHLY_PRICE_ID': '', 'APP_ORIGIN': ''}):
+            self.assertEqual(self.call('POST', f'/api/companies/{self.foreign}/billing/checkout').status_code, 403)
+            self.assertEqual(self.call('POST', f'/api/companies/{self.foreign}/billing/portal').status_code, 403)
+        open_session = {'customer': 'cus_test', 'mode': 'subscription',
+            'client_reference_id': str(self.owner),
+            'metadata': {'contentmetric_company_id': str(self.owner)},
+            'url': 'https://checkout.stripe.com/pay/test'}
         with patch.object(billing_routes.stripe, 'create_customer', return_value={'id': 'cus_test'}) as customer, \
+             patch.object(billing_routes.stripe, 'open_checkout_sessions', side_effect=[[], [open_session]]), \
+             patch.object(billing_routes.stripe, 'current_subscriptions', return_value=[]), \
              patch.object(billing_routes.stripe, 'create_checkout', return_value={
                  'url': 'https://checkout.stripe.com/pay/test'}) as checkout:
             for _ in range(2):
@@ -105,16 +114,62 @@ class BillingTests(unittest.TestCase):
                 self.assertEqual(result.status_code, 200, result.text)
                 self.assertEqual(result.json(), {'url': 'https://checkout.stripe.com/pay/test'})
             customer.assert_called_once_with(self.owner)
-            self.assertEqual(checkout.call_count, 2)
+            self.assertEqual(checkout.call_count, 1)
             self.assertEqual(checkout.call_args.args[:3], (self.owner, 'cus_test', 'price_pro'))
-            self.assertEqual(checkout.call_args_list[0].kwargs['idempotency_key'],
-                             checkout.call_args_list[1].kwargs['idempotency_key'])
             self.assertEqual(self.db.execute('SELECT stripe_subscription_id FROM company_billing WHERE company_id=%s',
                                              (self.owner,)).fetchone()['stripe_subscription_id'], None)
         with patch.object(billing_routes.stripe, 'create_portal', return_value={
                 'url': 'https://billing.stripe.com/session/test'}) as portal:
             self.assertEqual(self.call('POST', self.path('/portal')).status_code, 200)
             portal.assert_called_once_with('cus_test', 'https://example.test')
+
+    def test_old_open_checkout_is_reused_and_completed_subscription_blocks_new_checkout(self):
+        self.mapped()
+        old = {'customer': 'cus_test', 'mode': 'subscription',
+            'client_reference_id': str(self.owner),
+            'metadata': {'contentmetric_company_id': str(self.owner)},
+            'url': 'https://checkout.stripe.com/pay/old'}
+        with patch.object(billing_routes.stripe, 'open_checkout_sessions', return_value=[old]), \
+             patch.object(billing_routes.stripe, 'current_subscriptions', return_value=[]), \
+             patch.object(billing_routes.stripe, 'create_checkout') as create:
+            for _ in range(2):
+                self.assertEqual(self.call('POST', self.path('/checkout')).json(), {'url': old['url']})
+            create.assert_not_called()
+        # A completed Session may precede webhook delivery. Stripe's subscription
+        # blocks another purchase even while the local effective plan is Free.
+        with patch.object(billing_routes.stripe, 'open_checkout_sessions', return_value=[]), \
+             patch.object(billing_routes.stripe, 'current_subscriptions',
+                          return_value=[{'status': 'active'}]), \
+             patch.object(billing_routes.stripe, 'create_checkout') as create:
+            self.assertEqual(self.call('POST', self.path('/checkout')).status_code, 409)
+            create.assert_not_called()
+
+    def test_expired_checkout_uses_new_attempt_key(self):
+        self.mapped()
+        with patch.object(billing_routes.stripe, 'open_checkout_sessions', return_value=[]), \
+             patch.object(billing_routes.stripe, 'current_subscriptions', return_value=[]), \
+             patch.object(billing_routes.stripe, 'create_checkout', return_value={
+                 'url': 'https://checkout.stripe.com/pay/new'}) as create:
+            self.assertEqual(self.call('POST', self.path('/checkout')).status_code, 200)
+            self.assertEqual(self.call('POST', self.path('/checkout')).status_code, 200)
+            self.assertNotEqual(create.call_args_list[0].kwargs['idempotency_key'],
+                                create.call_args_list[1].kwargs['idempotency_key'])
+
+    def test_checkout_provider_lists_are_customer_scoped_and_fail_closed(self):
+        with patch.object(billing_routes.stripe, 'request', return_value={
+            'data': [], 'has_more': False}) as send:
+            self.assertEqual(billing_routes.stripe.open_checkout_sessions('cus_test'), [])
+            self.assertEqual(send.call_args.kwargs['params'], {
+                'customer': 'cus_test', 'status': 'open', 'limit': 100})
+            self.assertEqual(billing_routes.stripe.current_subscriptions('cus_test'), [])
+            self.assertEqual(send.call_args.kwargs['params'], {
+                'customer': 'cus_test', 'limit': 100})
+        with patch.object(billing_routes.stripe, 'request', return_value={
+            'data': [], 'has_more': True}):
+            with self.assertRaises(billing_routes.stripe.StripeError):
+                billing_routes.stripe.open_checkout_sessions('cus_test')
+            with self.assertRaises(billing_routes.stripe.StripeError):
+                billing_routes.stripe.current_subscriptions('cus_test')
 
     def test_signature_duplicate_and_transaction_retry(self):
         self.mapped()

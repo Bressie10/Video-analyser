@@ -38,9 +38,13 @@ under the billing row lock and creates a hosted Checkout Session with
 `mode=subscription`, one unit of `STRIPE_PRO_MONTHLY_PRICE_ID`, company metadata,
 and return URLs built from `APP_ORIGIN`. Request bodies, Origin/Referer headers,
 query strings, and redirect success do not grant Pro or select a Price/customer.
-Customer and Checkout creation use deterministic Stripe idempotency keys; retries
-within Stripe's idempotency retention window reuse the session/customer. An already
-effective Pro company is directed to Portal instead.
+Customer creation uses a deterministic Stripe idempotency key. Before a new
+Checkout, the server checks the company's Stripe customer for open Sessions and
+non-ended subscriptions. An open company Session is reused; a subscription
+blocks another Checkout even before its webhook arrives. New Checkout attempts
+use distinct idempotency keys after an old Session expires. An already effective
+Pro company is directed to Portal instead. Provider list and timing behavior
+must be checked in Stripe staging before release.
 
 `POST /api/companies/{company_id}/billing/portal` requires an owner and an existing
 company customer. It returns the server-created Stripe Customer Portal URL. Configure

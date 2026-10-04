@@ -2,7 +2,7 @@
 
 import os
 from urllib.parse import urlparse
-from uuid import UUID
+from uuid import UUID, uuid4
 
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
@@ -47,12 +47,12 @@ def read_billing(company_id: UUID, user: AuthenticatedUser = Depends(require_aut
 @router.post('/api/companies/{company_id}/billing/checkout')
 def checkout(company_id: UUID, user: AuthenticatedUser = Depends(require_authenticated_user)):
     try:
-        price = stripe.configured('STRIPE_PRO_MONTHLY_PRICE_ID')
-        if not price.startswith('price_'):
-            raise stripe.StripeError('Invalid Pro price.')
-        return_origin = origin()
         with application_database() as db:
             auth.require_company_role(db, user.user_id, company_id)
+            price = stripe.configured('STRIPE_PRO_MONTHLY_PRICE_ID')
+            if not price.startswith('price_'):
+                raise stripe.StripeError('Invalid Pro price.')
+            return_origin = origin()
             row = billing.initialize(db, company_id)
             if billing.effective_plan(row) == 'pro':
                 raise HTTPException(409, 'Manage the current subscription in the billing portal.')
@@ -61,8 +61,24 @@ def checkout(company_id: UUID, user: AuthenticatedUser = Depends(require_authent
                 customer = stripe.create_customer(company_id)['id']
                 db.execute('''UPDATE company_billing SET stripe_customer_id=%s,updated_at=now()
                     WHERE company_id=%s''', (customer, company_id))
+            # Stripe's request idempotency expires. Check provider state while the
+            # company billing row is locked, including Sessions from older requests.
+            sessions = stripe.open_checkout_sessions(customer)
+            subscriptions = stripe.current_subscriptions(customer)
+            if any(sub.get('status') != 'incomplete_expired' for sub in subscriptions):
+                raise HTTPException(409, 'Manage the current subscription in the billing portal.')
+            if sessions:
+                if len(sessions) != 1 or any(
+                    session.get('customer') != customer
+                    or session.get('mode') != 'subscription'
+                    or session.get('client_reference_id') != str(company_id)
+                    or (session.get('metadata') or {}).get('contentmetric_company_id') != str(company_id)
+                    for session in sessions
+                ):
+                    raise HTTPException(409, 'An existing Checkout session needs billing support.')
+                return destination(sessions[0].get('url'), 'checkout.stripe.com')
             session = stripe.create_checkout(company_id, customer, price, return_origin,
-                idempotency_key=f'contentmetric:company:{company_id}:checkout:{row["current_period_start"].isoformat()}')
+                idempotency_key=f'contentmetric:company:{company_id}:checkout:{uuid4()}')
             return destination(session.get('url'), 'checkout.stripe.com')
     except stripe.StripeError:
         raise unavailable() from None
@@ -71,9 +87,9 @@ def checkout(company_id: UUID, user: AuthenticatedUser = Depends(require_authent
 @router.post('/api/companies/{company_id}/billing/portal')
 def portal(company_id: UUID, user: AuthenticatedUser = Depends(require_authenticated_user)):
     try:
-        return_origin = origin()
         with application_database() as db:
             auth.require_company_role(db, user.user_id, company_id)
+            return_origin = origin()
             row = billing.initialize(db, company_id)
             if not row['stripe_customer_id']:
                 raise HTTPException(409, 'No billing customer exists for this company.')
