@@ -11,7 +11,9 @@ class Contract(BaseModel):
     model_config = ConfigDict(extra="forbid", strict=True)
 
 
-StructureRole = Literal["hook", "setup", "value", "demonstration", "cta", "other"]
+StructureRole = Literal[
+    "hook", "setup", "problem", "explanation", "demonstration", "proof", "payoff", "cta", "other",
+]
 
 
 def require_version(actual: str, expected: str) -> str:

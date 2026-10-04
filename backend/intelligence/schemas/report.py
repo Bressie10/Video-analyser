@@ -11,7 +11,7 @@ from intelligence.schemas.common import (
 from intelligence.versions import ANALYSIS_REPORT_VERSION, ONTOLOGY_VERSION
 
 
-class Detector(Contract):
+class VersionedProducer(Contract):
     name: str = Field(min_length=1)
     version: str = Field(min_length=1)
 
@@ -24,7 +24,7 @@ class Evidence(Contract):
 
 class TechniqueObservation(TechniqueSpan):
     confidence: float = Field(ge=0, le=1, allow_inf_nan=False)
-    detector: Detector
+    detector: VersionedProducer
     evidence: list[Evidence] = Field(min_length=1)
 
 
@@ -32,8 +32,12 @@ class StructureSegment(TimeRange):
     role: StructureRole
     end_seconds: float = Field(gt=0, allow_inf_nan=False)
     confidence: float = Field(ge=0, le=1, allow_inf_nan=False)
-    detector: Detector
+    detector: VersionedProducer
     evidence: list[Evidence] = Field(min_length=1)
+
+
+class ComputedFeature(NumericFeature):
+    producer: VersionedProducer
 
 
 class ProcessingProvenance(Contract):
@@ -49,10 +53,10 @@ class AnalysisReport(Contract):
     schema_version: str
     ontology_version: str
     source: SourceIdentity
-    detector_versions: list[Detector]
+    producer_versions: list[VersionedProducer]
     techniques: list[TechniqueObservation]
     structure: list[StructureSegment]
-    derived_features: list[NumericFeature]
+    derived_features: list[ComputedFeature]
     limitations: list[str]
     provenance: ProcessingProvenance
 
@@ -68,12 +72,14 @@ class AnalysisReport(Contract):
 
     @model_validator(mode="after")
     def consistent(self):
-        declared = {(d.name, d.version) for d in self.detector_versions}
-        if len(declared) != len(self.detector_versions):
-            raise ValueError("Duplicate detector version declaration")
-        used = [o.detector for o in self.techniques] + [s.detector for s in self.structure]
+        declared = {(d.name, d.version) for d in self.producer_versions}
+        if len(declared) != len(self.producer_versions):
+            raise ValueError("Duplicate producer version declaration")
+        used = ([o.detector for o in self.techniques]
+                + [s.detector for s in self.structure]
+                + [f.producer for f in self.derived_features])
         if any((d.name, d.version) not in declared for d in used):
-            raise ValueError("Observation detector/version must be declared")
+            raise ValueError("Observation or feature producer/version must be declared")
         duration = self.source.duration_seconds
         if duration is not None:
             spans = [*self.techniques, *self.structure]

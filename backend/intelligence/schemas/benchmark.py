@@ -11,9 +11,31 @@ from intelligence.versions import ANALYSIS_REPORT_VERSION, BENCHMARK_VERSION, ON
 
 
 def valid_metrics(values: dict[str, int | float | None]) -> dict[str, int | float | None]:
-    if any(value is not None and (value < 0 or not math.isfinite(value)) for value in values.values()):
+    if any(not key.strip() for key in values):
+        raise ValueError("Metric keys must be non-empty")
+    if any(value is not None and (value < 0 or
+           (isinstance(value, float) and not math.isfinite(value))) for value in values.values()):
         raise ValueError("Metrics must be finite non-negative values or null")
     return values
+
+
+class MetricDefinition(Contract):
+    description: str = Field(min_length=1)
+    unit: str = Field(min_length=1)
+    measurement_basis: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def nonblank(self):
+        if not all(value.strip() for value in (
+            self.description, self.unit, self.measurement_basis,
+        )):
+            raise ValueError("Metric definition fields must be nonblank")
+        return self
+
+
+def require_definitions(metrics: dict, definitions: dict) -> None:
+    if set(metrics) != set(definitions):
+        raise ValueError("Every recorded metric key needs exactly one semantic definition")
 
 
 class SourceProvenance(Contract):
@@ -67,7 +89,7 @@ class PerformanceSnapshot(Contract):
     source: str = Field(min_length=1)
     exposure: Literal["organic", "paid", "mixed", "unknown"]
     metrics: dict[str, int | float | None]
-    metric_definitions: dict[str, str]
+    metric_definitions: dict[str, MetricDefinition]
     observation_window_start: datetime | None
     observation_window_end: datetime | None
     attribution_context: str | None
@@ -83,6 +105,7 @@ class PerformanceSnapshot(Contract):
 
     @model_validator(mode="after")
     def ordered_window(self):
+        require_definitions(self.metrics, self.metric_definitions)
         if self.observation_window_start and self.observation_window_end:
             if self.observation_window_end < self.observation_window_start:
                 raise ValueError("Invalid performance observation window")
@@ -90,22 +113,28 @@ class PerformanceSnapshot(Contract):
 
 
 class AccountBaseline(Contract):
+    source: str = Field(min_length=1)
     metrics: dict[str, int | float | None]
-    sample_size: int | None = Field(ge=0)
-    window_start: datetime | None
-    window_end: datetime | None
-    method_reference: str | None
+    metric_definitions: dict[str, MetricDefinition]
+    sample_size: int = Field(ge=1)
+    window_start: datetime
+    window_end: datetime
+    cohort_definition: str = Field(min_length=1)
+    method_reference: str = Field(min_length=1)
 
     _valid_metrics = field_validator("metrics")(valid_metrics)
 
     @field_validator("window_start", "window_end")
     @classmethod
     def window_aware(cls, value):
-        return aware(value) if value is not None else value
+        return aware(value)
 
     @model_validator(mode="after")
     def ordered_window(self):
-        if self.window_start and self.window_end and self.window_end < self.window_start:
+        require_definitions(self.metrics, self.metric_definitions)
+        if not self.source.strip() or not self.cohort_definition.strip() or not self.method_reference.strip():
+            raise ValueError("Baseline source, cohort and method must be nonblank")
+        if self.window_end <= self.window_start:
             raise ValueError("Invalid baseline window")
         return self
 

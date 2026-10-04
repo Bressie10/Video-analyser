@@ -1,5 +1,5 @@
 {
-  "ontology_version": "1.0.0",
+  "ontology_version": "1.1.0",
   "techniques": [
     {"id":"hook.question","name":"Question hook","description":"Opens with a spoken or displayed question.","category":"hook","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.0.0"},
     {"id":"hook.bold_claim","name":"Bold claim","description":"Opens with an assertive claim intended to draw attention.","category":"hook","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.0.0"},
@@ -19,10 +19,13 @@
     {"id":"format.interview","name":"Interview","description":"Question and answer exchange is a principal format.","category":"format","temporal":false,"observation_kind":"whole_video","overlaps_allowed":true,"introduced_in":"1.0.0"},
     {"id":"editing.jump_cut","name":"Jump cut","description":"Abrupt cut within a continuous subject or setup.","category":"editing","temporal":true,"observation_kind":"point","overlaps_allowed":true,"introduced_in":"1.0.0"},
     {"id":"editing.punch_in","name":"Punch in","description":"Abrupt reframing to a closer crop of the same shot.","category":"editing","temporal":true,"observation_kind":"point","overlaps_allowed":true,"introduced_in":"1.0.0"},
+    {"id":"editing.zoom","name":"Zoom","description":"Continuous visible change in framing scale within a shot.","category":"editing","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.1.0"},
+    {"id":"editing.transition","name":"Visual transition","description":"Deliberate non-hard-cut visual transition between shots or scenes.","category":"editing","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.1.0"},
     {"id":"editing.b_roll","name":"B-roll","description":"Supporting footage overlays or interrupts the main action.","category":"editing","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.0.0"},
     {"id":"editing.speed_ramp","name":"Speed ramp","description":"Playback speed visibly changes within a shot.","category":"editing","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.0.0"},
     {"id":"editing.freeze_frame","name":"Freeze frame","description":"A held still frame interrupts moving footage.","category":"editing","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.0.0"},
     {"id":"editing.split_screen","name":"Split screen","description":"Two or more distinct visual regions display simultaneously.","category":"editing","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.0.0"},
+    {"id":"editing.picture_in_picture","name":"Picture-in-picture","description":"A smaller inset moving image overlays a principal image.","category":"editing","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.1.0"},
     {"id":"text.captions","name":"Captions","description":"On-screen text follows spoken words.","category":"text","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.0.0"},
     {"id":"text.headline","name":"Headline","description":"Prominent on-screen title summarizes or frames the content.","category":"text","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.0.0"},
     {"id":"text.keyword_emphasis","name":"Keyword emphasis","description":"Selected words receive distinct visual emphasis.","category":"text","temporal":true,"observation_kind":"interval","overlaps_allowed":true,"introduced_in":"1.0.0"},
