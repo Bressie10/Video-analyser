@@ -1,5 +1,6 @@
 import { apiFetch } from "../auth/apiFetch";
 import { isUUID, ServiceError } from '../metaLibrary';
+import { billingError } from '../billing/billingApi';
 
 export type ContentItem = {
   library_item_id: string; display_title: string; platform: string; content_type: string;
@@ -29,7 +30,7 @@ export async function analyzeContent(company: string, itemId: string, signal: Ab
     method: 'POST', signal, credentials: 'same-origin', cache: 'no-store',
     headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ item_id: itemId }),
   });
-  if (!response.ok) throw new ServiceError(response.status, 'Analysis could not be started.');
+  if (!response.ok) throw response.status === 402 ? await billingError(response) : new ServiceError(response.status, 'Analysis could not be started.');
 }
 export const platformLabel = (value: string) => ({ instagram: 'Instagram', facebook: 'Facebook', meta_ads: 'Meta Ads' })[value] ?? 'Social content';
 export const typeLabel = (value: string) => ({ reel: 'Reel', video: 'Video', ad: 'Ad' })[value] ?? 'Content';

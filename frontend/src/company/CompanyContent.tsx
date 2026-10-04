@@ -6,16 +6,21 @@ import { Alert, EmptyState, LoadingState, PageLayout, Panel, SectionHeader } fro
 import { ContentList } from '../content/ContentList';
 import { analyzeContent, contentError, defaultFilters, loadContent, type ContentFilters } from '../content/contentApi';
 import '../content/content.css';
+import { PlanLimitError } from '../billing/billingApi';
+import { useBilling } from '../billing/BillingProvider';
+import { LimitNotice } from '../billing/BillingUI';
 
 export function CompanyContent({ onAnalysisChange }: { onAnalysisChange?: () => void }) { return <CompanyScopeBoundary><Content onAnalysisChange={onAnalysisChange} /></CompanyScopeBoundary>; }
 function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   const { activeCompany } = useCompany();
+  const billing = useBilling();
   const [filters, setFilters] = useState(defaultFilters);
   const [search, setSearch] = useState('');
   const [offset, setOffset] = useState(0);
   const [revision, revise] = useState(0);
   const [analyzing, setAnalyzing] = useState<string | null>(null);
   const [actionError, setActionError] = useState('');
+  const [limit, setLimit] = useState(false);
   const actionController = useRef<AbortController | null>(null);
   const lastStatuses = useRef('');
   useEffect(() => () => actionController.current?.abort(), []);
@@ -42,12 +47,12 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
     if (!activeCompany || analyzing) return;
     const controller = new AbortController();
     actionController.current = controller;
-    setAnalyzing(id); setActionError('');
+    setAnalyzing(id); setActionError(''); setLimit(false);
     try {
       await analyzeContent(activeCompany.id, id, controller.signal);
       if (!controller.signal.aborted) { revise(v => v + 1); onAnalysisChange?.(); }
-    } catch {
-      if (!controller.signal.aborted) setActionError('Analysis could not be started. Try again or check your access in Settings.');
+    } catch (error) {
+      if (!controller.signal.aborted) { if (error instanceof PlanLimitError && error.code === 'analysis_limit_reached') { setLimit(true); billing.refresh(); } else setActionError('Analysis could not be started. Try again or check your access in Settings.'); }
     } finally {
       if (!controller.signal.aborted) setAnalyzing(null);
     }
@@ -56,6 +61,7 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   const noAnalysis = completeUnfilteredPage && allItems.length > 0 && allItems.every(item => !item.analyzed);
   const processing = allItems.some(item => ['queued', 'pending', 'processing', 'running', 'downloading', 'analyzing'].includes(item.analysis_state));
   const failed = allItems.some(item => item.analysis_state === 'failed');
+  const quotaReached = billing.state.data && billing.state.data.usage.analyses >= billing.state.data.entitlements.analysis_limit;
   const reset = () => { setSearch(''); setFilters(defaultFilters); setOffset(0); };
   return <PageLayout className="cm-library" role="region" aria-label="Company content library">
     <SectionHeader title="Content library" description="Browse the content linked to this company. Analysed videos can inform your next idea."
@@ -79,6 +85,7 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
     </Panel>
     {!invalidDates && <div aria-busy={result.status === 'loading'}>
       {actionError && <Alert tone="danger" role="alert">{actionError}</Alert>}
+      {(limit || quotaReached) && <LimitNotice code="analysis_limit_reached" billing={billing.state.data} onUpgrade={() => { window.location.hash = 'settings'; }} />}
       {result.status === 'loading' && <LoadingState label="Loading company content…" />}
       {result.status === 'error' && <Alert tone="danger"><p>{contentError(result.error)}</p><Button onClick={() => revise(v => v + 1)}>Retry content</Button></Alert>}
       {result.data && (result.data.items.length ? <>

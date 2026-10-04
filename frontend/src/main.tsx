@@ -21,11 +21,12 @@ import { navigate, useAppPage } from './shell/navigation';
 import { WorkspaceOverview } from './shell/WorkspaceOverview';
 import { OnboardingProvider, useOnboarding } from './onboarding/OnboardingProvider';
 import { OnboardingScreen } from './onboarding/OnboardingScreen';
+import { BillingProvider, useBilling } from './billing/BillingProvider';
 
 function OnboardingMount() {
   const store = useCompanyStore();
   const refreshAccess = useCallback(() => store.refreshCompanies(), [store]);
-  return <OnboardingProvider onAccessError={refreshAccess}><App /></OnboardingProvider>;
+  return <OnboardingProvider onAccessError={refreshAccess}><BillingProvider><App /></BillingProvider></OnboardingProvider>;
 }
 
 export function App() {
@@ -37,18 +38,19 @@ export function App() {
   const [analysisRevision, refreshAnalysisSources] = useState(0);
   const store = useCompanyStore();
   const onboarding = useOnboarding();
+  const billing = useBilling();
   const connect = useRef<() => void>(() => {});
   const previous = useRef(false);
   const connectionChanged = useCallback((value: boolean) => {
     setConnected(value);
     if (value !== previous.current && store.getSnapshot().status === 'ready') void store.refreshCompanies();
-    if (value !== previous.current) void onboarding.refresh();
+    if (value !== previous.current) { void onboarding.refresh(); billing.refresh(); }
     previous.current = value;
-  }, [store, onboarding.refresh]);
+  }, [store, onboarding.refresh, billing.refresh]);
   useEffect(() => { void onboarding.refresh(); }, [page]);
   const model = useCompanyUI(connected, () => connect.current());
   return <CompanyShell companyUI={model} allowUnlinkedWorkspace showOnboarding={page === 'overview' && onboarding.mode === 'normal'}
-    onCompanyCreated={id => { if (onboarding.mode === 'guided') void onboarding.selectCompany(id); else void onboarding.refresh(); }} onAccountLinked={() => { void onboarding.refresh(); }}
+    onCompanyCreated={id => { if (onboarding.mode === 'guided') void onboarding.selectCompany(id); else void onboarding.refresh(); billing.refresh(); }} onAccountLinked={() => { void onboarding.refresh(); billing.refresh(); }}
     managementPage={page === 'settings'} onManagementChange={open => navigate(open ? 'settings' : previousWorkflow.current)}
     layout={(selector, content, switchCompany, manage) => <AppShell page={page} companySelector={selector} setup={onboarding.data && !onboarding.data.complete && onboarding.data.welcome_seen ? { progress: onboarding.data.progress, onResume: () => { navigate('overview'); onboarding.resume(); } } : undefined}>
       <OnboardingScreen page={page} onManage={manage} onSwitchCompany={switchCompany} onConnect={() => connect.current()} />
@@ -57,8 +59,8 @@ export function App() {
     settings={<><MetaConnection beginAuthorization={beginMetaAuthorization} onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} connectAction={connect} /><ProfileRefresh /></>}>
     {onSetup => <>
       <div hidden={page !== 'overview'}><WorkspaceOverview /></div>
-      <div hidden={page !== 'content'}><CompanyContent onAnalysisChange={() => { refreshAnalysisSources(v => v + 1); void onboarding.refresh(); }} /></div>
-      <div hidden={page !== 'generate'}><GenerateIdea onSetup={onSetup} refreshToken={analysisRevision} onSaved={() => { refreshHistory(v => v + 1); void onboarding.refresh(); }} /></div>
+      <div hidden={page !== 'content'}><CompanyContent onAnalysisChange={() => { refreshAnalysisSources(v => v + 1); void onboarding.refresh(); billing.refresh(); }} /></div>
+      <div hidden={page !== 'generate'}><GenerateIdea onSetup={onSetup} refreshToken={analysisRevision} onSaved={() => { refreshHistory(v => v + 1); void onboarding.refresh(); billing.refresh(); }} /></div>
       <div hidden={page !== 'ideas'}><IdeasPage refreshToken={historyRevision} /></div>
     </>}
   </CompanyShell>;

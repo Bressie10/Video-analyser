@@ -4,6 +4,8 @@ import { useCompanySwitchGuard } from './CompanySwitchGuard';
 import { Button, Input, Select } from './ui/controls';
 import { Badge, EmptyState } from './ui/layout';
 import './settings.css';
+import { BillingSection } from './billing/BillingUI';
+import { useBilling } from './billing/BillingProvider';
 
 type Props = CompanyUIProps & { busy: boolean; run(action: () => Promise<void> | void): void; onCreateAndEnter(name: string, ownGuard: string): void; onBack(): void; onAccountLinked?: () => void };
 function Rename({ company, busy, onSave }: { company: Company; busy: boolean; onSave(name: string): void }) {
@@ -15,6 +17,7 @@ function Rename({ company, busy, onSave }: { company: Company; busy: boolean; on
   </form>;
 }
 export function CompanyManagement(props: Props) {
+  const billing = useBilling();
   const [name, setName] = useState('');
   const [showArchived, setShowArchived] = useState(false);
   const [inspectedId, setInspectedId] = useState(props.activeCompanyId);
@@ -31,7 +34,7 @@ export function CompanyManagement(props: Props) {
   const jump = (id: string) => { const target = document.getElementById(id); target?.scrollIntoView({ block: 'start' }); target?.focus(); };
   return <div className="settings-page">
     <header className="settings-heading"><div><h2 id="companies-title" tabIndex={-1}>Manage companies</h2><p>Configure your workspace, connected accounts and content ownership.</p></div><Button variant="ghost" disabled={props.busy} onClick={props.onBack}>Back to workspace</Button></header>
-    <nav className="settings-nav" aria-label="Settings sections">{[['settings-general', 'General'], ['settings-meta', 'Integrations'], ['settings-ownership', 'Content ownership'], ['settings-analysis', 'AI & Analysis'], ['settings-companies', 'Company management']].filter(([id]) => !(id === 'settings-ownership' && company?.role !== 'owner') && !(['settings-general', 'settings-ownership'].includes(id) && !company) && !(id === 'settings-analysis' && !props.activeCompanyId)).map(([id, label]) => <Button key={id} variant="ghost" onClick={() => jump(id)}>{label}</Button>)}</nav>
+    <nav className="settings-nav" aria-label="Settings sections">{[['settings-general', 'General'], ['settings-billing', 'Billing'], ['settings-meta', 'Integrations'], ['settings-ownership', 'Content ownership'], ['settings-analysis', 'AI & Analysis'], ['settings-companies', 'Company management']].filter(([id]) => !(id === 'settings-ownership' && company?.role !== 'owner') && !(['settings-general', 'settings-ownership', 'settings-billing'].includes(id) && !company) && !(id === 'settings-analysis' && !props.activeCompanyId)).map(([id, label]) => <Button key={id} variant="ghost" onClick={() => jump(id)}>{label}</Button>)}</nav>
     {props.status === 'ready' && company ? <>
       <section className="settings-section" aria-labelledby="settings-general">
         <h2 id="settings-general" tabIndex={-1}>General</h2><h3>{company.name}</h3>
@@ -39,6 +42,7 @@ export function CompanyManagement(props: Props) {
         {company.archived && <p className="settings-note">Archived — unavailable for normal work. Restore this company to use it again.</p>}
         {company.role === 'owner' ? <Rename key={`${company.id}:${company.name}`} company={company} busy={disabled} onSave={value => props.run(() => props.onRename(company.id, value))} /> : <p>You are a member. A company owner manages configuration and content ownership.</p>}
       </section>
+      {!company.archived && <BillingSection key={company.id} companyId={company.id} activeCompanyId={props.activeCompanyId} />}
       {company.role === 'owner' && <section className="settings-section" aria-labelledby="settings-ownership">
         <div className="settings-heading"><div><h2 id="settings-ownership" tabIndex={-1}>Content ownership</h2><p>Choose the accounts and ads that belong in {company.name}.</p></div><Button disabled={disabled || !props.metaConnected || discoveryStatus === 'loading'} onClick={props.onRetryDiscovery}>Refresh available accounts</Button></div>
         {!props.metaConnected && <p className="settings-note">Connect Meta in Integrations to discover accounts for your companies.</p>}
@@ -46,6 +50,7 @@ export function CompanyManagement(props: Props) {
         {props.metaConnected && discoveryStatus === 'error' && <p role="alert">{props.discoveryError ?? 'Could not load accounts and ads.'} <Button onClick={props.onRetryDiscovery}>Retry accounts</Button></p>}
         {props.metaConnected && discoveryStatus === 'ready' && <>
           <h3>Linked accounts</h3><p>Facebook and Instagram accounts can belong to one company at a time. Unlink an account from its current company before linking it here.</p>
+          {company.id === props.activeCompanyId && billing.state.data && company.role === 'owner' && props.accounts.filter(a => a.kind !== 'ads' && a.linkedCompanyIds.includes(company.id)).length >= billing.state.data.entitlements.organic_account_limit && <p className="settings-note">This workspace has reached its included organic account count. New Instagram or Facebook links may require a plan change. Linked accounts remain available, and you can still unlink them.</p>}
           {(['facebook', 'instagram', 'ads'] as const).map(kind => <fieldset className="settings-picker" key={kind} disabled={disabled || company.archived || !props.metaConnected}>
             <legend>{kind === 'facebook' ? 'Facebook Pages' : kind === 'instagram' ? 'Instagram accounts' : 'Ads accounts'}</legend>
             {kind === 'ads' && <p>Ads accounts can be shared across companies. Linking an account does not assign its ads.</p>}

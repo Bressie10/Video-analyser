@@ -1,5 +1,6 @@
 import { apiFetch } from "../auth/apiFetch";
 import { isUUID, ServiceError } from "../metaLibrary";
+import { billingError } from '../billing/billingApi';
 
 export type MetaAccount = Readonly<{ id: string; name: string; platform: "facebook" | "instagram" | "meta_ads" }>;
 export type Company = Readonly<{ id: string; name: string; archived: boolean; role?: "owner" | "member"; accounts: readonly MetaAccount[] }>;
@@ -73,6 +74,7 @@ export function createCompanyApi(fetcher: typeof fetch = (...args) => apiFetch(.
     const response = await fetcher(path, { method, signal: AbortSignal.any([signal, AbortSignal.timeout(20000)]), credentials: "same-origin", cache: "no-store",
       ...(body === undefined ? {} : { headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }) });
     if (!response.ok) {
+      if (response.status === 402) throw await billingError(response);
       // Use operation-specific safe copy; never render arbitrary provider/database error text.
       const message = response.status !== 409 ? "The company request failed." : method === "DELETE" && path.includes("/accounts/")
         ? "This Ads account still has assigned ads. Unassign or reassign them before unlinking the account."

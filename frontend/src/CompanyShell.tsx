@@ -7,6 +7,9 @@ import { Building2 } from 'lucide-react';
 import { Button } from './ui/controls';
 import { EmptyState, LoadingState } from './ui/layout';
 import type { CompanyUIProps } from './companyUI';
+import { PlanLimitError, type LimitCode } from './billing/billingApi';
+import { useBilling } from './billing/BillingProvider';
+import { LimitNotice } from './billing/BillingUI';
 
 export function CompanyEmptyState({ name, onManage, onSkip, skipped, canManage = true }: { canManage?: boolean; name: string; onManage(): void; onSkip(): void; skipped: boolean }) {
   return <section className="welcome" aria-labelledby="company-empty-title">
@@ -39,6 +42,8 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
   const lock = useRef(false);
   const created = useRef<{ name: string; id: string } | null>(null);
   const [error, setError] = useState('');
+  const [limit, setLimit] = useState<LimitCode | null>(null);
+  const billing = useBilling();
   const [pending, setPending] = useState<(() => Promise<void>) | null>(null);
   const [skipped, setSkipped] = useState<string[]>([]);
   const dialog = useRef<HTMLDialogElement>(null);
@@ -52,8 +57,8 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
   useEffect(() => { if (management) document.getElementById('companies-title')?.focus(); }, [management]);
   const run = async (action: () => Promise<void> | void) => {
     if (lock.current) return;
-    lock.current = true; setBusy(true); setError('');
-    try { await action(); } catch (caught) { setError(companyError(caught)); }
+    lock.current = true; setBusy(true); setError(''); setLimit(null);
+    try { await action(); } catch (caught) { if (caught instanceof PlanLimitError) { setLimit(caught.code); billing.refresh(); } else setError(companyError(caught)); }
     finally { lock.current = false; setBusy(false); }
   };
   const guarded = (action: () => Promise<void>) => {
@@ -66,6 +71,7 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
   const content = <>
     {model.error && <p className="notice error" role="alert">{model.error}</p>}
     {error && <p className="notice error" role="alert">{error}</p>}
+    {limit && <LimitNotice code={limit} billing={billing.state.data} onUpgrade={() => { setManagement(true); requestAnimationFrame(() => document.getElementById('settings-billing')?.scrollIntoView()); }} />}
     {busy && <p role="status">Saving company changes…</p>}
     {management ? <CompanyManagement {...model} busy={busy} run={run} onBack={() => setManagement(false)} onAccountLinked={onAccountLinked} onCreateAndEnter={(name, ownGuard) => {
       // Submitting this create form consumes its own edits; other pending work still requires confirmation.

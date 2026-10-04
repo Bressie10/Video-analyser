@@ -1,5 +1,6 @@
 import { apiFetch } from "../auth/apiFetch";
 import { isUUID, ServiceError } from '../metaLibrary';
+import { billingError } from '../billing/billingApi';
 
 export type TargetPlatform = 'instagram' | 'facebook';
 export type SourceItem = { id: string; title: string; platform: TargetPlatform | 'meta_ads'; publishedAt: string | null };
@@ -35,7 +36,7 @@ export function createGenerationApi(fetcher: typeof fetch = (...args) => apiFetc
     const response = await fetcher(path, { method: body ? 'POST' : 'GET', credentials: 'same-origin', cache: 'no-store',
       signal: AbortSignal.any([signal, AbortSignal.timeout(body ? 180000 : 20000)]),
       ...(body ? { headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {}) });
-    if (!response.ok) throw new ServiceError(response.status, 'Generation request failed.');
+    if (!response.ok) throw response.status === 402 ? await billingError(response) : new ServiceError(response.status, 'Generation request failed.');
     try { return await response.json(); } catch { throw invalid(); }
   }
   return {

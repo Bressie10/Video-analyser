@@ -6,6 +6,9 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { CompanyScopeBoundary, useCompany, useCompanyQuery, useCompanyStore } from '../company/CompanyProvider';
 import { useCompanySwitchGuard } from '../CompanySwitchGuard';
 import { generationApi, generationError, latestSources, type GenerationApi, type PersistedIdea, type TargetPlatform } from './generationApi';
+import { PlanLimitError } from '../billing/billingApi';
+import { useBilling } from '../billing/BillingProvider';
+import { LimitNotice } from '../billing/BillingUI';
 
 export function GenerateIdea({ onSetup, onSaved, api = generationApi, refreshToken = 0 }: { onSetup(): void; onSaved?(): void; api?: GenerationApi; refreshToken?: number }) {
   return <CompanyScopeBoundary fallback={<EmptyState title="Select a company to generate an idea" action={<Button onClick={onSetup}>Company setup</Button>}><p>Select or create a company to use its analysed content.</p></EmptyState>}>
@@ -14,6 +17,7 @@ export function GenerateIdea({ onSetup, onSaved, api = generationApi, refreshTok
 }
 function Workflow({ api, onSetup, onSaved, refreshToken }: { api: GenerationApi; onSetup(): void; onSaved?(): void; refreshToken: number }) {
   const { activeCompany } = useCompany();
+  const billing = useBilling();
   const store = useCompanyStore();
   const [revision, revise] = useState(0);
   const [mode, setMode] = useState<'all' | 'manual'>('all');
@@ -32,6 +36,7 @@ function Workflow({ api, onSetup, onSaved, refreshToken }: { api: GenerationApi;
   const [brief, setBrief] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
+  const [limit, setLimit] = useState(false);
   const [result, setResult] = useState<PersistedIdea>();
   const lock = useRef(false);
   const attempt = useRef<{ fingerprint: string; key: string } | undefined>(undefined);
@@ -45,11 +50,12 @@ function Workflow({ api, onSetup, onSaved, refreshToken }: { api: GenerationApi;
   const missingSelection = mode === 'manual' && sources.status === 'success' ? selection.filter(id => !items.some(i => i.id === id)) : [];
   const chosenTargets = targets.filter(t => available.includes(t));
   const visible = items.filter(i => (platform === 'all' || i.platform === platform) && i.title.toLowerCase().includes(search.toLowerCase()));
+  const quotaReached = billing.state.data && billing.state.data.usage.idea_generations >= billing.state.data.entitlements.idea_generation_limit;
   async function generate() {
     if (lock.current || sources.status !== 'success' || !sourceIds.length || sourceIds.length > 20 || missingSelection.length > 0 || !chosenTargets.length) return;
     const scope = store.captureScope();
     if (!scope) return;
-    lock.current = true; setBusy(true); setError('');
+    lock.current = true; setBusy(true); setError(''); setLimit(false);
     const input = { companyId: scope.companyId, sourceIds, brief: brief.trim() || undefined, targetPlatforms: chosenTargets };
     const fingerprint = JSON.stringify(input);
     if (attempt.current?.fingerprint !== fingerprint) attempt.current = { fingerprint, key: crypto.randomUUID() };
@@ -58,7 +64,7 @@ function Workflow({ api, onSetup, onSaved, refreshToken }: { api: GenerationApi;
       const saved = await api.generate({ ...input, idempotencyKey: attempt.current.key }, signal);
       if (!signal.aborted && scope.isCurrent()) { setResult(saved); attempt.current = undefined; onSaved?.(); }
     } catch (caught) {
-      if (!signal.aborted && scope.isCurrent()) { setError(generationError(caught)); void store.handleScopeError(scope, caught); }
+      if (!signal.aborted && scope.isCurrent()) { if (caught instanceof PlanLimitError && caught.code === 'idea_generation_limit_reached') { setLimit(true); billing.refresh(); } else setError(generationError(caught)); void store.handleScopeError(scope, caught); }
     } finally {
       if (!signal.aborted && scope.isCurrent()) { lock.current = false; setBusy(false); }
     }
@@ -99,6 +105,7 @@ function Workflow({ api, onSetup, onSaved, refreshToken }: { api: GenerationApi;
         </fieldset>
         <div className="generate-step generate-brief"><label htmlFor="generate-brief">Brief (optional)</label><p id="brief-help">What do you want this idea to focus on? Share a goal, audience or message.</p><Textarea id="generate-brief" disabled={busy} aria-describedby="brief-help" rows={3} maxLength={10000} placeholder="For example, help homeowners prepare for winter." value={brief} onChange={e => setBrief(e.target.value)} /></div>
         {error && <Alert tone="danger"><p>{error}</p><Button disabled={busy} onClick={() => { setError(''); revise(v => v + 1); }}>Reload sources</Button></Alert>}
+        {(limit || quotaReached) && <LimitNotice code="idea_generation_limit_reached" billing={billing.state.data} onUpgrade={() => { window.location.hash = 'settings'; }} />}
         <div className="generate-action"><Button variant="primary" type="submit" disabled={busy || sources.status !== 'success' || !sourceIds.length || sourceIds.length > 20 || missingSelection.length > 0 || !chosenTargets.length}><Sparkles size={18} aria-hidden="true" />{busy ? 'Generating…' : 'Generate idea'}</Button><p>One idea, saved to your company’s Ideas.</p></div>
       </form>}
         {busy && <Alert><strong>Generating and saving your idea. This may take a moment.</strong><p>We’re using your selected content and brief. You can stay here while your idea is prepared.</p></Alert>}
