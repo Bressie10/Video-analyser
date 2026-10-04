@@ -4,7 +4,7 @@ import argparse
 import json
 from pathlib import Path
 
-from intelligence.normalization import evaluate
+from intelligence.normalization import evaluate, evaluate_baseline
 from intelligence.schemas.benchmark import BenchmarkVideo
 
 
@@ -13,8 +13,17 @@ def run(payload: dict) -> list[dict]:
     by_ref = {video.source.reference: video for video in videos}
     if len(by_ref) != len(videos):
         raise ValueError("Video references must be unique; use repeated source IDs for duplicate checks")
-    return [result for request in payload["requests"]
-            for result in evaluate(videos, by_ref[request["target"]], request["metric"])]
+    output = []
+    for request in payload["requests"]:
+        target = by_ref[request["target"]]
+        if request.get("comparison", "peer_videos") == "peer_videos":
+            output.extend(evaluate(videos, target, request["metric"]))
+        elif request["comparison"] == "account_baseline":
+            output.extend(evaluate_baseline(target, request["metric"],
+                                            request.get("baseline_context")))
+        else:
+            raise ValueError("Unknown normalization comparison")
+    return output
 
 
 def main() -> None:
