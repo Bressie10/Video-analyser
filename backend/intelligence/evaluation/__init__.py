@@ -1,4 +1,4 @@
-"""Offline, human-labelled evaluation dataset utilities."""
+"""Offline research and human-labelled evaluation utilities."""
 
 from .dataset import load_dataset, summarize
 from .agreement import compare

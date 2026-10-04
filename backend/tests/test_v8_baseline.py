@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from evaluation.v8_baseline import evaluate, evaluate_manifest
+from intelligence.evaluation.v8_baseline import evaluate, evaluate_manifest
 
 
 class BaselineTests(unittest.TestCase):
