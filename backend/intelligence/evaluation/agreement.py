@@ -62,6 +62,8 @@ def compare(left: Annotation, right: Annotation) -> dict:
         raise ValueError("Agreement requires the same source identity")
     if left.annotator_ref == right.annotator_ref:
         raise ValueError("Agreement requires distinct annotators")
+    if left.guideline_version != right.guideline_version:
+        raise ValueError("Agreement requires matching guideline versions")
     common = set(left.coverage.complete_technique_categories) & set(
         right.coverage.complete_technique_categories)
     rows = {}

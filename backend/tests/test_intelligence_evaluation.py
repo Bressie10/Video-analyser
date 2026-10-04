@@ -32,8 +32,10 @@ class EvaluationTests(unittest.TestCase):
     def test_example_validation_summary_and_cli(self):
         dataset, _ = load_dataset(EXAMPLE)
         summary = summarize(dataset)
+        self.assertEqual({item.guideline_version for item in dataset.annotations}, {"1.1.0"})
         self.assertEqual(summary["annotations"], 2)
         self.assertEqual(summary["sources"], 1)
+        self.assertEqual(summary["guideline_versions"], {"1.1.0": 2})
         self.assertEqual(summary["label_frequencies"]["hook.question"], 2)
         self.assertEqual(summary["coverage_counts"]["hook"], 2)
         self.assertEqual(summary["coverage_counts"]["audio"], 0)
@@ -62,6 +64,12 @@ class EvaluationTests(unittest.TestCase):
         third = dataset.annotations[0].model_copy(update={"annotation_ref": "synthetic-clip-1-c",
                                                       "annotator_ref": "example-c"})
         self.assertEqual(len(compare_all([*dataset.annotations, third])), 3)
+
+    def test_agreement_rejects_mixed_guideline_versions(self):
+        dataset, _ = load_dataset(EXAMPLE)
+        older = dataset.annotations[1].model_copy(update={"guideline_version": "1.0.0"})
+        with self.assertRaisesRegex(ValueError, "matching guideline versions"):
+            compare(dataset.annotations[0], older)
 
     def test_interval_union_and_empty(self):
         self.assertEqual(interval_iou([(0, 2), (1, 3)], [(2, 4)]), 0.25)
