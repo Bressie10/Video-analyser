@@ -33,6 +33,22 @@ def main():
         fixture.addCleanup(jwks.stop)
         app.dependency_overrides[get_token_verifier] = lambda: auth.verifier
         fixture.addCleanup(lambda: app.dependency_overrides.pop(get_token_verifier, None))
+        # This older multi-workspace browser fixture exercises company/Ads UI.
+        # Seed newly created workspaces as Pro so V8's Free creation and organic
+        # limits do not change the workflow under test.
+        from app import company_routes, billing_repository as billing
+        create_company = company_routes.auth.create_company_for_user
+        def create_pro_fixture_company(db, user_id, name):
+            company = create_company(db, user_id, name)
+            billing.initialize(db, company['id'])
+            db.execute('''UPDATE company_billing SET plan_code='pro',
+                stripe_customer_id=%s,stripe_subscription_id=%s,
+                subscription_status='active' WHERE company_id=%s''',
+                ('cus_' + company['id'].hex, 'sub_' + company['id'].hex, company['id']))
+            return company
+        create_patch = patch.object(company_routes.auth, 'create_company_for_user', create_pro_fixture_company)
+        create_patch.start()
+        fixture.addCleanup(create_patch.stop)
         ensure_profile(f.db, USER_ID)
         f.db.execute('UPDATE meta_connections SET owner_user_id=%s WHERE id=%s', (USER_ID, f.connection))
         for account, label in [(f.fb, 'Facebook Page'), (f.ig, 'Instagram Business'), (f.ads, 'Ads Business')]:

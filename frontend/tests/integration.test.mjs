@@ -25,7 +25,7 @@ async function stop(child) {
   });
 }
 
-test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-video recommendation", { timeout: 180000 }, async () => {
+test("legacy browser → real FastAPI → workers/analysis → PostgreSQL; unscoped recommendation is retired", { timeout: 180000 }, async () => {
   assert.ok(process.env.TEST_DATABASE_URL, "Set TEST_DATABASE_URL to disposable PostgreSQL; this test must not silently skip");
   const directory = await mkdtemp(join(tmpdir(), "meta-browser-integration-"));
   let backend, vite, browser;
@@ -50,7 +50,7 @@ test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-vid
     });
     page.on("pageerror", (error) => failures.push(error.message));
     page.on("response", (response) => {
-      if (response.url().includes("/api/") && response.status() >= 400) failures.push(`${response.status()} ${new URL(response.url()).pathname}`);
+      if (response.url().includes("/api/") && response.status() >= 400 && !(response.status() === 410 && new URL(response.url()).pathname === '/api/meta/recommendations')) failures.push(`${response.status()} ${new URL(response.url()).pathname}`);
     });
     // No page.route / context.route: all application requests reach the real server.
     await page.goto(`${origin}/tests/legacy.html`);
@@ -65,10 +65,10 @@ test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-vid
     await page.getByRole("checkbox", { name: "Select Facebook video", exact: true }).check();
     await page.getByRole("checkbox", { name: "Select IG Reel", exact: true }).check();
     await page.getByRole("checkbox", { name: "Select Video ad", exact: true }).check();
+    const retired = page.waitForResponse(response => response.url().endsWith('/api/meta/recommendations'));
     await page.getByRole("button", { name: "Generate a new video idea", exact: true }).click();
-    await page.getByText("Based on 4 selected videos.").waitFor();
-    await page.getByText("Show how your business solves a real customer problem.", { exact: true }).waitFor();
-    assert.match(await page.locator(".script").innerText(), /Demonstrate the process/);
+    assert.equal((await retired).status(), 410);
+    assert.equal(await page.getByText("Based on 4 selected videos.").count(), 0);
     const recommendation = calls.find((call) => call.path === "/api/meta/recommendations");
     assert.equal(recommendation.body.video_ids.length, 4);
     assert.equal(new Set(recommendation.body.video_ids).size, 4);
@@ -76,11 +76,7 @@ test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-vid
     assert.equal(calls.find((call) => call.path === "/api/meta/library/analyze").body.item_ids.length, 1);
     assert.equal(calls.some((call) => call.path.startsWith("/api/meta/jobs/")), true);
     assert.equal(calls.some((call) => call.path === "/api/meta/library/recommendations" || call.path === "/api/meta/library/sync" || call.path.startsWith("/api/meta/discovery")), false);
-    // A second request must reuse stored analysis, not queue another import.
-    await Promise.all([
-      page.waitForResponse((response) => response.url().endsWith("/api/meta/recommendations") && response.status() === 200),
-      page.getByRole("button", { name: "Generate a new video idea", exact: true }).click(),
-    ]);
+    // The retired route cannot make a second unmetered model call.
     assert.equal(calls.filter((call) => call.path === "/api/meta/library/analyze").length, 1);
     const unauthorized = await browser.newContext({ extraHTTPHeaders: { Authorization: `Bearer ${session.jwt}` } });
     assert.equal((await unauthorized.request.get(`${origin}/api/meta/library`)).status(), 401);
@@ -96,12 +92,7 @@ test("browser → real FastAPI → workers/analysis → PostgreSQL → multi-vid
     assert.equal(report.stored_videos, 5);
     assert.equal(report.analysis_calls.length, 5);
     assert.ok(report.analysis_calls.every((call) => call.duration === 4 && call.scene_count >= 2));
-    assert.equal(report.provider_inputs.length, 2);
-    for (const evidence of report.provider_inputs) {
-      assert.equal(evidence.videos.length, 4);
-      assert.ok(evidence.videos.every((entry) => entry.on_screen_text.some((row) => row.text.includes("VIDEO TEST"))));
-      assert.equal(new Set(evidence.performance_snapshots.map((entry) => entry.item_id)).size, evidence.performance_snapshots.length);
-    }
+    assert.equal(report.provider_inputs.length, 0);
   } finally {
     await browser?.close();
     await stop(vite);

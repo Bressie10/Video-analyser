@@ -47,7 +47,7 @@ test('new user browser activation reaches 100% through real FastAPI and PostgreS
     const page = await context.newPage(); page.setDefaultTimeout(12000);
     const errors = [], calls = [], forbidden = [];
     page.on('pageerror', error => errors.push(error.message));
-    page.on('console', message => { if (['error', 'warning'].includes(message.type())) errors.push(message.text()); });
+    page.on('console', message => { if (['error', 'warning'].includes(message.type()) && message.text() !== 'Failed to load resource: the server responded with a status of 402 (Payment Required)') errors.push(message.text()); });
     page.on('request', request => { if (request.url().includes('/api/')) calls.push({ path: new URL(request.url()).pathname,
       method: request.method(), authorization: request.headers().authorization }); });
     page.on('response', response => { if (response.status() === 403) forbidden.push(new URL(response.url()).pathname); });
@@ -69,6 +69,17 @@ test('new user browser activation reaches 100% through real FastAPI and PostgreS
     await page.getByRole('button', { name: 'Create company' }).click();
     await page.waitForFunction(() => document.body.textContent.includes('20% complete'));
     assert.equal((await state()).progress, 20);
+    const companyId = await page.evaluate(() => localStorage.getItem('video-analyzer.active-company-id'));
+    const billingPath = `/api/companies/${companyId}/billing`;
+    const freeBilling = await context.request.get(origin + billingPath, { headers: { Authorization: `Bearer ${session.user_a}` } });
+    assert.equal(freeBilling.status(), 200, await freeBilling.text());
+    assert.equal((await freeBilling.json()).effective_plan, 'free');
+    const secondWorkspace = await page.evaluate(async jwt => {
+      const response = await fetch('/api/companies', { method: 'POST', headers: { Authorization: `Bearer ${jwt}`, 'Content-Type': 'application/json' }, body: JSON.stringify({ name: 'Second Free workspace' }) });
+      return { status: response.status, body: await response.json() };
+    }, session.user_a);
+    assert.equal(secondWorkspace.status, 402);
+    assert.equal(secondWorkspace.body.detail.code, 'free_workspace_limit_reached');
 
     const popup = context.waitForEvent('page');
     await page.getByRole('button', { name: 'Connect Meta' }).click();
@@ -99,6 +110,10 @@ test('new user browser activation reaches 100% through real FastAPI and PostgreS
     await page.getByRole('button', { name: 'Generate idea', exact: true }).click();
     await page.getByRole('heading', { name: 'One idea' }).waitFor();
     assert.equal((await state()).progress, 100);
+    const usedBilling = await context.request.get(origin + billingPath, { headers: { Authorization: `Bearer ${session.user_a}` } });
+    assert.equal(usedBilling.status(), 200, await usedBilling.text());
+    assert.deepEqual((await usedBilling.json()).usage, { analyses: 1, idea_generations: 1 });
+    assert.equal((await context.request.get(origin + billingPath, { headers: { Authorization: `Bearer ${session.user_b}` } })).status(), 403);
     await nav('Overview');
     await page.getByRole('heading', { name: "You're ready to go" }).waitFor();
     await page.getByRole('button', { name: 'Go to Overview' }).click();
