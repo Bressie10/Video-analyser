@@ -1,8 +1,9 @@
 """Evaluate existing V8 observations against explicitly supplied low-level truth.
 
-Usage: python -m evaluation.v8_baseline path/to/manifest.json
+Usage: python -m intelligence.evaluation.v8_baseline path/to/manifest.json
 The manifest references local JSON analysis and truth files. No media is fetched or processed.
 Absent truth sections are not evaluated; empty truth lists mean exhaustively checked negatives.
+The scores assess V8 low-level outputs, never V8.5 semantic technique labels.
 """
 
 from __future__ import annotations
