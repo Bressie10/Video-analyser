@@ -63,6 +63,7 @@ def summarize(dataset: AnnotationDataset) -> dict:
     return {
         "annotations": len(annotations),
         "sources": len(by_source),
+        "guideline_versions": dict(sorted(Counter(item.guideline_version for item in annotations).items())),
         "annotator_overlap": {ref: sorted(names) for ref, names in sorted(by_source.items())
                               if len(names) > 1},
         "coverage_counts": {area: covered[area] for area in sorted(AREAS)} |

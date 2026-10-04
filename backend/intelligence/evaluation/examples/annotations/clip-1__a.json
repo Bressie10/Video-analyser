@@ -1,7 +1,7 @@
 {
   "schema_version": "2.0.0", "ontology_version": "1.1.0",
   "annotation_ref": "synthetic-clip-1-a", "annotator_ref": "example-a",
-  "guideline_version": "1.0.0", "annotated_at": "2026-10-04T12:00:00Z",
+  "guideline_version": "1.1.0", "annotated_at": "2026-10-04T12:00:00Z",
   "source": {"source_kind": "synthetic", "reference_id": "synthetic-clip-1", "platform": null, "duration_seconds": 10.0},
   "coverage": {"complete_technique_categories": ["hook", "editing", "format"], "structure_complete": true, "numeric_fields": [{"feature_id": "cuts_first_5_seconds", "status": "measured", "note": null}]},
   "techniques": [
