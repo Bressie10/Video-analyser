@@ -1,0 +1,19 @@
+{
+  "schema_version": "2.0.0", "ontology_version": "1.1.0",
+  "annotation_ref": "synthetic-clip-1-a", "annotator_ref": "example-a",
+  "guideline_version": "1.0.0", "annotated_at": "2026-10-04T12:00:00Z",
+  "source": {"source_kind": "synthetic", "reference_id": "synthetic-clip-1", "platform": null, "duration_seconds": 10.0},
+  "coverage": {"complete_technique_categories": ["hook", "editing", "format"], "structure_complete": true, "numeric_fields": [{"feature_id": "cuts_first_5_seconds", "status": "measured", "note": null}]},
+  "techniques": [
+    {"technique_id": "hook.question", "start_seconds": 0.2, "end_seconds": 1.5, "note": null},
+    {"technique_id": "format.talking_head", "start_seconds": 0.0, "end_seconds": null, "note": null},
+    {"technique_id": "editing.jump_cut", "start_seconds": 3.0, "end_seconds": null, "note": null}
+  ],
+  "structure": [
+    {"role": "hook", "start_seconds": 0.0, "end_seconds": 1.7, "note": null},
+    {"role": "explanation", "start_seconds": 1.7, "end_seconds": 8.0, "note": null},
+    {"role": "payoff", "start_seconds": 8.0, "end_seconds": 10.0, "note": null}
+  ],
+  "numeric_ground_truth": [{"feature_id": "cuts_first_5_seconds", "value": 1.0, "unit": "count", "window": {"start_seconds": 0.0, "end_seconds": 5.0}, "evidence_refs": ["synthetic cut at 3s"]}],
+  "notes": "Invented speech and cut for CLI demonstration."
+}
