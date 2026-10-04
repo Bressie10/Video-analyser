@@ -1,0 +1,8 @@
+{
+  "sources": [
+    {"reference_id": "synthetic-clip-1", "media_ref": "synthetic://clip-1", "notes": "Invented 10-second example; no media file"}
+  ],
+  "split_assignments": [
+    {"source_ref": "synthetic-clip-1", "partition": "test", "group_ref": "synthetic-creator-1"}
+  ]
+}
