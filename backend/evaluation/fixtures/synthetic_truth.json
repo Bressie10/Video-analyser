@@ -1,0 +1,6 @@
+{
+  "metadata": {"duration_seconds": {"value": 4.0, "tolerance": 0.05}, "video.resolution.width": 640, "audio.codec": null},
+  "scene_boundaries_seconds": [2.0],
+  "on_screen_text": [{"text": "video test", "start_seconds": 0.5, "end_seconds": 4.0}],
+  "motion_events": [{"type": "local_motion", "start_seconds": 0.5, "end_seconds": 1.5}]
+}
