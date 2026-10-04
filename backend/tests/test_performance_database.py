@@ -69,7 +69,9 @@ class PerformanceDatabaseTests(unittest.TestCase):
                                 with patch("app.recommendations.OpenAI") as model:
                                     sdk = model.return_value.__enter__.return_value
                                     sdk.responses.create.return_value.output_text = "Idea"
-                                    self.assertEqual(api.post(f"/api/videos/{video_id}/recommendations").status_code, 200)
+                                    self.assertEqual(api.post(f"/api/videos/{video_id}/recommendations").status_code, 410)
+                                    from app.recommendations import recommend_videos
+                                    recommend_videos(stored, api_key='test-key')
                                     sent = json.loads(sdk.responses.create.call_args.kwargs["input"].split("\n", 1)[1])
                                     self.assertEqual(sent, stored)
                                 db.execute("DELETE FROM videos WHERE id = %s", (video_id,))

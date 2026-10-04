@@ -10,8 +10,11 @@ from psycopg.types.json import Jsonb
 
 from app import company_ownership_repository as ownership
 from app import meta_library_repository as library
+from app import billing_repository as billing
+from app.idea_generation import InvalidGeneration
 import test_company_profile_integration as profile_tests
 from test_persistent_ideas import RESULT
+from company_auth_fixtures import grant, OTHER_USER_ID
 
 
 @unittest.skipUnless(os.environ.get('TEST_DATABASE_URL'), 'requires disposable PostgreSQL')
@@ -37,6 +40,50 @@ class IdeaIntegrationTests(unittest.TestCase):
         response = self.post(**kwargs)
         self.assertEqual(response.status_code, 200, response.text)
         return response.json()
+
+    def test_v8_free_idea_quota_and_replay(self):
+        first_body = {'request_id': str(uuid4()), 'target_platforms': ['facebook'],
+                      'video_ids': [str(self.f.creative)]}
+        saved = self.generate(body=first_body)
+        for _ in range(4):
+            self.generate()
+        self.assertEqual(self.generate(body=first_body)['id'], saved['id'])
+        blocked = self.post()
+        self.assertEqual(blocked.status_code, 402, blocked.text)
+        self.assertEqual(blocked.json()['detail']['code'], 'idea_generation_limit_reached')
+        with library.database() as db:
+            row = billing.initialize(db, self.f.a)
+            self.assertEqual(billing.usage(db, row)['idea_generations'], 5)
+        self.assertEqual(self.model.call_count, 5)
+
+    def test_v8_model_failure_refunds_then_same_request_can_retry(self):
+        body = {'request_id': str(uuid4()), 'target_platforms': ['facebook'],
+                'video_ids': [str(self.f.creative)]}
+        self.model.side_effect = InvalidGeneration('invalid model payload')
+        self.assertEqual(self.post(body=body).status_code, 502)
+        with library.database() as db:
+            row = billing.initialize(db, self.f.a)
+            self.assertEqual(billing.usage(db, row)['idea_generations'], 0)
+        self.model.side_effect = None
+        self.model.return_value = RESULT
+        saved = self.generate(body=body)
+        self.assertEqual(self.generate(body=body)['id'], saved['id'])
+        with library.database() as db:
+            row = billing.initialize(db, self.f.a)
+            self.assertEqual(billing.usage(db, row)['idea_generations'], 1)
+            self.assertEqual(db.execute('SELECT count(*) AS n FROM ideas WHERE company_id=%s',
+                                        (self.f.a,)).fetchone()['n'], 1)
+
+    def test_v8_member_consumes_company_allowance_without_cross_company_access(self):
+        grant(self.f.db, [self.f.a], user_id=OTHER_USER_ID, role='member')
+        self.client.headers['Authorization'] = 'Bearer ' + self.fixture.auth.token(sub=str(OTHER_USER_ID))
+        self.generate()
+        self.assertEqual(self.post(company=self.f.b).status_code, 403)
+        with library.database() as db:
+            row = billing.initialize(db, self.f.a)
+            self.assertEqual(billing.usage(db, row)['idea_generations'], 1)
+            other = billing.initialize(db, self.f.b)
+            self.assertEqual(billing.usage(db, other)['idea_generations'], 0)
 
     def test_real_adapter_shared_creative_and_profile_revisions(self):
         for company, own, forbidden in ((self.f.a, self.f.ad_a, self.f.ad_b),

@@ -171,62 +171,8 @@ async def upload_video(
     tiktok_url: str | None = Form(default=None),
     user: AuthenticatedUser = Depends(require_authenticated_user),
 ) -> dict[str, object]:
-    """Validate, normalise, and extract PCM WAV audio from a video upload."""
-    filename = video.filename or "upload"
-    suffix = Path(filename).suffix.lower()
-    if suffix not in SUPPORTED_EXTENSIONS:
-        raise HTTPException(status_code=415, detail="Unsupported video format.")
-
-    performance = None
-    if tiktok_url and tiktok_url.strip():
-        if not os.environ.get("DATABASE_URL"):
-            raise HTTPException(status_code=503, detail="Database is not configured.")
-        try:
-            tiktok_video_id = tiktok.video_id_from_url(tiktok_url)
-        except tiktok.TikTokError:
-            raise HTTPException(status_code=422, detail="Enter a full TikTok video URL.") from None
-        try:
-            config = tiktok.settings()
-            access_token = tiktok.access_token_for_session(request.cookies.get(tiktok.SESSION_COOKIE), config, owner_user_id=user.user_id)
-            performance = tiktok.video_performance(access_token, tiktok_video_id)
-        except tiktok.TikTokConfigurationError:
-            raise HTTPException(status_code=503, detail="TikTok is not configured.") from None
-        except tiktok.TikTokNotConnected:
-            raise HTTPException(status_code=401, detail="TikTok account is not connected.", headers={"X-ContentMetric-Auth": "provider"}) from None
-        except tiktok.TikTokVideoNotFound:
-            raise HTTPException(status_code=404, detail="TikTok video was not found for this account.") from None
-        except tiktok.TikTokError:
-            raise HTTPException(status_code=502, detail="TikTok performance request failed.") from None
-
-    with TemporaryDirectory(prefix="video-analyzer-") as directory:
-        source_path = Path(directory, f"source{suffix}")
-        size = 0
-        with source_path.open("wb") as source_file:
-            while chunk := await video.read(1024 * 1024):
-                size += len(chunk)
-                if size > MAX_UPLOAD_SIZE_BYTES:
-                    raise HTTPException(status_code=413, detail="Video exceeds the 500 MiB limit.")
-                source_file.write(chunk)
-
-        try:
-            analysis = analyze_file(source_path, directory, operations={
-                'inspect_video': inspect_video, 'normalise_video': normalise_video,
-                'detect_scenes': detect_scenes, 'detect_on_screen_text': detect_on_screen_text,
-                'detect_motion_events': detect_motion_events, 'extract_wav_audio': extract_wav_audio,
-                'transcribe_audio': transcribe_audio,
-            })
-        except VideoProcessingError as error:
-            raise HTTPException(status_code=422, detail=str(error)) from error
-
-    if performance is not None:
-        analysis.update(performance)
-    if os.environ.get("DATABASE_URL"):
-        try:
-            video_id = save_analysis(analysis, owner_user_id=user.user_id)
-        except psycopg.Error as error:
-            raise HTTPException(status_code=503, detail="Database is unavailable.") from error
-        return {"video_id": video_id, **analysis}
-    return analysis
+    """Retired: uploads have no company to authorize or meter."""
+    raise HTTPException(410, 'Use a company-scoped Content analysis operation.')
 
 
 def _stored_analysis(video_id: UUID, user: AuthenticatedUser) -> dict:
@@ -253,11 +199,6 @@ def create_video_recommendations(
     runtime_api_key: str | None = Header(default=None, alias="X-OpenAI-API-Key"),
     user: AuthenticatedUser = Depends(require_authenticated_user),
 ) -> dict[str, str]:
-    """Ask GPT-6 Sol to recommend future videos from stored analysis."""
-    analysis = _stored_analysis(video_id, user)
-    try:
-        return recommend_videos(analysis, api_key=runtime_api_key)
-    except MissingAPIKeyError as error:
-        raise HTTPException(status_code=503, detail="OpenAI API key is not configured.") from error
-    except OpenAIError:
-        raise HTTPException(status_code=502, detail="OpenAI request failed.") from None
+    """Retired: unpersisted legacy model calls have no company quota."""
+    _stored_analysis(video_id, user)
+    raise HTTPException(410, 'Use company-scoped idea generation.')

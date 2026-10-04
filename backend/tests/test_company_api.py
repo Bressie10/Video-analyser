@@ -7,10 +7,13 @@ from unittest.mock import patch
 from uuid import uuid4
 
 import psycopg
+from cryptography.fernet import Fernet
 from fastapi.testclient import TestClient
 
 from app import company_ownership_repository as repo
 from app import meta, meta_library_repository as library
+from app import billing_repository as billing
+from app import meta_library_worker as worker
 from app.main import app
 from company_auth_fixtures import sign_in, grant
 import test_company_ownership as ownership_tests
@@ -23,13 +26,22 @@ class CompanyAPITests(unittest.TestCase):
         self.addCleanup(self.f.doCleanups)
         self.f.setUp()
         env = patch.dict(os.environ, {'DATABASE_URL': self.f.url,
-                                     'COMPANY_PROFILE_WORKER_ENABLED': 'false', 'META_WORKER_ENABLED': 'false'})
+                                     'COMPANY_PROFILE_WORKER_ENABLED': 'false', 'META_WORKER_ENABLED': 'false',
+                                     'META_TOKEN_ENCRYPTION_KEY': Fernet.generate_key().decode()})
         env.start()
         self.addCleanup(env.stop)
         self.client = TestClient(app, base_url='https://testserver')
         self.addCleanup(self.client.close)
         self.auth = sign_in(self, self.client)
         grant(self.f.db, [self.f.a, self.f.b], connection=self.f.connection)
+        # These V4 management tests exercise multiple workspaces/accounts. Give
+        # their existing fixture companies Pro access under the V8 contract.
+        for company in (self.f.a, self.f.b):
+            billing.initialize(self.f.db, company)
+            self.f.db.execute('''UPDATE company_billing SET plan_code='pro',
+                stripe_customer_id=%s,stripe_subscription_id=%s,
+                subscription_status='active' WHERE company_id=%s''',
+                ('cus_' + company.hex, 'sub_' + company.hex, company))
         self.f.db.execute("INSERT INTO meta_sessions VALUES (%s,%s,now()+interval '1 day')",
                           (library.token_hash('company-api-session'), self.f.connection))
         self.client.cookies.set(meta.SESSION_COOKIE, 'company-api-session', path='/api')
@@ -201,7 +213,76 @@ class CompanyAPITests(unittest.TestCase):
         def create(index):
             return self.client.post('/api/companies', json={'name': f'Concurrent {index}'}).status_code
         with ThreadPoolExecutor(max_workers=2) as pool:
-            self.assertEqual(list(pool.map(create, range(2))), [201, 201])
+            self.assertEqual(sorted(pool.map(create, range(2))), [201, 402])
+
+    def test_v8_organic_limit_ads_unlink_and_downgrade(self):
+        self.f.db.execute("UPDATE company_billing SET plan_code='free' WHERE company_id=%s", (self.f.a,))
+        self.request('PUT', self.account(self.f.fb))
+        self.request('PUT', self.account(self.f.ads))
+        blocked = self.request('PUT', self.account(self.f.ig), 402)
+        self.assertEqual(blocked['detail']['code'], 'organic_account_limit_reached')
+        self.request('DELETE', self.account(self.f.fb))
+        self.request('PUT', self.account(self.f.ig))
+        self.f.db.execute("UPDATE company_billing SET plan_code='pro' WHERE company_id=%s", (self.f.a,))
+        self.request('PUT', self.account(self.f.fb))
+        self.f.db.execute("UPDATE company_billing SET plan_code='free' WHERE company_id=%s", (self.f.a,))
+        self.assertEqual(len(self.request('GET', self.base)['accounts']), 3)
+        extra = self.f.account('facebook', 'downgrade-extra')
+        self.request('PUT', self.account(extra), 402)
+
+    def test_v8_pro_sixth_organic_link_and_concurrent_free_race(self):
+        accounts = [self.f.fb, self.f.ig] + [self.f.account('facebook', f'pro-{i}') for i in range(4)]
+        for account in accounts[:5]:
+            self.request('PUT', self.account(account))
+        self.request('PUT', self.account(accounts[5]), 402)
+        for account in accounts[:5]:
+            self.request('DELETE', self.account(account))
+        self.f.db.execute("UPDATE company_billing SET plan_code='free' WHERE company_id=%s", (self.f.a,))
+        def link(account):
+            return self.client.put(self.account(account)).status_code
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            self.assertEqual(sorted(pool.map(link, accounts[:2])), [200, 402])
+        self.assertEqual(self.f.db.execute('''SELECT count(*) AS n FROM company_accounts
+            WHERE company_id=%s AND account_platform IN ('facebook','instagram')''',
+            (self.f.a,)).fetchone()['n'], 1)
+
+    def test_v8_analysis_api_quota_idempotency_and_worker_refund(self):
+        self.f.db.execute("UPDATE company_billing SET plan_code='free' WHERE company_id=%s", (self.f.a,))
+        self.request('PUT', self.account(self.f.fb))
+        items = [self.f.organic] + [self.f.item(self.f.fb, f'quota-{i}', 'video', 'facebook')
+                                     for i in range(3)]
+        path = self.base + '/content/analyze'
+        for item in items[:3]:
+            self.request('POST', path, 202, json={'item_id': str(item)})
+        self.request('POST', path, 202, json={'item_id': str(items[0])})
+        blocked = self.request('POST', path, 402, json={'item_id': str(items[3])})
+        self.assertEqual(blocked['detail']['code'], 'analysis_limit_reached')
+        legacy = self.client.post('/api/meta/library/analyze',
+                                  json={'item_ids': [str(items[3])]})
+        self.assertEqual(legacy.status_code, 402, legacy.text)
+        state = self.request('GET', self.base + '/billing')
+        self.assertEqual(state['usage']['analyses'], 3)
+        self.request('GET', self.base + '/content')
+        self.request('POST', self.base + '/profiles/shared/refresh', 202,
+                     headers={'Idempotency-Key': 'quota-read-profile'})
+        self.assertEqual(self.request('GET', self.base + '/billing')['usage']['analyses'], 3)
+        job = self.f.db.execute("SELECT id FROM meta_jobs WHERE item_id=%s AND kind='analysis'",
+                                (items[0],)).fetchone()['id']
+        claim = uuid4()
+        self.f.db.execute("UPDATE meta_jobs SET state='running',claim=%s WHERE id=%s", (claim, job))
+        operation = {'id': job, 'claim': claim, 'kind': 'analysis'}
+        worker.finish(operation, 'failed')
+        worker.finish(operation, 'failed')
+        self.assertEqual(self.request('GET', self.base + '/billing')['usage']['analyses'], 2)
+        completed = self.f.db.execute("SELECT id FROM meta_jobs WHERE item_id=%s AND kind='analysis'",
+                                      (items[1],)).fetchone()['id']
+        completed_claim = uuid4()
+        self.f.db.execute("UPDATE meta_jobs SET state='running',claim=%s WHERE id=%s",
+                          (completed_claim, completed))
+        worker.finish({'id': completed, 'claim': completed_claim, 'kind': 'analysis'}, 'completed')
+        self.assertEqual(self.request('GET', self.base + '/billing')['usage']['analyses'], 2)
+        self.assertEqual(self.client.post('/api/meta/library/analyze',
+            json={'item_ids': [str(items[3])]}).status_code, 202)
 
     def test_public_projection_uses_internal_ids_and_friendly_names(self):
         self.f.db.execute("UPDATE meta_accounts SET label='Friendly account' WHERE id=%s", (self.f.fb,))

@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from app.main import app
 from app.auth import get_token_verifier
 from app import tiktok
+from app import billing_repository as billing
 from app.video_repository import save_analysis, save_performance
 from auth_fixtures import USER_ID, OTHER_USER_ID
 import test_auth_database
@@ -40,11 +41,12 @@ class IntegrationSecurityTests(unittest.TestCase):
     def test_uploads_are_owned_and_legacy_and_cross_user_ids_are_hidden(self):
         legacy = save_analysis(ANALYSIS)
         self.login()
-        with patch('app.main.analyze_file', return_value=ANALYSIS):
+        with patch('app.main.analyze_file') as analyze:
             response = self.api.post('/api/videos', files={'video': ('sample.mp4', b'fixture', 'video/mp4')})
-        self.assertEqual(response.status_code, 200, response.text)
+        self.assertEqual(response.status_code, 410, response.text)
+        analyze.assert_not_called()
         self.assertIn('no-store', response.headers['cache-control'])
-        video = response.json()['video_id']
+        video = save_analysis(ANALYSIS, owner_user_id=USER_ID)
         self.assertEqual(self.api.get(f'/api/videos/{video}/analysis').status_code, 200)
         self.assertEqual(self.f.db.execute('SELECT owner_user_id FROM videos WHERE id=%s', (video,)).fetchone()['owner_user_id'], USER_ID)
         for identity in (USER_ID, OTHER_USER_ID):
@@ -118,6 +120,12 @@ class NewUserIntegrationTests(unittest.TestCase):
         accounts=[]
         for platform in ('facebook','instagram'):
             account=f.db.execute("INSERT INTO meta_accounts(connection_id,platform,external_id,label) VALUES (%s,%s,%s,%s) RETURNING id", (connection['id'],platform,platform,platform)).fetchone()['id']
+            if platform == 'instagram':
+                self.assertEqual(api.put(base+'/accounts/'+str(account)).status_code, 402)
+                billing.initialize(f.db, a)
+                f.db.execute('''UPDATE company_billing SET plan_code='pro',
+                    stripe_customer_id='cus_integration',stripe_subscription_id='sub_integration',
+                    subscription_status='active' WHERE company_id=%s''', (a,))
             self.assertEqual(api.put(base+'/accounts/'+str(account)).status_code,200)
             accounts.append(account)
         video=save_analysis(ANALYSIS)

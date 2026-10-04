@@ -9,6 +9,7 @@ from fastapi import HTTPException
 from fastapi.encoders import jsonable_encoder
 
 from app import idea_repository as ideas
+from app import entitlements
 from app import meta_library_repository as library
 from app.ad_metrics import normalize_ad_metrics
 from app.idea_generation import EVIDENCE_SCHEMA_VERSION, RECOMMENDATION_VERSION, generate_idea
@@ -109,7 +110,13 @@ def generate(access, user, company_id, body, api_key=None):
     digest = request_hash(body)
     with library.database() as db:
         access.authorize(db, user, company_id, [], write=True)
-        claim, saved = ideas.claim_request(db, company_id, body.request_id, digest)
+        claim, saved = ideas.claim_request(db, company_id, body.request_id, digest,
+            on_stale=lambda old: entitlements.refund_usage(db, company_id,
+                'idea_generation', f'idea:{old}:reserve', f'idea:{old}:refund',
+                'idea_request', old))
+        if saved is None:
+            entitlements.reserve_usage(db, company_id, 'idea_generation',
+                f'idea:{claim}:reserve', 'idea_request', claim)
     if saved is not None:
         # Replays need company access, not access to sources that may have unlinked.
         return saved
@@ -130,7 +137,11 @@ def generate(access, user, company_id, body, api_key=None):
         # the bounded lease provides recovery; a superseded claim cannot save.
         try:
             with library.database() as db:
+                # Claim row before billing row, matching claim_request's lock
+                # order when another request recovers an expired lease.
                 ideas.release_claim(db, company_id, body.request_id, claim)
+                entitlements.refund_usage(db, company_id, 'idea_generation',
+                    f'idea:{claim}:reserve', f'idea:{claim}:refund', 'idea_request', claim)
         except psycopg.Error:
             pass
         raise

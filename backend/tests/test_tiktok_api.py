@@ -209,16 +209,9 @@ class TikTokAPITests(unittest.TestCase):
                 data={"tiktok_url": "https://www.tiktok.com/@creator/video/123456789"},
             )
 
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["video_id"], "internal-uuid")
-        self.assertEqual(response.json()["performance_metrics"], counts)
-        fetch.assert_called_once_with(ACCESS_TOKEN, "123456789")
-        saved = save.call_args.args[0]
-        self.assertEqual(saved["performance_metrics"], counts)
-        self.assertEqual(saved["performance_source"], "tiktok")
-        self.assertEqual(response.json()["performance_source"], "tiktok")
-        self.assertNotIn("tiktok_url", saved)
-        self.assertNotIn("tiktok_video_id", saved)
+        self.assertEqual(response.status_code, 410)
+        fetch.assert_not_called()
+        save.assert_not_called()
 
     @patch.dict(os.environ, {**CONFIG, "DATABASE_URL": "postgresql://test"})
     def test_upload_with_tiktok_url_requires_connection(self) -> None:
@@ -227,7 +220,7 @@ class TikTokAPITests(unittest.TestCase):
             files={"video": ("sample.mp4", b"video", "video/mp4")},
             data={"tiktok_url": "https://www.tiktok.com/@creator/video/123456789"},
         )
-        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.status_code, 410)
 
     @patch.dict(os.environ, {**CONFIG, "DATABASE_URL": "postgresql://test"})
     def test_upload_rejects_non_tiktok_url_before_processing(self) -> None:
@@ -237,7 +230,7 @@ class TikTokAPITests(unittest.TestCase):
                 files={"video": ("sample.mp4", b"video", "video/mp4")},
                 data={"tiktok_url": "https://www.tiktok.com.evil.example/@creator/video/123456789"},
             )
-        self.assertEqual(response.status_code, 422)
+        self.assertEqual(response.status_code, 410)
         inspect.assert_not_called()
 
 

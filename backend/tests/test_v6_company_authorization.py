@@ -3,17 +3,25 @@ import os
 import unittest
 from concurrent.futures import ThreadPoolExecutor
 from unittest.mock import patch
-from uuid import uuid4
+from uuid import UUID, uuid4
 
 import psycopg
 from app import company_ownership_repository as ownership
 from app import meta_library_repository as library
+from app import billing_repository as billing
 from company_auth_fixtures import grant, USER_ID, OTHER_USER_ID
 import test_idea_integration as integration
 
 
 @unittest.skipUnless(os.environ.get('TEST_DATABASE_URL'), 'requires disposable PostgreSQL')
 class CompanyAuthorizationTests(unittest.TestCase):
+    def paid(self, company):
+        billing.initialize(self.f.db, company)
+        self.f.db.execute('''UPDATE company_billing SET plan_code='pro',
+            stripe_customer_id=%s,stripe_subscription_id=%s,
+            subscription_status='active' WHERE company_id=%s''',
+            ('cus_' + company.hex, 'sub_' + company.hex, company))
+
     def setUp(self):
         self.fixture = integration.IdeaIntegrationTests('test_real_adapter_shared_creative_and_profile_revisions')
         self.addCleanup(self.fixture.doCleanups)
@@ -94,6 +102,7 @@ class CompanyAuthorizationTests(unittest.TestCase):
         self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM company_memberships WHERE company_id=%s', (legacy,)).fetchone()['n'], 0)
 
     def test_creation_is_disconnected_atomic_owner_and_keeps_response_contract(self):
+        self.paid(self.f.a)
         self.client.cookies.clear()
         result = self.client.post('/api/companies', json={'name': 'Fresh'})
         self.assertEqual(result.status_code, 201, result.text)
@@ -105,6 +114,7 @@ class CompanyAuthorizationTests(unittest.TestCase):
         self.assertEqual(self.client.get(f'/api/companies/{identity}/content').json(), {'items': [], 'next_offset': None})
         self.assertEqual(self.client.get(f'/api/companies/{identity}/profiles/shared').status_code, 200)
         self.assertEqual(self.client.post(f'/api/companies/{identity}/profiles/shared/refresh', headers={'Idempotency-Key': 'new'}).status_code, 202)
+        self.paid(UUID(identity))
         # Failure after the foundation operation must roll its writes back too.
         before = self.f.db.execute('SELECT count(*) AS n FROM companies').fetchone()['n']
         with patch('app.company_routes.repo.company_summary', side_effect=psycopg.OperationalError('failure')):
@@ -168,6 +178,7 @@ class CompanyAuthorizationTests(unittest.TestCase):
         self.assertIn(self.f.ad_a, self.f.ids(self.f.b))
 
     def test_link_binds_only_owned_connection_and_rolls_back_failed_binding(self):
+        self.paid(self.f.a)
         result = self.client.post('/api/companies', json={'name': 'Disconnected'}).json()
         identity = result['company_id']
         path = f'/api/companies/{identity}/accounts/'

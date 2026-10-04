@@ -12,6 +12,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 from app import company_ownership_repository as repo
 from app import auth_repository as auth, meta_library_repository as library
+from app import entitlements
 from app.company_authorization import authenticated_request, authorize
 
 router = APIRouter(prefix='/api', tags=['company management'], dependencies=[Depends(authenticated_request)])
@@ -113,6 +114,7 @@ def companies(request: Request, include_archived: bool = False):
 @router.post('/companies', status_code=201)
 def create(request: Request, body: CompanyName):
     def operation(db, connection):
+        entitlements.require_free_workspace_slot(db, request.state.company_user.user_id)
         company = auth.create_company_for_user(db, request.state.company_user.user_id, body.name)
         return repo.company_summary(db, connection, company['id'])
     return respond(request, operation, write=True, status=201)
@@ -170,8 +172,11 @@ def accounts(request: Request):
 
 @router.put('/companies/{company_id}/accounts/{account_id}')
 def link_account(request: Request, company_id: UUID, account_id: UUID):
+    def link(db, connection, company):
+        entitlements.require_organic_slot(db, company, account_id)
+        repo.link_account(db, connection, company, account_id)
     return change_company(request, company_id,
-                          lambda db, connection, company: repo.link_account(db, connection, company, account_id), account_id=account_id)
+                          link, account_id=account_id)
 
 
 @router.delete('/companies/{company_id}/accounts/{account_id}')
@@ -251,7 +256,7 @@ def analyze_company_content(request: Request, company_id: UUID, body: AnalysisSe
         item = repo._selected(db, connection, company_id, body.item_id)
         if item['content_type'] == 'ad':
             raise HTTPException(422, 'Choose a Facebook or Instagram video.')
-        return {'job_id': library.new_batch(db, connection, 'analysis', [item])}
+        return {'job_id': library.new_batch(db, connection, 'analysis', [item], company_id=company_id)}
 
     return respond(request, operation, write=True, status=202,
                    company_id=company_id, owner=True)

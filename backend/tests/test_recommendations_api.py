@@ -94,9 +94,8 @@ class VideoAccessTests(unittest.TestCase):
     @patch("app.main.recommend_videos", return_value={"model": "gpt-6-sol", "response": "Idea one"})
     def test_recommendation_endpoint_returns_model_response(self, recommend: MagicMock, get: MagicMock) -> None:
         response = self.client(app).post(f"/api/videos/{VIDEO_ID}/recommendations")
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"model": "gpt-6-sol", "response": "Idea one"})
-        recommend.assert_called_once_with({"video_id": str(VIDEO_ID), **ANALYSIS}, api_key=None)
+        self.assertEqual(response.status_code, 410)
+        recommend.assert_not_called()
         get.assert_called_once_with(VIDEO_ID, owner_user_id=USER_ID)
 
     @patch("app.main.get_analysis", return_value={"video_id": str(VIDEO_ID), **ANALYSIS})
@@ -109,9 +108,9 @@ class VideoAccessTests(unittest.TestCase):
                 headers={"X-OpenAI-API-Key": key},
             )
             save.assert_not_called()
-        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.status_code, 410)
         self.assertNotIn(key, response.text)
-        recommend.assert_called_once_with({"video_id": str(VIDEO_ID), **ANALYSIS}, api_key=key)
+        recommend.assert_not_called()
         get.assert_called_once_with(VIDEO_ID, owner_user_id=USER_ID)
 
     @patch("app.main.get_analysis", return_value={"video_id": str(VIDEO_ID), **ANALYSIS})
@@ -122,8 +121,8 @@ class VideoAccessTests(unittest.TestCase):
             f"/api/videos/{VIDEO_ID}/recommendations",
             headers={"X-OpenAI-API-Key": key},
         )
-        self.assertEqual(response.status_code, 502)
-        self.assertEqual(response.json(), {"detail": "OpenAI request failed."})
+        self.assertEqual(response.status_code, 410)
+        recommend.assert_not_called()
         self.assertNotIn(key, response.text)
 
     @patch.dict(os.environ, {}, clear=True)
@@ -168,9 +167,9 @@ class VideoAccessTests(unittest.TestCase):
                                     save: MagicMock) -> None:
         inspect.return_value = VideoMetadata(**ANALYSIS["metadata"])
         response = self.client(app).post("/api/videos", files={"video": ("sample.mp4", b"video", "video/mp4")})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json()["video_id"], str(VIDEO_ID))
-        save.assert_called_once_with(ANALYSIS, owner_user_id=USER_ID)
+        self.assertEqual(response.status_code, 410)
+        save.assert_not_called()
+        inspect.assert_not_called()
 
     @patch.dict(os.environ, {"OPENAI_API_KEY": "test-key", "OPENAI_MODEL": "gpt-6-sol"})
     @patch("app.recommendations.OpenAI")
@@ -231,12 +230,14 @@ class VideoAccessTests(unittest.TestCase):
                 f"/api/videos/{VIDEO_ID}/recommendations",
                 headers={"X-OpenAI-API-Key": "runtime-test-key"},
             )
+            direct_default = recommend_videos({"video_id": str(VIDEO_ID), **ANALYSIS})
+            direct_runtime = recommend_videos({"video_id": str(VIDEO_ID), **ANALYSIS}, api_key="runtime-test-key")
 
-        self.assertEqual(default_response.status_code, 200)
-        self.assertEqual(runtime_response.status_code, 200)
-        self.assertEqual(default_response.json(),
+        self.assertEqual(default_response.status_code, 410)
+        self.assertEqual(runtime_response.status_code, 410)
+        self.assertEqual(direct_default,
                          {"model": "gpt-6-sol", "response": "Try a short follow-up."})
-        self.assertEqual(runtime_response.json(), default_response.json())
+        self.assertEqual(direct_runtime, direct_default)
         self.assertNotIn("runtime-test-key", runtime_response.text)
         self.assertEqual([request.headers["authorization"] for request in requests],
                          ["Bearer default-test-key", "Bearer runtime-test-key"])

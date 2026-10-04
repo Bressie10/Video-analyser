@@ -11,6 +11,8 @@ from openai import OpenAIError
 from pydantic import BaseModel, ConfigDict, Field
 
 from app import meta
+from app.auth import AuthenticatedUser
+from app.company_authorization import authorize
 from app import meta_library_repository as repo
 from app.meta_auth_dependencies import require_meta_session
 from app.meta_routes import _private
@@ -224,7 +226,31 @@ def batch(request, body, kind):
 
 @router.post("/library/analyze", status_code=202)
 def analyze(request: Request, body: Selection):
-    return batch(request, body, "analysis")
+    def operation(connection_id):
+        with repo.database() as db:
+            items = selected(db, connection_id, body.item_ids)
+            company_ids = set()
+            for item in items:
+                rows = db.execute('''SELECT ca.company_id FROM company_accounts ca
+                    JOIN companies c ON c.id=ca.company_id AND c.archived_at IS NULL
+                    JOIN company_memberships m ON m.company_id=c.id AND m.user_id=%s
+                    WHERE ca.account_id=%s AND ca.account_platform IN ('facebook','instagram')''',
+                    (request.state.meta_connection['owner_user_id'], item['account_id'])).fetchall()
+                if len(rows) != 1:
+                    raise HTTPException(404, 'Company-scoped content was not found.')
+                company_ids.add(rows[0]['company_id'])
+            if len(company_ids) != 1:
+                raise HTTPException(404, 'Company-scoped content was not found.')
+            company_id = company_ids.pop()
+            authorize(db, AuthenticatedUser(request.state.meta_connection['owner_user_id']),
+                      company_id, write=True)
+            if any(not db.execute('''SELECT 1 FROM company_accounts WHERE
+                company_id=%s AND account_id=%s AND account_platform IN ('facebook','instagram')''',
+                (company_id, item['account_id'])).fetchone() for item in items):
+                raise HTTPException(404, 'Company-scoped content was not found.')
+            return {'job_id': repo.new_batch(db, connection_id, 'analysis', items,
+                                             company_id=company_id)}
+    return respond(request, operation, 202)
 
 
 @router.post("/library/metrics/refresh", status_code=202)
@@ -288,13 +314,9 @@ def recommendations(
     runtime_api_key: str | None = Header(default=None, alias="X-OpenAI-API-Key"),
 ):
     def operation(connection_id):
-        evidence = recommendation_evidence(connection_id, body.video_ids)
-        try:
-            return recommend_videos(evidence, api_key=runtime_api_key)
-        except MissingAPIKeyError:
-            raise HTTPException(503, "OpenAI API key is not configured.") from None
-        except OpenAIError:
-            raise HTTPException(502, "OpenAI request failed.") from None
+        with repo.database() as db:
+            selected(db, connection_id, body.video_ids)
+        raise HTTPException(410, 'Use company-scoped idea generation.')
 
     return respond(request, operation)
 

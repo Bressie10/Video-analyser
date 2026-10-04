@@ -95,7 +95,15 @@ class PersistentIdeasTests(unittest.TestCase):
             db.execute((ROOT / 'tests/fixtures/idea_company_contract.sql').read_text())
             db.execute((ROOT / 'migrations/008_persistent_ideas.sql').read_text())
             db.execute((ROOT / 'migrations/009_idea_feedback_publications.sql').read_text())
+            db.execute((ROOT / 'migrations/014_billing_foundation.sql').read_text())
             db.execute('INSERT INTO companies VALUES (%s),(%s)', (self.company, self.other_company))
+            from app import billing_repository as billing
+            for company in (self.company, self.other_company):
+                billing.initialize(db, company)
+                db.execute('''UPDATE company_billing SET plan_code='pro',
+                    stripe_customer_id=%s,stripe_subscription_id=%s,
+                    subscription_status='active' WHERE company_id=%s''',
+                    ('cus_' + company.hex, 'sub_' + company.hex, company))
             db.execute('''INSERT INTO meta_connections(id,external_user_id,expires_at)
                 VALUES (%s,'provider-user-secret',now()+interval '1 day')''', (self.connection,))
             db.execute("INSERT INTO meta_sessions VALUES (%s,%s,now()+interval '1 day')",

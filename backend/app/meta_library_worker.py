@@ -13,6 +13,7 @@ from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 from psycopg.types.json import Jsonb
 
 from app import facebook, instagram, meta, meta_ads
+from app import entitlements
 from app import meta_library_repository as repo
 from app.analysis_pipeline import analyze_file
 from app.meta_library_discovery import discover
@@ -61,9 +62,9 @@ def claim_job(analysis=False):
 
 def finish(job, state="completed", error=None, payload=None, delay=0):
     with repo.database() as db:
-        db.execute(
+        changed = db.execute(
             """UPDATE meta_jobs SET state=%s,error=%s,payload=COALESCE(%s,payload),available_at=%s,
-            attempts=CASE WHEN %s THEN 0 ELSE attempts END, lease_until=NULL WHERE id=%s AND claim=%s AND state='running'""",
+            attempts=CASE WHEN %s THEN 0 ELSE attempts END, lease_until=NULL WHERE id=%s AND claim=%s AND state='running' RETURNING id""",
             (
                 state,
                 error,
@@ -73,7 +74,20 @@ def finish(job, state="completed", error=None, payload=None, delay=0):
                 job["id"],
                 job["claim"],
             ),
-        )
+        ).fetchone()
+        if changed and job['kind'] == 'analysis' and state in (
+            'failed', 'unavailable', 'unsupported', 'cancelled', 'reused'
+        ):
+            refund_analysis_job(db, job['id'])
+
+
+def refund_analysis_job(db, job_id):
+    reserve_key = 'analysis:' + str(job_id) + ':reserve'
+    event = db.execute('SELECT company_id FROM company_usage_ledger WHERE idempotency_key=%s',
+                       (reserve_key,)).fetchone()
+    if event:
+        entitlements.refund_usage(db, event['company_id'], 'analysis', reserve_key,
+            'analysis:' + str(job_id) + ':refund', 'meta_job', job_id)
 
 
 def heartbeat(job, done):

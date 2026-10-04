@@ -61,7 +61,7 @@ def history(db, company_id, limit, after=None, *, search=None, status=None,
     return {'items': rows[:limit], 'next_cursor': rows[limit-1]['id'] if len(rows) > limit else None}
 
 
-def claim_request(db, company_id, request_id, request_hash):
+def claim_request(db, company_id, request_id, request_hash, *, on_stale=None):
     db.execute('''INSERT INTO idea_generation_requests(company_id,request_id,request_hash)
         VALUES (%s,%s,%s) ON CONFLICT DO NOTHING''', (company_id, request_id, request_hash))
     row = db.execute('''SELECT *,lease_until>clock_timestamp() AS active
@@ -75,6 +75,8 @@ def claim_request(db, company_id, request_id, request_hash):
         return None, idea(db, company_id, saved['id'])
     if row['active']:
         raise HTTPException(409, 'Generation is in progress; retry this request later.')
+    if row['claim'] and on_stale:
+        on_stale(row['claim'])
     claim = uuid4()
     db.execute('''UPDATE idea_generation_requests SET claim=%s,
         lease_until=clock_timestamp()+interval '5 minutes' WHERE company_id=%s AND request_id=%s''',

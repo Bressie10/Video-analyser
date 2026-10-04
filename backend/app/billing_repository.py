@@ -28,6 +28,13 @@ def initialize(db, company_id, *, at=None):
         downgrade_at = None
         if row['subscription_status'] == 'past_due' and row['grace_until'] and at >= row['grace_until']:
             downgrade_at = row['grace_until']
+        elif (row['subscription_status'] == 'past_due' and row['grace_until']
+              and at >= row['current_period_end']):
+            # Grace can outlast the mirrored paid period. Keep one bounded,
+            # meterable Pro interval until the already persisted grace deadline.
+            row = db.execute('''UPDATE company_billing SET current_period_start=%s,
+                current_period_end=%s,updated_at=now() WHERE company_id=%s RETURNING *''',
+                (row['current_period_end'], row['grace_until'], company_id)).fetchone()
         elif row['subscription_status'] in ('active', 'trialing', 'canceled') and at >= row['current_period_end']:
             downgrade_at = row['current_period_end']
         if downgrade_at is not None:

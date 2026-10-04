@@ -8,6 +8,7 @@ from contextlib import contextmanager
 from datetime import datetime, timedelta, timezone
 
 import psycopg
+from fastapi import HTTPException
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 
@@ -140,10 +141,15 @@ def disconnect(connection_id):
             (connection_id,),
         )
         db.execute("DELETE FROM meta_sessions WHERE connection_id=%s", (connection_id,))
-        db.execute(
-            "UPDATE meta_jobs SET state='cancelled',claim=NULL WHERE connection_id=%s AND state IN ('queued','running','blocked')",
+        cancelled = db.execute(
+            "UPDATE meta_jobs SET state='cancelled',claim=NULL WHERE connection_id=%s AND state IN ('queued','running','blocked') RETURNING id,kind",
             (connection_id,),
-        )
+        ).fetchall()
+        if cancelled:
+            from app.meta_library_worker import refund_analysis_job
+            for job in cancelled:
+                if job['kind'] == 'analysis':
+                    refund_analysis_job(db, job['id'])
         db.execute(
             "UPDATE meta_sync_runs SET finished_at=now() WHERE connection_id=%s AND finished_at IS NULL",
             (connection_id,),
@@ -221,17 +227,53 @@ def upsert_item(db, account, external_id, content_type, label, published_at):
     ).fetchone()
 
 
-def queue_analysis(db, run_id, item, explicit=False):
+def automatic_analysis_company(db, item):
+    """Resolve a unique authorized content owner; never infer Ads ownership."""
+    owners = db.execute('''SELECT ca.company_id FROM company_accounts ca
+        JOIN companies c ON c.id=ca.company_id AND c.archived_at IS NULL
+        WHERE ca.account_id=%s AND ca.account_platform IN ('facebook','instagram')''',
+        (item['account_id'],)).fetchall()
+    if not owners:
+        owners = db.execute('''SELECT DISTINCT aa.company_id
+            FROM company_ad_assignments aa JOIN meta_ad_assets ma
+            ON ma.ad_item_id=aa.ad_item_id
+            JOIN companies c ON c.id=aa.company_id AND c.archived_at IS NULL
+            WHERE ma.video_item_id=%s''', (item['id'],)).fetchall()
+    return owners[0]['company_id'] if len(owners) == 1 else None
+
+
+def queue_analysis(db, run_id, item, explicit=False, company_id=None):
+    supplied_company = company_id is not None
     if item["content_type"] == "ad":
         return "unsupported"
     if item["video_id"] and item["analysis_version"] == ANALYSIS_VERSION:
         return "reused"
     if not explicit and not (item["auto_analyze"] or item["video_id"]):
         return "deferred"
+    if company_id is None:
+        # Discovery is connection-wide. Resolve a unique organic link or Ads
+        # assignment, then hold the company lock through job creation.
+        company_id = automatic_analysis_company(db, item)
+        if company_id is None:
+            return 'deferred'
+        db.execute('SELECT id FROM companies WHERE id=%s FOR SHARE', (company_id,))
+        if automatic_analysis_company(db, item) != company_id:
+            return 'deferred'
     added = add_job(
         db, run_id, item["connection_id"], "analysis", item["id"], item_id=item["id"]
     )
     if added:
+        from app import entitlements
+        try:
+            entitlements.reserve_usage(db, company_id, 'analysis',
+                'analysis:' + str(added['id']) + ':reserve', 'meta_job', added['id'])
+        except HTTPException:
+            if supplied_company:
+                raise
+            # Discovery should finish even when an automatic analysis cannot
+            # start. Remove only this unreserved job in the same transaction.
+            db.execute('DELETE FROM meta_jobs WHERE id=%s', (added['id'],))
+            return 'deferred'
         db.execute(
             "UPDATE meta_library_items SET analysis_state='queued',analysis_error=NULL WHERE id=%s",
             (item["id"],),
@@ -340,7 +382,7 @@ def public_performance(db, item_id):
     return rows
 
 
-def new_batch(db, connection_id, kind, items):
+def new_batch(db, connection_id, kind, items, *, company_id=None):
     run = db.execute(
         "INSERT INTO meta_sync_runs(connection_id,kind,discovery_finalized) VALUES (%s,%s,true) RETURNING id",
         (connection_id, kind),
@@ -360,7 +402,7 @@ def new_batch(db, connection_id, kind, items):
                     (run, item["id"]),
                 )
             for target in targets:
-                state = queue_analysis(db, run, target, explicit=True)
+                state = queue_analysis(db, run, target, explicit=True, company_id=company_id)
                 if state == "reused":
                     add_job(
                         db, run, connection_id, kind, target["id"], item_id=target["id"]

@@ -24,6 +24,7 @@ from app.meta_media import MediaUnavailable, download, validate_url
 from app.video_repository import get_analysis, save_analysis
 from cryptography.fernet import Fernet
 from fastapi.testclient import TestClient
+from fastapi import HTTPException
 from psycopg.conninfo import make_conninfo
 from test_meta_api import CONFIG
 from test_recommendations_api import ANALYSIS
@@ -222,6 +223,39 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             "123", meta.UserToken("private-token", time.time() + 86400 * 30), owner_user_id=USER_ID
         )
         self.connection_id = repo.session_connection(self.session)["id"]
+        # The V8 worker analyzes linked company content. Attach discovered
+        # accounts to one paid fixture company as discovery persists them.
+        from app import auth_repository, billing_repository as billing
+        with repo.database() as db:
+            self.company_id = auth_repository.create_company_for_user(db, USER_ID, 'Library fixture')['id']
+            db.execute('UPDATE companies SET connection_id=%s WHERE id=%s',
+                       (self.connection_id, self.company_id))
+            billing.initialize(db, self.company_id)
+            db.execute('''UPDATE company_billing SET plan_code='pro',
+                stripe_customer_id=%s,stripe_subscription_id=%s,
+                subscription_status='active' WHERE company_id=%s''',
+                ('cus_' + self.company_id.hex, 'sub_' + self.company_id.hex, self.company_id))
+        original_upsert = repo.upsert_account
+        def linked_account(db, *args, **kwargs):
+            account = original_upsert(db, *args, **kwargs)
+            db.execute('''INSERT INTO company_accounts
+                (company_id,connection_id,account_id,account_platform)
+                VALUES (%s,%s,%s,%s) ON CONFLICT DO NOTHING''',
+                (self.company_id, self.connection_id, account['id'], account['platform']))
+            return account
+        self.account_patch = patch.object(repo, 'upsert_account', side_effect=linked_account)
+        self.account_patch.start()
+        original_item = repo.upsert_item
+        def assigned_ad(db, account, *args, **kwargs):
+            item = original_item(db, account, *args, **kwargs)
+            if item['content_type'] == 'ad':
+                db.execute('''INSERT INTO company_ad_assignments
+                    (company_id,connection_id,account_id,ad_item_id)
+                    VALUES (%s,%s,%s,%s) ON CONFLICT DO NOTHING''',
+                    (self.company_id, self.connection_id, account['id'], item['id']))
+            return item
+        self.item_patch = patch.object(repo, 'upsert_item', side_effect=assigned_ad)
+        self.item_patch.start()
         self.api = TestClient(app, base_url="https://testserver")
         self.api.cookies.set(meta.SESSION_COOKIE, self.session, path="/api/meta")
         self.analysis = patch(
@@ -506,17 +540,14 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         ids = [str(self.item(i)["id"]) for i in ("100", "200", "400")]
         self.analysis.reset_mock()
         self.download.reset_mock()
-        with patch(
-            "app.meta_library_routes.recommend_videos",
-            return_value={"model": "test", "response": "One idea and script"},
-        ) as recommend:
+        evidence = recommendation_evidence(self.connection_id, [self.item(i)['id'] for i in ('100','200','400')])
+        with patch("app.meta_library_routes.recommend_videos") as recommend:
             response = self.api.post(
                 "/api/meta/recommendations",
                 json={"video_ids": [*ids, ids[0]]},
                 headers={"X-OpenAI-API-Key": "request-only"},
             )
-        self.assertEqual(response.status_code, 200, response.text)
-        evidence = recommend.call_args.args[0]
+        self.assertEqual(response.status_code, 410, response.text)
         self.assertEqual(len(evidence["videos"]), 3)
         self.assertEqual(
             {
@@ -525,7 +556,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             },
             {"facebook", "instagram", "meta_ads"},
         )
-        self.assertEqual(recommend.call_args.kwargs, {"api_key": "request-only"})
+        recommend.assert_not_called()
         self.analysis.assert_not_called()
         self.download.assert_not_called()
         with repo.database() as db:
@@ -540,7 +571,10 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             "/api/meta/recommendations",
             json={"video_ids": [str(self.item("101")["id"])]},
         )
-        self.assertEqual(response.status_code, 409, response.text)
+        self.assertEqual(response.status_code, 410, response.text)
+        with self.assertRaises(HTTPException) as error:
+            recommendation_evidence(self.connection_id, [self.item('101')['id']])
+        self.assertEqual(error.exception.status_code, 409)
         self.assertEqual(
             self.api.post(
                 "/api/meta/recommendations", json={"video_ids": []}
@@ -840,13 +874,13 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
                 "UPDATE videos SET transcript_text=%s WHERE id=%s",
                 ("x" * (1024 * 1024), identity),
             )
+        with self.assertRaises(HTTPException) as error:
+            recommendation_evidence(self.connection_id, [identity])
+        self.assertEqual(error.exception.status_code, 413)
         with patch("app.meta_library_routes.recommend_videos") as recommend:
-            self.assertEqual(
-                self.api.post(
-                    "/api/meta/recommendations", json={"video_ids": [str(identity)]}
-                ).status_code,
-                413,
-            )
+            self.assertEqual(self.api.post(
+                "/api/meta/recommendations", json={"video_ids": [str(identity)]}
+            ).status_code, 410)
         recommend.assert_not_called()
 
     def test_inaccessible_post_creative_keeps_ad_and_metrics(self):
@@ -1014,20 +1048,19 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
                     r["text"] for r in result.json()["analysis"]["on_screen_text"]
                 ).upper(),
             )
-            with patch(
-                "app.meta_library_routes.recommend_videos",
-                return_value={"model": "test", "response": "Idea and script"},
-            ) as recommend:
+            evidence = recommendation_evidence(self.connection_id, [UUID(identity)])
+            with patch("app.meta_library_routes.recommend_videos") as recommend:
                 response = self.api.post(
                     "/api/meta/recommendations", json={"video_ids": [identity]}
                 )
-            self.assertEqual(response.status_code, 200, response.text)
+            self.assertEqual(response.status_code, 410, response.text)
+            recommend.assert_not_called()
             self.assertEqual(
-                recommend.call_args.args[0]["videos"][0]["metadata"]["audio"]["codec"],
+                evidence["videos"][0]["metadata"]["audio"]["codec"],
                 "aac",
             )
             self.assertEqual(
-                recommend.call_args.args[0]["performance_snapshots"][0]["snapshot"][
+                evidence["performance_snapshots"][0]["snapshot"][
                     "performance_metrics"
                 ]["view_count"],
                 100,
