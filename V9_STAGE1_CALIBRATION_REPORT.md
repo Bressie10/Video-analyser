@@ -15,23 +15,27 @@ The pilot selection and near-duplicate exclusion must be documented before annot
 
 ## Annotation agreement
 
-Guideline **1.1.0** and frozen V8.5 `Annotation` contracts remain in use. The workflow requires two independent pseudonymous records per source, explicit category/structure/numeric coverage, uncertainty notes, a source-level split/group, an agreement JSON, adjudication notes, and a third reviewed truth record. Original disagreements remain in the two first-pass files. Real agreement statistics: **unavailable (0 annotated pilot videos)**. Agreement will be reported by technique presence, interval IoU, point timing, and structure role, with incomplete coverage excluded from that comparison.
+Guideline **1.1.0** and frozen V8.5 `Annotation` contracts remain in use. The semantic workflow requires two independent pseudonymous records per source, explicit category/structure/numeric coverage, uncertainty notes, a source-level split/group, an agreement JSON, adjudication notes, and a third reviewed truth record. Original disagreements remain in the two first-pass files. Real semantic agreement statistics: **unavailable (0 annotated pilot videos)**. Agreement will be reported by technique presence, interval IoU, point timing, and structure role, with incomplete coverage excluded from that comparison.
+
+Low-level truth now has a separate **private Stage 1 format version 1.0.0**. Two independent records carry annotator pseudonyms and timezone-aware annotation times; a reviewed record carries a separate reviewer pseudonym and review time. An offline audit requires both originals and nonempty adjudication notes before a source can be scored. Its per-signal agreement report compares scene timing, OCR spans/text, transcript text/timed segments, motion overlap/type, and independently checked metadata. Partial and unavailable coverage is excluded. Real low-level agreement statistics: **unavailable (0 annotated pilot videos)**. Human truth must be finalized before anyone involved sees V8 output.
 
 ## Existing V8 signal results
 
 | Signal | Pilot metric and uncertainty plan | Real-media result |
 |---|---|---|
 | Editorial scene boundaries | Precision, recall, F1 at 0.1/0.25/0.5 s; matched timing error; Wilson 95% intervals on event proportions | Pending |
-| OCR visible text | Exact normalized-text precision/recall; text similarity; temporal IoU; missed-visible-span rate | Pending |
-| Transcript/ASR | Token error rate; segment timing only when texts align; missing/hallucinated speech segments | Pending |
+| OCR visible text | Exact normalized-text precision/recall; text similarity; temporal IoU; unmatched visible text span rate | Pending |
+| Transcript/ASR | Token error rate; segment timing only when texts align; missing/hallucinated speech segment-presence counts | Pending |
 | Human-observable motion | Presence precision/recall/F1, temporal overlap, false positives/negatives, V8 type confusion | Pending |
 | Metadata | Independently checked duration, resolution, FPS, each with an explicit tolerance; per-field correctness | Pending |
 
 No overall “analysis accuracy” is computed. The evaluator keeps per-source rows and micro event counts. Wilson intervals describe event proportions, not uncertainty over creators or genres; sources within a creator group are correlated. For any final report, add group-level resampling or an explicit small-sample uncertainty statement and show all denominators. Do not interpret undefined rates from empty truth/prediction sets as zero.
 
+`unmatched_visible_text_span_rate` counts visible truth spans with no OCR track having any positive temporal overlap. A paired track with the wrong text lowers exact-text recall but does not count as an unmatched span. Transcript missing/hallucinated segment counts describe temporal segment presence, not recognition correctness.
+
 ## Detector coverage, abstention, and missing data
 
-Real detector coverage is **unknown**. Each reviewed low-level truth file marks every signal `complete`, `partial`, or `unavailable`. Only `complete` is scored; a complete empty list is a checked negative. Partial/unavailable sections abstain. Missing result or truth files are counted separately as missing data. Silent media may yield empty ASR output through the existing pipeline. Pipeline exceptions stop processing that source; they must be reported as coverage failures, not suppressed as clean negatives. The runner records the pipeline commit and input hash alongside raw output outside the production database.
+Real detector coverage is **unknown**. Each reviewed low-level truth file marks every signal `complete`, `partial`, or `unavailable`. Only `complete` is scored; a complete empty list is a checked negative. Partial/unavailable sections abstain. Missing result or reviewed truth files are counted separately as missing data. Independent draft records cannot be scored. Silent media may yield empty ASR output through the existing pipeline. Pipeline exceptions stop processing that source; they must be reported as coverage failures, not suppressed as clean negatives. The runner records the pipeline commit and input hash alongside raw output outside the production database.
 
 ## Failure examples and taxonomy
 

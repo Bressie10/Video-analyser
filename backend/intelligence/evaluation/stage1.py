@@ -1,6 +1,6 @@
 """Offline V9 Stage 1 pilot: private manifest, unchanged V8 runner, signal evaluation.
 
-Run with ``python -m intelligence.evaluation.stage1 {validate,run,evaluate} ...``.
+Run with ``python -m intelligence.evaluation.stage1 {validate,low-level-audit,run,evaluate} ...``.
 This module is deliberately outside the production app import graph.
 """
 
@@ -16,11 +16,9 @@ from collections import Counter
 from pathlib import Path
 
 from .v8_baseline import _edit_distance, _interval, _iou, _tokens
+from .stage1_truth import SIGNALS, MOTION_TYPES, audit as audit_truth, validate_record
 
 
-SIGNALS = ("scene_boundaries", "ocr", "transcript", "motion", "metadata")
-MOTION_TYPES = {"camera_shake", "camera_zoom", "camera_pan", "general_motion",
-                "local_motion", "unknown"}
 VARIATION = {"talking_head", "tutorial", "product_demo", "screen_recording",
              "interview", "storytime", "before_after", "fast_editing", "slow_editing",
              "captions", "no_captions", "music", "no_music", "clean_audio",
@@ -194,7 +192,7 @@ def _score_ocr(predicted, truth, min_iou):
             "exact_text_and_time": _counts(len(timed), len(p), len(t)),
             "normalized_text_similarity_mean": sum(similarities) / len(similarities) if similarities else None,
             "temporal_iou_mean": sum(_iou(p[i], t[j]) for i, j in pairs) / len(pairs) if pairs else None,
-            "missed_visible_text_rate": (len(t) - len(pairs)) / len(t) if t else None,
+            "unmatched_visible_text_span_rate": (len(t) - len(pairs)) / len(t) if t else None,
             "unmatched_truth_indices": [j for j in range(len(t)) if j not in {b for _, b in pairs}],
             "unmatched_prediction_indices": [i for i in range(len(p)) if i not in {a for a, _ in pairs}]}
 
@@ -257,17 +255,15 @@ def _score_metadata(predicted, truth):
 
 def evaluate_one(analysis: dict, truth: dict, *, tolerances=(0.1, 0.25, 0.5), min_iou=0.5) -> dict:
     """Evaluate only fully reviewed signal truth; partial coverage is an abstention."""
+    validate_record(truth, kind="reviewed")
     coverage = truth["coverage"]
-    if set(coverage) != set(SIGNALS) or any(value not in {"complete", "partial", "unavailable"} for value in coverage.values()):
-        raise ValueError("Explicit complete/partial/unavailable coverage needed for every signal")
+    observations = truth["observations"]
     results = {}
     for signal in SIGNALS:
         if coverage[signal] != "complete":
             results[signal] = {"status": "abstained", "reason": coverage[signal]}
             continue
-        if signal not in truth:
-            raise ValueError(f"Complete truth section missing: {signal}")
-        value = truth[signal]
+        value = observations[signal]
         if signal == "scene_boundaries":
             result = _score_scene(analysis["scenes"], value, tolerances)
         elif signal == "ocr":
@@ -282,49 +278,6 @@ def evaluate_one(analysis: dict, truth: dict, *, tolerances=(0.1, 0.25, 0.5), mi
             result = _score_metadata(analysis["metadata"], value)
         results[signal] = {"status": "measured", "result": result}
     return results
-
-
-def validate_truth(truth: dict, duration_seconds: float) -> None:
-    """Reject impossible reviewed timings before measuring the existing pipeline."""
-    coverage = truth.get("coverage")
-    if not isinstance(coverage, dict) or set(coverage) != set(SIGNALS):
-        raise ValueError("Every low-level signal needs explicit coverage")
-    for signal, status in coverage.items():
-        if status not in {"complete", "partial", "unavailable"}:
-            raise ValueError(f"Invalid low-level coverage: {signal}")
-        if status == "complete" and signal not in truth:
-            raise ValueError(f"Complete truth section missing: {signal}")
-    if coverage["scene_boundaries"] == "complete":
-        times = [row["time_seconds"] for row in truth["scene_boundaries"]]
-        if any(not isinstance(t, (int, float)) or not math.isfinite(t) or not 0 < t < duration_seconds for t in times):
-            raise ValueError("Editorial boundaries must be within the source duration")
-        if times != sorted(set(times)):
-            raise ValueError("Editorial boundaries must be unique and in time order")
-    for signal, start, end in (("ocr", "start_seconds", "end_seconds"),
-                               ("motion", "start_seconds", "end_seconds")):
-        if coverage[signal] != "complete":
-            continue
-        for row in truth[signal]:
-            a, b = _interval(row, start, end)
-            if not math.isfinite(a) or not math.isfinite(b) or b > duration_seconds:
-                raise ValueError(f"{signal} interval exceeds source duration")
-            if signal == "ocr" and (not row.get("text") or not row.get("normalized_text")):
-                raise ValueError("Visible OCR text needs literal and normalized text")
-            if signal == "motion" and row["type"] not in MOTION_TYPES:
-                raise ValueError("Motion truth must map to a V8 output type")
-    if coverage["transcript"] == "complete":
-        if not isinstance(truth["transcript"].get("text"), str):
-            raise ValueError("Human transcript text is required")
-        for segment in truth["transcript"].get("segments", []):
-            a, b = _interval(segment, "start", "end")
-            if not math.isfinite(a) or not math.isfinite(b) or b > duration_seconds:
-                raise ValueError("Transcript segment exceeds source duration")
-    if coverage["metadata"] == "complete":
-        for field, row in truth["metadata"].items():
-            if field not in {"duration_seconds", "video.resolution.width", "video.resolution.height", "video.fps"}:
-                raise ValueError(f"Unsupported independent metadata field: {field}")
-            if not isinstance(row.get("value"), (int, float)) or not math.isfinite(row["value"]) or row.get("tolerance", 0) < 0:
-                raise ValueError(f"Invalid metadata truth: {field}")
 
 
 def annotation_audit(manifest_path: Path, semantic_dir: Path, reviewed_dir: Path) -> dict:
@@ -371,28 +324,36 @@ def annotation_audit(manifest_path: Path, semantic_dir: Path, reviewed_dir: Path
     return {"sources": rows, "agreement": compare_all(dataset.annotations)}
 
 
-def evaluate_pilot(manifest_path: Path, results_dir: Path, truth_dir: Path,
+def low_level_audit(manifest_path: Path, low_level_dir: Path, *, scene_tolerance=0.25) -> dict:
+    """Audit human truth without loading or requiring any detector output."""
+    manifest = load_manifest(manifest_path)
+    report, _ = audit_truth(manifest, _private_path(low_level_dir), scene_tolerance=scene_tolerance)
+    return report
+
+
+def evaluate_pilot(manifest_path: Path, results_dir: Path, low_level_dir: Path,
                    *, scene_tolerances=(0.1, 0.25, 0.5)) -> dict:
     if not scene_tolerances or any(not math.isfinite(t) or t < 0 for t in scene_tolerances):
         raise ValueError("Scene tolerances must be finite nonnegative seconds")
     if len(set(scene_tolerances)) != len(scene_tolerances):
         raise ValueError("Scene tolerances must be unique")
     manifest = load_manifest(manifest_path)
-    results_dir, truth_dir = _private_path(results_dir), _private_path(truth_dir)
+    results_dir, low_level_dir = _private_path(results_dir), _private_path(low_level_dir)
+    truth_audit, reviewed_records = audit_truth(manifest, low_level_dir,
+                                                 scene_tolerance=scene_tolerances[0])
     rows = {}
     hashes = set()
     for item in manifest["sources"]:
         ref = item["source_ref"]
-        result_path, truth_path = results_dir / f"{ref}.json", truth_dir / f"{ref}.json"
-        if not item["low_level_truth_available"] or not truth_path.exists() or not result_path.exists():
-            rows[ref] = {"status": "missing_data", "truth_available": truth_path.exists(),
+        result_path = results_dir / f"{ref}.json"
+        if ref not in reviewed_records or not result_path.exists():
+            rows[ref] = {"status": "missing_data", "truth_available": ref in reviewed_records,
                          "analysis_available": result_path.exists()}
             continue
         payload = json.loads(result_path.read_text())
-        truth = json.loads(truth_path.read_text())
+        truth = reviewed_records[ref]
         if payload["source_ref"] != ref or truth["source_ref"] != ref:
             raise ValueError(f"Source reference mismatch: {ref}")
-        validate_truth(truth, item["duration_seconds"])
         if payload["input_sha256"] in hashes:
             raise ValueError("Duplicate input hash in pilot")
         hashes.add(payload["input_sha256"])
@@ -401,7 +362,7 @@ def evaluate_pilot(manifest_path: Path, results_dir: Path, truth_dir: Path,
     coverage = {signal: dict(sorted(Counter(
         row["signals"][signal]["status"] if row["status"] == "evaluated" else "missing_data"
         for row in rows.values()).items())) for signal in SIGNALS}
-    return {"schema_version": 1, "sources": rows, "coverage": coverage,
+    return {"schema_version": 1, "sources": rows, "truth_audit": truth_audit, "coverage": coverage,
             "aggregate": aggregate(rows, scene_tolerances)}
 
 
@@ -457,12 +418,12 @@ def aggregate(rows: dict, scene_tolerances=(0.1, 0.25, 0.5)) -> dict:
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("command", choices=("validate", "annotations", "run", "evaluate"))
+    parser.add_argument("command", choices=("validate", "annotations", "low-level-audit", "run", "evaluate"))
     parser.add_argument("manifest", type=Path)
     parser.add_argument("--results", type=Path)
-    parser.add_argument("--truth", type=Path)
     parser.add_argument("--semantic", type=Path)
     parser.add_argument("--reviewed", type=Path)
+    parser.add_argument("--low-level", type=Path)
     parser.add_argument("--scene-tolerances", type=float, nargs="+", default=[0.1, 0.25, 0.5],
                         metavar="SECONDS")
     args = parser.parse_args(argv)
@@ -476,10 +437,15 @@ def main(argv=None):
         if args.results is None:
             parser.error("run requires --results")
         result = run(args.manifest, args.results)
+    elif args.command == "low-level-audit":
+        if args.low_level is None:
+            parser.error("low-level-audit requires --low-level")
+        result = low_level_audit(args.manifest, args.low_level,
+                                 scene_tolerance=args.scene_tolerances[0])
     else:
-        if args.results is None or args.truth is None:
-            parser.error("evaluate requires --results and --truth")
-        result = evaluate_pilot(args.manifest, args.results, args.truth,
+        if args.results is None or args.low_level is None:
+            parser.error("evaluate requires --results and --low-level")
+        result = evaluate_pilot(args.manifest, args.results, args.low_level,
                                 scene_tolerances=args.scene_tolerances)
     print(json.dumps(result, indent=2, sort_keys=True, default=dict))
     return 0
