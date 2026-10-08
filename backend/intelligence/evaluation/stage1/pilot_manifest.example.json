@@ -1,0 +1,17 @@
+{
+  "schema_version": 1,
+  "sources": [
+    {
+      "source_ref": "replace-with-stable-id",
+      "media_path": "/private/path/to/authorized-local-video.mp4",
+      "duration_seconds": 30.0,
+      "creator_ref": null,
+      "rights_note": "Replace with source, permission and use limits",
+      "annotation_status": "pending",
+      "partition": "test",
+      "group_ref": "replace-with-source-family",
+      "low_level_truth_available": false,
+      "variation": ["talking_head", "ordinary"]
+    }
+  ]
+}

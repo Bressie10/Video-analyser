@@ -1,0 +1,19 @@
+{
+  "source_ref": "replace-with-stable-id",
+  "coverage": {
+    "scene_boundaries": "complete",
+    "ocr": "complete",
+    "transcript": "partial",
+    "motion": "unavailable",
+    "metadata": "complete"
+  },
+  "scene_boundaries": [{"time_seconds": 2.0, "note": "New editorial shot starts here"}],
+  "ocr": [{"text": "Visible words", "normalized_text": "visible words", "start_seconds": 0.5, "end_seconds": 1.8, "region": "upper third", "note": null}],
+  "transcript": {"text": "Human transcript", "segments": [{"text": "Human transcript", "start": 0.3, "end": 1.4}]},
+  "metadata": {
+    "duration_seconds": {"value": 30.0, "tolerance": 0.1},
+    "video.resolution.width": {"value": 1080, "tolerance": 0},
+    "video.resolution.height": {"value": 1920, "tolerance": 0},
+    "video.fps": {"value": 30.0, "tolerance": 0.1}
+  }
+}
