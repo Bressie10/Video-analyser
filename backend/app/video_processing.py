@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import json
 import os
+import re
 import subprocess
+import unicodedata
 from dataclasses import dataclass
+from difflib import SequenceMatcher
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -17,6 +20,10 @@ SCENE_DETECTION_THRESHOLD = 27.0
 TEXT_SAMPLE_RATE_FPS = 2.0
 MIN_TEXT_CONFIDENCE = 0.6
 TEXT_BOX_MATCH_IOU = 0.5
+TEXT_SINGLE_FRAME_CONFIDENCE = 0.7
+TEXT_FUZZY_MATCH_RATIO = 0.88
+TEXT_FUZZY_MAX_LOW_CONFIDENCE = 0.85
+TEXT_MOVE_MAX_BOX_WIDTH = 0.4
 MOTION_SAMPLE_RATE_FPS = 8.0
 MOTION_MAGNITUDE_THRESHOLD = 0.75
 GLOBAL_MOTION_COVERAGE = 0.55
@@ -313,7 +320,7 @@ def _ocr_model() -> Any:
 
 
 def _normalise_detected_text(text: str) -> str:
-    return " ".join(text.casefold().split())
+    return " ".join(unicodedata.normalize("NFKC", text).casefold().split())
 
 
 def _box_iou(first_box: list[list[int]], second_box: list[list[int]]) -> float:
@@ -340,8 +347,123 @@ def _box_iou(first_box: list[list[int]], second_box: list[list[int]]) -> float:
     return intersection / union if union else 0.0
 
 
-def detect_on_screen_text(video_path: Path) -> list[dict[str, Any]]:
-    """Sample frames and group recurring OCR detections into visible text intervals."""
+def _ocr_text_matches(first: str, second: str) -> bool:
+    if first == second:
+        return True
+    # Short labels and changing numbers are too easy to conflate with real edits.
+    if min(len(first), len(second)) < 8 or re.findall(r"\d+", first) != re.findall(r"\d+", second):
+        return False
+    return SequenceMatcher(None, first, second, autojunk=False).ratio() >= TEXT_FUZZY_MATCH_RATIO
+
+
+def _ocr_boxes_match(first: list[list[int]], second: list[list[int]]) -> bool:
+    if _box_iou(first, second) >= TEXT_BOX_MATCH_IOU:
+        return True
+    first_x = [point[0] for point in first]
+    first_y = [point[1] for point in first]
+    second_x = [point[0] for point in second]
+    second_y = [point[1] for point in second]
+    first_width, first_height = max(first_x) - min(first_x), max(first_y) - min(first_y)
+    second_width, second_height = max(second_x) - min(second_x), max(second_y) - min(second_y)
+    if not first_width or not first_height or not second_width or not second_height:
+        return False
+    if min(first_width, second_width) / max(first_width, second_width) < 0.5:
+        return False
+    if min(first_height, second_height) / max(first_height, second_height) < 0.5:
+        return False
+    first_center = ((min(first_x) + max(first_x)) / 2, (min(first_y) + max(first_y)) / 2)
+    second_center = ((min(second_x) + max(second_x)) / 2, (min(second_y) + max(second_y)) / 2)
+    return (
+        abs(first_center[0] - second_center[0]) <= TEXT_MOVE_MAX_BOX_WIDTH * max(first_width, second_width)
+        and abs(first_center[1] - second_center[1]) <= TEXT_MOVE_MAX_BOX_WIDTH * max(first_height, second_height)
+    )
+
+
+def _consolidate_ocr_observations(
+    samples: list[dict[str, Any]], video_duration: float, sample_interval_seconds: float
+) -> list[dict[str, Any]]:
+    """Build contract-compatible spans while leaving sampled OCR observations intact."""
+    tracks: list[dict[str, Any]] = []
+    active_track_indices: list[int] = []
+    for sample in samples:
+        candidates = []
+        for detection_index, detection in enumerate(sample["detections"]):
+            if not detection["text"].strip() or detection["confidence"] < MIN_TEXT_CONFIDENCE:
+                continue
+            normalised = _normalise_detected_text(detection["text"])
+            for track_index in active_track_indices:
+                track = tracks[track_index]
+                exact_text = track["normalised_text"] == normalised
+                if not exact_text and min(
+                    track["last_confidence"], detection["confidence"]
+                ) >= TEXT_FUZZY_MAX_LOW_CONFIDENCE:
+                    continue
+                if not _ocr_text_matches(track["normalised_text"], normalised):
+                    continue
+                if not _ocr_boxes_match(track["last_box"], detection["bounding_box"]):
+                    continue
+                candidates.append((
+                    exact_text,
+                    _box_iou(track["last_box"], detection["bounding_box"]),
+                    track_index, detection_index,
+                ))
+        matched_tracks: set[int] = set()
+        matched_detections: set[int] = set()
+        next_active_track_indices: list[int] = []
+        for _, _, track_index, detection_index in sorted(candidates, reverse=True):
+            if track_index in matched_tracks or detection_index in matched_detections:
+                continue
+            track = tracks[track_index]
+            detection = sample["detections"][detection_index]
+            track["last_seen_seconds"] = sample["timestamp_seconds"]
+            track["last_box"] = detection["bounding_box"]
+            track["last_confidence"] = detection["confidence"]
+            track["observations"] += 1
+            if detection["confidence"] > track["best"]["confidence"]:
+                track["best"] = detection
+                track["normalised_text"] = _normalise_detected_text(detection["text"])
+            matched_tracks.add(track_index)
+            matched_detections.add(detection_index)
+            next_active_track_indices.append(track_index)
+        for detection_index, detection in enumerate(sample["detections"]):
+            if detection_index in matched_detections or not detection["text"].strip():
+                continue
+            if detection["confidence"] < MIN_TEXT_CONFIDENCE:
+                continue
+            tracks.append({
+                "normalised_text": _normalise_detected_text(detection["text"]),
+                "last_box": detection["bounding_box"],
+                "last_confidence": detection["confidence"],
+                "best": detection,
+                "first_seen_seconds": sample["timestamp_seconds"],
+                "last_seen_seconds": sample["timestamp_seconds"],
+                "observations": 1,
+            })
+            next_active_track_indices.append(len(tracks) - 1)
+        active_track_indices = next_active_track_indices
+
+    return [
+        {
+            "text": track["best"]["text"].strip(),
+            "bounding_box": [
+                [int(round(value)) for value in point]
+                for point in track["best"]["bounding_box"]
+            ],
+            "confidence": round(track["best"]["confidence"], 3),
+            "appearance_timestamp_seconds": round(track["first_seen_seconds"], 3),
+            "disappearance_timestamp_seconds": round(
+                min(video_duration, track["last_seen_seconds"] + sample_interval_seconds), 3
+            ),
+        }
+        for track in tracks
+        if track["observations"] > 1 or track["best"]["confidence"] >= TEXT_SINGLE_FRAME_CONFIDENCE
+    ]
+
+
+def _sample_ocr_observations(
+    video_path: Path,
+) -> tuple[list[dict[str, Any]], float, float]:
+    """Keep every frame OCR result before confidence filtering or consolidation."""
     try:
         import cv2
 
@@ -356,8 +478,7 @@ def detect_on_screen_text(video_path: Path) -> list[dict[str, Any]]:
         sample_interval_frames = max(1, round(fps / TEXT_SAMPLE_RATE_FPS))
         sample_interval_seconds = sample_interval_frames / fps
         video_duration = frame_count / fps
-        tracks: list[dict[str, Any]] = []
-        completed_tracks: list[dict[str, Any]] = []
+        raw_samples: list[dict[str, Any]] = []
         frame_number = 0
 
         while True:
@@ -375,59 +496,14 @@ def detect_on_screen_text(video_path: Path) -> list[dict[str, Any]]:
             scores = result.scores if result.scores is not None else ()
             detections = [
                 {
-                    "text": text.strip(),
-                    "normalised_text": _normalise_detected_text(text),
-                    "bounding_box": [[int(round(value)) for value in point] for point in box],
-                    "confidence": round(float(score), 3),
+                    "text": text,
+                    "bounding_box": [[float(value) for value in point] for point in box],
+                    "confidence": float(score),
                 }
                 for box, text, score in zip(boxes, texts, scores)
-                if text.strip() and float(score) >= MIN_TEXT_CONFIDENCE
             ]
-            matched_track_ids: set[int] = set()
-
-            for detection in detections:
-                matching_track = next(
-                    (
-                        track
-                        for track in tracks
-                        if track["id"] not in matched_track_ids
-                        and track["normalised_text"] == detection["normalised_text"]
-                        and _box_iou(track["bounding_box"], detection["bounding_box"])
-                        >= TEXT_BOX_MATCH_IOU
-                    ),
-                    None,
-                )
-                if matching_track is None:
-                    matching_track = {
-                        "id": len(tracks) + len(completed_tracks),
-                        "text": detection["text"],
-                        "normalised_text": detection["normalised_text"],
-                        "bounding_box": detection["bounding_box"],
-                        "confidence": detection["confidence"],
-                        "start_seconds": timestamp,
-                        "last_seen_seconds": timestamp,
-                    }
-                    tracks.append(matching_track)
-                else:
-                    matching_track["last_seen_seconds"] = timestamp
-                    if detection["confidence"] > matching_track["confidence"]:
-                        matching_track["confidence"] = detection["confidence"]
-                        matching_track["bounding_box"] = detection["bounding_box"]
-                matched_track_ids.add(matching_track["id"])
-
-            still_visible: list[dict[str, Any]] = []
-            for track in tracks:
-                if track["id"] in matched_track_ids:
-                    still_visible.append(track)
-                    continue
-                track["disappearance_timestamp_seconds"] = round(timestamp, 3)
-                completed_tracks.append(track)
-            tracks = still_visible
+            raw_samples.append({"timestamp_seconds": timestamp, "detections": detections})
             frame_number += 1
-
-        for track in tracks:
-            track["disappearance_timestamp_seconds"] = round(video_duration, 3)
-            completed_tracks.append(track)
     except TextDetectionError:
         raise
     except Exception as error:
@@ -436,16 +512,16 @@ def detect_on_screen_text(video_path: Path) -> list[dict[str, Any]]:
         if "capture" in locals():
             capture.release()
 
-    return [
-        {
-            "text": track["text"],
-            "bounding_box": track["bounding_box"],
-            "confidence": track["confidence"],
-            "appearance_timestamp_seconds": round(track["start_seconds"], 3),
-            "disappearance_timestamp_seconds": track["disappearance_timestamp_seconds"],
-        }
-        for track in completed_tracks
-    ]
+    return raw_samples, video_duration, sample_interval_seconds
+
+
+def detect_on_screen_text(video_path: Path) -> list[dict[str, Any]]:
+    """Sample frames and consolidate recurring OCR into visible text intervals."""
+    samples, duration, interval = _sample_ocr_observations(video_path)
+    try:
+        return _consolidate_ocr_observations(samples, duration, interval)
+    except Exception as error:
+        raise TextDetectionError("On-screen text detection failed.") from error
 
 
 def _motion_strength(magnitude: float) -> float:
