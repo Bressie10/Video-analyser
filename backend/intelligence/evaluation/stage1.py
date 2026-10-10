@@ -12,6 +12,7 @@ import json
 import math
 import re
 import tempfile
+import unicodedata
 from collections import Counter
 from pathlib import Path
 
@@ -170,6 +171,37 @@ def _score_scene(predicted, truth, tolerances):
     return rows
 
 
+def _ocr_tokens(value):
+    """Fold presentation differences while retaining each word occurrence."""
+    value = unicodedata.normalize("NFKC", value).casefold()
+    value = "".join("" if char in "'\u2019" else " " if unicodedata.category(char)[0] in "PS" else char
+                    for char in value)
+    return value.split()
+
+
+def _normalized_ocr_scores(predicted, truth, p_intervals, t_intervals):
+    p_words = [(word, span) for span, row in enumerate(predicted) for word in _ocr_tokens(row["text"])]
+    t_words = [(word, span) for span, row in enumerate(truth)
+               for word in _ocr_tokens(row["normalized_text"])]
+    common = sum((Counter(word for word, _ in p_words) &
+                  Counter(word for word, _ in t_words)).values())
+    normalized = _counts(common, len(p_words), len(t_words))
+    # Each prediction word occurrence can cover at most one truth occurrence.
+    # Span boundaries may differ, but text and time must both agree.
+    candidates = [(_iou(p_intervals[p_span], t_intervals[t_span]), p, t)
+                  for p, (p_word, p_span) in enumerate(p_words)
+                  for t, (t_word, t_span) in enumerate(t_words)
+                  if p_word == t_word and _iou(p_intervals[p_span], t_intervals[t_span]) > 0]
+    covered = len(_pair(candidates, len(p_words), len(t_words)))
+    return {"normalized_text_precision": normalized["precision"],
+            "normalized_text_recall": normalized["recall"],
+            "normalized_text_f1": normalized["f1"],
+            "temporal_text_coverage": covered / len(t_words) if t_words else None,
+            "normalized_text_token_counts": {"matched": common, "predicted": len(p_words),
+                                             "truth": len(t_words)},
+            "temporal_text_coverage_counts": {"matched": covered, "truth": len(t_words)}}
+
+
 def _score_ocr(predicted, truth, min_iou):
     p = [_interval(x, "appearance_timestamp_seconds", "disappearance_timestamp_seconds") for x in predicted]
     t = [_interval(x, "start_seconds", "end_seconds") for x in truth]
@@ -190,6 +222,7 @@ def _score_ocr(predicted, truth, min_iou):
                     for i, j in pairs]
     return {"exact_text": _counts(len(exact), len(p), len(t)),
             "exact_text_and_time": _counts(len(timed), len(p), len(t)),
+            **_normalized_ocr_scores(predicted, truth, p, t),
             "normalized_text_similarity_mean": sum(similarities) / len(similarities) if similarities else None,
             "temporal_iou_mean": sum(_iou(p[i], t[j]) for i, j in pairs) / len(pairs) if pairs else None,
             "unmatched_visible_text_span_rate": (len(t) - len(pairs)) / len(t) if t else None,
@@ -397,6 +430,18 @@ def aggregate(rows: dict, scene_tolerances=(0.1, 0.25, 0.5)) -> dict:
               for tolerance in scene_tolerances}
     ocr = {key: _aggregate_counts([r[key] for r in measured["ocr"]])
            for key in ("exact_text", "exact_text_and_time")}
+    normalized_counts = {key: sum(r["normalized_text_token_counts"][key] for r in measured["ocr"])
+                         for key in ("matched", "predicted", "truth")}
+    normalized = _counts(normalized_counts["matched"], normalized_counts["predicted"],
+                         normalized_counts["truth"])
+    ocr.update({"normalized_text_precision": normalized["precision"],
+                "normalized_text_recall": normalized["recall"],
+                "normalized_text_f1": normalized["f1"]})
+    coverage_matched = sum(r["temporal_text_coverage_counts"]["matched"] for r in measured["ocr"])
+    coverage_truth = sum(r["temporal_text_coverage_counts"]["truth"] for r in measured["ocr"])
+    ocr["temporal_text_coverage"] = coverage_matched / coverage_truth if coverage_truth else None
+    ocr["normalized_text_token_counts"] = normalized_counts
+    ocr["temporal_text_coverage_counts"] = {"matched": coverage_matched, "truth": coverage_truth}
     motion = _aggregate_counts([r["presence_overlap"] for r in measured["motion"]])
     transcript = {"reference_tokens": sum(r["reference_tokens"] for r in measured["transcript"]),
                   "token_errors": sum(r["token_errors"] for r in measured["transcript"]),
