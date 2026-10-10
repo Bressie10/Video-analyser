@@ -1,0 +1,2612 @@
+{
+  "baseline_threshold": 27,
+  "detector": {
+    "call": "scenedetect.detect(video_path, ContentDetector(threshold=...), show_progress=False)",
+    "class": "scenedetect.detectors.ContentDetector",
+    "fixed_settings": {
+      "backend": "opencv",
+      "delta_edges": 0.0,
+      "delta_hue": 1.0,
+      "delta_lum": 1.0,
+      "delta_sat": 1.0,
+      "filter_mode": "MERGE",
+      "kernel_size": null,
+      "luma_only": false,
+      "min_scene_len_frames": 15,
+      "start_in_scene": false
+    },
+    "package": "scenedetect",
+    "preprocessing": "app.video_processing.normalise_video; one pass per source",
+    "thresholds": [
+      20,
+      24,
+      27,
+      30,
+      33,
+      36,
+      40,
+      45
+    ],
+    "version": "0.7.1"
+  },
+  "events": [
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 44.12,
+      "observation": "Roadside approach changes to closer view of seated man.",
+      "prediction_index": 1,
+      "private_frame_files": {
+        "+0.05": "04/001_+0.05.jpg",
+        "+0.25": "04/001_+0.25.jpg",
+        "-0.05": "04/001_-0.05.jpg",
+        "-0.25": "04/001_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 2.592,
+        "+0.25": 2.792,
+        "-0.05": 2.492,
+        "-0.25": 2.292
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 2.542,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 52.16,
+      "observation": "Carrying shot under flyover changes to roadside view.",
+      "prediction_index": 2,
+      "private_frame_files": {
+        "+0.05": "04/002_+0.05.jpg",
+        "+0.25": "04/002_+0.25.jpg",
+        "-0.05": "04/002_-0.05.jpg",
+        "-0.25": "04/002_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 8.925,
+        "+0.25": 9.125,
+        "-0.05": 8.825,
+        "-0.25": 8.625
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 8.875,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 48.64,
+      "observation": "Walking with man changes to him seated on blue mat.",
+      "prediction_index": 3,
+      "private_frame_files": {
+        "+0.05": "04/003_+0.05.jpg",
+        "+0.25": "04/003_+0.25.jpg",
+        "-0.05": "04/003_-0.05.jpg",
+        "-0.25": "04/003_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 10.425,
+        "+0.25": 10.625,
+        "-0.05": 10.325,
+        "-0.25": 10.125
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 10.375,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "object_or_subject_motion",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 29.23,
+      "observation": "Shirt is lifted within continuous view; no visible shot change.",
+      "prediction_index": 4,
+      "private_frame_files": {
+        "+0.05": "04/004_+0.05.jpg",
+        "+0.25": "04/004_+0.25.jpg",
+        "-0.05": "04/004_-0.05.jpg",
+        "-0.25": "04/004_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 13.508,
+        "+0.25": 13.708,
+        "-0.05": 13.408,
+        "-0.25": 13.208
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 13.458,
+      "truth_review_status": "none"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 57.04,
+      "observation": "Wide haircut preparation changes to close clipper shot.",
+      "prediction_index": 5,
+      "private_frame_files": {
+        "+0.05": "04/005_+0.05.jpg",
+        "+0.25": "04/005_+0.25.jpg",
+        "-0.05": "04/005_-0.05.jpg",
+        "-0.25": "04/005_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 15.133,
+        "+0.25": 15.333,
+        "-0.05": 15.033,
+        "-0.25": 14.833
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 15.083,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 56.32,
+      "observation": "Frontal clipper view changes to side angle.",
+      "prediction_index": 6,
+      "private_frame_files": {
+        "+0.05": "04/006_+0.05.jpg",
+        "+0.25": "04/006_+0.25.jpg",
+        "-0.05": "04/006_-0.05.jpg",
+        "-0.25": "04/006_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 18.467,
+        "+0.25": 18.667,
+        "-0.05": 18.367,
+        "-0.25": 18.167
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 18.417,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 59.36,
+      "observation": "Haircut angle changes from side close-up to overhead view.",
+      "prediction_index": 7,
+      "private_frame_files": {
+        "+0.05": "04/007_+0.05.jpg",
+        "+0.25": "04/007_+0.25.jpg",
+        "-0.05": "04/007_-0.05.jpg",
+        "-0.25": "04/007_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 22.175,
+        "+0.25": 22.375,
+        "-0.05": 22.075,
+        "-0.25": 21.875
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 22.125,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 59.51,
+      "observation": "Haircut angle changes to wider side view.",
+      "prediction_index": 8,
+      "private_frame_files": {
+        "+0.05": "04/008_+0.05.jpg",
+        "+0.25": "04/008_+0.25.jpg",
+        "-0.05": "04/008_-0.05.jpg",
+        "-0.25": "04/008_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 23.633,
+        "+0.25": 23.833,
+        "-0.05": 23.533,
+        "-0.25": 23.333
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 23.583,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 55.03,
+      "observation": "Haircut angle changes to close frontal face view.",
+      "prediction_index": 9,
+      "private_frame_files": {
+        "+0.05": "04/009_+0.05.jpg",
+        "+0.25": "04/009_+0.25.jpg",
+        "-0.05": "04/009_-0.05.jpg",
+        "-0.25": "04/009_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 25.217,
+        "+0.25": 25.417,
+        "-0.05": 25.117,
+        "-0.25": 24.917
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 25.167,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 68.07,
+      "observation": "Frontal face view changes to clipper at side of head.",
+      "prediction_index": 10,
+      "private_frame_files": {
+        "+0.05": "04/010_+0.05.jpg",
+        "+0.25": "04/010_+0.25.jpg",
+        "-0.05": "04/010_-0.05.jpg",
+        "-0.25": "04/010_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 26.508,
+        "+0.25": 26.708,
+        "-0.05": 26.408,
+        "-0.25": 26.208
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 26.458,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 48.44,
+      "observation": "Close beard trim changes to overhead wider shaving view.",
+      "prediction_index": 11,
+      "private_frame_files": {
+        "+0.05": "04/011_+0.05.jpg",
+        "+0.25": "04/011_+0.25.jpg",
+        "-0.05": "04/011_-0.05.jpg",
+        "-0.25": "04/011_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 30.383,
+        "+0.25": 30.583,
+        "-0.05": 30.283,
+        "-0.25": 30.083
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 30.333,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 39.99,
+      "observation": "Side shaving view changes to front shaving view.",
+      "prediction_index": 12,
+      "private_frame_files": {
+        "+0.05": "04/012_+0.05.jpg",
+        "+0.25": "04/012_+0.25.jpg",
+        "-0.05": "04/012_-0.05.jpg",
+        "-0.25": "04/012_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 32.592,
+        "+0.25": 32.792,
+        "-0.05": 32.492,
+        "-0.25": 32.292
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 32.542,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 55.49,
+      "observation": "Towel close-up changes to wide shot with wash bucket.",
+      "prediction_index": 13,
+      "private_frame_files": {
+        "+0.05": "04/013_+0.05.jpg",
+        "+0.25": "04/013_+0.25.jpg",
+        "-0.05": "04/013_-0.05.jpg",
+        "-0.25": "04/013_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 35.717,
+        "+0.25": 35.917,
+        "-0.05": 35.617,
+        "-0.25": 35.417
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 35.667,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 53.31,
+      "observation": "Wide wash-bucket shot changes to closer towel wipe.",
+      "prediction_index": 14,
+      "private_frame_files": {
+        "+0.05": "04/014_+0.05.jpg",
+        "+0.25": "04/014_+0.25.jpg",
+        "-0.05": "04/014_-0.05.jpg",
+        "-0.25": "04/014_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 37.383,
+        "+0.25": 37.583,
+        "-0.05": 37.283,
+        "-0.25": 37.083
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 37.333,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 41.62,
+      "observation": "Lathering shot jumps to a new framing of the same subject.",
+      "prediction_index": 15,
+      "private_frame_files": {
+        "+0.05": "04/015_+0.05.jpg",
+        "+0.25": "04/015_+0.25.jpg",
+        "-0.05": "04/015_-0.05.jpg",
+        "-0.25": "04/015_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 39.258,
+        "+0.25": 39.458,
+        "-0.05": 39.158,
+        "-0.25": 38.958
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 39.208,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 56.67,
+      "observation": "Lathering view jumps to wider angle with truck in background.",
+      "prediction_index": 16,
+      "private_frame_files": {
+        "+0.05": "04/016_+0.05.jpg",
+        "+0.25": "04/016_+0.25.jpg",
+        "-0.05": "04/016_-0.05.jpg",
+        "-0.25": "04/016_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 41.008,
+        "+0.25": 41.208,
+        "-0.05": 40.908,
+        "-0.25": 40.708
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 40.958,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 61.62,
+      "observation": "Wide wash view changes to close hands and suds.",
+      "prediction_index": 17,
+      "private_frame_files": {
+        "+0.05": "04/017_+0.05.jpg",
+        "+0.25": "04/017_+0.25.jpg",
+        "-0.05": "04/017_-0.05.jpg",
+        "-0.25": "04/017_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 45.508,
+        "+0.25": 45.708,
+        "-0.05": 45.408,
+        "-0.25": 45.208
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 45.458,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 54.06,
+      "observation": "Wide seated wash view changes to close face view.",
+      "prediction_index": 18,
+      "private_frame_files": {
+        "+0.05": "04/018_+0.05.jpg",
+        "+0.25": "04/018_+0.25.jpg",
+        "-0.05": "04/018_-0.05.jpg",
+        "-0.25": "04/018_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 47.467,
+        "+0.25": 47.667,
+        "-0.05": 47.367,
+        "-0.25": 47.167
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 47.417,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "object_or_subject_motion",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 43.35,
+      "observation": "Foam passes across face in a continuous close shot.",
+      "prediction_index": 19,
+      "private_frame_files": {
+        "+0.05": "04/019_+0.05.jpg",
+        "+0.25": "04/019_+0.25.jpg",
+        "-0.05": "04/019_-0.05.jpg",
+        "-0.25": "04/019_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 49.383,
+        "+0.25": 49.583,
+        "-0.05": 49.283,
+        "-0.25": 49.083
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 49.333,
+      "truth_review_status": "none"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 65.73,
+      "observation": "Lathering scene changes to water poured over head.",
+      "prediction_index": 20,
+      "private_frame_files": {
+        "+0.05": "04/020_+0.05.jpg",
+        "+0.25": "04/020_+0.25.jpg",
+        "-0.05": "04/020_-0.05.jpg",
+        "-0.25": "04/020_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 52.383,
+        "+0.25": 52.583,
+        "-0.05": 52.283,
+        "-0.25": 52.083
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 52.333,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 58.75,
+      "observation": "Water-pouring angle changes to frontal rinse shot.",
+      "prediction_index": 21,
+      "private_frame_files": {
+        "+0.05": "04/021_+0.05.jpg",
+        "+0.25": "04/021_+0.25.jpg",
+        "-0.05": "04/021_-0.05.jpg",
+        "-0.25": "04/021_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 55.05,
+        "+0.25": 55.25,
+        "-0.05": 54.95,
+        "-0.25": 54.75
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 55.0,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "object_or_subject_motion",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 43.06,
+      "observation": "Towel and hands move across subject in continuous view.",
+      "prediction_index": 22,
+      "private_frame_files": {
+        "+0.05": "04/022_+0.05.jpg",
+        "+0.25": "04/022_+0.25.jpg",
+        "-0.05": "04/022_-0.05.jpg",
+        "-0.25": "04/022_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 57.508,
+        "+0.25": 57.708,
+        "-0.05": 57.408,
+        "-0.25": 57.208
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 57.458,
+      "truth_review_status": "none"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 67.04,
+      "observation": "Seated towel view changes to close face and shoulder view.",
+      "prediction_index": 23,
+      "private_frame_files": {
+        "+0.05": "04/023_+0.05.jpg",
+        "+0.25": "04/023_+0.25.jpg",
+        "-0.05": "04/023_-0.05.jpg",
+        "-0.25": "04/023_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 58.967,
+        "+0.25": 59.167,
+        "-0.05": 58.867,
+        "-0.25": 58.667
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 58.917,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 65.06,
+      "observation": "Wide seated view changes to closer dressing view.",
+      "prediction_index": 24,
+      "private_frame_files": {
+        "+0.05": "04/024_+0.05.jpg",
+        "+0.25": "04/024_+0.25.jpg",
+        "-0.05": "04/024_-0.05.jpg",
+        "-0.25": "04/024_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 61.717,
+        "+0.25": 61.917,
+        "-0.05": 61.617,
+        "-0.25": 61.417
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 61.667,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 46.55,
+      "observation": "Clothing and subject position jump in an otherwise similar frame.",
+      "prediction_index": 25,
+      "private_frame_files": {
+        "+0.05": "04/025_+0.05.jpg",
+        "+0.25": "04/025_+0.25.jpg",
+        "-0.05": "04/025_-0.05.jpg",
+        "-0.25": "04/025_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 63.508,
+        "+0.25": 63.708,
+        "-0.05": 63.408,
+        "-0.25": 63.208
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 63.458,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 71.64,
+      "observation": "Dressing close view changes to wide shot with passing cow.",
+      "prediction_index": 26,
+      "private_frame_files": {
+        "+0.05": "04/026_+0.05.jpg",
+        "+0.25": "04/026_+0.25.jpg",
+        "-0.05": "04/026_-0.05.jpg",
+        "-0.25": "04/026_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 64.967,
+        "+0.25": 65.167,
+        "-0.05": 64.867,
+        "-0.25": 64.667
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 64.917,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 57.51,
+      "observation": "Wide cow shot changes to closer clothing view.",
+      "prediction_index": 27,
+      "private_frame_files": {
+        "+0.05": "04/027_+0.05.jpg",
+        "+0.25": "04/027_+0.25.jpg",
+        "-0.05": "04/027_-0.05.jpg",
+        "-0.25": "04/027_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 67.133,
+        "+0.25": 67.333,
+        "-0.05": 67.033,
+        "-0.25": 66.833
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 67.083,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 60.26,
+      "observation": "Clothing view changes to placing flower garland.",
+      "prediction_index": 28,
+      "private_frame_files": {
+        "+0.05": "04/028_+0.05.jpg",
+        "+0.25": "04/028_+0.25.jpg",
+        "-0.05": "04/028_-0.05.jpg",
+        "-0.25": "04/028_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 70.342,
+        "+0.25": 70.542,
+        "-0.05": 70.242,
+        "-0.25": 70.042
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 70.292,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 48.7,
+      "observation": "Mirror presentation jumps to closer framing of same pair.",
+      "prediction_index": 29,
+      "private_frame_files": {
+        "+0.05": "04/029_+0.05.jpg",
+        "+0.25": "04/029_+0.25.jpg",
+        "-0.05": "04/029_-0.05.jpg",
+        "-0.25": "04/029_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 75.217,
+        "+0.25": 75.417,
+        "-0.05": 75.117,
+        "-0.25": 74.917
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 75.167,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 47.28,
+      "observation": "Conversation at mirror jumps to different framing and pose.",
+      "prediction_index": 30,
+      "private_frame_files": {
+        "+0.05": "04/030_+0.05.jpg",
+        "+0.25": "04/030_+0.25.jpg",
+        "-0.05": "04/030_-0.05.jpg",
+        "-0.25": "04/030_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 77.633,
+        "+0.25": 77.833,
+        "-0.05": 77.533,
+        "-0.25": 77.333
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 77.583,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 64.09,
+      "observation": "Wheelchair introduced in wide view changes to seated wheelchair view.",
+      "prediction_index": 31,
+      "private_frame_files": {
+        "+0.05": "04/031_+0.05.jpg",
+        "+0.25": "04/031_+0.25.jpg",
+        "-0.05": "04/031_-0.05.jpg",
+        "-0.25": "04/031_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 81.133,
+        "+0.25": 81.333,
+        "-0.05": 81.033,
+        "-0.25": 80.833
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 81.083,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 55.08,
+      "observation": "Wheelchair seating changes to another angle.",
+      "prediction_index": 32,
+      "private_frame_files": {
+        "+0.05": "04/032_+0.05.jpg",
+        "+0.25": "04/032_+0.25.jpg",
+        "-0.05": "04/032_-0.05.jpg",
+        "-0.25": "04/032_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 83.217,
+        "+0.25": 83.417,
+        "-0.05": 83.117,
+        "-0.25": 82.917
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 83.167,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 63.12,
+      "observation": "Wheelchair shot changes to closer waving view.",
+      "prediction_index": 33,
+      "private_frame_files": {
+        "+0.05": "04/033_+0.05.jpg",
+        "+0.25": "04/033_+0.25.jpg",
+        "-0.05": "04/033_-0.05.jpg",
+        "-0.25": "04/033_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 85.633,
+        "+0.25": 85.833,
+        "-0.05": 85.533,
+        "-0.25": 85.333
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 85.583,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 63.93,
+      "observation": "Wheelchair view changes to open vehicle trunk.",
+      "prediction_index": 34,
+      "private_frame_files": {
+        "+0.05": "04/034_+0.05.jpg",
+        "+0.25": "04/034_+0.25.jpg",
+        "-0.05": "04/034_-0.05.jpg",
+        "-0.25": "04/034_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 88.592,
+        "+0.25": 88.792,
+        "-0.05": 88.492,
+        "-0.25": 88.292
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 88.542,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 83.69,
+      "observation": "Vehicle trunk view changes to close limb view.",
+      "prediction_index": 35,
+      "private_frame_files": {
+        "+0.05": "04/035_+0.05.jpg",
+        "+0.25": "04/035_+0.25.jpg",
+        "-0.05": "04/035_-0.05.jpg",
+        "-0.25": "04/035_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 90.175,
+        "+0.25": 90.375,
+        "-0.05": 90.075,
+        "-0.25": 89.875
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 90.125,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 92.94,
+      "observation": "Trunk view changes to foot-care close-up.",
+      "prediction_index": 36,
+      "private_frame_files": {
+        "+0.05": "04/036_+0.05.jpg",
+        "+0.25": "04/036_+0.25.jpg",
+        "-0.05": "04/036_-0.05.jpg",
+        "-0.25": "04/036_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 91.925,
+        "+0.25": 92.125,
+        "-0.05": 91.825,
+        "-0.25": 91.625
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 91.875,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 57.89,
+      "observation": "Liquid poured on foot changes to bandage application.",
+      "prediction_index": 37,
+      "private_frame_files": {
+        "+0.05": "04/037_+0.05.jpg",
+        "+0.25": "04/037_+0.25.jpg",
+        "-0.05": "04/037_-0.05.jpg",
+        "-0.25": "04/037_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 94.883,
+        "+0.25": 95.083,
+        "-0.05": 94.783,
+        "-0.25": 94.583
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 94.833,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 68.76,
+      "observation": "Foot treatment changes to wider treatment angle.",
+      "prediction_index": 38,
+      "private_frame_files": {
+        "+0.05": "04/038_+0.05.jpg",
+        "+0.25": "04/038_+0.25.jpg",
+        "-0.05": "04/038_-0.05.jpg",
+        "-0.25": "04/038_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 99.3,
+        "+0.25": 99.5,
+        "-0.05": 99.2,
+        "-0.25": 99.0
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 99.25,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 69.03,
+      "observation": "Foot treatment changes to another side angle.",
+      "prediction_index": 39,
+      "private_frame_files": {
+        "+0.05": "04/039_+0.05.jpg",
+        "+0.25": "04/039_+0.25.jpg",
+        "-0.05": "04/039_-0.05.jpg",
+        "-0.25": "04/039_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 101.675,
+        "+0.25": 101.875,
+        "-0.05": 101.575,
+        "-0.25": 101.375
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 101.625,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 53.37,
+      "observation": "Foot treatment changes to wrapped-foot view.",
+      "prediction_index": 40,
+      "private_frame_files": {
+        "+0.05": "04/040_+0.05.jpg",
+        "+0.25": "04/040_+0.25.jpg",
+        "-0.05": "04/040_-0.05.jpg",
+        "-0.25": "04/040_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 105.175,
+        "+0.25": 105.375,
+        "-0.05": 105.075,
+        "-0.25": 104.875
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 105.125,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 77.16,
+      "observation": "Wrapped foot changes to close bandage adjustment.",
+      "prediction_index": 41,
+      "private_frame_files": {
+        "+0.05": "04/041_+0.05.jpg",
+        "+0.25": "04/041_+0.25.jpg",
+        "-0.05": "04/041_-0.05.jpg",
+        "-0.25": "04/041_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 109.3,
+        "+0.25": 109.5,
+        "-0.05": 109.2,
+        "-0.25": 109.0
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 109.25,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "object_or_subject_motion",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 40.15,
+      "observation": "Hands adjust bandage in continuous close view.",
+      "prediction_index": 42,
+      "private_frame_files": {
+        "+0.05": "04/042_+0.05.jpg",
+        "+0.25": "04/042_+0.25.jpg",
+        "-0.05": "04/042_-0.05.jpg",
+        "-0.25": "04/042_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 110.8,
+        "+0.25": 111.0,
+        "-0.05": 110.7,
+        "-0.25": 110.5
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 110.75,
+      "truth_review_status": "none"
+    },
+    {
+      "category": "object_or_subject_motion",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 43.05,
+      "observation": "Wide conversation continues with a quick hand gesture.",
+      "prediction_index": 43,
+      "private_frame_files": {
+        "+0.05": "04/043_+0.05.jpg",
+        "+0.25": "04/043_+0.25.jpg",
+        "-0.05": "04/043_-0.05.jpg",
+        "-0.25": "04/043_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 123.342,
+        "+0.25": 123.542,
+        "-0.05": 123.242,
+        "-0.25": 123.042
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 123.292,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "object_or_subject_motion",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 59.8,
+      "observation": "Two people move into a hug in the same camera view.",
+      "prediction_index": 44,
+      "private_frame_files": {
+        "+0.05": "04/044_+0.05.jpg",
+        "+0.25": "04/044_+0.25.jpg",
+        "-0.05": "04/044_-0.05.jpg",
+        "-0.25": "04/044_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 127.092,
+        "+0.25": 127.292,
+        "-0.05": 126.992,
+        "-0.25": 126.792
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 127.042,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 65.19,
+      "observation": "Hug shot changes to presenter and charity message.",
+      "prediction_index": 45,
+      "private_frame_files": {
+        "+0.05": "04/045_+0.05.jpg",
+        "+0.25": "04/045_+0.25.jpg",
+        "-0.05": "04/045_-0.05.jpg",
+        "-0.25": "04/045_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 131.842,
+        "+0.25": 132.042,
+        "-0.05": 131.742,
+        "-0.25": 131.542
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 131.792,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 75.26,
+      "observation": "Market crowd changes to close view of child.",
+      "prediction_index": 46,
+      "private_frame_files": {
+        "+0.05": "04/046_+0.05.jpg",
+        "+0.25": "04/046_+0.25.jpg",
+        "-0.05": "04/046_-0.05.jpg",
+        "-0.25": "04/046_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 133.925,
+        "+0.25": 134.125,
+        "-0.05": 133.825,
+        "-0.25": 133.625
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 133.875,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_transition",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 84.03,
+      "observation": "Feeding scene flashes into presenter closing shot.",
+      "prediction_index": 47,
+      "private_frame_files": {
+        "+0.05": "04/047_+0.05.jpg",
+        "+0.25": "04/047_+0.25.jpg",
+        "-0.05": "04/047_-0.05.jpg",
+        "-0.25": "04/047_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 137.3,
+        "+0.25": 137.5,
+        "-0.05": 137.2,
+        "-0.25": 137.0
+      },
+      "source_ref": "04",
+      "timestamp_seconds": 137.25,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "animated_graphic_layout",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 80.19,
+      "observation": "Second helmet panel slides into the product graphic.",
+      "prediction_index": 1,
+      "private_frame_files": {
+        "+0.05": "07/001_+0.05.jpg",
+        "+0.25": "07/001_+0.25.jpg",
+        "-0.05": "07/001_-0.05.jpg",
+        "-0.25": "07/001_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 9.65,
+        "+0.25": 9.85,
+        "-0.05": 9.55,
+        "-0.25": 9.35
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 9.6,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "animated_graphic_layout",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 65.64,
+      "observation": "Blue text panel slides in beside helmet.",
+      "prediction_index": 2,
+      "private_frame_files": {
+        "+0.05": "07/002_+0.05.jpg",
+        "+0.25": "07/002_+0.25.jpg",
+        "-0.05": "07/002_-0.05.jpg",
+        "-0.25": "07/002_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 14.983,
+        "+0.25": 15.183,
+        "-0.05": 14.883,
+        "-0.25": 14.683
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 14.933,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "animated_graphic_layout",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 46.35,
+      "observation": "Helmet and text panels rearrange and add lower product panel.",
+      "prediction_index": 3,
+      "private_frame_files": {
+        "+0.05": "07/003_+0.05.jpg",
+        "+0.25": "07/003_+0.25.jpg",
+        "-0.05": "07/003_-0.05.jpg",
+        "-0.25": "07/003_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 15.617,
+        "+0.25": 15.817,
+        "-0.05": 15.517,
+        "-0.25": 15.317
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 15.567,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 31.29,
+      "observation": "City aerial changes to wider aerial angle.",
+      "prediction_index": 4,
+      "private_frame_files": {
+        "+0.05": "07/004_+0.05.jpg",
+        "+0.25": "07/004_+0.25.jpg",
+        "-0.05": "07/004_-0.05.jpg",
+        "-0.25": "07/004_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 21.617,
+        "+0.25": 21.817,
+        "-0.05": 21.517,
+        "-0.25": 21.317
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 21.567,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 56.44,
+      "observation": "Factory machine view changes to another factory room.",
+      "prediction_index": 5,
+      "private_frame_files": {
+        "+0.05": "07/005_+0.05.jpg",
+        "+0.25": "07/005_+0.25.jpg",
+        "-0.05": "07/005_-0.05.jpg",
+        "-0.25": "07/005_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 28.483,
+        "+0.25": 28.683,
+        "-0.05": 28.383,
+        "-0.25": 28.183
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 28.433,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 52.63,
+      "observation": "Factory room changes to different workshop shot.",
+      "prediction_index": 6,
+      "private_frame_files": {
+        "+0.05": "07/006_+0.05.jpg",
+        "+0.25": "07/006_+0.25.jpg",
+        "-0.05": "07/006_-0.05.jpg",
+        "-0.25": "07/006_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 32.95,
+        "+0.25": 33.15,
+        "-0.05": 32.85,
+        "-0.25": 32.65
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 32.9,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 85.14,
+      "observation": "Workshop changes to hanging helmet close-up.",
+      "prediction_index": 7,
+      "private_frame_files": {
+        "+0.05": "07/007_+0.05.jpg",
+        "+0.25": "07/007_+0.25.jpg",
+        "-0.05": "07/007_-0.05.jpg",
+        "-0.25": "07/007_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 35.15,
+        "+0.25": 35.35,
+        "-0.05": 35.05,
+        "-0.25": 34.85
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 35.1,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 78.37,
+      "observation": "Helmet close-up changes to spray booth view.",
+      "prediction_index": 8,
+      "private_frame_files": {
+        "+0.05": "07/008_+0.05.jpg",
+        "+0.25": "07/008_+0.25.jpg",
+        "-0.05": "07/008_-0.05.jpg",
+        "-0.25": "07/008_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 37.483,
+        "+0.25": 37.683,
+        "-0.05": 37.383,
+        "-0.25": 37.183
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 37.433,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 64.63,
+      "observation": "Spray booth changes to assembly line.",
+      "prediction_index": 9,
+      "private_frame_files": {
+        "+0.05": "07/009_+0.05.jpg",
+        "+0.25": "07/009_+0.25.jpg",
+        "-0.05": "07/009_-0.05.jpg",
+        "-0.25": "07/009_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 39.35,
+        "+0.25": 39.55,
+        "-0.05": 39.25,
+        "-0.25": 39.05
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 39.3,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 66.11,
+      "observation": "Helmet handling changes to worker at assembly table.",
+      "prediction_index": 10,
+      "private_frame_files": {
+        "+0.05": "07/010_+0.05.jpg",
+        "+0.25": "07/010_+0.25.jpg",
+        "-0.05": "07/010_-0.05.jpg",
+        "-0.25": "07/010_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 43.217,
+        "+0.25": 43.417,
+        "-0.05": 43.117,
+        "-0.25": 42.917
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 43.167,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 56.13,
+      "observation": "Worker at table changes to close machine detail.",
+      "prediction_index": 11,
+      "private_frame_files": {
+        "+0.05": "07/011_+0.05.jpg",
+        "+0.25": "07/011_+0.25.jpg",
+        "-0.05": "07/011_-0.05.jpg",
+        "-0.25": "07/011_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 44.717,
+        "+0.25": 44.917,
+        "-0.05": 44.617,
+        "-0.25": 44.417
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 44.667,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 70.66,
+      "observation": "Helmet display wall changes to product shelf view.",
+      "prediction_index": 12,
+      "private_frame_files": {
+        "+0.05": "07/012_+0.05.jpg",
+        "+0.25": "07/012_+0.25.jpg",
+        "-0.05": "07/012_-0.05.jpg",
+        "-0.25": "07/012_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 51.617,
+        "+0.25": 51.817,
+        "-0.05": 51.517,
+        "-0.25": 51.317
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 51.567,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 77.76,
+      "observation": "Product display changes to wide helmet shelf.",
+      "prediction_index": 13,
+      "private_frame_files": {
+        "+0.05": "07/013_+0.05.jpg",
+        "+0.25": "07/013_+0.25.jpg",
+        "-0.05": "07/013_-0.05.jpg",
+        "-0.25": "07/013_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 54.35,
+        "+0.25": 54.55,
+        "-0.05": 54.25,
+        "-0.25": 54.05
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 54.3,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 73.07,
+      "observation": "Scooter riding wide shot changes to chinstrap close-up.",
+      "prediction_index": 14,
+      "private_frame_files": {
+        "+0.05": "07/014_+0.05.jpg",
+        "+0.25": "07/014_+0.25.jpg",
+        "-0.05": "07/014_-0.05.jpg",
+        "-0.25": "07/014_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 57.317,
+        "+0.25": 57.517,
+        "-0.05": 57.217,
+        "-0.25": 57.017
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 57.267,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 70.2,
+      "observation": "Chinstrap close-up changes to side rider shot.",
+      "prediction_index": 15,
+      "private_frame_files": {
+        "+0.05": "07/015_+0.05.jpg",
+        "+0.25": "07/015_+0.25.jpg",
+        "-0.05": "07/015_-0.05.jpg",
+        "-0.25": "07/015_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 58.85,
+        "+0.25": 59.05,
+        "-0.05": 58.75,
+        "-0.25": 58.55
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 58.8,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 65.6,
+      "observation": "Scooter rider changes to farther road angle.",
+      "prediction_index": 16,
+      "private_frame_files": {
+        "+0.05": "07/016_+0.05.jpg",
+        "+0.25": "07/016_+0.25.jpg",
+        "-0.05": "07/016_-0.05.jpg",
+        "-0.25": "07/016_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 61.683,
+        "+0.25": 61.883,
+        "-0.05": 61.583,
+        "-0.25": 61.383
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 61.633,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 64.03,
+      "observation": "Road rider changes to side rider close-up.",
+      "prediction_index": 17,
+      "private_frame_files": {
+        "+0.05": "07/017_+0.05.jpg",
+        "+0.25": "07/017_+0.25.jpg",
+        "-0.05": "07/017_-0.05.jpg",
+        "-0.25": "07/017_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 63.317,
+        "+0.25": 63.517,
+        "-0.05": 63.217,
+        "-0.25": 63.017
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 63.267,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_transition",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 47.81,
+      "observation": "Moving blue pillar obscures rider and reveals machinery.",
+      "prediction_index": 18,
+      "private_frame_files": {
+        "+0.05": "07/018_+0.05.jpg",
+        "+0.25": "07/018_+0.25.jpg",
+        "-0.05": "07/018_-0.05.jpg",
+        "-0.25": "07/018_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 65.15,
+        "+0.25": 65.35,
+        "-0.05": 65.05,
+        "-0.25": 64.85
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 65.1,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 67.62,
+      "observation": "Machine wheel detail changes to equipment interior.",
+      "prediction_index": 19,
+      "private_frame_files": {
+        "+0.05": "07/019_+0.05.jpg",
+        "+0.25": "07/019_+0.25.jpg",
+        "-0.05": "07/019_-0.05.jpg",
+        "-0.25": "07/019_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 67.55,
+        "+0.25": 67.75,
+        "-0.05": 67.45,
+        "-0.25": 67.25
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 67.5,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 61.13,
+      "observation": "Equipment interior changes to another machine close-up.",
+      "prediction_index": 20,
+      "private_frame_files": {
+        "+0.05": "07/020_+0.05.jpg",
+        "+0.25": "07/020_+0.25.jpg",
+        "-0.05": "07/020_-0.05.jpg",
+        "-0.25": "07/020_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 69.417,
+        "+0.25": 69.617,
+        "-0.05": 69.317,
+        "-0.25": 69.117
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 69.367,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 81.75,
+      "observation": "Tire close-up changes to worker inspecting helmet.",
+      "prediction_index": 21,
+      "private_frame_files": {
+        "+0.05": "07/021_+0.05.jpg",
+        "+0.25": "07/021_+0.25.jpg",
+        "-0.05": "07/021_-0.05.jpg",
+        "-0.25": "07/021_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 72.117,
+        "+0.25": 72.317,
+        "-0.05": 72.017,
+        "-0.25": 71.817
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 72.067,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 73.08,
+      "observation": "Inspector view changes to woman lifting tire.",
+      "prediction_index": 22,
+      "private_frame_files": {
+        "+0.05": "07/022_+0.05.jpg",
+        "+0.25": "07/022_+0.25.jpg",
+        "-0.05": "07/022_-0.05.jpg",
+        "-0.25": "07/022_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 73.583,
+        "+0.25": 73.783,
+        "-0.05": 73.483,
+        "-0.25": 73.283
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 73.533,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 63.58,
+      "observation": "Woman lifting tire changes to tire conveyor close-up.",
+      "prediction_index": 23,
+      "private_frame_files": {
+        "+0.05": "07/023_+0.05.jpg",
+        "+0.25": "07/023_+0.25.jpg",
+        "-0.05": "07/023_-0.05.jpg",
+        "-0.25": "07/023_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 74.983,
+        "+0.25": 75.183,
+        "-0.05": 74.883,
+        "-0.25": 74.683
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 74.933,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 63.49,
+      "observation": "Manufacturing line changes to worker examining helmet.",
+      "prediction_index": 24,
+      "private_frame_files": {
+        "+0.05": "07/024_+0.05.jpg",
+        "+0.25": "07/024_+0.25.jpg",
+        "-0.05": "07/024_-0.05.jpg",
+        "-0.25": "07/024_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 78.65,
+        "+0.25": 78.85,
+        "-0.05": 78.55,
+        "-0.25": 78.35
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 78.6,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 57.8,
+      "observation": "Worker view changes to close helmet instrument.",
+      "prediction_index": 25,
+      "private_frame_files": {
+        "+0.05": "07/025_+0.05.jpg",
+        "+0.25": "07/025_+0.25.jpg",
+        "-0.05": "07/025_-0.05.jpg",
+        "-0.25": "07/025_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 81.117,
+        "+0.25": 81.317,
+        "-0.05": 81.017,
+        "-0.25": 80.817
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 81.067,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 106.28,
+      "observation": "Instrument close-up changes to engineering meeting.",
+      "prediction_index": 26,
+      "private_frame_files": {
+        "+0.05": "07/026_+0.05.jpg",
+        "+0.25": "07/026_+0.25.jpg",
+        "-0.05": "07/026_-0.05.jpg",
+        "-0.25": "07/026_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 83.117,
+        "+0.25": 83.317,
+        "-0.05": 83.017,
+        "-0.25": 82.817
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 83.067,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 68.02,
+      "observation": "Meeting wide view changes to engineer close-up.",
+      "prediction_index": 27,
+      "private_frame_files": {
+        "+0.05": "07/027_+0.05.jpg",
+        "+0.25": "07/027_+0.25.jpg",
+        "-0.05": "07/027_-0.05.jpg",
+        "-0.25": "07/027_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 85.017,
+        "+0.25": 85.217,
+        "-0.05": 84.917,
+        "-0.25": 84.717
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 84.967,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 92.17,
+      "observation": "Engineer close-up changes to CAD screen.",
+      "prediction_index": 28,
+      "private_frame_files": {
+        "+0.05": "07/028_+0.05.jpg",
+        "+0.25": "07/028_+0.25.jpg",
+        "-0.05": "07/028_-0.05.jpg",
+        "-0.25": "07/028_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 86.85,
+        "+0.25": 87.05,
+        "-0.05": 86.75,
+        "-0.25": 86.55
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 86.8,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 69.56,
+      "observation": "Quality-control room changes to worker at tester.",
+      "prediction_index": 29,
+      "private_frame_files": {
+        "+0.05": "07/029_+0.05.jpg",
+        "+0.25": "07/029_+0.25.jpg",
+        "-0.05": "07/029_-0.05.jpg",
+        "-0.25": "07/029_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 90.383,
+        "+0.25": 90.583,
+        "-0.05": 90.283,
+        "-0.25": 90.083
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 90.333,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 66.19,
+      "observation": "Tester worker changes to helmet detail under probe.",
+      "prediction_index": 30,
+      "private_frame_files": {
+        "+0.05": "07/030_+0.05.jpg",
+        "+0.25": "07/030_+0.25.jpg",
+        "-0.05": "07/030_-0.05.jpg",
+        "-0.25": "07/030_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 91.883,
+        "+0.25": 92.083,
+        "-0.05": 91.783,
+        "-0.25": 91.583
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 91.833,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 75.63,
+      "observation": "Helmet probe changes to test-stand operator.",
+      "prediction_index": 31,
+      "private_frame_files": {
+        "+0.05": "07/031_+0.05.jpg",
+        "+0.25": "07/031_+0.25.jpg",
+        "-0.05": "07/031_-0.05.jpg",
+        "-0.25": "07/031_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 93.583,
+        "+0.25": 93.783,
+        "-0.05": 93.483,
+        "-0.25": 93.283
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 93.533,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 56.48,
+      "observation": "Testing operator changes to helmet gauge close-up.",
+      "prediction_index": 32,
+      "private_frame_files": {
+        "+0.05": "07/032_+0.05.jpg",
+        "+0.25": "07/032_+0.25.jpg",
+        "-0.05": "07/032_-0.05.jpg",
+        "-0.25": "07/032_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 95.483,
+        "+0.25": 95.683,
+        "-0.05": 95.383,
+        "-0.25": 95.183
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 95.433,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 59.45,
+      "observation": "Gauge close-up changes to testing rig view.",
+      "prediction_index": 33,
+      "private_frame_files": {
+        "+0.05": "07/033_+0.05.jpg",
+        "+0.25": "07/033_+0.25.jpg",
+        "-0.05": "07/033_-0.05.jpg",
+        "-0.25": "07/033_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 96.717,
+        "+0.25": 96.917,
+        "-0.05": 96.617,
+        "-0.25": 96.417
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 96.667,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 52.36,
+      "observation": "Testing rig changes to moving helmet machine.",
+      "prediction_index": 34,
+      "private_frame_files": {
+        "+0.05": "07/034_+0.05.jpg",
+        "+0.25": "07/034_+0.25.jpg",
+        "-0.05": "07/034_-0.05.jpg",
+        "-0.25": "07/034_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 99.117,
+        "+0.25": 99.317,
+        "-0.05": 99.017,
+        "-0.25": 98.817
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 99.067,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 47.49,
+      "observation": "Moving helmet machine changes to graph screen.",
+      "prediction_index": 35,
+      "private_frame_files": {
+        "+0.05": "07/035_+0.05.jpg",
+        "+0.25": "07/035_+0.25.jpg",
+        "-0.05": "07/035_-0.05.jpg",
+        "-0.25": "07/035_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 100.65,
+        "+0.25": 100.85,
+        "-0.05": 100.55,
+        "-0.25": 100.35
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 100.6,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 108.99,
+      "observation": "Graph screen changes to helmet packing worker.",
+      "prediction_index": 36,
+      "private_frame_files": {
+        "+0.05": "07/036_+0.05.jpg",
+        "+0.25": "07/036_+0.25.jpg",
+        "-0.05": "07/036_-0.05.jpg",
+        "-0.25": "07/036_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 101.95,
+        "+0.25": 102.15,
+        "-0.05": 101.85,
+        "-0.25": 101.65
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 101.9,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 64.16,
+      "observation": "Packing worker changes to man with cartons.",
+      "prediction_index": 37,
+      "private_frame_files": {
+        "+0.05": "07/037_+0.05.jpg",
+        "+0.25": "07/037_+0.25.jpg",
+        "-0.05": "07/037_-0.05.jpg",
+        "-0.25": "07/037_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 103.583,
+        "+0.25": 103.783,
+        "-0.05": 103.483,
+        "-0.25": 103.283
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 103.533,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 68.29,
+      "observation": "Man with cartons changes to sealing box close-up.",
+      "prediction_index": 38,
+      "private_frame_files": {
+        "+0.05": "07/038_+0.05.jpg",
+        "+0.25": "07/038_+0.25.jpg",
+        "-0.05": "07/038_-0.05.jpg",
+        "-0.25": "07/038_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 105.45,
+        "+0.25": 105.65,
+        "-0.05": 105.35,
+        "-0.25": 105.15
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 105.4,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 67.47,
+      "observation": "Sealed box changes to stacked branded cartons.",
+      "prediction_index": 39,
+      "private_frame_files": {
+        "+0.05": "07/039_+0.05.jpg",
+        "+0.25": "07/039_+0.25.jpg",
+        "-0.05": "07/039_-0.05.jpg",
+        "-0.25": "07/039_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 106.85,
+        "+0.25": 107.05,
+        "-0.05": 106.75,
+        "-0.25": 106.55
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 106.8,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 46.44,
+      "observation": "Stacked cartons change to warehouse aisle.",
+      "prediction_index": 40,
+      "private_frame_files": {
+        "+0.05": "07/040_+0.05.jpg",
+        "+0.25": "07/040_+0.25.jpg",
+        "-0.05": "07/040_-0.05.jpg",
+        "-0.25": "07/040_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 108.183,
+        "+0.25": 108.383,
+        "-0.05": 108.083,
+        "-0.25": 107.883
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 108.133,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 44.27,
+      "observation": "Warehouse view changes to woman among boxes.",
+      "prediction_index": 41,
+      "private_frame_files": {
+        "+0.05": "07/041_+0.05.jpg",
+        "+0.25": "07/041_+0.25.jpg",
+        "-0.05": "07/041_-0.05.jpg",
+        "-0.25": "07/041_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 109.583,
+        "+0.25": 109.783,
+        "-0.05": 109.483,
+        "-0.25": 109.283
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 109.533,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 48.37,
+      "observation": "Woman among boxes changes to closer view of same worker.",
+      "prediction_index": 42,
+      "private_frame_files": {
+        "+0.05": "07/042_+0.05.jpg",
+        "+0.25": "07/042_+0.25.jpg",
+        "-0.05": "07/042_-0.05.jpg",
+        "-0.25": "07/042_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 111.183,
+        "+0.25": 111.383,
+        "-0.05": 111.083,
+        "-0.25": 110.883
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 111.133,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 80.1,
+      "observation": "Box close-up changes to office wide shot.",
+      "prediction_index": 43,
+      "private_frame_files": {
+        "+0.05": "07/043_+0.05.jpg",
+        "+0.25": "07/043_+0.25.jpg",
+        "-0.05": "07/043_-0.05.jpg",
+        "-0.25": "07/043_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 113.35,
+        "+0.25": 113.55,
+        "-0.05": 113.25,
+        "-0.25": 113.05
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 113.3,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 60.83,
+      "observation": "Office wide shot changes to man at computer.",
+      "prediction_index": 44,
+      "private_frame_files": {
+        "+0.05": "07/044_+0.05.jpg",
+        "+0.25": "07/044_+0.25.jpg",
+        "-0.05": "07/044_-0.05.jpg",
+        "-0.25": "07/044_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 114.683,
+        "+0.25": 114.883,
+        "-0.05": 114.583,
+        "-0.25": 114.383
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 114.633,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 62.8,
+      "observation": "Man at computer changes to product website screen.",
+      "prediction_index": 45,
+      "private_frame_files": {
+        "+0.05": "07/045_+0.05.jpg",
+        "+0.25": "07/045_+0.25.jpg",
+        "-0.05": "07/045_-0.05.jpg",
+        "-0.25": "07/045_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 115.817,
+        "+0.25": 116.017,
+        "-0.05": 115.717,
+        "-0.25": 115.517
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 115.767,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 55.79,
+      "observation": "Phone-support worker changes to colleague at desk.",
+      "prediction_index": 46,
+      "private_frame_files": {
+        "+0.05": "07/046_+0.05.jpg",
+        "+0.25": "07/046_+0.25.jpg",
+        "-0.05": "07/046_-0.05.jpg",
+        "-0.25": "07/046_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 118.217,
+        "+0.25": 118.417,
+        "-0.05": 118.117,
+        "-0.25": 117.917
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 118.167,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "editorial_cut",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 100.45,
+      "observation": "Colleague at desk changes to computer message screen.",
+      "prediction_index": 47,
+      "private_frame_files": {
+        "+0.05": "07/047_+0.05.jpg",
+        "+0.25": "07/047_+0.25.jpg",
+        "-0.05": "07/047_-0.05.jpg",
+        "-0.25": "07/047_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 119.45,
+        "+0.25": 119.65,
+        "-0.05": 119.35,
+        "-0.25": 119.15
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 119.4,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "animated_graphic_layout",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 48.94,
+      "observation": "Rider panel slides aside to reveal road-riding shot.",
+      "prediction_index": 48,
+      "private_frame_files": {
+        "+0.05": "07/048_+0.05.jpg",
+        "+0.25": "07/048_+0.25.jpg",
+        "-0.05": "07/048_-0.05.jpg",
+        "-0.25": "07/048_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 132.85,
+        "+0.25": 133.05,
+        "-0.05": 132.75,
+        "-0.25": 132.55
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 132.8,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "animated_graphic_layout",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 49.25,
+      "observation": "Road shot changes within animated multi-panel layout to aerial road.",
+      "prediction_index": 49,
+      "private_frame_files": {
+        "+0.05": "07/049_+0.05.jpg",
+        "+0.25": "07/049_+0.25.jpg",
+        "-0.05": "07/049_-0.05.jpg",
+        "-0.25": "07/049_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 135.45,
+        "+0.25": 135.65,
+        "-0.05": 135.35,
+        "-0.25": 135.15
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 135.4,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "editorial_transition",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 164.74,
+      "observation": "Presenter shot flashes into customer-photo collage.",
+      "prediction_index": 50,
+      "private_frame_files": {
+        "+0.05": "07/050_+0.05.jpg",
+        "+0.25": "07/050_+0.25.jpg",
+        "-0.05": "07/050_-0.05.jpg",
+        "-0.25": "07/050_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 143.017,
+        "+0.25": 143.217,
+        "-0.05": 142.917,
+        "-0.25": 142.717
+      },
+      "source_ref": "07",
+      "timestamp_seconds": 142.967,
+      "truth_review_status": "likely"
+    },
+    {
+      "category": "cgi_or_synthetic_animation",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 39.41,
+      "observation": "Synthetic crowd abruptly multiplies and view steps farther out around central person.",
+      "prediction_index": 1,
+      "private_frame_files": {
+        "+0.05": "09/001_+0.05.jpg",
+        "+0.25": "09/001_+0.25.jpg",
+        "-0.05": "09/001_-0.05.jpg",
+        "-0.25": "09/001_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 2.25,
+        "+0.25": 2.45,
+        "-0.05": 2.15,
+        "-0.25": 1.95
+      },
+      "source_ref": "09",
+      "timestamp_seconds": 2.2,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "cgi_or_synthetic_animation",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 41.79,
+      "observation": "Synthetic crowd abruptly multiplies again with a large scale change.",
+      "prediction_index": 2,
+      "private_frame_files": {
+        "+0.05": "09/002_+0.05.jpg",
+        "+0.25": "09/002_+0.25.jpg",
+        "-0.05": "09/002_-0.05.jpg",
+        "-0.25": "09/002_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 6.15,
+        "+0.25": 6.35,
+        "-0.05": 6.05,
+        "-0.25": 5.85
+      },
+      "source_ref": "09",
+      "timestamp_seconds": 6.1,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "cgi_or_synthetic_animation",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 40.0,
+      "observation": "CG crowd and view step outward at follower-count change.",
+      "prediction_index": 3,
+      "private_frame_files": {
+        "+0.05": "09/003_+0.05.jpg",
+        "+0.25": "09/003_+0.25.jpg",
+        "-0.05": "09/003_-0.05.jpg",
+        "-0.25": "09/003_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 10.25,
+        "+0.25": 10.45,
+        "-0.05": 10.15,
+        "-0.25": 9.95
+      },
+      "source_ref": "09",
+      "timestamp_seconds": 10.2,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "cgi_or_synthetic_animation",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 38.09,
+      "observation": "CG crowd and view step outward again at follower-count change.",
+      "prediction_index": 4,
+      "private_frame_files": {
+        "+0.05": "09/004_+0.05.jpg",
+        "+0.25": "09/004_+0.25.jpg",
+        "-0.05": "09/004_-0.05.jpg",
+        "-0.25": "09/004_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 14.117,
+        "+0.25": 14.317,
+        "-0.05": 14.017,
+        "-0.25": 13.817
+      },
+      "source_ref": "09",
+      "timestamp_seconds": 14.067,
+      "truth_review_status": "possible"
+    },
+    {
+      "category": "cgi_or_synthetic_animation",
+      "mean_absolute_pixel_difference_minus_0_05_to_plus_0_05": 6.4,
+      "observation": "Crowd field subtly shifts at 15 s; no new composition is visible frame by frame.",
+      "prediction_index": 5,
+      "private_frame_files": {
+        "+0.05": "09/005_+0.05.jpg",
+        "+0.25": "09/005_+0.25.jpg",
+        "-0.05": "09/005_-0.05.jpg",
+        "-0.25": "09/005_-0.25.jpg"
+      },
+      "sample_timestamps_seconds": {
+        "+0.05": 15.05,
+        "+0.25": 15.25,
+        "-0.05": 14.95,
+        "-0.25": 14.75
+      },
+      "source_ref": "09",
+      "timestamp_seconds": 15.0,
+      "truth_review_status": "none"
+    }
+  ],
+  "frame_evidence": "Private extracted frames in /private/tmp/cm-v9-stage3-1 (not committed because media rights are not independently verified).",
+  "frame_sampling": "Existing production normalise_video preprocessing; OpenCV nearest decoded frames at requested offsets; manual inspection of contact sheets and denser sequences for ambiguous events.",
+  "matching_tolerance_seconds": 0.5,
+  "reference_status": "provisional Gemini + human-checked calibration truth, not production ground truth",
+  "schema_version": 1,
+  "scope": "threshold-27 unmatched predictions at \u00b10.5 s in videos 04, 07, 09 only",
+  "source_report_commit": "6365d3e9718c2a534821e92e343cfcd72e1b77ae",
+  "source_sha256_by_ref": {
+    "04": "6cbdadc00ba049951d1acb4fe837fbed064ad2b4c4f34ed4512859dfa311aa92",
+    "07": "969db68f8d9a0c3113d86d7adaebc923f5ea3eb8690b10e50e6b88ff6a9c9af2",
+    "09": "2c28ef458bd258c407ea65492736f0e0a11ab9ceac28a499d6b49308b72facf5"
+  },
+  "summary": {
+    "by_category": {
+      "04": {
+        "editorial_cut": 40,
+        "editorial_transition": 1,
+        "object_or_subject_motion": 6
+      },
+      "07": {
+        "animated_graphic_layout": 5,
+        "editorial_cut": 43,
+        "editorial_transition": 2
+      },
+      "09": {
+        "cgi_or_synthetic_animation": 5
+      },
+      "all": {
+        "animated_graphic_layout": 5,
+        "cgi_or_synthetic_animation": 5,
+        "editorial_cut": 83,
+        "editorial_transition": 3,
+        "object_or_subject_motion": 6
+      }
+    },
+    "inspected_events": 102,
+    "truth_review_status": {
+      "likely": 86,
+      "none": 5,
+      "possible": 11
+    }
+  },
+  "suspected_truth_errors": {
+    "likely": [
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 2.542
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 8.875
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 10.375
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 15.083
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 18.417
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 22.125
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 23.583
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 25.167
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 26.458
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 30.333
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 32.542
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 35.667
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 37.333
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 39.208
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 40.958
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 45.458
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 47.417
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 52.333
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 55.0
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 58.917
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 61.667
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 63.458
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 64.917
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 67.083
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 70.292
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 75.167
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 77.583
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 81.083
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 83.167
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 85.583
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 88.542
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 90.125
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 91.875
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 94.833
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 99.25
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 101.625
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 105.125
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 109.25
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 131.792
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 133.875
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 137.25
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 21.567
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 28.433
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 32.9
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 35.1
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 37.433
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 39.3
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 43.167
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 44.667
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 51.567
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 54.3
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 57.267
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 58.8
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 61.633
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 63.267
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 65.1
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 67.5
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 69.367
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 72.067
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 73.533
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 74.933
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 78.6
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 81.067
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 83.067
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 84.967
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 86.8
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 90.333
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 91.833
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 93.533
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 95.433
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 96.667
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 99.067
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 100.6
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 101.9
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 103.533
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 105.4
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 106.8
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 108.133
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 109.533
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 111.133
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 113.3
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 114.633
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 115.767
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 118.167
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 119.4
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 142.967
+      }
+    ],
+    "possible": [
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 123.292
+      },
+      {
+        "source_ref": "04",
+        "timestamp_seconds": 127.042
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 9.6
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 14.933
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 15.567
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 132.8
+      },
+      {
+        "source_ref": "07",
+        "timestamp_seconds": 135.4
+      },
+      {
+        "source_ref": "09",
+        "timestamp_seconds": 2.2
+      },
+      {
+        "source_ref": "09",
+        "timestamp_seconds": 6.1
+      },
+      {
+        "source_ref": "09",
+        "timestamp_seconds": 10.2
+      },
+      {
+        "source_ref": "09",
+        "timestamp_seconds": 14.067
+      }
+    ]
+  }
+}
