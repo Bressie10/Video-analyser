@@ -5,7 +5,7 @@ import os
 from openai import OpenAI
 
 from app.idea_models import GeneratedIdea
-from app.recommendations import MissingAPIKeyError, SYSTEM_PROMPT
+from app.recommendations import MissingAPIKeyError, SYSTEM_PROMPT, without_motion_events
 
 RECOMMENDATION_VERSION = 4
 EVIDENCE_SCHEMA_VERSION = 3
@@ -34,7 +34,8 @@ def generate_idea(evidence: dict, *, model: str, api_key: str | None = None) -> 
     with OpenAI(api_key=key.strip(), timeout=60.0) as client:
         response = client.responses.parse(
             model=model, instructions=IDEA_PROMPT,
-            input=json.dumps(evidence, sort_keys=True, separators=(',', ':'), ensure_ascii=False),
+            input=json.dumps(without_motion_events(evidence), sort_keys=True,
+                             separators=(',', ':'), ensure_ascii=False),
             text_format=GeneratedIdea, reasoning={'effort': 'none'},
             max_output_tokens=2500, store=False,
         )

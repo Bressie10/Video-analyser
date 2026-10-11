@@ -187,7 +187,7 @@ class VideoAccessTests(unittest.TestCase):
         self.assertEqual(request["model"], "gpt-6-sol")
         self.assertEqual(request["instructions"], SYSTEM_PROMPT)
         self.assertIn("Hello world", request["input"])
-        self.assertIn("camera_pan", request["input"])
+        self.assertNotIn("camera_pan", request["input"])
         self.assertEqual(json.loads(request["input"].split("\n", 1)[1])["performance_metrics"],
                          analysis["performance_metrics"])
         self.assertFalse(request["store"])
