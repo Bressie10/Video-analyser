@@ -144,6 +144,10 @@ class Stage53Tests(unittest.TestCase):
         self.assertEqual(flat.findings[0].evidence_refs,
                          ["frame:0", "transcript:0", "frame:1", "ocr:0"])
         self.assertEqual(report.techniques[0].technique_id, "format.product_demo")
+        draft["findings"] = []
+        flat, _ = validate_synthesis(SynthesisDraft.model_validate(draft),
+                                     self.ledger, self.content, self.frames)
+        self.assertEqual(flat.findings[0].technique_id, "format.product_demo")
 
     def test_other_needs_visible_description(self):
         draft = self.draft()

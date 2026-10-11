@@ -225,8 +225,8 @@ def validate_synthesis(draft: SynthesisDraft, ledger: list[dict], content: dict,
                  if row.decision == "supported"}
     format_findings = {row.technique_id for row in draft.findings
                        if row.technique_id.startswith("format.")}
-    if supported != format_findings:
-        raise ValueError("Format findings must match explicit full-runtime assessments")
+    if format_findings - supported:
+        raise ValueError("Format finding contradicts full-runtime assessment")
     events = {event.event_id: event for event in draft.cta_events}
     if len(events) != len(draft.cta_events):
         raise ValueError("CTA event IDs must be unique")
@@ -263,6 +263,13 @@ def validate_synthesis(draft: SynthesisDraft, ledger: list[dict], content: dict,
                 raise ValueError("Pass 2 finding has no overlapping original evidence")
         findings.append(Finding.model_validate({**row.model_dump(exclude={"event_id"}),
                                                 "evidence_refs": expanded}))
+    for assessment in draft.format_assessments:
+        if assessment.decision == "supported" and assessment.technique_id not in format_findings:
+            findings.append(Finding(technique_id=assessment.technique_id,
+                                    start_seconds=0, end_seconds=None, confidence=.7,
+                                    basis="model_interpretation", rationale=assessment.rationale,
+                                    evidence_refs=references(assessment.ledger_refs, 0, duration,
+                                                             require_overlap=False)))
     for row in draft.structure:
         expanded = references(row.evidence_refs, row.start_seconds, row.end_seconds)
         overlapping = [items[ref] for ref in row.evidence_refs
@@ -332,9 +339,13 @@ def run_one(source_ref: str, media_path: Path, result: dict, *, model: str,
                   "content_sha256": content_hash, "chunk_responses": [], "synthesis_response": None}
     if checkpoint_path is not None and checkpoint_path.exists():
         checkpoint = json.loads(checkpoint_path.read_text())
-        if (checkpoint["source_ref"], checkpoint["analyzer_commit"], checkpoint["content_sha256"]) != (
-                source_ref, analyzer_commit, content_hash):
+        if (checkpoint["source_ref"], checkpoint["content_sha256"]) != (source_ref, content_hash):
             raise ValueError("Inference checkpoint provenance mismatch")
+        for saved in checkpoint["chunk_responses"]:
+            if saved["provenance"]["prompt_sha256"] != hashlib.sha256(PASS1_PROMPT.encode()).hexdigest():
+                raise ValueError("Pass 1 checkpoint prompt mismatch")
+        if checkpoint["synthesis_response"] is not None and checkpoint["synthesis_response"]["provenance"]["prompt_sha256"] != hashlib.sha256(PASS2_PROMPT.encode()).hexdigest():
+            raise ValueError("Pass 2 checkpoint prompt mismatch")
 
     def save_checkpoint():
         if checkpoint_path is not None:
@@ -402,7 +413,9 @@ def run_one(source_ref: str, media_path: Path, result: dict, *, model: str,
             "prompt_sha256": hashlib.sha256(PASS2_PROMPT.encode()).hexdigest(),
             "prompts": {"pass1": PASS1_PROMPT, "pass2": PASS2_PROMPT},
             "model_passes": passes, "openai_sdk_version": openai.__version__,
-            "ontology_version": ONTOLOGY_VERSION, "analyzer_commit": analyzer_commit,
+            "ontology_version": ONTOLOGY_VERSION,
+            "analyzer_commit": synthesis_meta["analyzer_commit"],
+            "validation_commit": analyzer_commit,
             "low_level_pipeline_commit": result["pipeline_version"],
             "content_sha256": content_hash,
             "selected_frames": public, "frame_coverage": frame_coverage(public, duration),
@@ -443,7 +456,8 @@ def main() -> None:
                          checkpoint_path=args.output_dir / f"{ref}.checkpoint.json")
         (args.output_dir / f"{ref}.json").write_text(json.dumps(output, indent=2) + "\n")
         (args.output_dir / f"{ref}.ledger.json").write_text(json.dumps({
-            "source_ref": ref, "analyzer_commit": commit,
+            "source_ref": ref, "analyzer_commit": output["analyzer_commit"],
+            "validation_commit": commit,
             "model_passes": output["model_passes"][:-1], "chunk_plan": output["chunk_plan"],
             "evidence_ledger": output["evidence_ledger"]}, indent=2) + "\n")
         print(f"{ref}: {len(output['chunk_plan'])} chunks, "
