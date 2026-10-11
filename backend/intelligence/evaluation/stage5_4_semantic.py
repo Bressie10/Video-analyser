@@ -230,6 +230,7 @@ def clamp_synthesis_edges(draft: SynthesisDraft, ledger: list[dict]) -> tuple[Sy
     """Trim unsupported outer edges; validation still rejects internal gaps and role conflicts."""
     items = {row["ledger_id"]: row for row in ledger}
     normalized = draft.model_copy(deep=True)
+    events = {event.event_id: event for event in normalized.cta_events}
     adjustments = []
     for kind, rows in (("cta_event", normalized.cta_events),
                        ("finding", normalized.findings),
@@ -241,6 +242,8 @@ def clamp_synthesis_edges(draft: SynthesisDraft, ledger: list[dict]) -> tuple[Sy
             if row.end_seconds == row.start_seconds:
                 continue
             refs = row.ledger_refs if kind == "cta_event" else row.evidence_refs
+            if kind == "finding" and row.event_id in events:
+                refs = list(dict.fromkeys([*refs, *events[row.event_id].ledger_refs]))
             if not refs or any(ref not in items for ref in refs):
                 continue  # The strict validator reports missing or invalid references.
             earliest = min(items[ref]["start_seconds"] for ref in refs)
@@ -340,7 +343,10 @@ def validate_synthesis(draft: SynthesisDraft, ledger: list[dict], content: dict,
             expanded = references(row.evidence_refs, 0, duration, require_overlap=False)
         else:
             expanded = references(row.evidence_refs, row.start_seconds, end)
-            _supported_interval(row.start_seconds, end, row.evidence_refs, items)
+            timing_refs = row.evidence_refs
+            if is_cta:
+                timing_refs = list(dict.fromkeys([*timing_refs, *event.ledger_refs]))
+            _supported_interval(row.start_seconds, end, timing_refs, items)
             overlapping_refs = [ref for ref in row.evidence_refs
                                 if _overlaps(row.start_seconds, end, items[ref], .5)]
             expanded = list(dict.fromkeys(source for ref in overlapping_refs

@@ -273,6 +273,23 @@ class Stage54Tests(unittest.TestCase):
             validate_synthesis(SynthesisDraft.model_validate(draft), self.ledger,
                                self.content, self.frames)
 
+    def test_cta_label_timing_may_use_contiguous_physical_event_evidence(self):
+        ledger = [{"ledger_id": "ledger:1:0", "chunk_id": "chunk:1",
+                   **observation(8, 9, ["ocr:0"], text=["Visit the site"])},
+                  {"ledger_id": "ledger:1:1", "chunk_id": "chunk:1",
+                   **observation(9, 10, ["frame:1", "ocr:0"], text=["Visit the site"])}]
+        draft = self.draft()
+        draft["cta_events"] = [{"event_id": "event:1", "start_seconds": 8,
+                                "end_seconds": 10, "requested_action": "Visit the site",
+                                "ledger_refs": ["ledger:1:0", "ledger:1:1"]}]
+        draft["findings"] = [{"technique_id": "cta.visual", "start_seconds": 8,
+                              "end_seconds": 10, "confidence": .8,
+                              "basis": "model_interpretation", "rationale": "Visible request",
+                              "evidence_refs": ["ledger:1:0"], "event_id": "event:1"}]
+        validated, _ = clamp_synthesis_edges(SynthesisDraft.model_validate(draft), ledger)
+        self.assertEqual(validated.findings[0].end_seconds, 10)
+        validate_synthesis(validated, ledger, self.content, self.frames)
+
     def test_chunking_is_deterministic_and_sized_from_runtime_and_frames(self):
         frames = [{"ref": f"frame:{i}", "timestamp_seconds": i * 5 + 1}
                   for i in range(12)]
