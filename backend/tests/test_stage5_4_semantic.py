@@ -152,6 +152,13 @@ class Stage54Tests(unittest.TestCase):
         self.assertEqual(flat.findings[0].evidence_refs,
                          ["frame:0", "transcript:0", "frame:1", "ocr:0"])
         self.assertEqual(report.techniques[0].technique_id, "format.product_demo")
+        draft["findings"][0]["start_seconds"] = 1
+        draft["findings"][0]["end_seconds"] = 2
+        normalized, adjustments = clamp_synthesis_edges(SynthesisDraft.model_validate(draft),
+                                                         self.ledger)
+        self.assertEqual((normalized.findings[0].start_seconds,
+                          normalized.findings[0].end_seconds), (0, None))
+        self.assertEqual(adjustments[0]["reason"], "whole_video_reporting_contract")
         draft["findings"] = []
         flat, _ = validate_synthesis(SynthesisDraft.model_validate(draft),
                                      self.ledger, self.content, self.frames)

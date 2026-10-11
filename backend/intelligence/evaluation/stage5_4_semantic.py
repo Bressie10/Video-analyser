@@ -236,8 +236,17 @@ def clamp_synthesis_edges(draft: SynthesisDraft, ledger: list[dict]) -> tuple[Sy
                        ("finding", normalized.findings),
                        ("structure", normalized.structure)):
         for index, row in enumerate(rows):
-            if kind == "finding" and (row.technique_id.startswith("format.") or
-                                      row.end_seconds is None):
+            if kind == "finding" and row.technique_id.startswith("format."):
+                if (row.start_seconds, row.end_seconds) != (0, None):
+                    adjustments.append({"kind": kind, "index": index,
+                                        "original_start_seconds": row.start_seconds,
+                                        "original_end_seconds": row.end_seconds,
+                                        "validated_start_seconds": 0,
+                                        "validated_end_seconds": None,
+                                        "reason": "whole_video_reporting_contract"})
+                    row.start_seconds, row.end_seconds = 0, None
+                continue
+            if kind == "finding" and row.end_seconds is None:
                 continue
             if row.end_seconds == row.start_seconds:
                 continue
