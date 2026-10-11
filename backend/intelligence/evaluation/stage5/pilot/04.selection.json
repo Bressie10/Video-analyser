@@ -1,0 +1,98 @@
+{
+  "source_ref": "04",
+  "low_level_pipeline_commit": "6cfbe673feb76e13a03c98f61533aa16c1cfcbad",
+  "analyzer_commit": "222ffc0ef575e5ea1d16fa2538ad7ef94af2cc58",
+  "content_sha256": "54047f476ddc75d1569437d3a59a03d13eb859b56bd33e3720039821fe8b37ac",
+  "selected_frames": [
+    {
+      "ref": "frame:0",
+      "timestamp_seconds": 0.083,
+      "selection_reason": "opening",
+      "jpeg_sha256": "cee4645e2b41093c4123b8d2e6fb74c9a6f4a65a3339c9eeaf64410af6e42030"
+    },
+    {
+      "ref": "frame:1",
+      "timestamp_seconds": 1.5,
+      "selection_reason": "opening",
+      "jpeg_sha256": "1c9470eed45e7e13bf60732de8ad996d2b798ed26be59e91a7a0e4abc151322d"
+    },
+    {
+      "ref": "frame:2",
+      "timestamp_seconds": 3.0,
+      "selection_reason": "opening",
+      "jpeg_sha256": "5b3fba2dd74fe1833b36bfc160820598c216c759a8883c95695728c68e8df17f"
+    },
+    {
+      "ref": "frame:3",
+      "timestamp_seconds": 15.875,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "e448ec8feef114981e99c54effde3b5a23dd5d4e1eedc97a8172e49a90a9db99"
+    },
+    {
+      "ref": "frame:4",
+      "timestamp_seconds": 29.25,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "bd85f804d8a1f639968335ec9a9f2b3632d8a2ec138f76f8fe696462490a975e"
+    },
+    {
+      "ref": "frame:5",
+      "timestamp_seconds": 46.458,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "58a47f299bafef261b5bea13e49e77cbf82c8bc8cc4abe6f05d0975bddb0aca7"
+    },
+    {
+      "ref": "frame:6",
+      "timestamp_seconds": 59.625,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "d037061f3504fb1a09f5f36807dce7be48ed01f119d0e8677144db62f4f00849"
+    },
+    {
+      "ref": "frame:7",
+      "timestamp_seconds": 68.583,
+      "selection_reason": "ocr_change",
+      "jpeg_sha256": "cabbf79c12ad74c1e31ccf6e1f54e0d8ee2440208e918a6759287fe4161e1cbf"
+    },
+    {
+      "ref": "frame:8",
+      "timestamp_seconds": 74.5,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "ff0546b7d3922fde57636064a7d7309fde63388313ab21922845d1b2771df5a7"
+    },
+    {
+      "ref": "frame:9",
+      "timestamp_seconds": 91.0,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "77da1d9f224550b0a5af84181bdd140954b4f184c40a63e4097df03c7e1c1880"
+    },
+    {
+      "ref": "frame:10",
+      "timestamp_seconds": 119.417,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "414ffec1a8231b533df522782ad3e8052e487752ea37e0233a456893d02a8860"
+    },
+    {
+      "ref": "frame:11",
+      "timestamp_seconds": 136.542,
+      "selection_reason": "final",
+      "jpeg_sha256": "0c46dec642105f2a40e152c51b78e7f8049ebcb8027ebfdab42197466eb53d72"
+    },
+    {
+      "ref": "frame:12",
+      "timestamp_seconds": 137.875,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "8340f6ebe21c7eccb792752fc6e7a121222240df07c74b3bde8eafa5fd9dbbf1"
+    },
+    {
+      "ref": "frame:13",
+      "timestamp_seconds": 138.417,
+      "selection_reason": "final",
+      "jpeg_sha256": "b620a126617e2689a213058a03ff5d10b4e8e94e1f6d31184f4b7338a2ba9494"
+    }
+  ],
+  "content_counts": {
+    "transcript": 9,
+    "ocr": 275,
+    "scenes": 67
+  },
+  "model_inference_completed": false
+}

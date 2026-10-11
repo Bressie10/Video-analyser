@@ -1,0 +1,74 @@
+{
+  "source_ref": "12",
+  "low_level_pipeline_commit": "6cfbe673feb76e13a03c98f61533aa16c1cfcbad",
+  "analyzer_commit": "222ffc0ef575e5ea1d16fa2538ad7ef94af2cc58",
+  "content_sha256": "424a15a17729c5ed2d4f37a129254eba5bf0fa97e060f3011baa196a3637adcc",
+  "selected_frames": [
+    {
+      "ref": "frame:0",
+      "timestamp_seconds": 0.1,
+      "selection_reason": "opening",
+      "jpeg_sha256": "3bfe31689879ac2150cde8af23093aa288ff37bbaaae40bb6458febb31c7bd45"
+    },
+    {
+      "ref": "frame:1",
+      "timestamp_seconds": 1.5,
+      "selection_reason": "opening",
+      "jpeg_sha256": "7276608bf223e49b2fc76182515ffba35db442ecff84d704ffbb13845e38be84"
+    },
+    {
+      "ref": "frame:2",
+      "timestamp_seconds": 3.0,
+      "selection_reason": "opening",
+      "jpeg_sha256": "f3e15f087dc038f94cb6e40dce1357c3ba6beab8f62971d70d99eb0b05b1f43b"
+    },
+    {
+      "ref": "frame:3",
+      "timestamp_seconds": 8.933,
+      "selection_reason": "uniform_fallback",
+      "jpeg_sha256": "ee5a5f9f2567df5f16c7d65bf70453537b1d3da4c15256706c5c8fbf5604c5f3"
+    },
+    {
+      "ref": "frame:4",
+      "timestamp_seconds": 13.6,
+      "selection_reason": "ocr_change",
+      "jpeg_sha256": "017c2482bb0c1386fd2f1cf6539b41282e073b378e29aeffe77e3e9fc74af1a0"
+    },
+    {
+      "ref": "frame:5",
+      "timestamp_seconds": 17.867,
+      "selection_reason": "uniform_fallback",
+      "jpeg_sha256": "ab54e45def5ee515d43c999aafeb1763b72a6203f756db3b4ad5cb4dd7fb41b0"
+    },
+    {
+      "ref": "frame:6",
+      "timestamp_seconds": 26.767,
+      "selection_reason": "uniform_fallback",
+      "jpeg_sha256": "5bb5561d92d3aae83cd07f5977c9c3002024728a56e231d5262188dcb40cbb38"
+    },
+    {
+      "ref": "frame:7",
+      "timestamp_seconds": 33.1,
+      "selection_reason": "ocr_change",
+      "jpeg_sha256": "c1eaaa35804b7f6129f5dd1f08d55189fac44aa44f5c2aa86097b0b2baa8c5c0"
+    },
+    {
+      "ref": "frame:8",
+      "timestamp_seconds": 33.7,
+      "selection_reason": "final",
+      "jpeg_sha256": "a8b6a7d96c82a52b4804fcbbc9f58a83c647a8b0b0c36a0f36169c9e5082ebc9"
+    },
+    {
+      "ref": "frame:9",
+      "timestamp_seconds": 35.6,
+      "selection_reason": "final",
+      "jpeg_sha256": "0b1c1ecd7e7b8ee6816c7f159d53738c1df6c0470973208efc480787536f87ec"
+    }
+  ],
+  "content_counts": {
+    "transcript": 7,
+    "ocr": 20,
+    "scenes": 0
+  },
+  "model_inference_completed": false
+}
