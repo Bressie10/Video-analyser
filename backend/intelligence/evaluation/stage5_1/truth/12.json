@@ -1,0 +1,130 @@
+{
+  "truth_version": "stage5.1-provisional-1",
+  "source_ref": "12",
+  "source_media_sha256": "c7a5490e755b3e99ee372e619c1122a26731816ea1f82cc147acda19fbfa6fac",
+  "duration_seconds": 35.7,
+  "provenance": {
+    "reviewer_type": "AI-assisted visual reviewer (Codex)",
+    "reviewed_at": "2026-10-11T11:27:07.903638+00:00",
+    "saw_model_output_before_annotation": true,
+    "blind": false,
+    "independent_human_review": false,
+    "source_audio_reviewed": false,
+    "review_method": "Decoded timestamped frames across the full runtime at 1.0s spacing (1.5s for 04), plus supplied OCR/transcript; no continuous audio playback. Interval bounds are approximate.",
+    "adjudication_notes": [
+      "One-second samples show a stable talking-head composition; uninterrupted footage cannot be asserted.",
+      "Text appears absent in sampled frames but partial coverage prevents a definitive whole-video negative.",
+      "Transcript proper names may be wrong and are not used to identify the speaker or institution."
+    ]
+  },
+  "category_coverage": {
+    "hook": "complete",
+    "format": "complete",
+    "editing": "partial",
+    "text": "partial",
+    "cta": "complete",
+    "visual": "partial",
+    "audio": "unavailable"
+  },
+  "structure_coverage": "complete",
+  "items": [
+    {
+      "technique_id": "hook.question",
+      "start_seconds": 0,
+      "end_seconds": 3.5,
+      "status": "present",
+      "evidence": "Opening transcript asks whether the viewer career is moving forward; matching speaker mouth movement visible.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "format.talking_head",
+      "start_seconds": 0,
+      "end_seconds": null,
+      "status": "present",
+      "evidence": "Speaker addresses the lens in one-second samples across the 35.7s runtime; edits between samples are possible.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "text.captions",
+      "start_seconds": 0,
+      "end_seconds": 35.7,
+      "status": "absent",
+      "evidence": "No speech captions visible in one-second frame review; brief between-sample overlays cannot be ruled out.",
+      "coverage": "partial"
+    },
+    {
+      "technique_id": "text.headline",
+      "start_seconds": 0,
+      "end_seconds": 35.7,
+      "status": "absent",
+      "evidence": "No title or headline visible in sampled frames over the complete runtime.",
+      "coverage": "partial"
+    },
+    {
+      "technique_id": "editing.b_roll",
+      "start_seconds": 0,
+      "end_seconds": 35.7,
+      "status": "absent",
+      "evidence": "No supporting visual cutaway appears in one-second samples; editing coverage remains partial.",
+      "coverage": "partial"
+    },
+    {
+      "technique_id": "cta.verbal",
+      "start_seconds": 32.0,
+      "end_seconds": 35.7,
+      "status": "uncertain",
+      "evidence": "Transcript records a request for a course catalog; source audio was not listened to.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "cta.product",
+      "start_seconds": 32.0,
+      "end_seconds": 35.7,
+      "status": "present",
+      "evidence": "Closing transcript requests a course catalog and matching presenter mouth movement is visible; program-related action.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "visual.face_to_camera",
+      "start_seconds": 0,
+      "end_seconds": 35.7,
+      "status": "present",
+      "evidence": "Speaker faces lens in opening, middle, and final one-second samples; does not prove uninterrupted shot.",
+      "coverage": "partial"
+    }
+  ],
+  "structure": [
+    {
+      "role": "hook",
+      "start_seconds": 0,
+      "end_seconds": 3.5,
+      "status": "present",
+      "evidence": "Opening career-progress question.",
+      "coverage": "complete"
+    },
+    {
+      "role": "setup",
+      "start_seconds": 3.5,
+      "end_seconds": 14.5,
+      "status": "present",
+      "evidence": "Speaker introduction and online program setup per transcript; proper names not adopted as identity facts.",
+      "coverage": "complete"
+    },
+    {
+      "role": "explanation",
+      "start_seconds": 14.5,
+      "end_seconds": 32.0,
+      "status": "present",
+      "evidence": "Program duration and subject areas described in transcript.",
+      "coverage": "complete"
+    },
+    {
+      "role": "cta",
+      "start_seconds": 32.0,
+      "end_seconds": 35.7,
+      "status": "present",
+      "evidence": "Closing course-catalog request per transcript and visible speaker delivery.",
+      "coverage": "complete"
+    }
+  ]
+}

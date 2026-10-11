@@ -184,6 +184,24 @@ def evidence_catalog(content: dict, frames: list[dict]) -> dict[str, tuple[str, 
     return catalog
 
 
+def temporal_evidence_support(row, catalog: dict, *, tolerance: float = 0.5) -> dict:
+    """Classify cited timing; contextual references remain visible to reviewers."""
+    start = row.start_seconds
+    end = row.end_seconds if row.end_seconds is not None else start
+    interval_support, context_support = [], []
+    for ref in row.evidence_refs:
+        if ref not in catalog:
+            raise ValueError("Evidence reference was not supplied")
+        kind, evidence_start, evidence_end = catalog[ref]
+        if evidence_start <= end + tolerance and evidence_end >= start - tolerance:
+            interval_support.append(ref)
+        else:
+            context_support.append(ref)
+    return {"interval_support": interval_support, "context_support": context_support,
+            "substantive_interval_support": [ref for ref in interval_support
+                                              if catalog[ref][0] != "scene"]}
+
+
 def validate_draft(draft: SemanticDraft, content: dict, frames: list[dict]) -> AnalysisReport:
     """Validate ontology, timing, and each reference against supplied evidence."""
     duration = content["metadata"]["duration_seconds"]
@@ -210,10 +228,16 @@ def validate_draft(draft: SemanticDraft, content: dict, frames: list[dict]) -> A
             raise ValueError(f"Unknown technique ID: {row.technique_id}")
         if row.technique_id.startswith("audio."):
             raise ValueError("Audio technique is unsupported without audio evidence")
+        if not row.technique_id.startswith("format.") and not temporal_evidence_support(
+                row, catalog)["substantive_interval_support"]:
+            raise ValueError("Finding lacks temporally relevant interval support")
         observations.append({"technique_id": row.technique_id,
                              "start_seconds": row.start_seconds,
                              "end_seconds": row.end_seconds, "confidence": row.confidence,
                              "detector": producer, "evidence": refs_for(row)})
+    for row in draft.structure:
+        if not temporal_evidence_support(row, catalog)["substantive_interval_support"]:
+            raise ValueError("Structure lacks temporally relevant interval support")
     structure = [{"role": row.role, "start_seconds": row.start_seconds,
                   "end_seconds": row.end_seconds, "confidence": row.confidence,
                   "detector": producer, "evidence": refs_for(row)}

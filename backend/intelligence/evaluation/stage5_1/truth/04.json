@@ -1,0 +1,155 @@
+{
+  "truth_version": "stage5.1-provisional-1",
+  "source_ref": "04",
+  "source_media_sha256": "6cbdadc00ba049951d1acb4fe837fbed064ad2b4c4f34ed4512859dfa311aa92",
+  "duration_seconds": 138.5,
+  "provenance": {
+    "reviewer_type": "AI-assisted visual reviewer (Codex)",
+    "reviewed_at": "2026-10-11T11:27:07.903206+00:00",
+    "saw_model_output_before_annotation": true,
+    "blind": false,
+    "independent_human_review": false,
+    "source_audio_reviewed": false,
+    "review_method": "Decoded timestamped frames across the full runtime at 1.0s spacing (1.5s for 04), plus supplied OCR/transcript; no continuous audio playback. Interval bounds are approximate.",
+    "adjudication_notes": [
+      "Grooming begins near 15s; reveal is near 70\u201380s. Bounds derive from 1.5s frame review and are approximate.",
+      "The Stage 5 90\u2013123s other segment misses a substantial foot-care/bandaging sequence; the provisional truth adds it.",
+      "Final CTA has both visual modality and product-action labels describing the same event. This is legitimate ontology overlap, not two independent CTAs.",
+      "Transcript Bye segments covering long periods are unreliable; structural intervals use visual review instead."
+    ]
+  },
+  "category_coverage": {
+    "hook": "complete",
+    "format": "complete",
+    "editing": "partial",
+    "text": "partial",
+    "cta": "complete",
+    "visual": "partial",
+    "audio": "unavailable"
+  },
+  "structure_coverage": "partial",
+  "items": [
+    {
+      "technique_id": "hook.visual",
+      "start_seconds": 0,
+      "end_seconds": 5.5,
+      "status": "present",
+      "evidence": "0\u20135s: roadside approach to a seated person under the visible transformation title.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "format.before_after",
+      "start_seconds": 0,
+      "end_seconds": null,
+      "status": "present",
+      "evidence": "0\u201315s pre-grooming state and 70\u201380s groomed/clothed reveal show an explicit before/after comparison.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "text.headline",
+      "start_seconds": 0,
+      "end_seconds": 5.5,
+      "status": "present",
+      "evidence": "0\u20135s: prominent POV transformation title at bottom of frame.",
+      "coverage": "partial"
+    },
+    {
+      "technique_id": "cta.visual",
+      "start_seconds": 137.1,
+      "end_seconds": 138.5,
+      "status": "present",
+      "evidence": "137\u2013138.5s: visible ending caption asks the viewer to buy yours today.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "cta.product",
+      "start_seconds": 137.1,
+      "end_seconds": 138.5,
+      "status": "present",
+      "evidence": "137\u2013138.5s: the visible buy-yours request is a purchase action; product target is the orange card shown.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "cta.verbal",
+      "start_seconds": 131.5,
+      "end_seconds": 138.5,
+      "status": "uncertain",
+      "evidence": "131.5\u2013138.5s: transcript suggests a spoken request, but audio was not independently listened to.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "visual.close_up",
+      "start_seconds": 16.5,
+      "end_seconds": 34.5,
+      "status": "present",
+      "evidence": "16.5\u201334.5s: close framing of hair and beard grooming in multiple samples.",
+      "coverage": "partial"
+    },
+    {
+      "technique_id": "visual.face_to_camera",
+      "start_seconds": 137.5,
+      "end_seconds": 138.5,
+      "status": "present",
+      "evidence": "138s: closing speaker faces camera holding an orange card.",
+      "coverage": "partial"
+    }
+  ],
+  "structure": [
+    {
+      "role": "hook",
+      "start_seconds": 0,
+      "end_seconds": 5.5,
+      "status": "present",
+      "evidence": "0\u20135s: roadside encounter and transformation title.",
+      "coverage": "partial"
+    },
+    {
+      "role": "setup",
+      "start_seconds": 5.5,
+      "end_seconds": 15.0,
+      "status": "present",
+      "evidence": "6\u201315s: man is brought to a mat and prepared for grooming.",
+      "coverage": "partial"
+    },
+    {
+      "role": "demonstration",
+      "start_seconds": 15.0,
+      "end_seconds": 70.0,
+      "status": "present",
+      "evidence": "15\u201370s: hair trimming, washing, dressing, and garland are shown.",
+      "coverage": "partial"
+    },
+    {
+      "role": "payoff",
+      "start_seconds": 70.0,
+      "end_seconds": 80.5,
+      "status": "present",
+      "evidence": "70\u201380s: dressed, groomed man sees his appearance and reacts.",
+      "coverage": "partial"
+    },
+    {
+      "role": "other",
+      "start_seconds": 80.5,
+      "end_seconds": 89.0,
+      "status": "present",
+      "evidence": "81\u201389s: wheelchair is presented and used.",
+      "coverage": "partial"
+    },
+    {
+      "role": "demonstration",
+      "start_seconds": 89.0,
+      "end_seconds": 130.5,
+      "status": "present",
+      "evidence": "89\u2013130s: foot-care/bandaging sequence and farewell embrace, omitted from Stage 5 structure.",
+      "coverage": "partial"
+    },
+    {
+      "role": "cta",
+      "start_seconds": 131.5,
+      "end_seconds": 138.5,
+      "status": "present",
+      "evidence": "131.5\u2013138.5s: orange card, aid-distribution visuals, and visible buy-yours caption.",
+      "coverage": "partial"
+    }
+  ]
+}

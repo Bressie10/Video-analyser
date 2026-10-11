@@ -1,0 +1,146 @@
+{
+  "truth_version": "stage5.1-provisional-1",
+  "source_ref": "08",
+  "source_media_sha256": "9d06de3582f77cacf63a109010a440081ca42662ea90a71183e349ba3863f33e",
+  "duration_seconds": 27.467,
+  "provenance": {
+    "reviewer_type": "AI-assisted visual reviewer (Codex)",
+    "reviewed_at": "2026-10-11T11:27:07.903511+00:00",
+    "saw_model_output_before_annotation": true,
+    "blind": false,
+    "independent_human_review": false,
+    "source_audio_reviewed": false,
+    "review_method": "Decoded timestamped frames across the full runtime at 1.0s spacing (1.5s for 04), plus supplied OCR/transcript; no continuous audio playback. Interval bounds are approximate.",
+    "adjudication_notes": [
+      "Persistent on-screen quiz directive from 0\u201323.5s is recorded as visible text usage and cta.visual. Frozen ontology has no generic persistent-overlay text technique; do not force it into text.captions.",
+      "The overlay CTA and end-card CTA are two temporal presentations of one request. Stage 5 separately emits cta.visual and cta.product for each; product label remains uncertain.",
+      "Final button begins near 24.8s; Stage 5 starts its closing CTA at 23.5s, before the button is visible."
+    ]
+  },
+  "category_coverage": {
+    "hook": "complete",
+    "format": "complete",
+    "editing": "partial",
+    "text": "complete",
+    "cta": "complete",
+    "visual": "partial",
+    "audio": "unavailable"
+  },
+  "structure_coverage": "complete",
+  "items": [
+    {
+      "technique_id": "hook.visual",
+      "start_seconds": 0,
+      "end_seconds": 1.1,
+      "status": "present",
+      "evidence": "0\u20131s: face with product dots and handheld device appears immediately.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "format.product_demo",
+      "start_seconds": 0,
+      "end_seconds": null,
+      "status": "present",
+      "evidence": "1\u201323s: multiple skincare products are dispensed and applied and a device is used on the face.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "cta.visual",
+      "start_seconds": 0,
+      "end_seconds": 23.5,
+      "status": "present",
+      "evidence": "0\u201323s: persistent visible Tap to take the quiz and get a guide instruction.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "cta.visual",
+      "start_seconds": 24.8,
+      "end_seconds": 27.467,
+      "status": "present",
+      "evidence": "25\u201327.5s: separate white closing card displays a Take the quiz button.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "cta.product",
+      "start_seconds": 0,
+      "end_seconds": 23.5,
+      "status": "uncertain",
+      "evidence": "Quiz/guide may be a product funnel, but neither purchase nor product visit is explicitly requested in the overlay.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "cta.product",
+      "start_seconds": 24.8,
+      "end_seconds": 27.467,
+      "status": "uncertain",
+      "evidence": "Closing quiz action may be product-related, but product-action taxonomy fit is unresolved.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "text.headline",
+      "start_seconds": 23.5,
+      "end_seconds": 27.467,
+      "status": "present",
+      "evidence": "24\u201327s: Your Personal Plan is Ready appears as a prominent end-card heading.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "text.captions",
+      "start_seconds": 0,
+      "end_seconds": 23.5,
+      "status": "absent",
+      "evidence": "0\u201323s: persistent quiz directive does not follow spoken words; no speech captions are visible in one-second samples.",
+      "coverage": "complete"
+    },
+    {
+      "technique_id": "visual.face_to_camera",
+      "start_seconds": 0,
+      "end_seconds": 1.1,
+      "status": "present",
+      "evidence": "0\u20131s: demonstrator faces camera while holding device.",
+      "coverage": "partial"
+    },
+    {
+      "technique_id": "visual.product_foreground",
+      "start_seconds": 1.0,
+      "end_seconds": 3.0,
+      "status": "present",
+      "evidence": "1\u20132s: yellow tube and dispenser dominate foreground.",
+      "coverage": "partial"
+    },
+    {
+      "technique_id": "visual.product_foreground",
+      "start_seconds": 11.5,
+      "end_seconds": 13.0,
+      "status": "present",
+      "evidence": "12s: skincare jar displayed prominently.",
+      "coverage": "partial"
+    }
+  ],
+  "structure": [
+    {
+      "role": "hook",
+      "start_seconds": 0,
+      "end_seconds": 1.1,
+      "status": "present",
+      "evidence": "0\u20131s: device and product-dotted face introduce visual action.",
+      "coverage": "complete"
+    },
+    {
+      "role": "demonstration",
+      "start_seconds": 1.1,
+      "end_seconds": 23.5,
+      "status": "present",
+      "evidence": "1\u201323s: products are applied and device is used in a rapid sequence.",
+      "coverage": "complete"
+    },
+    {
+      "role": "cta",
+      "start_seconds": 23.5,
+      "end_seconds": 27.467,
+      "status": "present",
+      "evidence": "23.5\u201327.5s: white end card displays personal-plan headline and quiz button.",
+      "coverage": "complete"
+    }
+  ]
+}
