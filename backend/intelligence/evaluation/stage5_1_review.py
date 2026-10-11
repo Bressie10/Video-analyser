@@ -129,6 +129,18 @@ def _flags(findings: list[dict], structure: list[dict]) -> dict:
             "contradictory_prediction_count": len(contradictions)}
 
 
+def structure_covered_runtime_fraction(structure: list[dict], duration: float) -> float:
+    """Union of predicted structure intervals / runtime; descriptive only."""
+    intervals = sorted((max(0.0, row["start_seconds"]),
+                        min(duration, row["end_seconds"])) for row in structure)
+    covered, right_edge = 0.0, 0.0
+    for start, end in intervals:
+        if end > right_edge:
+            covered += end - max(start, right_edge)
+            right_edge = end
+    return round(covered / duration, 6) if duration > 0 else 0.0
+
+
 def _score(predictions: list[dict], reviewed: list[dict], coverage: dict,
            *, label_key: str, tolerance: float | None = None) -> dict:
     scored_categories = {category for category, state in coverage.items() if state == "complete"}
@@ -189,6 +201,8 @@ def compare(candidate: dict, truth: dict) -> dict:
             "coverage": truth["category_coverage"], "structure_coverage": truth["structure_coverage"],
             "label": labels, "interval_matching": intervals, "structure_role_agreement": structural,
             "flags": flags, "evidence_interval_audit": evidence,
+            "structure_covered_runtime_fraction": structure_covered_runtime_fraction(
+                structure, truth["duration_seconds"]),
             "evidence_without_interval_support_count": sum(not row["passes"] for row in evidence),
             "unsupported_finding_count": len(unsupported),
             "unsupported_finding_indices": sorted(unsupported),
@@ -209,6 +223,7 @@ def markdown(result: dict, candidate: dict, truth: dict) -> str:
     for tolerance, score in result["interval_matching"].items():
         lines.append(f"- Interval ±{tolerance}s: TP {score['tp']}, FP {score['fp']}, FN {score['fn']}; P/R/F1 {score['precision']}, {score['recall']}, {score['f1']}.")
     lines += [f"- Structure-role agreement: {result['structure_role_agreement']}.",
+              f"- Structure-covered-runtime fraction: {result['structure_covered_runtime_fraction']} (descriptive).",
               f"- Duplicate prediction pairs: {result['flags']['duplicate_prediction_pairs']}.",
               f"- Same CTA event pairs (review, not automatic deletion): {result['flags']['cta_same_event_pairs']}.",
               f"- Contradictory structure pairs: {result['flags']['contradictory_structure_pairs']}.",

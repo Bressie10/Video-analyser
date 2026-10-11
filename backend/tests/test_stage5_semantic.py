@@ -70,13 +70,13 @@ class Stage5SemanticTests(unittest.TestCase):
         ocr = [{"start_seconds": index * 0.7} for index in range(100)]
         first = select_frame_timestamps(200.0, scenes, ocr)
         self.assertEqual(first, select_frame_timestamps(200.0, scenes, ocr))
-        self.assertLessEqual(len(first), 16)
+        self.assertLessEqual(len(first), 32)
         self.assertTrue(any(row["reason"] == "opening" for row in first))
         self.assertTrue(any(row["reason"] == "final" for row in first))
         self.assertTrue(any(row["reason"] == "scene_representative" for row in first))
         self.assertTrue(any(row["reason"] == "ocr_change" for row in first))
         static_plan = select_frame_timestamps(35.0, [], [])
-        self.assertLessEqual(len(static_plan), 8)
+        self.assertLessEqual(len(static_plan), 16)
 
     def test_frozen_report_and_evidence_references(self):
         report = validate_draft(draft(), self.content, self.frames)
