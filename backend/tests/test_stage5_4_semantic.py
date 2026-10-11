@@ -262,6 +262,12 @@ class Stage54Tests(unittest.TestCase):
         self.assertEqual(audit["cta_event_count"], 1)
         self.assertEqual(audit["overlapping_cta_labels_same_event"], [[0, 1]])
         self.assertEqual(audit["overlapping_cta_labels_different_events"], [])
+        draft["cta_events"][0]["start_seconds"] = 7
+        normalized, adjustments = clamp_synthesis_edges(SynthesisDraft.model_validate(draft),
+                                                         self.ledger)
+        self.assertEqual(normalized.cta_events[0].start_seconds, 8)
+        self.assertEqual(adjustments[0]["kind"], "cta_event")
+        draft["cta_events"][0]["start_seconds"] = 8
         draft["findings"][1]["event_id"] = "event:2"
         with self.assertRaisesRegex(ValueError, "unknown event"):
             validate_synthesis(SynthesisDraft.model_validate(draft), self.ledger,

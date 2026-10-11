@@ -240,10 +240,11 @@ def clamp_synthesis_edges(draft: SynthesisDraft, ledger: list[dict]) -> tuple[Sy
                 continue
             if row.end_seconds == row.start_seconds:
                 continue
-            if not row.evidence_refs or any(ref not in items for ref in row.evidence_refs):
+            refs = row.ledger_refs if kind == "cta_event" else row.evidence_refs
+            if not refs or any(ref not in items for ref in refs):
                 continue  # The strict validator reports missing or invalid references.
-            earliest = min(items[ref]["start_seconds"] for ref in row.evidence_refs)
-            latest = max(items[ref]["end_seconds"] for ref in row.evidence_refs)
+            earliest = min(items[ref]["start_seconds"] for ref in refs)
+            latest = max(items[ref]["end_seconds"] for ref in refs)
             start = max(row.start_seconds, earliest)
             end = min(row.end_seconds, latest)
             if start >= end:
