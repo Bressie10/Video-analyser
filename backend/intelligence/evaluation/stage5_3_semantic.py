@@ -89,8 +89,9 @@ class SynthesisDraft(BaseModel):
     uncertainties: list[str]
 
 
-ChunkDescription.model_rebuild(_types_namespace=globals())
-SynthesisDraft.model_rebuild(_types_namespace=globals())
+for _model in (LedgerObservation, ChunkDescription, FormatAssessment, CTAEvent,
+               SynthesisFinding, SynthesisDraft):
+    _model.model_rebuild(_types_namespace=globals())
 
 
 def chunk_plan(duration: float, frames: list[dict], scenes: list[dict]) -> list[dict]:

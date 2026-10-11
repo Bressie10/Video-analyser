@@ -148,6 +148,7 @@ class Stage53Tests(unittest.TestCase):
         flat, _ = validate_synthesis(SynthesisDraft.model_validate(draft),
                                      self.ledger, self.content, self.frames)
         self.assertEqual(flat.findings[0].technique_id, "format.product_demo")
+        SynthesisDraft.model_validate(draft).model_dump(mode="json")
 
     def test_other_needs_visible_description(self):
         draft = self.draft()
