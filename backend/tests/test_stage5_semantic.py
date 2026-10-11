@@ -95,6 +95,12 @@ class Stage5SemanticTests(unittest.TestCase):
         bad.findings[0].rationale = "This boosted engagement."
         with self.assertRaisesRegex(ValueError, "Performance claim"):
             validate_draft(bad, self.content, self.frames)
+        visual = draft()
+        visual.findings[0].rationale = "A text panel shares the image with two people."
+        validate_draft(visual, self.content, self.frames)
+        visual.findings[0].rationale = "The ad received 20 shares."
+        with self.assertRaisesRegex(ValueError, "Performance claim"):
+            validate_draft(visual, self.content, self.frames)
         excerpts = cited_evidence(self.content, self.frames, draft())
         self.assertEqual(excerpts["ocr:0"]["text"], "Welcome")
         self.assertEqual(excerpts["transcript:0"]["text"], "Hello")
@@ -126,6 +132,9 @@ class Stage5SemanticTests(unittest.TestCase):
                              [row["timestamp_seconds"] for row in private])
             self.assertTrue(all("_jpeg" not in row for row in public))
             self.assertEqual(list(Path(directory).iterdir()), [media])
+            tail, _ = extract_frames(media, [{"timestamp_seconds": 8.1,
+                                              "reason": "final"}])
+            self.assertEqual(tail[0]["timestamp_seconds"], 7.9)
 
             with patch("openai.OpenAI") as client:
                 client.return_value.__enter__.return_value.responses.parse.return_value = (
