@@ -1,0 +1,3860 @@
+{
+  "comparison_version": "stage5.4-1",
+  "scoring_scope": "Provisional complete categories only; partial and unavailable abstain",
+  "sources": [
+    {
+      "source_ref": "01",
+      "truth_version": "stage5.1-provisional-1",
+      "truth_provenance": {
+        "reviewer_type": "AI-assisted visual reviewer (Codex)",
+        "reviewed_at": "2026-10-11T11:27:07.902770+00:00",
+        "saw_model_output_before_annotation": true,
+        "blind": false,
+        "independent_human_review": false,
+        "source_audio_reviewed": false,
+        "review_method": "Decoded timestamped frames across the full runtime at 1.0s spacing (1.5s for 04), plus supplied OCR/transcript; no continuous audio playback. Interval bounds are approximate.",
+        "adjudication_notes": [
+          "Caption span is supported across the sampled runtime, but brief gaps cannot be ruled out; text coverage is partial.",
+          "Both B-roll intervals have supporting product cutaways; precise edit onset/end is approximate and other edits are unreviewed.",
+          "Proof is an interpretation of a speaker claim, not independent verification of compliments."
+        ]
+      },
+      "stage5_2": {
+        "analyzer_commit": "1c376da9fb37bf35738df83b2d7a9e665e304b17",
+        "model": "gpt-6-sol",
+        "response_id": "resp_08bf3d347b4f3b6e016acb7470ff5087d2ac09c6f3617ccdb1",
+        "prompt_sha256": "35a641ed3011b695e219145fea591df252681189ea407e031a734a33a02a9505",
+        "frame_coverage": {
+          "selected_frame_count": 16,
+          "largest_frame_gap_seconds": 3.967
+        },
+        "label": {
+          "tp": 4,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.6666666666666666,
+          "recall": 1.0,
+          "f1": 0.8,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              2,
+              1
+            ],
+            [
+              3,
+              2
+            ],
+            [
+              15,
+              7
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            1,
+            14
+          ],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [
+            13
+          ],
+          "scored_prediction_count": 6,
+          "scored_truth_count": 4
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 2,
+            "fp": 4,
+            "fn": 2,
+            "precision": 0.3333333333333333,
+            "recall": 0.5,
+            "f1": 0.4,
+            "matched_pairs": [
+              [
+                2,
+                1
+              ],
+              [
+                3,
+                2
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              1,
+              14,
+              15
+            ],
+            "missed_reviewed_indices": [
+              0,
+              7
+            ],
+            "abstained_uncertain_prediction_indices": [
+              13
+            ],
+            "scored_prediction_count": 6,
+            "scored_truth_count": 4
+          },
+          "0.5": {
+            "tp": 3,
+            "fp": 3,
+            "fn": 1,
+            "precision": 0.5,
+            "recall": 0.75,
+            "f1": 0.6,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                3,
+                2
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              1,
+              14,
+              15
+            ],
+            "missed_reviewed_indices": [
+              7
+            ],
+            "abstained_uncertain_prediction_indices": [
+              13
+            ],
+            "scored_prediction_count": 6,
+            "scored_truth_count": 4
+          },
+          "1.0": {
+            "tp": 3,
+            "fp": 3,
+            "fn": 1,
+            "precision": 0.5,
+            "recall": 0.75,
+            "f1": 0.6,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                2,
+                1
+              ],
+              [
+                3,
+                2
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              1,
+              14,
+              15
+            ],
+            "missed_reviewed_indices": [
+              7
+            ],
+            "abstained_uncertain_prediction_indices": [
+              13
+            ],
+            "scored_prediction_count": 6,
+            "scored_truth_count": 4
+          }
+        },
+        "structure_role_agreement": null,
+        "missed_reviewed_finding_count": 0,
+        "missed_reviewed_indices": [],
+        "unsupported_finding_count": 2,
+        "unsupported_finding_indices": [
+          1,
+          14
+        ],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 1.0,
+        "whole_video_formats": [
+          "format.product_demo",
+          "format.talking_head"
+        ],
+        "overlapping_cta_pair_count": 3,
+        "evidence_interval_support_failure_count": 0,
+        "missed_reviewed_findings": [],
+        "unsupported_by_provisional_truth": [
+          {
+            "technique_id": "hook.visual",
+            "start_seconds": 0.0,
+            "end_seconds": 2.48,
+            "confidence": 0.85,
+            "basis": "model_interpretation",
+            "rationale": "The opening pairs a direct-to-camera presentation with a prominently held perfume bottle.",
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "frame:2"
+            ]
+          },
+          {
+            "technique_id": "cta.visual",
+            "start_seconds": 25.68,
+            "end_seconds": 28.5,
+            "confidence": 0.88,
+            "basis": "direct_observation",
+            "rationale": "The closing request is also shown in speech-following on-screen text.",
+            "evidence_refs": [
+              "ocr:162",
+              "ocr:170",
+              "ocr:173",
+              "frame:13",
+              "frame:14"
+            ]
+          }
+        ],
+        "incompatible_structure_overlap_count": 0
+      },
+      "stage5_3": {
+        "analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71",
+        "model": "gpt-6-sol",
+        "response_id": "resp_0706ad99521925cb016acb7820200c87d2b9adf838229c04a1",
+        "prompt_sha256": "8b950810bd422710ac87600edd7887d34fec981c295b8b5ab18e45d9cf0ebec9",
+        "frame_coverage": {
+          "selected_frame_count": 16,
+          "largest_frame_gap_seconds": 3.967
+        },
+        "label": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 1,
+          "precision": 0.6,
+          "recall": 0.75,
+          "f1": 0.6666666666666665,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              16,
+              7
+            ],
+            [
+              17,
+              1
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            1,
+            15
+          ],
+          "missed_reviewed_indices": [
+            2
+          ],
+          "abstained_uncertain_prediction_indices": [
+            14
+          ],
+          "scored_prediction_count": 5,
+          "scored_truth_count": 4
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 1,
+            "fp": 4,
+            "fn": 3,
+            "precision": 0.2,
+            "recall": 0.25,
+            "f1": 0.22222222222222224,
+            "matched_pairs": [
+              [
+                17,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              1,
+              15,
+              16
+            ],
+            "missed_reviewed_indices": [
+              0,
+              2,
+              7
+            ],
+            "abstained_uncertain_prediction_indices": [
+              14
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 4
+          },
+          "0.5": {
+            "tp": 3,
+            "fp": 2,
+            "fn": 1,
+            "precision": 0.6,
+            "recall": 0.75,
+            "f1": 0.6666666666666665,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                16,
+                7
+              ],
+              [
+                17,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              1,
+              15
+            ],
+            "missed_reviewed_indices": [
+              2
+            ],
+            "abstained_uncertain_prediction_indices": [
+              14
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 4
+          },
+          "1.0": {
+            "tp": 3,
+            "fp": 2,
+            "fn": 1,
+            "precision": 0.6,
+            "recall": 0.75,
+            "f1": 0.6666666666666665,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                16,
+                7
+              ],
+              [
+                17,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              1,
+              15
+            ],
+            "missed_reviewed_indices": [
+              2
+            ],
+            "abstained_uncertain_prediction_indices": [
+              14
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 4
+          }
+        },
+        "structure_role_agreement": null,
+        "missed_reviewed_finding_count": 1,
+        "missed_reviewed_indices": [
+          2
+        ],
+        "unsupported_finding_count": 2,
+        "unsupported_finding_indices": [
+          1,
+          15
+        ],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 0.989547,
+        "whole_video_formats": [
+          "format.talking_head"
+        ],
+        "overlapping_cta_pair_count": 1,
+        "evidence_interval_support_failure_count": 0,
+        "cta_event_audit": {
+          "cta_event_count": 1,
+          "ontology_labels_per_event": {
+            "cta:1": [
+              "cta.verbal",
+              "cta.visual",
+              "cta.product"
+            ]
+          },
+          "overlapping_cta_labels_same_event": [
+            [
+              14,
+              15
+            ],
+            [
+              14,
+              16
+            ],
+            [
+              15,
+              16
+            ]
+          ],
+          "overlapping_cta_labels_different_events": []
+        },
+        "model_passes": [
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:0",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0bfd056e8d6f2f70016acb780a2b0487d29cba9509d0dbb6bf",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:1",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_00b93fa0532c9807016acb7811948887d2b71a3fe07b7f76b2",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:2",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0106d17f4ada6d9a016acb781928c487d28c20668accf28507",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71"
+          },
+          {
+            "stage": "ontology_synthesis",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0706ad99521925cb016acb7820200c87d2b9adf838229c04a1",
+            "prompt_sha256": "8b950810bd422710ac87600edd7887d34fec981c295b8b5ab18e45d9cf0ebec9",
+            "analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71"
+          }
+        ],
+        "format_assessments": [
+          {
+            "technique_id": "format.talking_head",
+            "decision": "supported",
+            "rationale": "The speaker faces the camera in the car at the opening, middle, and end; product close views interrupt but do not displace this recurring presentation.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:0:2",
+              "ledger:1:3",
+              "ledger:2:1",
+              "ledger:2:3"
+            ]
+          },
+          {
+            "technique_id": "format.tutorial",
+            "decision": "unsupported",
+            "rationale": "The speaker describes and recommends a perfume, without teaching a process in steps.",
+            "ledger_refs": [
+              "ledger:0:1",
+              "ledger:0:2",
+              "ledger:1:2",
+              "ledger:2:2"
+            ]
+          },
+          {
+            "technique_id": "format.product_demo",
+            "decision": "uncertain",
+            "rationale": "The bottle is repeatedly held and displayed, but the sampled stills do not establish it being applied or otherwise used.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:0:1",
+              "ledger:0:2",
+              "ledger:1:2",
+              "ledger:2:2"
+            ]
+          },
+          {
+            "technique_id": "format.storytime",
+            "decision": "unsupported",
+            "rationale": "Claims about scent, ingredients, price, and compliments do not form a narrated event as the main format.",
+            "ledger_refs": [
+              "ledger:0:2",
+              "ledger:1:2",
+              "ledger:1:3",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.listicle",
+            "decision": "unsupported",
+            "rationale": "The video focuses on product 461 and its attributes, not numbered or clearly enumerated items; other bottle numbers appear as labels.",
+            "ledger_refs": [
+              "ledger:0:1",
+              "ledger:1:1",
+              "ledger:1:2",
+              "ledger:2:2"
+            ]
+          },
+          {
+            "technique_id": "format.reaction",
+            "decision": "unsupported",
+            "rationale": "The speaker offers their own product assessment rather than responding to another piece of content or event.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:0:2",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.before_after",
+            "decision": "unsupported",
+            "rationale": "The comparison to another fragrance is verbal; no before-and-after states are presented.",
+            "ledger_refs": [
+              "ledger:0:1",
+              "ledger:0:2",
+              "ledger:1:3",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.screen_recording",
+            "decision": "unsupported",
+            "rationale": "A laptop product page appears near the end, but car footage and physical bottle views supply the principal visuals; no recorded screen is established.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:0:1",
+              "ledger:1:2",
+              "ledger:2:2",
+              "ledger:2:3"
+            ]
+          },
+          {
+            "technique_id": "format.interview",
+            "decision": "unsupported",
+            "rationale": "The ledger describes one speaker's product remarks, not a question-and-answer exchange.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:3",
+              "ledger:2:1",
+              "ledger:2:3"
+            ]
+          }
+        ],
+        "cta_events": [
+          {
+            "event_id": "cta:1",
+            "start_seconds": 23.5,
+            "end_seconds": 28.4,
+            "requested_action": "Go to the Essence Vault website and get the perfume; the speaker says to 'go and grab yours' because it sells out quickly.",
+            "ledger_refs": [
+              "ledger:2:1",
+              "ledger:2:2",
+              "ledger:2:3"
+            ]
+          }
+        ],
+        "missed_reviewed_findings": [
+          {
+            "technique_id": "format.product_demo",
+            "start_seconds": 0,
+            "end_seconds": null,
+            "status": "present",
+            "evidence": "3\u20136s bottle/packaging display; 9\u201310s presenter brings bottle to nose; 24\u201327s bottle beside product page.",
+            "coverage": "complete"
+          }
+        ],
+        "unsupported_by_provisional_truth": [
+          {
+            "technique_id": "hook.visual",
+            "start_seconds": 0.0,
+            "end_seconds": 2.533,
+            "confidence": 0.83,
+            "basis": "model_interpretation",
+            "rationale": "The bottle is held visibly near the camera-facing speaker during the opening claim.",
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "frame:2",
+              "transcript:0",
+              "ocr:0",
+              "ocr:1",
+              "ocr:2",
+              "ocr:3"
+            ]
+          },
+          {
+            "technique_id": "cta.visual",
+            "start_seconds": 26.5,
+            "end_seconds": 27.0,
+            "confidence": 0.92,
+            "basis": "direct_observation",
+            "rationale": "The on-screen words 'grab yours' visibly request the same action.",
+            "evidence_refs": [
+              "frame:13",
+              "transcript:10",
+              "ocr:89",
+              "ocr:92",
+              "ocr:162"
+            ]
+          }
+        ],
+        "incompatible_structure_overlap_count": 0
+      },
+      "stage5_4": {
+        "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a",
+        "model": "gpt-6-sol",
+        "response_id": "resp_0716b8aa6b2c68c3016acbf36c064487d29420df91c43702a1",
+        "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+        "frame_coverage": {
+          "selected_frame_count": 16,
+          "largest_frame_gap_seconds": 3.967
+        },
+        "label": {
+          "tp": 3,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.75,
+          "recall": 0.75,
+          "f1": 0.75,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              7
+            ],
+            [
+              9,
+              2
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            7
+          ],
+          "missed_reviewed_indices": [
+            1
+          ],
+          "abstained_uncertain_prediction_indices": [
+            6
+          ],
+          "scored_prediction_count": 4,
+          "scored_truth_count": 4
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 1,
+            "fp": 3,
+            "fn": 3,
+            "precision": 0.25,
+            "recall": 0.25,
+            "f1": 0.25,
+            "matched_pairs": [
+              [
+                9,
+                2
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              7,
+              8
+            ],
+            "missed_reviewed_indices": [
+              0,
+              1,
+              7
+            ],
+            "abstained_uncertain_prediction_indices": [
+              6
+            ],
+            "scored_prediction_count": 4,
+            "scored_truth_count": 4
+          },
+          "0.5": {
+            "tp": 2,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1": 0.5,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                9,
+                2
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              7,
+              8
+            ],
+            "missed_reviewed_indices": [
+              1,
+              7
+            ],
+            "abstained_uncertain_prediction_indices": [
+              6
+            ],
+            "scored_prediction_count": 4,
+            "scored_truth_count": 4
+          },
+          "1.0": {
+            "tp": 2,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1": 0.5,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                9,
+                2
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              7,
+              8
+            ],
+            "missed_reviewed_indices": [
+              1,
+              7
+            ],
+            "abstained_uncertain_prediction_indices": [
+              6
+            ],
+            "scored_prediction_count": 4,
+            "scored_truth_count": 4
+          }
+        },
+        "structure_role_agreement": null,
+        "missed_reviewed_finding_count": 1,
+        "missed_reviewed_indices": [
+          1
+        ],
+        "unsupported_finding_count": 1,
+        "unsupported_finding_indices": [
+          7
+        ],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 0.959129,
+        "whole_video_formats": [
+          "format.product_demo"
+        ],
+        "overlapping_cta_pair_count": 3,
+        "evidence_interval_support_failure_count": 0,
+        "cta_event_audit": {
+          "cta_event_count": 1,
+          "ontology_labels_per_event": {
+            "cta:1": [
+              "cta.verbal",
+              "cta.visual",
+              "cta.product"
+            ]
+          },
+          "overlapping_cta_labels_same_event": [
+            [
+              6,
+              7
+            ],
+            [
+              6,
+              8
+            ],
+            [
+              7,
+              8
+            ]
+          ],
+          "overlapping_cta_labels_different_events": []
+        },
+        "model_passes": [
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:0",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_02a61c2d882899d2016acbf1ba6c1c87d28fbcce938d658a31",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "16b6c98249ed09db3074b188fdb57e909f2ad666"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:1",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_03f2e7df5bb565e7016acbf1c274ec87d2b263674a88c830e5",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "16b6c98249ed09db3074b188fdb57e909f2ad666"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:2",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0b251f98e228bfa9016acbf1cccd5087d2a9cbd9f07fb257c8",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "16b6c98249ed09db3074b188fdb57e909f2ad666"
+          },
+          {
+            "stage": "ontology_synthesis",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0716b8aa6b2c68c3016acbf36c064487d29420df91c43702a1",
+            "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          }
+        ],
+        "format_assessments": [
+          {
+            "technique_id": "format.talking_head",
+            "ontology_definition": "Speaker addresses the camera for a substantial part of the video.",
+            "decision": "uncertain",
+            "positive_ledger_refs": [
+              "ledger:0:0",
+              "ledger:0:2",
+              "ledger:1:4",
+              "ledger:2:1",
+              "ledger:2:2",
+              "ledger:2:5"
+            ],
+            "counterevidence_limitations": "The woman speaks in car segments, but the ledger does not establish that she addresses the camera for a substantial part.",
+            "criterion_explanation": "Speaking while visible is not sufficient to establish camera-addressing speech."
+          },
+          {
+            "technique_id": "format.tutorial",
+            "ontology_definition": "Explains a process or teaches a skill in steps.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The speaker describes and recommends a fragrance without teaching steps.",
+            "criterion_explanation": "No stepwise process or skill instruction is established."
+          },
+          {
+            "technique_id": "format.product_demo",
+            "ontology_definition": "Shows a product or service in use.",
+            "decision": "supported",
+            "positive_ledger_refs": [
+              "ledger:0:2"
+            ],
+            "counterevidence_limitations": "The still near her nose does not prove she inhaled or sprayed the fragrance.",
+            "criterion_explanation": "The bottle held close to the speaker's nose while she discusses its smell supports a localized depiction of fragrance use."
+          },
+          {
+            "technique_id": "format.storytime",
+            "ontology_definition": "Narrates an event as the main format.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "A personal claim about compliments is present, but no event is narrated as the main format.",
+            "criterion_explanation": "Product description and recommendation, rather than event narration, organize the video."
+          },
+          {
+            "technique_id": "format.listicle",
+            "ontology_definition": "Presents numbered or clearly enumerated items.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The numbers 461 and 82 identify bottles, not enumerated list entries.",
+            "criterion_explanation": "No numbered or clearly enumerated sequence of items is established."
+          },
+          {
+            "technique_id": "format.reaction",
+            "ontology_definition": "Responds to another piece of content or event.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The speaker reacts to the fragrance's smell, not to another piece of content or an identifiable event.",
+            "criterion_explanation": "An expression of enthusiasm alone does not establish this format."
+          },
+          {
+            "technique_id": "format.before_after",
+            "ontology_definition": "Compares a state before and after a change.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The comparison to another fragrance does not show states before and after a change.",
+            "criterion_explanation": "Evidence for both temporal states is absent."
+          },
+          {
+            "technique_id": "format.screen_recording",
+            "ontology_definition": "Recorded screen is a principal visual source.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [
+              "ledger:2:3",
+              "ledger:2:4"
+            ],
+            "counterevidence_limitations": "A laptop product page appears locally; no recorded screen is established.",
+            "criterion_explanation": "Filming a device screen does not establish a screen recording as a principal visual source."
+          },
+          {
+            "technique_id": "format.interview",
+            "ontology_definition": "Question and answer exchange is a principal format.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "Only one speaker's product commentary is described.",
+            "criterion_explanation": "No question-and-answer exchange is established."
+          }
+        ],
+        "cta_events": [
+          {
+            "event_id": "cta:1",
+            "start_seconds": 25.68,
+            "end_seconds": 28.4,
+            "requested_action": "Grab or buy the fragrance for yourself.",
+            "ledger_refs": [
+              "ledger:2:4",
+              "ledger:2:5"
+            ]
+          }
+        ],
+        "missed_reviewed_findings": [
+          {
+            "technique_id": "format.talking_head",
+            "start_seconds": 0,
+            "end_seconds": null,
+            "status": "present",
+            "evidence": "1\u20132s, 7\u201311s, 16\u201324s and 28s: presenter addresses lens for much of the runtime.",
+            "coverage": "complete"
+          }
+        ],
+        "unsupported_by_provisional_truth": [
+          {
+            "technique_id": "cta.visual",
+            "start_seconds": 25.68,
+            "end_seconds": 27.4,
+            "confidence": 0.94,
+            "basis": "direct_observation",
+            "rationale": "The displayed caption 'grab yours' itself requests action.",
+            "evidence_refs": [
+              "transcript:10",
+              "frame:13",
+              "ocr:89",
+              "ocr:142",
+              "ocr:162",
+              "ocr:170"
+            ]
+          }
+        ],
+        "incompatible_structure_overlap_count": 0,
+        "synthesis_timing_adjustments": [],
+        "ledger_timing_adjustment_count": 1,
+        "evidence_ledger_support_failures": []
+      }
+    },
+    {
+      "source_ref": "04",
+      "truth_version": "stage5.1-provisional-1",
+      "truth_provenance": {
+        "reviewer_type": "AI-assisted visual reviewer (Codex)",
+        "reviewed_at": "2026-10-11T11:27:07.903206+00:00",
+        "saw_model_output_before_annotation": true,
+        "blind": false,
+        "independent_human_review": false,
+        "source_audio_reviewed": false,
+        "review_method": "Decoded timestamped frames across the full runtime at 1.0s spacing (1.5s for 04), plus supplied OCR/transcript; no continuous audio playback. Interval bounds are approximate.",
+        "adjudication_notes": [
+          "Grooming begins near 15s; reveal is near 70\u201380s. Bounds derive from 1.5s frame review and are approximate.",
+          "The Stage 5 90\u2013123s other segment misses a substantial foot-care/bandaging sequence; the provisional truth adds it.",
+          "Final CTA has both visual modality and product-action labels describing the same event. This is legitimate ontology overlap, not two independent CTAs.",
+          "Transcript Bye segments covering long periods are unreliable; structural intervals use visual review instead."
+        ]
+      },
+      "stage5_2": {
+        "analyzer_commit": "1c376da9fb37bf35738df83b2d7a9e665e304b17",
+        "model": "gpt-6-sol",
+        "response_id": "resp_0bce8a0621f827a1016acb74817e3887d2bd33956c4a2295b7",
+        "prompt_sha256": "35a641ed3011b695e219145fea591df252681189ea407e031a734a33a02a9505",
+        "frame_coverage": {
+          "selected_frame_count": 29,
+          "largest_frame_gap_seconds": 7.292
+        },
+        "label": {
+          "tp": 3,
+          "fp": 1,
+          "fn": 1,
+          "precision": 0.75,
+          "recall": 0.75,
+          "f1": 0.75,
+          "matched_pairs": [
+            [
+              2,
+              0
+            ],
+            [
+              8,
+              3
+            ],
+            [
+              9,
+              4
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            0
+          ],
+          "missed_reviewed_indices": [
+            1
+          ],
+          "abstained_uncertain_prediction_indices": [
+            7
+          ],
+          "scored_prediction_count": 4,
+          "scored_truth_count": 4
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 0,
+            "fp": 4,
+            "fn": 4,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": null,
+            "matched_pairs": [],
+            "unsupported_prediction_indices": [
+              0,
+              2,
+              8,
+              9
+            ],
+            "missed_reviewed_indices": [
+              0,
+              1,
+              3,
+              4
+            ],
+            "abstained_uncertain_prediction_indices": [
+              7
+            ],
+            "scored_prediction_count": 4,
+            "scored_truth_count": 4
+          },
+          "0.5": {
+            "tp": 0,
+            "fp": 4,
+            "fn": 4,
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": null,
+            "matched_pairs": [],
+            "unsupported_prediction_indices": [
+              0,
+              2,
+              8,
+              9
+            ],
+            "missed_reviewed_indices": [
+              0,
+              1,
+              3,
+              4
+            ],
+            "abstained_uncertain_prediction_indices": [
+              7
+            ],
+            "scored_prediction_count": 4,
+            "scored_truth_count": 4
+          },
+          "1.0": {
+            "tp": 2,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.5,
+            "recall": 0.5,
+            "f1": 0.5,
+            "matched_pairs": [
+              [
+                8,
+                3
+              ],
+              [
+                9,
+                4
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              2
+            ],
+            "missed_reviewed_indices": [
+              0,
+              1
+            ],
+            "abstained_uncertain_prediction_indices": [
+              7
+            ],
+            "scored_prediction_count": 4,
+            "scored_truth_count": 4
+          }
+        },
+        "structure_role_agreement": null,
+        "missed_reviewed_finding_count": 1,
+        "missed_reviewed_indices": [
+          1
+        ],
+        "unsupported_finding_count": 1,
+        "unsupported_finding_indices": [
+          0
+        ],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 1.0,
+        "whole_video_formats": [],
+        "overlapping_cta_pair_count": 3,
+        "evidence_interval_support_failure_count": 0,
+        "missed_reviewed_findings": [
+          {
+            "technique_id": "format.before_after",
+            "start_seconds": 0,
+            "end_seconds": null,
+            "status": "present",
+            "evidence": "0\u201315s pre-grooming state and 70\u201380s groomed/clothed reveal show an explicit before/after comparison.",
+            "coverage": "complete"
+          }
+        ],
+        "unsupported_by_provisional_truth": [
+          {
+            "technique_id": "hook.curiosity_gap",
+            "start_seconds": 0.0,
+            "end_seconds": 5.5,
+            "confidence": 0.96,
+            "basis": "direct_observation",
+            "rationale": "The opening text promises a coming transformation without showing its outcome yet.",
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "ocr:2",
+              "ocr:3"
+            ]
+          }
+        ],
+        "incompatible_structure_overlap_count": 0
+      },
+      "stage5_3": {
+        "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021",
+        "model": "gpt-6-sol",
+        "response_id": "resp_05bd81ab27413fae016acb78beee7087d2a9ec62744d34bd45",
+        "prompt_sha256": "8b950810bd422710ac87600edd7887d34fec981c295b8b5ab18e45d9cf0ebec9",
+        "frame_coverage": {
+          "selected_frame_count": 29,
+          "largest_frame_gap_seconds": 7.292
+        },
+        "label": {
+          "tp": 4,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.6666666666666666,
+          "recall": 1.0,
+          "f1": 0.8,
+          "matched_pairs": [
+            [
+              2,
+              0
+            ],
+            [
+              10,
+              3
+            ],
+            [
+              11,
+              4
+            ],
+            [
+              12,
+              1
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            0,
+            1
+          ],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [
+            9
+          ],
+          "scored_prediction_count": 6,
+          "scored_truth_count": 4
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 1,
+            "fp": 5,
+            "fn": 3,
+            "precision": 0.16666666666666666,
+            "recall": 0.25,
+            "f1": 0.2,
+            "matched_pairs": [
+              [
+                12,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              1,
+              2,
+              10,
+              11
+            ],
+            "missed_reviewed_indices": [
+              0,
+              3,
+              4
+            ],
+            "abstained_uncertain_prediction_indices": [
+              9
+            ],
+            "scored_prediction_count": 6,
+            "scored_truth_count": 4
+          },
+          "0.5": {
+            "tp": 1,
+            "fp": 5,
+            "fn": 3,
+            "precision": 0.16666666666666666,
+            "recall": 0.25,
+            "f1": 0.2,
+            "matched_pairs": [
+              [
+                12,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              1,
+              2,
+              10,
+              11
+            ],
+            "missed_reviewed_indices": [
+              0,
+              3,
+              4
+            ],
+            "abstained_uncertain_prediction_indices": [
+              9
+            ],
+            "scored_prediction_count": 6,
+            "scored_truth_count": 4
+          },
+          "1.0": {
+            "tp": 1,
+            "fp": 5,
+            "fn": 3,
+            "precision": 0.16666666666666666,
+            "recall": 0.25,
+            "f1": 0.2,
+            "matched_pairs": [
+              [
+                12,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              1,
+              2,
+              10,
+              11
+            ],
+            "missed_reviewed_indices": [
+              0,
+              3,
+              4
+            ],
+            "abstained_uncertain_prediction_indices": [
+              9
+            ],
+            "scored_prediction_count": 6,
+            "scored_truth_count": 4
+          }
+        },
+        "structure_role_agreement": null,
+        "missed_reviewed_finding_count": 0,
+        "missed_reviewed_indices": [],
+        "unsupported_finding_count": 2,
+        "unsupported_finding_indices": [
+          0,
+          1
+        ],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 1.0,
+        "whole_video_formats": [
+          "format.before_after"
+        ],
+        "overlapping_cta_pair_count": 3,
+        "evidence_interval_support_failure_count": 0,
+        "cta_event_audit": {
+          "cta_event_count": 1,
+          "ontology_labels_per_event": {
+            "cta:1": [
+              "cta.verbal",
+              "cta.visual",
+              "cta.product"
+            ]
+          },
+          "overlapping_cta_labels_same_event": [
+            [
+              9,
+              10
+            ],
+            [
+              9,
+              11
+            ],
+            [
+              10,
+              11
+            ]
+          ],
+          "overlapping_cta_labels_different_events": []
+        },
+        "model_passes": [
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:0",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_070f5dde486d7d33016acb789070a087d28c748bc8a727876e",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:1",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0a5575a1e5392162016acb7899baf887d2b1465c8fe3f8d4e4",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:2",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_07d16c8acb973211016acb78a0ced487d2a77c82649a8558f2",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:3",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0097caff36ea4855016acb78a8241087d28ba8665f85d4d7cc",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:4",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0fb50cc2303c6bbe016acb78ae40c887d2b940b48697bd79c5",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:5",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_09d52037da64e660016acb78b50a8487d2b251bf1c982f515e",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+          },
+          {
+            "stage": "ontology_synthesis",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_05bd81ab27413fae016acb78beee7087d2a9ec62744d34bd45",
+            "prompt_sha256": "8b950810bd422710ac87600edd7887d34fec981c295b8b5ab18e45d9cf0ebec9",
+            "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+          }
+        ],
+        "format_assessments": [
+          {
+            "technique_id": "format.talking_head",
+            "decision": "unsupported",
+            "rationale": "The seated camera-facing person appears only near the end; the rest follows roadside assistance and care, not sustained camera address.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:2:0",
+              "ledger:3:2",
+              "ledger:5:3"
+            ]
+          },
+          {
+            "technique_id": "format.tutorial",
+            "decision": "unsupported",
+            "rationale": "Care activities are shown, but no process is taught in steps.",
+            "ledger_refs": [
+              "ledger:0:2",
+              "ledger:1:2",
+              "ledger:4:2",
+              "ledger:5:3"
+            ]
+          },
+          {
+            "technique_id": "format.product_demo",
+            "decision": "unsupported",
+            "rationale": "The late purchase request and displayed card do not show a product or service in use as the video's principal format.",
+            "ledger_refs": [
+              "ledger:0:1",
+              "ledger:3:1",
+              "ledger:5:2",
+              "ledger:5:3"
+            ]
+          },
+          {
+            "technique_id": "format.storytime",
+            "decision": "unsupported",
+            "rationale": "An observable sequence unfolds, but narration of an event is not established as the main format; the supplied speech is largely repeated brief phrases until the closing appeal.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:1",
+              "ledger:3:2",
+              "ledger:5:1",
+              "ledger:5:3"
+            ]
+          },
+          {
+            "technique_id": "format.listicle",
+            "decision": "unsupported",
+            "rationale": "The full sequence has no numbered or clearly enumerated items.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:2:1",
+              "ledger:4:2",
+              "ledger:5:3"
+            ]
+          },
+          {
+            "technique_id": "format.reaction",
+            "decision": "unsupported",
+            "rationale": "No principal response to another piece of content or event is established.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:3:1",
+              "ledger:5:2",
+              "ledger:5:3"
+            ]
+          },
+          {
+            "technique_id": "format.before_after",
+            "decision": "supported",
+            "rationale": "Across the video, the person is first shown seated by the curb with long hair and a beard, then receiving grooming and care, and later wearing clean clothing and garlands with visibly shorter hair. The opening text also frames a forthcoming transformation; this comparison extends well beyond the opening.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:0:2",
+              "ledger:1:1",
+              "ledger:2:2",
+              "ledger:3:0",
+              "ledger:5:1"
+            ]
+          },
+          {
+            "technique_id": "format.screen_recording",
+            "decision": "unsupported",
+            "rationale": "Roadside and vehicle footage, followed by a person holding a card, are described; a recorded screen is not a principal visual source.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:2:0",
+              "ledger:4:0",
+              "ledger:5:3"
+            ]
+          },
+          {
+            "technique_id": "format.interview",
+            "decision": "unsupported",
+            "rationale": "No question-and-answer exchange is supplied across the runtime.",
+            "ledger_refs": [
+              "ledger:0:2",
+              "ledger:1:1",
+              "ledger:3:2",
+              "ledger:5:3"
+            ]
+          }
+        ],
+        "cta_events": [
+          {
+            "event_id": "cta:1",
+            "start_seconds": 131.792,
+            "end_seconds": 138.537,
+            "requested_action": "Join the movement by buying the offered item; the appeal says a purchase funds 20 meals.",
+            "ledger_refs": [
+              "ledger:5:2",
+              "ledger:5:3"
+            ]
+          }
+        ],
+        "missed_reviewed_findings": [],
+        "unsupported_by_provisional_truth": [
+          {
+            "technique_id": "hook.curiosity_gap",
+            "start_seconds": 0.0,
+            "end_seconds": 3.0,
+            "confidence": 0.92,
+            "basis": "direct_observation",
+            "rationale": "The opening caption promises a 'Beautiful Transformation incoming' without showing its outcome yet.",
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "frame:2",
+              "ocr:2",
+              "ocr:3",
+              "ocr:4",
+              "ocr:5"
+            ]
+          },
+          {
+            "technique_id": "hook.story_open",
+            "start_seconds": 0.0,
+            "end_seconds": 3.0,
+            "confidence": 0.82,
+            "basis": "model_interpretation",
+            "rationale": "The opening establishes the curbside situation and two people before the care sequence unfolds.",
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "frame:2",
+              "ocr:2",
+              "ocr:3",
+              "ocr:4",
+              "ocr:5"
+            ]
+          }
+        ],
+        "incompatible_structure_overlap_count": 0
+      },
+      "stage5_4": {
+        "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a",
+        "model": "gpt-6-sol",
+        "response_id": "resp_0e7f9e12654dbc58016acbf3bf1f7c87d2ad6af44f016fd376",
+        "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+        "frame_coverage": {
+          "selected_frame_count": 29,
+          "largest_frame_gap_seconds": 7.292
+        },
+        "label": {
+          "tp": 3,
+          "fp": 3,
+          "fn": 1,
+          "precision": 0.5,
+          "recall": 0.75,
+          "f1": 0.6,
+          "matched_pairs": [
+            [
+              11,
+              3
+            ],
+            [
+              12,
+              4
+            ],
+            [
+              14,
+              1
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            0,
+            9,
+            13
+          ],
+          "missed_reviewed_indices": [
+            0
+          ],
+          "abstained_uncertain_prediction_indices": [
+            8,
+            10
+          ],
+          "scored_prediction_count": 6,
+          "scored_truth_count": 4
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 1,
+            "fp": 5,
+            "fn": 3,
+            "precision": 0.16666666666666666,
+            "recall": 0.25,
+            "f1": 0.2,
+            "matched_pairs": [
+              [
+                14,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              9,
+              11,
+              12,
+              13
+            ],
+            "missed_reviewed_indices": [
+              0,
+              3,
+              4
+            ],
+            "abstained_uncertain_prediction_indices": [
+              8,
+              10
+            ],
+            "scored_prediction_count": 6,
+            "scored_truth_count": 4
+          },
+          "0.5": {
+            "tp": 1,
+            "fp": 5,
+            "fn": 3,
+            "precision": 0.16666666666666666,
+            "recall": 0.25,
+            "f1": 0.2,
+            "matched_pairs": [
+              [
+                14,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              9,
+              11,
+              12,
+              13
+            ],
+            "missed_reviewed_indices": [
+              0,
+              3,
+              4
+            ],
+            "abstained_uncertain_prediction_indices": [
+              8,
+              10
+            ],
+            "scored_prediction_count": 6,
+            "scored_truth_count": 4
+          },
+          "1.0": {
+            "tp": 3,
+            "fp": 3,
+            "fn": 1,
+            "precision": 0.5,
+            "recall": 0.75,
+            "f1": 0.6,
+            "matched_pairs": [
+              [
+                11,
+                3
+              ],
+              [
+                12,
+                4
+              ],
+              [
+                14,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              9,
+              13
+            ],
+            "missed_reviewed_indices": [
+              0
+            ],
+            "abstained_uncertain_prediction_indices": [
+              8,
+              10
+            ],
+            "scored_prediction_count": 6,
+            "scored_truth_count": 4
+          }
+        },
+        "structure_role_agreement": null,
+        "missed_reviewed_finding_count": 1,
+        "missed_reviewed_indices": [
+          0
+        ],
+        "unsupported_finding_count": 3,
+        "unsupported_finding_indices": [
+          0,
+          9,
+          13
+        ],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 0.326895,
+        "whole_video_formats": [
+          "format.before_after",
+          "format.product_demo"
+        ],
+        "overlapping_cta_pair_count": 4,
+        "evidence_interval_support_failure_count": 0,
+        "cta_event_audit": {
+          "cta_event_count": 2,
+          "ontology_labels_per_event": {
+            "cta:1": [
+              "cta.verbal",
+              "cta.visual"
+            ],
+            "cta:2": [
+              "cta.verbal",
+              "cta.visual",
+              "cta.product"
+            ]
+          },
+          "overlapping_cta_labels_same_event": [
+            [
+              8,
+              9
+            ],
+            [
+              10,
+              11
+            ],
+            [
+              10,
+              12
+            ],
+            [
+              11,
+              12
+            ]
+          ],
+          "overlapping_cta_labels_different_events": []
+        },
+        "model_passes": [
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:0",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0318d7e069cea36d016acbf1ea75f487d28eae7a00cab1c9c2",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "16b6c98249ed09db3074b188fdb57e909f2ad666"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:1",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_04eb79a9aee2963c016acbf37cc04487d2a251579465e487a0",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:2",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0dde9840e497f3a7016acbf388d6d487d28234579e9eaff982",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:3",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_02ac68dec9c0223b016acbf393bb6487d2b358e6a5066b1514",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:4",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_058d503166d26e63016acbf3a0d02c87d2a86a6ae742388f23",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:5",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0db9d7173cef2f4b016acbf3ac20d087d2b626fb0234b8fc7d",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          },
+          {
+            "stage": "ontology_synthesis",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0e7f9e12654dbc58016acbf3bf1f7c87d2ad6af44f016fd376",
+            "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          }
+        ],
+        "format_assessments": [
+          {
+            "technique_id": "format.talking_head",
+            "ontology_definition": "Speaker addresses the camera for a substantial part of the video.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The supplied frames show interactions and care activities; the closing speech is not established as camera-addressing for a substantial part.",
+            "criterion_explanation": "Substantial camera-addressing speech is not established."
+          },
+          {
+            "technique_id": "format.tutorial",
+            "ontology_definition": "Explains a process or teaches a skill in steps.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "Clipping, cleaning and bandaging are visible in isolated stills, but no steps are explained or taught.",
+            "criterion_explanation": "Showing activities is not a step-by-step explanation."
+          },
+          {
+            "technique_id": "format.product_demo",
+            "ontology_definition": "Shows a product or service in use.",
+            "decision": "supported",
+            "positive_ledger_refs": [
+              "ledger:0:6",
+              "ledger:1:1"
+            ],
+            "counterevidence_limitations": "The product's brand is not established; this decision rests on the visible clipper, not the later purchase request or an inferred advertised product.",
+            "criterion_explanation": "The clipper is shown against the seated man's hair and beard in a grooming use."
+          },
+          {
+            "technique_id": "format.storytime",
+            "ontology_definition": "Narrates an event as the main format.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The frames depict a sequence of situations, but the supplied speech does not narrate those events.",
+            "criterion_explanation": "An event sequence alone does not establish event narration as the main format."
+          },
+          {
+            "technique_id": "format.listicle",
+            "ontology_definition": "Presents numbered or clearly enumerated items.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "No numbered or clearly enumerated content is established.",
+            "criterion_explanation": "The content is not presented as a list."
+          },
+          {
+            "technique_id": "format.reaction",
+            "ontology_definition": "Responds to another piece of content or event.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "No identifiable content or event is presented as the subject of a reaction.",
+            "criterion_explanation": "The requisite response format is not established."
+          },
+          {
+            "technique_id": "format.before_after",
+            "ontology_definition": "Compares a state before and after a change.",
+            "decision": "supported",
+            "positive_ledger_refs": [
+              "ledger:0:0",
+              "ledger:2:2",
+              "ledger:3:1"
+            ],
+            "counterevidence_limitations": "The intervening changes are not shown continuously, and the opening title promises a transformation rather than proving one by itself.",
+            "criterion_explanation": "The same seated man is shown initially in a red shirt and later with short hair, a light-colored shirt and a garland, providing observable earlier and later states."
+          },
+          {
+            "technique_id": "format.screen_recording",
+            "ontology_definition": "Recorded screen is a principal visual source.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "No recorded device or software screen is established.",
+            "criterion_explanation": "The principal visuals are not shown to be a screen recording."
+          },
+          {
+            "technique_id": "format.interview",
+            "ontology_definition": "Question and answer exchange is a principal format.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "No question-and-answer exchange is supplied.",
+            "criterion_explanation": "An interview format is not established."
+          }
+        ],
+        "cta_events": [
+          {
+            "event_id": "cta:1",
+            "start_seconds": 132.16,
+            "end_seconds": 133.16,
+            "requested_action": "Help the speaker wear love and spread love.",
+            "ledger_refs": [
+              "ledger:5:4"
+            ]
+          },
+          {
+            "event_id": "cta:2",
+            "start_seconds": 136.16,
+            "end_seconds": 138.5,
+            "requested_action": "Join the movement and buy yours today.",
+            "ledger_refs": [
+              "ledger:5:6",
+              "ledger:5:7"
+            ]
+          }
+        ],
+        "missed_reviewed_findings": [
+          {
+            "technique_id": "hook.visual",
+            "start_seconds": 0,
+            "end_seconds": 5.5,
+            "status": "present",
+            "evidence": "0\u20135s: roadside approach to a seated person under the visible transformation title.",
+            "coverage": "complete"
+          }
+        ],
+        "unsupported_by_provisional_truth": [
+          {
+            "technique_id": "hook.curiosity_gap",
+            "start_seconds": 0.0,
+            "end_seconds": 2.542,
+            "confidence": 0.91,
+            "basis": "direct_observation",
+            "rationale": "The opening title promises a 'Beautiful Transformation incoming' without yet showing the resulting state.",
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "ocr:2",
+              "ocr:3",
+              "ocr:4",
+              "ocr:5"
+            ]
+          },
+          {
+            "technique_id": "cta.visual",
+            "start_seconds": 132.16,
+            "end_seconds": 133.16,
+            "confidence": 0.78,
+            "basis": "direct_observation",
+            "rationale": "On-screen text includes the request 'help me wear love'; the start is limited to the supplied transcript's request timing.",
+            "evidence_refs": [
+              "transcript:6",
+              "ocr:259",
+              "ocr:260"
+            ]
+          },
+          {
+            "technique_id": "format.product_demo",
+            "start_seconds": 0.0,
+            "end_seconds": null,
+            "confidence": 0.7,
+            "basis": "model_interpretation",
+            "rationale": "The clipper is shown against the seated man's hair and beard in a grooming use.",
+            "evidence_refs": [
+              "frame:7",
+              "transcript:0",
+              "ocr:30",
+              "scene:8",
+              "frame:10",
+              "transcript:2",
+              "ocr:63",
+              "scene:16"
+            ]
+          }
+        ],
+        "incompatible_structure_overlap_count": 0,
+        "synthesis_timing_adjustments": [],
+        "ledger_timing_adjustment_count": 6,
+        "evidence_ledger_support_failures": []
+      }
+    },
+    {
+      "source_ref": "08",
+      "truth_version": "stage5.1-provisional-1",
+      "truth_provenance": {
+        "reviewer_type": "AI-assisted visual reviewer (Codex)",
+        "reviewed_at": "2026-10-11T11:27:07.903511+00:00",
+        "saw_model_output_before_annotation": true,
+        "blind": false,
+        "independent_human_review": false,
+        "source_audio_reviewed": false,
+        "review_method": "Decoded timestamped frames across the full runtime at 1.0s spacing (1.5s for 04), plus supplied OCR/transcript; no continuous audio playback. Interval bounds are approximate.",
+        "adjudication_notes": [
+          "Persistent on-screen quiz directive from 0\u201323.5s is recorded as visible text usage and cta.visual. Frozen ontology has no generic persistent-overlay text technique; do not force it into text.captions.",
+          "The overlay CTA and end-card CTA are two temporal presentations of one request. Stage 5 separately emits cta.visual and cta.product for each; product label remains uncertain.",
+          "Final button begins near 24.8s; Stage 5 starts its closing CTA at 23.5s, before the button is visible."
+        ]
+      },
+      "stage5_2": {
+        "analyzer_commit": "1c376da9fb37bf35738df83b2d7a9e665e304b17",
+        "model": "gpt-6-sol",
+        "response_id": "resp_04efd42580b8595b016acb748e0b4487d2aa29eb8186b40f8e",
+        "prompt_sha256": "35a641ed3011b695e219145fea591df252681189ea407e031a734a33a02a9505",
+        "frame_coverage": {
+          "selected_frame_count": 16,
+          "largest_frame_gap_seconds": 6.867
+        },
+        "label": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched_pairs": [
+            [
+              0,
+              1
+            ],
+            [
+              1,
+              0
+            ],
+            [
+              5,
+              2
+            ],
+            [
+              7,
+              6
+            ],
+            [
+              8,
+              3
+            ]
+          ],
+          "unsupported_prediction_indices": [],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [
+            6,
+            9
+          ],
+          "scored_prediction_count": 5,
+          "scored_truth_count": 5
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 3,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.6,
+            "recall": 0.6,
+            "f1": 0.6,
+            "matched_pairs": [
+              [
+                0,
+                1
+              ],
+              [
+                5,
+                2
+              ],
+              [
+                7,
+                6
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              1,
+              8
+            ],
+            "missed_reviewed_indices": [
+              0,
+              3
+            ],
+            "abstained_uncertain_prediction_indices": [
+              6,
+              9
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 5
+          },
+          "0.5": {
+            "tp": 5,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "matched_pairs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                5,
+                2
+              ],
+              [
+                7,
+                6
+              ],
+              [
+                8,
+                3
+              ]
+            ],
+            "unsupported_prediction_indices": [],
+            "missed_reviewed_indices": [],
+            "abstained_uncertain_prediction_indices": [
+              6,
+              9
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 5
+          },
+          "1.0": {
+            "tp": 5,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "matched_pairs": [
+              [
+                0,
+                1
+              ],
+              [
+                1,
+                0
+              ],
+              [
+                5,
+                2
+              ],
+              [
+                7,
+                6
+              ],
+              [
+                8,
+                3
+              ]
+            ],
+            "unsupported_prediction_indices": [],
+            "missed_reviewed_indices": [],
+            "abstained_uncertain_prediction_indices": [
+              6,
+              9
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 5
+          }
+        },
+        "structure_role_agreement": {
+          "tp": 3,
+          "fp": 3,
+          "fn": 0,
+          "precision": 0.5,
+          "recall": 1.0,
+          "f1": 0.6666666666666666,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              5,
+              2
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            2,
+            3,
+            4
+          ],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [],
+          "scored_prediction_count": 6,
+          "scored_truth_count": 3
+        },
+        "missed_reviewed_finding_count": 0,
+        "missed_reviewed_indices": [],
+        "unsupported_finding_count": 0,
+        "unsupported_finding_indices": [],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 1.0,
+        "whole_video_formats": [
+          "format.product_demo"
+        ],
+        "overlapping_cta_pair_count": 2,
+        "evidence_interval_support_failure_count": 0,
+        "missed_reviewed_findings": [],
+        "unsupported_by_provisional_truth": [],
+        "incompatible_structure_overlap_count": 0
+      },
+      "stage5_3": {
+        "analyzer_commit": "c48a277557254191f1159a5f7f0a9859c5a2237a",
+        "model": "gpt-6-sol",
+        "response_id": "resp_0ead821c1f3b54c6016acb7904023887d2b3564bd37ab30d7e",
+        "prompt_sha256": "8b950810bd422710ac87600edd7887d34fec981c295b8b5ab18e45d9cf0ebec9",
+        "frame_coverage": {
+          "selected_frame_count": 16,
+          "largest_frame_gap_seconds": 6.867
+        },
+        "label": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              4,
+              6
+            ],
+            [
+              5,
+              3
+            ],
+            [
+              7,
+              1
+            ]
+          ],
+          "unsupported_prediction_indices": [],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [
+            3,
+            6
+          ],
+          "scored_prediction_count": 5,
+          "scored_truth_count": 5
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 2,
+            "fp": 3,
+            "fn": 3,
+            "precision": 0.4,
+            "recall": 0.4,
+            "f1": 0.4000000000000001,
+            "matched_pairs": [
+              [
+                4,
+                6
+              ],
+              [
+                7,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              2,
+              5
+            ],
+            "missed_reviewed_indices": [
+              0,
+              2,
+              3
+            ],
+            "abstained_uncertain_prediction_indices": [
+              3,
+              6
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 5
+          },
+          "0.5": {
+            "tp": 3,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.6,
+            "recall": 0.6,
+            "f1": 0.6,
+            "matched_pairs": [
+              [
+                4,
+                6
+              ],
+              [
+                5,
+                3
+              ],
+              [
+                7,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              2
+            ],
+            "missed_reviewed_indices": [
+              0,
+              2
+            ],
+            "abstained_uncertain_prediction_indices": [
+              3,
+              6
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 5
+          },
+          "1.0": {
+            "tp": 4,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.8,
+            "recall": 0.8,
+            "f1": 0.8000000000000002,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                4,
+                6
+              ],
+              [
+                5,
+                3
+              ],
+              [
+                7,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              2
+            ],
+            "missed_reviewed_indices": [
+              2
+            ],
+            "abstained_uncertain_prediction_indices": [
+              3,
+              6
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 5
+          }
+        },
+        "structure_role_agreement": {
+          "tp": 3,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.8571428571428571,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              3,
+              2
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            2
+          ],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [],
+          "scored_prediction_count": 4,
+          "scored_truth_count": 3
+        },
+        "missed_reviewed_finding_count": 0,
+        "missed_reviewed_indices": [],
+        "unsupported_finding_count": 0,
+        "unsupported_finding_indices": [],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 0.518185,
+        "whole_video_formats": [
+          "format.product_demo"
+        ],
+        "overlapping_cta_pair_count": 2,
+        "evidence_interval_support_failure_count": 0,
+        "cta_event_audit": {
+          "cta_event_count": 2,
+          "ontology_labels_per_event": {
+            "cta:1": [
+              "cta.visual",
+              "cta.product"
+            ],
+            "cta:2": [
+              "cta.visual",
+              "cta.product"
+            ]
+          },
+          "overlapping_cta_labels_same_event": [
+            [
+              6,
+              7
+            ],
+            [
+              9,
+              10
+            ]
+          ],
+          "overlapping_cta_labels_different_events": []
+        },
+        "model_passes": [
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:0",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0d84b7c9c396a13a016acb78d061a887d2ac00a99696f34e47",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:1",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_00f98530bde32d52016acb78d5fbdc87d2a6f84b4a6a05cd0c",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:2",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0637ebd60b841f13016acb78da12c487d2930b3e1c9a038c10",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+          },
+          {
+            "stage": "ontology_synthesis",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0ead821c1f3b54c6016acb7904023887d2b3564bd37ab30d7e",
+            "prompt_sha256": "8b950810bd422710ac87600edd7887d34fec981c295b8b5ab18e45d9cf0ebec9",
+            "analyzer_commit": "c48a277557254191f1159a5f7f0a9859c5a2237a"
+          }
+        ],
+        "format_assessments": [
+          {
+            "technique_id": "format.talking_head",
+            "decision": "unsupported",
+            "rationale": "The person presents objects and attends to their face, but no substantial camera-address speech is established; the later frames are a graphic card.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0",
+              "ledger:2:0",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.tutorial",
+            "decision": "unsupported",
+            "rationale": "Product-handling and face-application stills are shown, but no instructional steps or explanation are supplied across the video.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0",
+              "ledger:2:0",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.product_demo",
+            "decision": "supported",
+            "rationale": "Across separated portions, the person holds containers and handheld objects to camera and is shown with substances on the face and an object near the face; the later graphic card does not negate the product-use presentation.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0",
+              "ledger:2:0",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.storytime",
+            "decision": "unsupported",
+            "rationale": "No narrated event is supplied; the only recorded vocalization is \u201cHmm.\u201d",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0",
+              "ledger:2:0",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.listicle",
+            "decision": "unsupported",
+            "rationale": "The sampled product presentation and final card contain no numbered or clearly enumerated sequence.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0",
+              "ledger:2:0",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.reaction",
+            "decision": "unsupported",
+            "rationale": "There is no supplied content or event to which the person is shown responding.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0",
+              "ledger:2:0",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.before_after",
+            "decision": "unsupported",
+            "rationale": "Different substances and marks appear on the face, but the ledger does not establish a before-versus-after comparison.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0",
+              "ledger:2:0",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.screen_recording",
+            "decision": "unsupported",
+            "rationale": "The final graphic card does not establish that a recorded screen is the principal visual source; earlier portions show a person and physical objects.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0",
+              "ledger:2:0",
+              "ledger:2:1"
+            ]
+          },
+          {
+            "technique_id": "format.interview",
+            "decision": "unsupported",
+            "rationale": "No question-and-answer exchange is supplied.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0",
+              "ledger:2:0",
+              "ledger:2:1"
+            ]
+          }
+        ],
+        "cta_events": [
+          {
+            "event_id": "cta:1",
+            "start_seconds": 0.0,
+            "end_seconds": 20.6,
+            "requested_action": "Tap to take the quiz and get a guide.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0",
+              "ledger:2:0"
+            ]
+          },
+          {
+            "event_id": "cta:2",
+            "start_seconds": 23.6,
+            "end_seconds": 27.367,
+            "requested_action": "Take the quiz, as displayed on the final graphic card.",
+            "ledger_refs": [
+              "ledger:2:1"
+            ]
+          }
+        ],
+        "missed_reviewed_findings": [],
+        "unsupported_by_provisional_truth": [],
+        "incompatible_structure_overlap_count": 0
+      },
+      "stage5_4": {
+        "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a",
+        "model": "gpt-6-sol",
+        "response_id": "resp_04286ca2a1a52512016acbf3f5d85087d29fe2603840dea8d9",
+        "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+        "frame_coverage": {
+          "selected_frame_count": 16,
+          "largest_frame_gap_seconds": 6.867
+        },
+        "label": {
+          "tp": 5,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              6,
+              6
+            ],
+            [
+              7,
+              2
+            ],
+            [
+              9,
+              3
+            ]
+          ],
+          "unsupported_prediction_indices": [],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [
+            8,
+            10
+          ],
+          "scored_prediction_count": 5,
+          "scored_truth_count": 5
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 3,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.6,
+            "recall": 0.6,
+            "f1": 0.6,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                6,
+                6
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              7,
+              9
+            ],
+            "missed_reviewed_indices": [
+              2,
+              3
+            ],
+            "abstained_uncertain_prediction_indices": [
+              8,
+              10
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 5
+          },
+          "0.5": {
+            "tp": 5,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                6,
+                6
+              ],
+              [
+                7,
+                2
+              ],
+              [
+                9,
+                3
+              ]
+            ],
+            "unsupported_prediction_indices": [],
+            "missed_reviewed_indices": [],
+            "abstained_uncertain_prediction_indices": [
+              8,
+              10
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 5
+          },
+          "1.0": {
+            "tp": 5,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                6,
+                6
+              ],
+              [
+                7,
+                2
+              ],
+              [
+                9,
+                3
+              ]
+            ],
+            "unsupported_prediction_indices": [],
+            "missed_reviewed_indices": [],
+            "abstained_uncertain_prediction_indices": [
+              8,
+              10
+            ],
+            "scored_prediction_count": 5,
+            "scored_truth_count": 5
+          }
+        },
+        "structure_role_agreement": {
+          "tp": 3,
+          "fp": 2,
+          "fn": 0,
+          "precision": 0.6,
+          "recall": 1.0,
+          "f1": 0.7499999999999999,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              4,
+              2
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            2,
+            3
+          ],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [],
+          "scored_prediction_count": 5,
+          "scored_truth_count": 3
+        },
+        "missed_reviewed_finding_count": 0,
+        "missed_reviewed_indices": [],
+        "unsupported_finding_count": 0,
+        "unsupported_finding_indices": [],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 0.372593,
+        "whole_video_formats": [
+          "format.product_demo"
+        ],
+        "overlapping_cta_pair_count": 2,
+        "evidence_interval_support_failure_count": 0,
+        "cta_event_audit": {
+          "cta_event_count": 2,
+          "ontology_labels_per_event": {
+            "cta:quiz_overlay": [
+              "cta.visual",
+              "cta.product"
+            ],
+            "cta:quiz_end_card": [
+              "cta.visual",
+              "cta.product"
+            ]
+          },
+          "overlapping_cta_labels_same_event": [
+            [
+              7,
+              8
+            ],
+            [
+              9,
+              10
+            ]
+          ],
+          "overlapping_cta_labels_different_events": []
+        },
+        "model_passes": [
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:0",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0d75af1033d2eddd016acbf3d59f1087d2a9d07954342bde6d",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:1",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0c72c1239b3a98ed016acbf3e3a06087d2b3ff176770d7ea15",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:2",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0585bb9212498f6a016acbf3eb611087d2bd27f0262697773b",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          },
+          {
+            "stage": "ontology_synthesis",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_04286ca2a1a52512016acbf3f5d85087d29fe2603840dea8d9",
+            "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+            "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+          }
+        ],
+        "format_assessments": [
+          {
+            "technique_id": "format.talking_head",
+            "ontology_definition": "Speaker addresses the camera for a substantial part of the video.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "A person appears in sampled frames, but no camera-addressing speech is transcribed (ledger:0:0, ledger:1:1).",
+            "criterion_explanation": "Facing or appearing near the camera does not establish substantial camera-addressing speech."
+          },
+          {
+            "technique_id": "format.tutorial",
+            "ontology_definition": "Explains a process or teaches a skill in steps.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "Product handling is visible, but no step-by-step explanation is supplied (ledger:0:1, ledger:0:5, ledger:1:1).",
+            "criterion_explanation": "An explained process or taught skill is not established."
+          },
+          {
+            "technique_id": "format.product_demo",
+            "ontology_definition": "Shows a product or service in use.",
+            "decision": "supported",
+            "positive_ledger_refs": [
+              "ledger:0:0",
+              "ledger:0:1",
+              "ledger:0:2",
+              "ledger:0:3",
+              "ledger:0:5",
+              "ledger:0:6"
+            ],
+            "counterevidence_limitations": "Sparse stills do not show how facial substances were applied or establish continuous tool movement.",
+            "criterion_explanation": "The person holds a product against their chin and later holds a tool beside the chin and near the forehead, showing localized product use; the format need not persist throughout the video."
+          },
+          {
+            "technique_id": "format.storytime",
+            "ontology_definition": "Narrates an event as the main format.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The only transcribed sound is a sustained \u201chmm\u201d (ledger:0:0, ledger:0:1); later chunks have no transcript (ledger:1:0, ledger:2:0).",
+            "criterion_explanation": "Event narration as the main format is not established."
+          },
+          {
+            "technique_id": "format.listicle",
+            "ontology_definition": "Presents numbered or clearly enumerated items.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "Visible product activity and quiz text do not enumerate items (ledger:0:0, ledger:1:3, ledger:2:4).",
+            "criterion_explanation": "No numbered or clearly enumerated list is evidenced."
+          },
+          {
+            "technique_id": "format.reaction",
+            "ontology_definition": "Responds to another piece of content or event.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "No other content or event being responded to is identified (ledger:0:0, ledger:1:3).",
+            "criterion_explanation": "A response to a distinct piece of content or event is not established."
+          },
+          {
+            "technique_id": "format.before_after",
+            "ontology_definition": "Compares a state before and after a change.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "Facial appearance differs across stills, but application and an explicit comparison of before and after states are not shown (ledger:0:0, ledger:0:2, ledger:0:5).",
+            "criterion_explanation": "Different sampled states alone do not establish a before-and-after comparison."
+          },
+          {
+            "technique_id": "format.screen_recording",
+            "ontology_definition": "Recorded screen is a principal visual source.",
+            "decision": "uncertain",
+            "positive_ledger_refs": [
+              "ledger:2:3",
+              "ledger:2:4",
+              "ledger:2:5",
+              "ledger:2:6"
+            ],
+            "counterevidence_limitations": "A screen-like quiz end card is visible, but the ledger does not establish that it is a recorded screen; earlier supplied frames show a person and products (ledger:0:0, ledger:1:3).",
+            "criterion_explanation": "Neither screen recording nor its use as a principal visual source is established."
+          },
+          {
+            "technique_id": "format.interview",
+            "ontology_definition": "Question and answer exchange is a principal format.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "No question-and-answer exchange is transcribed (ledger:0:0, ledger:1:0, ledger:2:0).",
+            "criterion_explanation": "The defining exchange is absent from the supplied evidence."
+          }
+        ],
+        "cta_events": [
+          {
+            "event_id": "cta:quiz_overlay",
+            "start_seconds": 0.0,
+            "end_seconds": 23.233,
+            "requested_action": "Tap to take the quiz and get a guide.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:0:1",
+              "ledger:0:2",
+              "ledger:0:3",
+              "ledger:0:4",
+              "ledger:0:5",
+              "ledger:0:6",
+              "ledger:0:7",
+              "ledger:0:8",
+              "ledger:0:9",
+              "ledger:1:0",
+              "ledger:1:1",
+              "ledger:1:2",
+              "ledger:1:3",
+              "ledger:1:4",
+              "ledger:2:0",
+              "ledger:2:1",
+              "ledger:2:2"
+            ]
+          },
+          {
+            "event_id": "cta:quiz_end_card",
+            "start_seconds": 24.5,
+            "end_seconds": 27.467,
+            "requested_action": "Take the quiz.",
+            "ledger_refs": [
+              "ledger:2:4",
+              "ledger:2:5",
+              "ledger:2:6"
+            ]
+          }
+        ],
+        "missed_reviewed_findings": [],
+        "unsupported_by_provisional_truth": [],
+        "incompatible_structure_overlap_count": 0,
+        "synthesis_timing_adjustments": [
+          {
+            "kind": "cta_event",
+            "index": 0,
+            "original_start_seconds": 0.0,
+            "original_end_seconds": 23.5,
+            "validated_start_seconds": 0.0,
+            "validated_end_seconds": 23.233,
+            "reason": "clamped_to_cited_atomic_evidence_envelope"
+          },
+          {
+            "kind": "finding",
+            "index": 1,
+            "original_start_seconds": 0.0,
+            "original_end_seconds": 4.933,
+            "validated_start_seconds": 0,
+            "validated_end_seconds": null,
+            "reason": "whole_video_reporting_contract"
+          },
+          {
+            "kind": "finding",
+            "index": 7,
+            "original_start_seconds": 0.0,
+            "original_end_seconds": 23.5,
+            "validated_start_seconds": 0.0,
+            "validated_end_seconds": 23.233,
+            "reason": "clamped_to_cited_atomic_evidence_envelope"
+          },
+          {
+            "kind": "finding",
+            "index": 8,
+            "original_start_seconds": 0.0,
+            "original_end_seconds": 23.5,
+            "validated_start_seconds": 0.0,
+            "validated_end_seconds": 23.233,
+            "reason": "clamped_to_cited_atomic_evidence_envelope"
+          }
+        ],
+        "ledger_timing_adjustment_count": 2,
+        "evidence_ledger_support_failures": []
+      }
+    },
+    {
+      "source_ref": "12",
+      "truth_version": "stage5.1-provisional-1",
+      "truth_provenance": {
+        "reviewer_type": "AI-assisted visual reviewer (Codex)",
+        "reviewed_at": "2026-10-11T11:27:07.903638+00:00",
+        "saw_model_output_before_annotation": true,
+        "blind": false,
+        "independent_human_review": false,
+        "source_audio_reviewed": false,
+        "review_method": "Decoded timestamped frames across the full runtime at 1.0s spacing (1.5s for 04), plus supplied OCR/transcript; no continuous audio playback. Interval bounds are approximate.",
+        "adjudication_notes": [
+          "One-second samples show a stable talking-head composition; uninterrupted footage cannot be asserted.",
+          "Text appears absent in sampled frames but partial coverage prevents a definitive whole-video negative.",
+          "Transcript proper names may be wrong and are not used to identify the speaker or institution."
+        ]
+      },
+      "stage5_2": {
+        "analyzer_commit": "1c376da9fb37bf35738df83b2d7a9e665e304b17",
+        "model": "gpt-6-sol",
+        "response_id": "resp_048febd1b10d697d016acb749920dc87d28010c9e1593337fc",
+        "prompt_sha256": "35a641ed3011b695e219145fea591df252681189ea407e031a734a33a02a9505",
+        "frame_coverage": {
+          "selected_frame_count": 11,
+          "largest_frame_gap_seconds": 7.167
+        },
+        "label": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              4,
+              6
+            ]
+          ],
+          "unsupported_prediction_indices": [],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [
+            3
+          ],
+          "scored_prediction_count": 3,
+          "scored_truth_count": 3
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 2,
+            "fp": 1,
+            "fn": 1,
+            "precision": 0.6666666666666666,
+            "recall": 0.6666666666666666,
+            "f1": 0.6666666666666666,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              4
+            ],
+            "missed_reviewed_indices": [
+              6
+            ],
+            "abstained_uncertain_prediction_indices": [
+              3
+            ],
+            "scored_prediction_count": 3,
+            "scored_truth_count": 3
+          },
+          "0.5": {
+            "tp": 3,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                4,
+                6
+              ]
+            ],
+            "unsupported_prediction_indices": [],
+            "missed_reviewed_indices": [],
+            "abstained_uncertain_prediction_indices": [
+              3
+            ],
+            "scored_prediction_count": 3,
+            "scored_truth_count": 3
+          },
+          "1.0": {
+            "tp": 3,
+            "fp": 0,
+            "fn": 0,
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                1,
+                1
+              ],
+              [
+                4,
+                6
+              ]
+            ],
+            "unsupported_prediction_indices": [],
+            "missed_reviewed_indices": [],
+            "abstained_uncertain_prediction_indices": [
+              3
+            ],
+            "scored_prediction_count": 3,
+            "scored_truth_count": 3
+          }
+        },
+        "structure_role_agreement": {
+          "tp": 4,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.888888888888889,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            4
+          ],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [],
+          "scored_prediction_count": 5,
+          "scored_truth_count": 4
+        },
+        "missed_reviewed_finding_count": 0,
+        "missed_reviewed_indices": [],
+        "unsupported_finding_count": 0,
+        "unsupported_finding_indices": [],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 0.997759,
+        "whole_video_formats": [
+          "format.talking_head"
+        ],
+        "overlapping_cta_pair_count": 1,
+        "evidence_interval_support_failure_count": 0,
+        "missed_reviewed_findings": [],
+        "unsupported_by_provisional_truth": [],
+        "incompatible_structure_overlap_count": 0
+      },
+      "stage5_3": {
+        "analyzer_commit": "9b6efdc7f186e8d388a92ab9a5a581b992aa9388",
+        "model": "gpt-6-sol",
+        "response_id": "resp_025c17534a0c9529016acb794e230887d28c0b2b611a18456c",
+        "prompt_sha256": "8b950810bd422710ac87600edd7887d34fec981c295b8b5ab18e45d9cf0ebec9",
+        "frame_coverage": {
+          "selected_frame_count": 11,
+          "largest_frame_gap_seconds": 7.167
+        },
+        "label": {
+          "tp": 3,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              3,
+              6
+            ],
+            [
+              4,
+              1
+            ]
+          ],
+          "unsupported_prediction_indices": [],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [
+            2
+          ],
+          "scored_prediction_count": 3,
+          "scored_truth_count": 3
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 1,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.3333333333333333,
+            "recall": 0.3333333333333333,
+            "f1": 0.3333333333333333,
+            "matched_pairs": [
+              [
+                4,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              3
+            ],
+            "missed_reviewed_indices": [
+              0,
+              6
+            ],
+            "abstained_uncertain_prediction_indices": [
+              2
+            ],
+            "scored_prediction_count": 3,
+            "scored_truth_count": 3
+          },
+          "0.5": {
+            "tp": 1,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.3333333333333333,
+            "recall": 0.3333333333333333,
+            "f1": 0.3333333333333333,
+            "matched_pairs": [
+              [
+                4,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              3
+            ],
+            "missed_reviewed_indices": [
+              0,
+              6
+            ],
+            "abstained_uncertain_prediction_indices": [
+              2
+            ],
+            "scored_prediction_count": 3,
+            "scored_truth_count": 3
+          },
+          "1.0": {
+            "tp": 1,
+            "fp": 2,
+            "fn": 2,
+            "precision": 0.3333333333333333,
+            "recall": 0.3333333333333333,
+            "f1": 0.3333333333333333,
+            "matched_pairs": [
+              [
+                4,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              0,
+              3
+            ],
+            "missed_reviewed_indices": [
+              0,
+              6
+            ],
+            "abstained_uncertain_prediction_indices": [
+              2
+            ],
+            "scored_prediction_count": 3,
+            "scored_truth_count": 3
+          }
+        },
+        "structure_role_agreement": {
+          "tp": 4,
+          "fp": 0,
+          "fn": 0,
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              3,
+              3
+            ]
+          ],
+          "unsupported_prediction_indices": [],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [],
+          "scored_prediction_count": 4,
+          "scored_truth_count": 4
+        },
+        "missed_reviewed_finding_count": 0,
+        "missed_reviewed_indices": [],
+        "unsupported_finding_count": 0,
+        "unsupported_finding_indices": [],
+        "contradictory_structure_pairs": [
+          [
+            0,
+            1
+          ],
+          [
+            2,
+            3
+          ]
+        ],
+        "structure_covered_runtime_fraction": 1.0,
+        "whole_video_formats": [
+          "format.talking_head"
+        ],
+        "overlapping_cta_pair_count": 1,
+        "evidence_interval_support_failure_count": 0,
+        "cta_event_audit": {
+          "cta_event_count": 1,
+          "ontology_labels_per_event": {
+            "cta:catalog": [
+              "cta.verbal",
+              "cta.product"
+            ]
+          },
+          "overlapping_cta_labels_same_event": [
+            [
+              2,
+              3
+            ]
+          ],
+          "overlapping_cta_labels_different_events": []
+        },
+        "model_passes": [
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:0",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_091f378a08f5e43b016acb79452fd487d28783e1f0cec62ef8",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "9b6efdc7f186e8d388a92ab9a5a581b992aa9388"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:1",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0dc86015881c5391016acb794a25c887d29567506579f3345a",
+            "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+            "analyzer_commit": "9b6efdc7f186e8d388a92ab9a5a581b992aa9388"
+          },
+          {
+            "stage": "ontology_synthesis",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_025c17534a0c9529016acb794e230887d28c0b2b611a18456c",
+            "prompt_sha256": "8b950810bd422710ac87600edd7887d34fec981c295b8b5ab18e45d9cf0ebec9",
+            "analyzer_commit": "9b6efdc7f186e8d388a92ab9a5a581b992aa9388"
+          }
+        ],
+        "format_assessments": [
+          {
+            "technique_id": "format.talking_head",
+            "decision": "supported",
+            "rationale": "The same speaker faces the camera throughout both observed chunks while delivering the message.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0"
+            ]
+          },
+          {
+            "technique_id": "format.tutorial",
+            "decision": "unsupported",
+            "rationale": "The speech describes degree options and requests a catalog; it does not teach a process in steps.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0"
+            ]
+          },
+          {
+            "technique_id": "format.product_demo",
+            "decision": "unsupported",
+            "rationale": "The programs are described, but no product or service is shown in use.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0"
+            ]
+          },
+          {
+            "technique_id": "format.storytime",
+            "decision": "unsupported",
+            "rationale": "The speaker introduces an offering rather than narrating an event as the main format.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0"
+            ]
+          },
+          {
+            "technique_id": "format.listicle",
+            "decision": "unsupported",
+            "rationale": "Specialties are listed late in the video, but the full presentation is not organized as numbered or clearly enumerated items.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0"
+            ]
+          },
+          {
+            "technique_id": "format.reaction",
+            "decision": "unsupported",
+            "rationale": "Neither chunk shows the speaker responding to another piece of content or event.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0"
+            ]
+          },
+          {
+            "technique_id": "format.before_after",
+            "decision": "unsupported",
+            "rationale": "Neither chunk compares states before and after a change.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0"
+            ]
+          },
+          {
+            "technique_id": "format.screen_recording",
+            "decision": "unsupported",
+            "rationale": "Both chunks show the speaker at a waterfront setting, not a recorded screen.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0"
+            ]
+          },
+          {
+            "technique_id": "format.interview",
+            "decision": "unsupported",
+            "rationale": "The opening question addresses the viewer; no question-and-answer exchange is observed in either chunk.",
+            "ledger_refs": [
+              "ledger:0:0",
+              "ledger:1:0"
+            ]
+          }
+        ],
+        "cta_events": [
+          {
+            "event_id": "cta:catalog",
+            "start_seconds": 17.855,
+            "end_seconds": 35.711,
+            "requested_action": "Request the course catalog and get started today.",
+            "ledger_refs": [
+              "ledger:1:0"
+            ]
+          }
+        ],
+        "missed_reviewed_findings": [],
+        "unsupported_by_provisional_truth": [],
+        "incompatible_structure_overlap_count": 2
+      },
+      "stage5_4": {
+        "analyzer_commit": "df46317aa3a184ce81941941ea76ed6d4ca6e274",
+        "model": "gpt-6-sol",
+        "response_id": "resp_0f8bd543efc8d566016acbfb554c0c87d28522b53ec4b4d5b0",
+        "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+        "frame_coverage": {
+          "selected_frame_count": 11,
+          "largest_frame_gap_seconds": 7.167
+        },
+        "label": {
+          "tp": 3,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.75,
+          "recall": 1.0,
+          "f1": 0.8571428571428571,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              8,
+              6
+            ],
+            [
+              9,
+              1
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            10
+          ],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [
+            7
+          ],
+          "scored_prediction_count": 4,
+          "scored_truth_count": 3
+        },
+        "interval_matching": {
+          "0.25": {
+            "tp": 2,
+            "fp": 2,
+            "fn": 1,
+            "precision": 0.5,
+            "recall": 0.6666666666666666,
+            "f1": 0.5714285714285715,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                9,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              8,
+              10
+            ],
+            "missed_reviewed_indices": [
+              6
+            ],
+            "abstained_uncertain_prediction_indices": [
+              7
+            ],
+            "scored_prediction_count": 4,
+            "scored_truth_count": 3
+          },
+          "0.5": {
+            "tp": 3,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.75,
+            "recall": 1.0,
+            "f1": 0.8571428571428571,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                8,
+                6
+              ],
+              [
+                9,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              10
+            ],
+            "missed_reviewed_indices": [],
+            "abstained_uncertain_prediction_indices": [
+              7
+            ],
+            "scored_prediction_count": 4,
+            "scored_truth_count": 3
+          },
+          "1.0": {
+            "tp": 3,
+            "fp": 1,
+            "fn": 0,
+            "precision": 0.75,
+            "recall": 1.0,
+            "f1": 0.8571428571428571,
+            "matched_pairs": [
+              [
+                0,
+                0
+              ],
+              [
+                8,
+                6
+              ],
+              [
+                9,
+                1
+              ]
+            ],
+            "unsupported_prediction_indices": [
+              10
+            ],
+            "missed_reviewed_indices": [],
+            "abstained_uncertain_prediction_indices": [
+              7
+            ],
+            "scored_prediction_count": 4,
+            "scored_truth_count": 3
+          }
+        },
+        "structure_role_agreement": {
+          "tp": 4,
+          "fp": 1,
+          "fn": 0,
+          "precision": 0.8,
+          "recall": 1.0,
+          "f1": 0.888888888888889,
+          "matched_pairs": [
+            [
+              0,
+              0
+            ],
+            [
+              1,
+              1
+            ],
+            [
+              2,
+              2
+            ],
+            [
+              4,
+              3
+            ]
+          ],
+          "unsupported_prediction_indices": [
+            3
+          ],
+          "missed_reviewed_indices": [],
+          "abstained_uncertain_prediction_indices": [],
+          "scored_prediction_count": 5,
+          "scored_truth_count": 4
+        },
+        "missed_reviewed_finding_count": 0,
+        "missed_reviewed_indices": [],
+        "unsupported_finding_count": 1,
+        "unsupported_finding_indices": [
+          10
+        ],
+        "contradictory_structure_pairs": [],
+        "structure_covered_runtime_fraction": 0.990476,
+        "whole_video_formats": [
+          "format.listicle",
+          "format.talking_head"
+        ],
+        "overlapping_cta_pair_count": 1,
+        "evidence_interval_support_failure_count": 0,
+        "cta_event_audit": {
+          "cta_event_count": 1,
+          "ontology_labels_per_event": {
+            "cta:1": [
+              "cta.verbal",
+              "cta.product"
+            ]
+          },
+          "overlapping_cta_labels_same_event": [
+            [
+              7,
+              8
+            ]
+          ],
+          "overlapping_cta_labels_different_events": []
+        },
+        "model_passes": [
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:0",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_054b2b4797025cc6016acbfb46308087d28581643412f159bf",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "df46317aa3a184ce81941941ea76ed6d4ca6e274"
+          },
+          {
+            "stage": "evidence_description",
+            "chunk_id": "chunk:1",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_090b48449348bce3016acbfb4d944487d2a6ab4de530f5a8ef",
+            "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+            "analyzer_commit": "df46317aa3a184ce81941941ea76ed6d4ca6e274"
+          },
+          {
+            "stage": "ontology_synthesis",
+            "model_requested": "gpt-6-sol",
+            "model_reported": "gpt-6-sol",
+            "response_id": "resp_0f8bd543efc8d566016acbfb554c0c87d28522b53ec4b4d5b0",
+            "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+            "analyzer_commit": "df46317aa3a184ce81941941ea76ed6d4ca6e274"
+          }
+        ],
+        "format_assessments": [
+          {
+            "technique_id": "format.talking_head",
+            "ontology_definition": "Speaker addresses the camera for a substantial part of the video.",
+            "decision": "supported",
+            "positive_ledger_refs": [
+              "ledger:0:0",
+              "ledger:0:1",
+              "ledger:0:2",
+              "ledger:1:1",
+              "ledger:1:2",
+              "ledger:1:3"
+            ],
+            "counterevidence_limitations": "Camera-facing posture is observed in sparse frames, not continuously; no frames are supplied for 14.32\u201320.32 seconds.",
+            "criterion_explanation": "Repeated camera-facing views accompany the speaker's presentation across much of the video."
+          },
+          {
+            "technique_id": "format.tutorial",
+            "ontology_definition": "Explains a process or teaches a skill in steps.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The speaker describes programs, their duration, and specialties, without teaching a process in steps.",
+            "criterion_explanation": "A program description is not a step-by-step tutorial."
+          },
+          {
+            "technique_id": "format.product_demo",
+            "ontology_definition": "Shows a product or service in use.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The speaker describes online programs, but no supplied observation shows someone using the service.",
+            "criterion_explanation": "Describing an offering does not show it in use."
+          },
+          {
+            "technique_id": "format.storytime",
+            "ontology_definition": "Narrates an event as the main format.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The speech introduces and describes programs rather than narrating an event.",
+            "criterion_explanation": "Event narration is not the main format."
+          },
+          {
+            "technique_id": "format.listicle",
+            "ontology_definition": "Presents numbered or clearly enumerated items.",
+            "decision": "supported",
+            "positive_ledger_refs": [
+              "ledger:1:1",
+              "ledger:1:2"
+            ],
+            "counterevidence_limitations": "The specialties are not numbered, and the list occupies only a later portion of the video.",
+            "criterion_explanation": "The speaker clearly enumerates distinct specialties across two consecutive speech segments."
+          },
+          {
+            "technique_id": "format.reaction",
+            "ontology_definition": "Responds to another piece of content or event.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "No other content or event being reacted to is established.",
+            "criterion_explanation": "The presentation describes an offering rather than responding to something."
+          },
+          {
+            "technique_id": "format.before_after",
+            "ontology_definition": "Compares a state before and after a change.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "Neither a before state nor an after state is shown or described as a comparison.",
+            "criterion_explanation": "The opening career question does not establish a before-and-after comparison."
+          },
+          {
+            "technique_id": "format.screen_recording",
+            "ontology_definition": "Recorded screen is a principal visual source.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The supplied frames show a person outdoors, not a recorded screen.",
+            "criterion_explanation": "No screen recording is established."
+          },
+          {
+            "technique_id": "format.interview",
+            "ontology_definition": "Question and answer exchange is a principal format.",
+            "decision": "unsupported",
+            "positive_ledger_refs": [],
+            "counterevidence_limitations": "The opening question is followed by the speaker's presentation, not an observed exchange.",
+            "criterion_explanation": "No interview-style question-and-answer exchange is established."
+          }
+        ],
+        "cta_events": [
+          {
+            "event_id": "cta:1",
+            "start_seconds": 32.16,
+            "end_seconds": 35.44,
+            "requested_action": "Request the course catalog and get started today.",
+            "ledger_refs": [
+              "ledger:1:3"
+            ]
+          }
+        ],
+        "missed_reviewed_findings": [],
+        "unsupported_by_provisional_truth": [
+          {
+            "technique_id": "format.listicle",
+            "start_seconds": 0.0,
+            "end_seconds": null,
+            "confidence": 0.7,
+            "basis": "model_interpretation",
+            "rationale": "The speaker clearly enumerates distinct specialties across two consecutive speech segments.",
+            "evidence_refs": [
+              "transcript:4",
+              "frame:5",
+              "transcript:5",
+              "frame:6",
+              "frame:7"
+            ]
+          }
+        ],
+        "incompatible_structure_overlap_count": 0,
+        "synthesis_timing_adjustments": [],
+        "ledger_timing_adjustment_count": 1,
+        "evidence_ledger_support_failures": []
+      }
+    }
+  ]
+}

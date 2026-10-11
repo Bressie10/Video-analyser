@@ -1,0 +1,532 @@
+{
+  "source_ref": "12",
+  "analyzer_commit": "df46317aa3a184ce81941941ea76ed6d4ca6e274",
+  "content_sha256": "424a15a17729c5ed2d4f37a129254eba5bf0fa97e060f3011baa196a3637adcc",
+  "chunk_responses": [
+    {
+      "chunk_id": "chunk:0",
+      "description": {
+        "chunk_start_seconds": 0.0,
+        "chunk_end_seconds": 17.855,
+        "observations": [
+          {
+            "start_seconds": 0.08,
+            "end_seconds": 3.44,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [
+              "A man wearing glasses, a dark suit, a light shirt, and a patterned tie",
+              "Water, distant shoreline, and sky behind him"
+            ],
+            "visible_actions": [
+              "The man faces the camera in frame:0.",
+              "His hands are raised in front of him in frame:1."
+            ],
+            "visible_text": [],
+            "spoken_content_summary": "A voice asks, \u201cIs your career really moving forward?\u201d",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.95,
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "frame:2",
+              "transcript:0"
+            ],
+            "uncertainties": [
+              "The sparse frames do not establish how his hands moved between images."
+            ]
+          },
+          {
+            "start_seconds": 3.44,
+            "end_seconds": 8.56,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "The same man in a suit and glasses",
+              "Water and distant shoreline"
+            ],
+            "visible_actions": [
+              "The man faces the camera with his hands together near his waist in frame:3."
+            ],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker identifies himself as Professor David Costa and refers to Robert Kennedy College in Switzerland; the transcript renders his title as \u201cthe D&E.\u201d",
+            "changes_from_previous_chunk": "The speech changes from a question to an introduction.",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "frame:3",
+              "transcript:1"
+            ],
+            "uncertainties": [
+              "The title transcribed as \u201cD&E\u201d is unclear."
+            ]
+          },
+          {
+            "start_seconds": 8.56,
+            "end_seconds": 14.32,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "The man in a suit and glasses",
+              "Water and distant shoreline"
+            ],
+            "visible_actions": [
+              "The man faces the camera with his hands together in frame:4."
+            ],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker says he is introducing online master's programs; the transcript names them \u201cUniversity of Soul Food.\u201d",
+            "changes_from_previous_chunk": "The speech changes from self-introduction to the programs.",
+            "confidence": 0.82,
+            "evidence_refs": [
+              "frame:4",
+              "transcript:2"
+            ],
+            "uncertainties": [
+              "The institution name in the transcript may be inaccurate.",
+              "Frame:4 is near the end of this speech segment and does not establish activity throughout it."
+            ]
+          },
+          {
+            "start_seconds": 14.32,
+            "end_seconds": 17.855,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker says a British master's degree can be completed entirely online in one year.",
+            "changes_from_previous_chunk": "The speech changes to the degree's format and duration.",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "transcript:3"
+            ],
+            "uncertainties": [
+              "The transcript segment continues beyond this chunk; no supplied frame falls within this observation."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "OCR returns isolated characters, but the supplied frames do not establish corresponding legible on-screen text."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:0",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_054b2b4797025cc6016acbfb46308087d28581643412f159bf",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "df46317aa3a184ce81941941ea76ed6d4ca6e274"
+      }
+    },
+    {
+      "chunk_id": "chunk:1",
+      "description": {
+        "chunk_start_seconds": 17.855,
+        "chunk_end_seconds": 35.711,
+        "observations": [
+          {
+            "start_seconds": 17.855,
+            "end_seconds": 20.32,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker finishes saying a British master's degree can be completed entirely online in one year.",
+            "changes_from_previous_chunk": "This speech continues from the previous chunk.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "transcript:3"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this interval."
+            ]
+          },
+          {
+            "start_seconds": 20.32,
+            "end_seconds": 26.88,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "A man in glasses, a dark suit, a light shirt, and a patterned tie",
+              "Water, distant shoreline, and sky"
+            ],
+            "visible_actions": [
+              "The man faces the camera with his hands together near his waist in frame:5."
+            ],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker lists business administration and project management as specialties.",
+            "changes_from_previous_chunk": "The speech changes from degree duration and format to specialties.",
+            "confidence": 0.96,
+            "evidence_refs": [
+              "transcript:4",
+              "frame:5"
+            ],
+            "uncertainties": [
+              "Frame:5 does not establish his posture throughout the spoken segment."
+            ]
+          },
+          {
+            "start_seconds": 26.88,
+            "end_seconds": 32.16,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "The man in glasses and a suit",
+              "Water, distant shoreline, and sky"
+            ],
+            "visible_actions": [
+              "The man faces the camera with his hands together near his waist in frame:6.",
+              "The man faces the camera with his hands together near his waist in frame:7."
+            ],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker continues the list: HR management, marketing, operations management, and more.",
+            "changes_from_previous_chunk": "The spoken list continues with different specialties.",
+            "confidence": 0.95,
+            "evidence_refs": [
+              "transcript:5",
+              "frame:6",
+              "frame:7"
+            ],
+            "uncertainties": [
+              "Frame:7 falls near the end of this transcript segment; neither still establishes continuous activity.",
+              "Isolated OCR characters do not establish legible on-screen text in the supplied frames."
+            ]
+          },
+          {
+            "start_seconds": 32.16,
+            "end_seconds": 35.44,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "The man in glasses and a suit",
+              "Water, distant shoreline, and sky"
+            ],
+            "visible_actions": [
+              "The man faces the camera with his hands apart in frame:8.",
+              "The man faces the camera with his hands together near his waist in frame:9."
+            ],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker asks viewers to request the course catalog and get started today.",
+            "changes_from_previous_chunk": "The speech changes from listing specialties to a request.",
+            "confidence": 0.96,
+            "evidence_refs": [
+              "transcript:6",
+              "frame:8",
+              "frame:9"
+            ],
+            "uncertainties": [
+              "The stills do not establish how the man's hands changed position between frames."
+            ]
+          },
+          {
+            "start_seconds": 35.6,
+            "end_seconds": 35.711,
+            "boundary_reason": "uncertain",
+            "visible_subjects_objects": [
+              "The man in glasses and a suit",
+              "Water, distant shoreline, and sky"
+            ],
+            "visible_actions": [
+              "The man faces the camera with his hands together near his waist in frame:10."
+            ],
+            "visible_text": [],
+            "spoken_content_summary": "No supplied transcript covers this interval.",
+            "changes_from_previous_chunk": "The transcript ends before this final supplied frame; the visible setting remains similar.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "frame:10"
+            ],
+            "uncertainties": [
+              "The supplied evidence does not establish whether any speech occurs after 35.44 seconds."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "OCR reports isolated characters, but no corresponding legible text is established in the supplied frames."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:1",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_090b48449348bce3016acbfb4d944487d2a6ab4de530f5a8ef",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "df46317aa3a184ce81941941ea76ed6d4ca6e274"
+      }
+    }
+  ],
+  "synthesis_response": {
+    "draft": {
+      "format_assessments": [
+        {
+          "technique_id": "format.talking_head",
+          "ontology_definition": "Speaker addresses the camera for a substantial part of the video.",
+          "decision": "supported",
+          "positive_ledger_refs": [
+            "ledger:0:0",
+            "ledger:0:1",
+            "ledger:0:2",
+            "ledger:1:1",
+            "ledger:1:2",
+            "ledger:1:3"
+          ],
+          "counterevidence_limitations": "Camera-facing posture is observed in sparse frames, not continuously; no frames are supplied for 14.32\u201320.32 seconds.",
+          "criterion_explanation": "Repeated camera-facing views accompany the speaker's presentation across much of the video."
+        },
+        {
+          "technique_id": "format.tutorial",
+          "ontology_definition": "Explains a process or teaches a skill in steps.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The speaker describes programs, their duration, and specialties, without teaching a process in steps.",
+          "criterion_explanation": "A program description is not a step-by-step tutorial."
+        },
+        {
+          "technique_id": "format.product_demo",
+          "ontology_definition": "Shows a product or service in use.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The speaker describes online programs, but no supplied observation shows someone using the service.",
+          "criterion_explanation": "Describing an offering does not show it in use."
+        },
+        {
+          "technique_id": "format.storytime",
+          "ontology_definition": "Narrates an event as the main format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The speech introduces and describes programs rather than narrating an event.",
+          "criterion_explanation": "Event narration is not the main format."
+        },
+        {
+          "technique_id": "format.listicle",
+          "ontology_definition": "Presents numbered or clearly enumerated items.",
+          "decision": "supported",
+          "positive_ledger_refs": [
+            "ledger:1:1",
+            "ledger:1:2"
+          ],
+          "counterevidence_limitations": "The specialties are not numbered, and the list occupies only a later portion of the video.",
+          "criterion_explanation": "The speaker clearly enumerates distinct specialties across two consecutive speech segments."
+        },
+        {
+          "technique_id": "format.reaction",
+          "ontology_definition": "Responds to another piece of content or event.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "No other content or event being reacted to is established.",
+          "criterion_explanation": "The presentation describes an offering rather than responding to something."
+        },
+        {
+          "technique_id": "format.before_after",
+          "ontology_definition": "Compares a state before and after a change.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "Neither a before state nor an after state is shown or described as a comparison.",
+          "criterion_explanation": "The opening career question does not establish a before-and-after comparison."
+        },
+        {
+          "technique_id": "format.screen_recording",
+          "ontology_definition": "Recorded screen is a principal visual source.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The supplied frames show a person outdoors, not a recorded screen.",
+          "criterion_explanation": "No screen recording is established."
+        },
+        {
+          "technique_id": "format.interview",
+          "ontology_definition": "Question and answer exchange is a principal format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The opening question is followed by the speaker's presentation, not an observed exchange.",
+          "criterion_explanation": "No interview-style question-and-answer exchange is established."
+        }
+      ],
+      "cta_events": [
+        {
+          "event_id": "cta:1",
+          "start_seconds": 32.16,
+          "end_seconds": 35.44,
+          "requested_action": "Request the course catalog and get started today.",
+          "ledger_refs": [
+            "ledger:1:3"
+          ]
+        }
+      ],
+      "findings": [
+        {
+          "technique_id": "hook.question",
+          "start_seconds": 0.08,
+          "end_seconds": 3.44,
+          "confidence": 0.95,
+          "basis": "direct_observation",
+          "rationale": "The video opens with the spoken question, \u201cIs your career really moving forward?\u201d",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.face_to_camera",
+          "start_seconds": 0.08,
+          "end_seconds": 3.44,
+          "confidence": 0.95,
+          "basis": "direct_observation",
+          "rationale": "A supplied opening frame shows the man facing the camera.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.face_to_camera",
+          "start_seconds": 3.44,
+          "end_seconds": 8.56,
+          "confidence": 0.88,
+          "basis": "direct_observation",
+          "rationale": "A supplied frame shows the man facing the camera.",
+          "evidence_refs": [
+            "ledger:0:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.face_to_camera",
+          "start_seconds": 8.56,
+          "end_seconds": 14.32,
+          "confidence": 0.82,
+          "basis": "direct_observation",
+          "rationale": "A supplied frame shows the man facing the camera.",
+          "evidence_refs": [
+            "ledger:0:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.face_to_camera",
+          "start_seconds": 20.32,
+          "end_seconds": 26.88,
+          "confidence": 0.96,
+          "basis": "direct_observation",
+          "rationale": "A supplied frame shows the man facing the camera.",
+          "evidence_refs": [
+            "ledger:1:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.face_to_camera",
+          "start_seconds": 26.88,
+          "end_seconds": 32.16,
+          "confidence": 0.95,
+          "basis": "direct_observation",
+          "rationale": "Supplied frames show the man facing the camera.",
+          "evidence_refs": [
+            "ledger:1:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.face_to_camera",
+          "start_seconds": 32.16,
+          "end_seconds": 35.44,
+          "confidence": 0.96,
+          "basis": "direct_observation",
+          "rationale": "Supplied frames show the man facing the camera during the spoken request.",
+          "evidence_refs": [
+            "ledger:1:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "cta.verbal",
+          "start_seconds": 32.16,
+          "end_seconds": 35.44,
+          "confidence": 0.96,
+          "basis": "direct_observation",
+          "rationale": "The speaker asks viewers to request the course catalog and get started today.",
+          "evidence_refs": [
+            "ledger:1:3"
+          ],
+          "event_id": "cta:1"
+        },
+        {
+          "technique_id": "cta.product",
+          "start_seconds": 32.16,
+          "end_seconds": 35.44,
+          "confidence": 0.94,
+          "basis": "direct_observation",
+          "rationale": "Requesting a catalog for the presented programs and getting started is a product-related action.",
+          "evidence_refs": [
+            "ledger:1:3",
+            "ledger:0:2"
+          ],
+          "event_id": "cta:1"
+        }
+      ],
+      "structure": [
+        {
+          "role": "hook",
+          "start_seconds": 0.08,
+          "end_seconds": 3.44,
+          "confidence": 0.95,
+          "rationale": "The opening career question introduces the appeal.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ]
+        },
+        {
+          "role": "setup",
+          "start_seconds": 3.44,
+          "end_seconds": 8.56,
+          "confidence": 0.88,
+          "rationale": "The speaker introduces himself and names an institution.",
+          "evidence_refs": [
+            "ledger:0:1"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 8.56,
+          "end_seconds": 20.32,
+          "confidence": 0.85,
+          "rationale": "The speaker introduces the online master's programs and explains the degree's online format and one-year duration.",
+          "evidence_refs": [
+            "ledger:0:2",
+            "ledger:0:3",
+            "ledger:1:0"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 20.32,
+          "end_seconds": 32.16,
+          "confidence": 0.95,
+          "rationale": "The speaker lists the programs' specialties.",
+          "evidence_refs": [
+            "ledger:1:1",
+            "ledger:1:2"
+          ]
+        },
+        {
+          "role": "cta",
+          "start_seconds": 32.16,
+          "end_seconds": 35.44,
+          "confidence": 0.96,
+          "rationale": "The speaker requests the course catalog and urges viewers to get started.",
+          "evidence_refs": [
+            "ledger:1:3"
+          ]
+        }
+      ],
+      "uncertainties": [
+        "The transcript's rendering of the speaker's title and one institution name is uncertain.",
+        "Sparse frames do not establish continuous posture or motion, and no frames are supplied for 14.32\u201320.32 seconds.",
+        "Isolated OCR characters do not establish legible captions, a headline, or a visual call to action.",
+        "The final frame at 35.6 seconds has no accompanying transcript; any speech or request after 35.44 seconds is unknown."
+      ]
+    },
+    "provenance": {
+      "stage": "ontology_synthesis",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0f8bd543efc8d566016acbfb554c0c87d28522b53ec4b4d5b0",
+      "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+      "analyzer_commit": "df46317aa3a184ce81941941ea76ed6d4ca6e274"
+    },
+    "ledger_sha256": "139314c11c6f3a0459db3227798b1a084e3354cded2aab0190cb16826f4584e6"
+  }
+}

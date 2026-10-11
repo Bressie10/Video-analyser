@@ -1,0 +1,1422 @@
+{
+  "source_ref": "04",
+  "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a",
+  "validation_commit": "df46317aa3a184ce81941941ea76ed6d4ca6e274",
+  "model_passes": [
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:0",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0318d7e069cea36d016acbf1ea75f487d28eae7a00cab1c9c2",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "16b6c98249ed09db3074b188fdb57e909f2ad666"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:1",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_04eb79a9aee2963c016acbf37cc04487d2a251579465e487a0",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:2",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0dde9840e497f3a7016acbf388d6d487d28234579e9eaff982",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:3",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_02ac68dec9c0223b016acbf393bb6487d2b358e6a5066b1514",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:4",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_058d503166d26e63016acbf3a0d02c87d2a86a6ae742388f23",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:5",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0db9d7173cef2f4b016acbf3ac20d087d2b626fb0234b8fc7d",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+    }
+  ],
+  "chunk_plan": [
+    {
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 23.583,
+      "frame_refs": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "frame:3",
+        "frame:4",
+        "frame:5",
+        "frame:6",
+        "frame:7",
+        "frame:8",
+        "frame:9"
+      ]
+    },
+    {
+      "chunk_id": "chunk:1",
+      "start_seconds": 23.583,
+      "end_seconds": 45.458,
+      "frame_refs": [
+        "frame:10",
+        "frame:11",
+        "frame:12"
+      ]
+    },
+    {
+      "chunk_id": "chunk:2",
+      "start_seconds": 45.458,
+      "end_seconds": 68.708,
+      "frame_refs": [
+        "frame:13",
+        "frame:14",
+        "frame:15"
+      ]
+    },
+    {
+      "chunk_id": "chunk:3",
+      "start_seconds": 68.708,
+      "end_seconds": 91.875,
+      "frame_refs": [
+        "frame:16",
+        "frame:17",
+        "frame:18"
+      ]
+    },
+    {
+      "chunk_id": "chunk:4",
+      "start_seconds": 91.875,
+      "end_seconds": 115.5,
+      "frame_refs": [
+        "frame:19",
+        "frame:20",
+        "frame:21"
+      ]
+    },
+    {
+      "chunk_id": "chunk:5",
+      "start_seconds": 115.5,
+      "end_seconds": 138.537,
+      "frame_refs": [
+        "frame:22",
+        "frame:23",
+        "frame:24",
+        "frame:25",
+        "frame:26",
+        "frame:27",
+        "frame:28"
+      ]
+    }
+  ],
+  "evidence_ledger": [
+    {
+      "ledger_id": "ledger:0:0",
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 2.542,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [
+        "A man in a white shirt and red shorts on a road",
+        "A man in a red shirt seated beside a wall",
+        "Roadside wall, posters, and trees"
+      ],
+      "visible_actions": [
+        "At frame:0 and frame:1, the man in white faces the seated man with an arm extended."
+      ],
+      "visible_text": [
+        "POV: Beautiful Transformation incoming \u2764\ufe0f",
+        "Text on the back of the white shirt appears to read \u201cChoose Today\u201d"
+      ],
+      "spoken_content_summary": "No supplied speech in this interval.",
+      "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:0",
+        "frame:1",
+        "ocr:2",
+        "ocr:3",
+        "ocr:4",
+        "ocr:5",
+        "scene:0"
+      ],
+      "uncertainties": [
+        "The stills do not establish movement between the two positions."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:1",
+      "chunk_id": "chunk:0",
+      "start_seconds": 2.542,
+      "end_seconds": 5.5,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "The seated man in red",
+        "The man in white and red shorts",
+        "Wall posters"
+      ],
+      "visible_actions": [
+        "At frame:2, both men have their hands raised toward one another."
+      ],
+      "visible_text": [
+        "POV: Beautiful Transformation incoming \u2764\ufe0f"
+      ],
+      "spoken_content_summary": "No supplied speech in this interval.",
+      "changes_from_previous_chunk": "The frame shows a closer view of the two men.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:2",
+        "ocr:13",
+        "ocr:15",
+        "ocr:3",
+        "scene:1"
+      ],
+      "uncertainties": [
+        "The precise interaction between their raised hands is not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:2",
+      "chunk_id": "chunk:0",
+      "start_seconds": 6.5,
+      "end_seconds": 7.292,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "The two men beside the roadside wall",
+        "An elevated roadway"
+      ],
+      "visible_actions": [
+        "At frame:3, the man in white supports the man in red, whose arm is around his shoulders.",
+        "At frame:4, the man in white holds the man in red across his arms."
+      ],
+      "visible_text": [
+        "A small \u201cVIDEOLEE\u201d mark near the top of the frames"
+      ],
+      "spoken_content_summary": "No supplied speech in this interval.",
+      "changes_from_previous_chunk": "The man previously seated is shown off the ground in frame:4.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:3",
+        "frame:4",
+        "scene:2"
+      ],
+      "uncertainties": [
+        "The intervening lifting action is not shown continuously."
+      ],
+      "timing_adjustment": {
+        "reason": "clamped_to_substantive_evidence_envelope",
+        "model_start_seconds": 5.5,
+        "model_end_seconds": 7.5
+      }
+    },
+    {
+      "ledger_id": "ledger:0:3",
+      "chunk_id": "chunk:0",
+      "start_seconds": 7.5,
+      "end_seconds": 10.375,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "The two men",
+        "Roadside wall and posters"
+      ],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR variously reads \u201cVIDEOLEE\u201d and similar forms."
+      ],
+      "spoken_content_summary": "No supplied speech in this interval.",
+      "changes_from_previous_chunk": "Not established by a supplied frame within this interval.",
+      "confidence": 0.46,
+      "evidence_refs": [
+        "scene:3",
+        "scene:4",
+        "ocr:20",
+        "ocr:21",
+        "ocr:22",
+        "ocr:23",
+        "ocr:24",
+        "ocr:25"
+      ],
+      "uncertainties": [
+        "No supplied still falls within these scene intervals; subjects and actions cannot be confirmed there.",
+        "The differing OCR readings may refer to the same mark."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:4",
+      "chunk_id": "chunk:0",
+      "start_seconds": 10.5,
+      "end_seconds": 11.5,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "The two men on a blue patterned mat beside the road",
+        "Wall poster"
+      ],
+      "visible_actions": [
+        "At frame:5, the man in red braces a hand on the mat while the man in white supports him."
+      ],
+      "visible_text": [
+        "A wall poster includes \u201cELARA IVF\u201d"
+      ],
+      "spoken_content_summary": "No supplied speech in this interval.",
+      "changes_from_previous_chunk": "A blue patterned mat is visible; it was not visible in earlier supplied frames.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:5",
+        "ocr:26",
+        "ocr:27",
+        "scene:5"
+      ],
+      "uncertainties": [
+        "How the men reached the mat is not shown."
+      ],
+      "timing_adjustment": {
+        "reason": "clamped_to_substantive_evidence_envelope",
+        "model_start_seconds": 10.375,
+        "model_end_seconds": 12.0
+      }
+    },
+    {
+      "ledger_id": "ledger:0:5",
+      "chunk_id": "chunk:0",
+      "start_seconds": 14.583,
+      "end_seconds": 14.583,
+      "boundary_reason": "visual_change",
+      "visible_subjects_objects": [
+        "The formerly red-shirted man seated shirtless on the blue mat",
+        "The man in white holding a red shirt"
+      ],
+      "visible_actions": [
+        "At frame:6, the man in white holds the red shirt above the seated man."
+      ],
+      "visible_text": [
+        "A small \u201cVIDEOLEE\u201d mark near the top"
+      ],
+      "spoken_content_summary": "No supplied speech in this interval.",
+      "changes_from_previous_chunk": "The seated man's red shirt is no longer on him in frame:6.",
+      "confidence": 0.92,
+      "evidence_refs": [
+        "frame:6",
+        "scene:6",
+        "scene:7"
+      ],
+      "uncertainties": [
+        "No supplied frame shows the shirt being removed."
+      ],
+      "timing_adjustment": {
+        "reason": "clamped_to_substantive_evidence_envelope",
+        "model_start_seconds": 12.0,
+        "model_end_seconds": 15.083
+      }
+    },
+    {
+      "ledger_id": "ledger:0:6",
+      "chunk_id": "chunk:0",
+      "start_seconds": 15.5,
+      "end_seconds": 16.708,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "The shirtless seated man",
+        "The man in white",
+        "A black hair clipper",
+        "The blue mat"
+      ],
+      "visible_actions": [
+        "At frame:7, the man in white holds a clipper against the seated man's hair."
+      ],
+      "visible_text": [
+        "A small top-of-frame mark, read inconsistently by OCR as \u201cVIDLOLEE\u201d and similar text"
+      ],
+      "spoken_content_summary": "A voice says, \u201cGood job,\u201d from 15.98 to 16.98 seconds.",
+      "changes_from_previous_chunk": "A clipper is visible at the seated man's head.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:7",
+        "transcript:0",
+        "ocr:30",
+        "scene:8"
+      ],
+      "uncertainties": [
+        "The speaker is not established by the transcript.",
+        "The transcript extends beyond this observation's scene interval."
+      ],
+      "timing_adjustment": {
+        "reason": "clamped_to_substantive_evidence_envelope",
+        "model_start_seconds": 15.083,
+        "model_end_seconds": 16.708
+      }
+    },
+    {
+      "ledger_id": "ledger:0:7",
+      "chunk_id": "chunk:0",
+      "start_seconds": 16.708,
+      "end_seconds": 18.417,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "The seated man with hair gathered upward",
+        "Another person's hands and a black clipper",
+        "A child seated in the background",
+        "Blue patterned mat"
+      ],
+      "visible_actions": [
+        "At frame:7, a clipper rests against the seated man's hair.",
+        "At frame:8, hands hold up the seated man's hair while a clipper is near his head."
+      ],
+      "visible_text": [
+        "A small \u201cVIDEOLEE\u201d mark is visible near the top"
+      ],
+      "spoken_content_summary": "A voice says, \u201cGood job.\u201d The supplied transcript begins a second \u201cGood job\u201d at 16.98 seconds.",
+      "changes_from_previous_chunk": "Frame:8 shows a different angle, with a child visible behind the seated man.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:7",
+        "frame:8",
+        "transcript:0",
+        "transcript:1",
+        "scene:9",
+        "ocr:37"
+      ],
+      "uncertainties": [
+        "Frame:7 precedes this scene interval and only supports the appearance at its own timestamp; the exact scene transition is not established by a frame.",
+        "The transcript does not identify the speaker."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:8",
+      "chunk_id": "chunk:0",
+      "start_seconds": 18.417,
+      "end_seconds": 22.125,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "The shirtless seated man",
+        "Another person's arm, hand, and clipper",
+        "Blue patterned mat"
+      ],
+      "visible_actions": [
+        "At frame:8, a hand holds the man's gathered hair near a clipper."
+      ],
+      "visible_text": [
+        "OCR reads \u201cVIDEOLEE\u201d or a similar top-of-frame mark."
+      ],
+      "spoken_content_summary": "The second transcript segment contains \u201cGood job\u201d and spans this interval.",
+      "changes_from_previous_chunk": "The supplied scene reference changes; frame:8 shows hair gathered above the seated man's head.",
+      "confidence": 0.86,
+      "evidence_refs": [
+        "frame:8",
+        "transcript:1",
+        "ocr:37",
+        "ocr:39",
+        "ocr:41",
+        "scene:10",
+        "scene:11"
+      ],
+      "uncertainties": [
+        "Frame:8 occurs in scene:11, not scene:10; no frame establishes activity during scene:10.",
+        "Transcript:1 spans beyond the chunk, but contains only the supplied words \u201cGood job.\u201d"
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:9",
+      "chunk_id": "chunk:0",
+      "start_seconds": 22.125,
+      "end_seconds": 23.583,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "The shirtless seated man",
+        "Another person's hands",
+        "A clipper",
+        "Blue patterned mat"
+      ],
+      "visible_actions": [
+        "At frame:9, one hand holds the man's hair up while the other holds a clipper beside it."
+      ],
+      "visible_text": [
+        "A small top-of-frame mark read by OCR as \u201cVIDEQLEE\u201d or \u201c\u00a9 VIDEOLEE\u201d"
+      ],
+      "spoken_content_summary": "The supplied second \u201cGood job\u201d transcript segment continues across this interval.",
+      "changes_from_previous_chunk": "Frame:9 shows the seated man and clipper from a different angle.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "frame:9",
+        "transcript:1",
+        "ocr:43",
+        "ocr:44",
+        "scene:12"
+      ],
+      "uncertainties": [
+        "The exact clipper movement between stills is not established.",
+        "The speaker is not identified."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:0",
+      "chunk_id": "chunk:1",
+      "start_seconds": 23.583,
+      "end_seconds": 28.67,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR repeatedly reads a small mark as \u201cVIDEOLEE\u201d or similar.",
+        "OCR includes \u201cELARA\u201d and partial vehicle-plate text."
+      ],
+      "spoken_content_summary": "The supplied transcript segment says \u201cGood job.\u201d",
+      "changes_from_previous_chunk": "No visual change is established by a supplied frame in this interval.",
+      "confidence": 0.72,
+      "evidence_refs": [
+        "transcript:1",
+        "ocr:44",
+        "ocr:49",
+        "ocr:53",
+        "ocr:56",
+        "ocr:57",
+        "ocr:59",
+        "scene:13",
+        "scene:14",
+        "scene:15"
+      ],
+      "uncertainties": [
+        "No supplied still occurs in this interval; the scene references and OCR do not establish visible actions.",
+        "The transcript does not identify a speaker."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:1",
+      "chunk_id": "chunk:1",
+      "start_seconds": 28.67,
+      "end_seconds": 29.67,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "A shirtless seated man with short hair and gray facial hair",
+        "Two other people's hands",
+        "A hair clipper",
+        "A blue patterned mat beside a road"
+      ],
+      "visible_actions": [
+        "At frame:10, one hand rests on the seated man's hair while another holds a clipper against his beard."
+      ],
+      "visible_text": [
+        "A small top-of-frame mark reads \u201cVIDEOLEE\u201d or a similar form."
+      ],
+      "spoken_content_summary": "A voice says, \u201cGood job.\u201d",
+      "changes_from_previous_chunk": "Frame:10 establishes a close view of a clipper at the seated man's beard; no intervening action is shown.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:10",
+        "transcript:2",
+        "ocr:63",
+        "scene:16"
+      ],
+      "uncertainties": [
+        "The speaker is not identified.",
+        "The still does not establish clipper movement."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:2",
+      "chunk_id": "chunk:1",
+      "start_seconds": 29.67,
+      "end_seconds": 30.67,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR reads \u201c\u00a9 VIDEOLEE.\u201d"
+      ],
+      "spoken_content_summary": "A voice says, \u201cGood job.\u201d",
+      "changes_from_previous_chunk": "The transcript begins another \u201cGood job\u201d; no new supplied frame establishes a visual change.",
+      "confidence": 0.77,
+      "evidence_refs": [
+        "transcript:3",
+        "ocr:64",
+        "scene:16",
+        "scene:17"
+      ],
+      "uncertainties": [
+        "The speaker and visible activity during this interval are not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:3",
+      "chunk_id": "chunk:1",
+      "start_seconds": 30.67,
+      "end_seconds": 36.458,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "At frame:11, a man in a white shirt and red shorts and a shirtless man are on a blue patterned mat beside a road.",
+        "A light-blue bucket, a vehicle, and roadside signs are visible."
+      ],
+      "visible_actions": [
+        "At frame:11, the man in white crouches beside the bucket with his hands on its rim; the shirtless man sits on the mat."
+      ],
+      "visible_text": [
+        "At frame:11, a roadside sign reads \u201cLEARNING WINGS\u201d; another sign includes \u201cELARA IVF.\u201d",
+        "OCR reads \u201cVIDEOLEE\u201d and similar variants."
+      ],
+      "spoken_content_summary": "A transcript segment beginning at 30.67 seconds says \u201cBye.\u201d",
+      "changes_from_previous_chunk": "At frame:11 the view is wider, a bucket is visible, and the shirtless man's hair appears closely cut. How these changes occurred is not shown.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "frame:11",
+        "transcript:4",
+        "ocr:64",
+        "ocr:65",
+        "ocr:71",
+        "scene:17",
+        "scene:18",
+        "scene:19",
+        "scene:20"
+      ],
+      "uncertainties": [
+        "Only frame:11 establishes the described subjects and actions within this interval.",
+        "The long transcript segment does not establish when within it the word is spoken or who says it."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:4",
+      "chunk_id": "chunk:1",
+      "start_seconds": 36.458,
+      "end_seconds": 43.75,
+      "boundary_reason": "uncertain",
+      "visible_subjects_objects": [
+        "At frame:11, the two men, blue bucket, and patterned mat remain visible."
+      ],
+      "visible_actions": [
+        "At frame:11, the man in white has his hands on the bucket rim while the shirtless man sits nearby."
+      ],
+      "visible_text": [
+        "OCR includes partial readings of \u201cELARA IVF\u201d and \u201cLEARNING WINGS,\u201d along with variants of \u201cVIDEOLEE.\u201d"
+      ],
+      "spoken_content_summary": "The supplied transcript segment containing \u201cBye\u201d continues across this interval.",
+      "changes_from_previous_chunk": "No separate visual transition is established between frame:11 and frame:12.",
+      "confidence": 0.75,
+      "evidence_refs": [
+        "frame:11",
+        "transcript:4",
+        "ocr:72",
+        "ocr:73",
+        "ocr:75",
+        "ocr:82",
+        "scene:20",
+        "scene:21",
+        "scene:22",
+        "scene:23",
+        "scene:24"
+      ],
+      "uncertainties": [
+        "Frame:11 is a point observation; it does not establish continuous activity through this interval.",
+        "The OCR changes do not establish a precise visual transition."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:5",
+      "chunk_id": "chunk:1",
+      "start_seconds": 43.75,
+      "end_seconds": 45.458,
+      "boundary_reason": "visual_change",
+      "visible_subjects_objects": [
+        "The man in a white shirt and red shorts",
+        "The seated man, with white foam on his face and upper body",
+        "The blue patterned mat beside the road",
+        "A roadside sign"
+      ],
+      "visible_actions": [
+        "At frame:12, the man in white crouches beside the seated man and holds a pink item against his raised arm."
+      ],
+      "visible_text": [
+        "A roadside sign reads \u201cLEARNING WINGS\u201d and contains smaller text and numbers; OCR includes \u201cJODNPUR\u201d and \u201c84.\u201d"
+      ],
+      "spoken_content_summary": "The supplied transcript segment containing \u201cBye\u201d continues across this interval.",
+      "changes_from_previous_chunk": "Frame:12 shows white foam on the seated man's face and upper body, not visible in frame:11; the application of the foam is not shown.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:12",
+        "transcript:4",
+        "ocr:84",
+        "ocr:86",
+        "ocr:88",
+        "ocr:90",
+        "scene:24"
+      ],
+      "uncertainties": [
+        "The pink item's exact type and the interaction between the frames are not established.",
+        "The transcript does not identify the speaker."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:0",
+      "chunk_id": "chunk:2",
+      "start_seconds": 45.458,
+      "end_seconds": 51.125,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [
+        "At frame:13, a seated shirtless man has white foam on his face and upper body.",
+        "Another person's arms and a pink cloth are beside his face.",
+        "A blue patterned mat and road are visible."
+      ],
+      "visible_actions": [
+        "At frame:13, a hand holds the pink cloth against the seated man's neck and jaw."
+      ],
+      "visible_text": [
+        "OCR reads variants of \u201cVIDEOLEE\u201d and \u201cELARA IVF.\u201d"
+      ],
+      "spoken_content_summary": "The transcript segment containing \u201cBye\u201d spans this interval; it does not locate the utterance more precisely.",
+      "changes_from_previous_chunk": "Frame:13 shows the foamed man from a closer, frontal angle than frame:12.",
+      "confidence": 0.89,
+      "evidence_refs": [
+        "frame:13",
+        "transcript:4",
+        "ocr:91",
+        "ocr:94",
+        "ocr:100",
+        "ocr:101",
+        "scene:25",
+        "scene:26",
+        "scene:27"
+      ],
+      "uncertainties": [
+        "The still does not establish movement of the cloth or activity between frames.",
+        "The transcript does not identify a speaker."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:1",
+      "chunk_id": "chunk:2",
+      "start_seconds": 51.125,
+      "end_seconds": 58.917,
+      "boundary_reason": "visual_change",
+      "visible_subjects_objects": [
+        "At frame:14, the seated man has short hair and little visible foam on his face.",
+        "A second person in a white shirt and red shorts is beside him.",
+        "A large white towel, blue patterned mat, and road are visible."
+      ],
+      "visible_actions": [
+        "At frame:14, the seated man holds an edge of the towel near his shoulder while the second person has an arm against the towel."
+      ],
+      "visible_text": [
+        "OCR reads \u201cELARA IVF\u201d and variants of \u201cVIDEOLEE.\u201d"
+      ],
+      "spoken_content_summary": "The supplied transcript segment containing \u201cBye\u201d continues; no new spoken topic is supplied.",
+      "changes_from_previous_chunk": "Frame:14 shows a large towel around the man rather than the extensive foam visible at frame:13. The intervening activity is not shown.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:14",
+        "transcript:4",
+        "ocr:104",
+        "ocr:105",
+        "ocr:108",
+        "ocr:112",
+        "ocr:114",
+        "scene:28",
+        "scene:29",
+        "scene:30",
+        "scene:31",
+        "scene:32"
+      ],
+      "uncertainties": [
+        "The still does not establish whether the towel is being moved.",
+        "The exact visual transition between frame:13 and frame:14 is not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:2",
+      "chunk_id": "chunk:2",
+      "start_seconds": 58.917,
+      "end_seconds": 66.52,
+      "boundary_reason": "visual_change",
+      "visible_subjects_objects": [
+        "At frame:15, the man wears a light-colored shirt and sits on the blue patterned mat.",
+        "The person in a white shirt and red shorts crouches beside him.",
+        "A black-and-white cow stands close to the mat; a road and wall posters are in the background."
+      ],
+      "visible_actions": [
+        "At frame:15, the crouching person holds a large pale sheet or towel while the other man sits nearby."
+      ],
+      "visible_text": [
+        "A wall poster reads \u201cELARA IVF.\u201d",
+        "OCR also reads parts of \u201cLEARNING WINGS,\u201d \u201c84,\u201d and variants of \u201cVIDEOLEE.\u201d"
+      ],
+      "spoken_content_summary": "The transcript segment containing \u201cBye\u201d continues to 66.52 seconds.",
+      "changes_from_previous_chunk": "Frame:15 establishes a wider view, the seated man's shirt, and a nearby cow; how these changes occurred is not shown.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "frame:15",
+        "transcript:4",
+        "ocr:117",
+        "ocr:118",
+        "ocr:124",
+        "ocr:126",
+        "ocr:127",
+        "ocr:131",
+        "scene:33",
+        "scene:34",
+        "scene:35",
+        "scene:36",
+        "scene:37"
+      ],
+      "uncertainties": [
+        "The cow's arrival and any handling of the pale sheet between frames are not shown.",
+        "OCR readings of the wall text vary."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:3",
+      "chunk_id": "chunk:2",
+      "start_seconds": 66.52,
+      "end_seconds": 68.708,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR reads \u201cELARA IVF\u201d and \u201c84\u201d in this interval."
+      ],
+      "spoken_content_summary": "A new transcript segment begins at 66.52 seconds and contains \u201cBye.\u201d",
+      "changes_from_previous_chunk": "The transcript segment changes; no supplied frame after frame:15 establishes a corresponding visual change.",
+      "confidence": 0.75,
+      "evidence_refs": [
+        "transcript:5",
+        "ocr:132",
+        "ocr:133",
+        "ocr:134",
+        "scene:37",
+        "scene:38"
+      ],
+      "uncertainties": [
+        "The segment does not establish precisely when \u201cBye\u201d is spoken or who says it.",
+        "No supplied still establishes visible subjects or actions after 66.52 seconds."
+      ]
+    },
+    {
+      "ledger_id": "ledger:3:0",
+      "chunk_id": "chunk:3",
+      "start_seconds": 68.708,
+      "end_seconds": 70.292,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR reads \u201c84\u201d and fragments including \u201c2500\u201d and \u201cEL.\u201d"
+      ],
+      "spoken_content_summary": "The transcript segment containing \u201cBye\u201d spans this interval; its exact timing and speaker are not established.",
+      "changes_from_previous_chunk": "No visual change is established by a supplied frame in this interval.",
+      "confidence": 0.7,
+      "evidence_refs": [
+        "transcript:5",
+        "ocr:136",
+        "ocr:137",
+        "ocr:138",
+        "ocr:139",
+        "scene:39"
+      ],
+      "uncertainties": [
+        "OCR fragments do not establish complete sign text.",
+        "No supplied frame shows subjects or actions in this interval."
+      ]
+    },
+    {
+      "ledger_id": "ledger:3:1",
+      "chunk_id": "chunk:3",
+      "start_seconds": 70.292,
+      "end_seconds": 73.833,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "At frame:16, a seated man in a light-colored shirt wears a yellow-and-orange flower garland.",
+        "A second person with light hair and a white shirt is close to him; a road and wall are behind them."
+      ],
+      "visible_actions": [
+        "At frame:16, the second person's hands are near the seated man's shoulders and garland."
+      ],
+      "visible_text": [
+        "OCR reads \u201cLEARNING WINGS,\u201d \u201c84,\u201d and variants of \u201cVIDEOLEE.\u201d"
+      ],
+      "spoken_content_summary": "The same transcript segment contains \u201cBye\u201d; no new spoken topic is supplied.",
+      "changes_from_previous_chunk": "Frame:16 establishes a flower garland and a close view of two people; when the garland was placed is not shown.",
+      "confidence": 0.88,
+      "evidence_refs": [
+        "frame:16",
+        "transcript:5",
+        "ocr:144",
+        "ocr:147",
+        "ocr:148",
+        "ocr:149",
+        "ocr:150",
+        "scene:40"
+      ],
+      "uncertainties": [
+        "The still does not establish hand movement or the activity between frames.",
+        "The transcript does not identify a speaker."
+      ]
+    },
+    {
+      "ledger_id": "ledger:3:2",
+      "chunk_id": "chunk:3",
+      "start_seconds": 73.833,
+      "end_seconds": 79.875,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR reads variants of \u201cVIDEOLEE.\u201d"
+      ],
+      "spoken_content_summary": "No transcript change is supplied; the segment containing \u201cBye\u201d continues.",
+      "changes_from_previous_chunk": "Scene boundaries are supplied, but no frame in this interval establishes what is visible.",
+      "confidence": 0.62,
+      "evidence_refs": [
+        "transcript:5",
+        "ocr:151",
+        "ocr:152",
+        "scene:41",
+        "scene:42",
+        "scene:43"
+      ],
+      "uncertainties": [
+        "The scene references do not establish subjects or actions without a supplied frame."
+      ]
+    },
+    {
+      "ledger_id": "ledger:3:3",
+      "chunk_id": "chunk:3",
+      "start_seconds": 79.875,
+      "end_seconds": 83.167,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "At frame:17, the garlanded man sits on a blue patterned mat beside a wheelchair.",
+        "The light-haired person in a white shirt and red shorts stands behind the wheelchair.",
+        "A pink cloth, road, trees, and wall posters are visible."
+      ],
+      "visible_actions": [
+        "At frame:17, the standing person has both hands on the wheelchair handles."
+      ],
+      "visible_text": [
+        "A wall poster reads \u201cELARA IVF.\u201d",
+        "OCR also reads variants of \u201cVIDEOLEE.\u201d"
+      ],
+      "spoken_content_summary": "No transcript change is supplied; the segment containing \u201cBye\u201d continues.",
+      "changes_from_previous_chunk": "Frame:17 establishes a wider view with a wheelchair beside the seated man; its arrival is not shown.",
+      "confidence": 0.92,
+      "evidence_refs": [
+        "frame:17",
+        "transcript:5",
+        "ocr:153",
+        "ocr:154",
+        "ocr:155",
+        "ocr:156",
+        "ocr:157",
+        "ocr:158",
+        "scene:44",
+        "scene:45"
+      ],
+      "uncertainties": [
+        "The still does not establish whether the wheelchair is moving."
+      ]
+    },
+    {
+      "ledger_id": "ledger:3:4",
+      "chunk_id": "chunk:3",
+      "start_seconds": 83.167,
+      "end_seconds": 87.042,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR reads \u201cELARA IVF\u201d and fragments resembling \u201cVIDEOLEE.\u201d"
+      ],
+      "spoken_content_summary": "No transcript change is supplied; the segment containing \u201cBye\u201d continues.",
+      "changes_from_previous_chunk": "No supplied frame in this interval establishes a visual change.",
+      "confidence": 0.65,
+      "evidence_refs": [
+        "transcript:5",
+        "ocr:159",
+        "ocr:160",
+        "ocr:161",
+        "ocr:162",
+        "ocr:164",
+        "scene:46",
+        "scene:47"
+      ],
+      "uncertainties": [
+        "OCR readings vary; subjects and actions in this interval are not established by a supplied frame."
+      ]
+    },
+    {
+      "ledger_id": "ledger:3:5",
+      "chunk_id": "chunk:3",
+      "start_seconds": 87.042,
+      "end_seconds": 91.875,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "At frame:18, the garlanded man is positioned at the open rear of a white vehicle, with a wheelchair beneath and beside him.",
+        "The light-haired person in a white shirt and red shorts is bent beside the wheelchair.",
+        "The vehicle's rear hatch is open."
+      ],
+      "visible_actions": [
+        "At frame:18, the garlanded man has one hand on the wheelchair and one leg raised toward the vehicle interior.",
+        "At frame:18, the second person has a hand on the wheelchair."
+      ],
+      "visible_text": [
+        "OCR reads variants of \u201cVIDEOLEE\u201d; several other OCR fragments are unclear."
+      ],
+      "spoken_content_summary": "No transcript change is supplied; the segment containing \u201cBye\u201d continues.",
+      "changes_from_previous_chunk": "Frame:18 establishes a different location beside an open vehicle; how the people and wheelchair reached it is not shown.",
+      "confidence": 0.88,
+      "evidence_refs": [
+        "frame:18",
+        "transcript:5",
+        "ocr:165",
+        "ocr:167",
+        "ocr:169",
+        "ocr:170",
+        "ocr:171",
+        "ocr:172",
+        "scene:48",
+        "scene:49",
+        "scene:50"
+      ],
+      "uncertainties": [
+        "A still does not establish whether the man is entering the vehicle or whether the wheelchair is being moved.",
+        "The precise timing of visual changes between supplied frames is not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:4:0",
+      "chunk_id": "chunk:4",
+      "start_seconds": 91.875,
+      "end_seconds": 94.833,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [
+        "At frame:19, the garlanded man sits at the open rear of a white vehicle with one leg extended.",
+        "Another person's hands, a bottle, and a white cloth are visible near his exposed knee."
+      ],
+      "visible_actions": [
+        "At frame:19, a hand holds a tilted bottle over the man's knee, with liquid visible on the knee and dripping below it.",
+        "Another hand holds a white cloth below the knee."
+      ],
+      "visible_text": [
+        "\u201cVIDEOLEE\u201d appears near the top of frame:19; OCR also gives variants of that text."
+      ],
+      "spoken_content_summary": "The supplied transcript segment contains \u201cBye,\u201d but does not establish when within its long span it was said.",
+      "changes_from_previous_chunk": "The man is now shown inside the open rear of the vehicle, with liquid on his exposed knee; the intervening activity is not shown.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:19",
+        "scene:51",
+        "ocr:177",
+        "transcript:5"
+      ],
+      "uncertainties": [
+        "The still does not establish who poured the liquid or the sequence of activity before this frame.",
+        "The transcript does not identify a speaker."
+      ]
+    },
+    {
+      "ledger_id": "ledger:4:1",
+      "chunk_id": "chunk:4",
+      "start_seconds": 94.833,
+      "end_seconds": 101.625,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR repeatedly reads \u201cVIDEOLEE\u201d or close variants; two additional fragments read \u201cktterth\u201d and \u201cutterf.\u201d"
+      ],
+      "spoken_content_summary": "No new spoken content is established; the same long transcript segment contains \u201cBye.\u201d",
+      "changes_from_previous_chunk": "Scene boundaries are supplied, but no frame in this interval establishes the subjects or their actions.",
+      "confidence": 0.65,
+      "evidence_refs": [
+        "scene:52",
+        "scene:53",
+        "ocr:178",
+        "ocr:180",
+        "ocr:182",
+        "ocr:183",
+        "ocr:184",
+        "transcript:5"
+      ],
+      "uncertainties": [
+        "The additional OCR fragments do not establish legible complete text."
+      ]
+    },
+    {
+      "ledger_id": "ledger:4:2",
+      "chunk_id": "chunk:4",
+      "start_seconds": 101.625,
+      "end_seconds": 105.125,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "At frame:20, the garlanded man sits at the open rear of the white vehicle with his leg extended.",
+        "A light-haired person in a white shirt and red shorts is beside the vehicle, with hands around the man's lower leg."
+      ],
+      "visible_actions": [
+        "At frame:20, the light-haired person holds the man's lower leg with both hands."
+      ],
+      "visible_text": [
+        "\u201cVIDEOLEE\u201d appears near the top of frame:20; OCR reads \u201cVIDEOLEE\u201d and close variants."
+      ],
+      "spoken_content_summary": "No new spoken content is established; the same long transcript segment contains \u201cBye.\u201d",
+      "changes_from_previous_chunk": "Frame:20 establishes the light-haired person beside the extended leg; what happened between the supplied stills is not shown.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "frame:20",
+        "scene:54",
+        "ocr:186",
+        "ocr:188",
+        "transcript:5"
+      ],
+      "uncertainties": [
+        "The still does not establish movement or a treatment sequence."
+      ]
+    },
+    {
+      "ledger_id": "ledger:4:3",
+      "chunk_id": "chunk:4",
+      "start_seconds": 105.125,
+      "end_seconds": 109.25,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR reads variants of \u201cVIDEOLEE.\u201d"
+      ],
+      "spoken_content_summary": "No new spoken content is established; the same long transcript segment contains \u201cBye.\u201d",
+      "changes_from_previous_chunk": "No supplied frame in this interval establishes a visual change.",
+      "confidence": 0.65,
+      "evidence_refs": [
+        "scene:55",
+        "ocr:190",
+        "ocr:191",
+        "ocr:192",
+        "ocr:193",
+        "ocr:194",
+        "ocr:195",
+        "transcript:5"
+      ],
+      "uncertainties": [
+        "Subjects and actions in this interval are not established by a supplied frame."
+      ]
+    },
+    {
+      "ledger_id": "ledger:4:4",
+      "chunk_id": "chunk:4",
+      "start_seconds": 109.25,
+      "end_seconds": 110.75,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "At frame:21, a close view shows the man's exposed knee, white gauze around his lower leg, a reddish sock, and two hands near the gauze."
+      ],
+      "visible_actions": [
+        "At frame:21, the hands hold the lower edge of the gauze near the sock."
+      ],
+      "visible_text": [
+        "\u201cVIDEOLEE\u201d appears near the top of frame:21; OCR gives a variant reading, \u201c\u00a9VIOLOLCE.\u201d"
+      ],
+      "spoken_content_summary": "No new spoken content is established; the same long transcript segment contains \u201cBye.\u201d",
+      "changes_from_previous_chunk": "Frame:21 establishes gauze around the lower leg in a closer view; when it was placed is not shown.",
+      "confidence": 0.88,
+      "evidence_refs": [
+        "frame:21",
+        "scene:56",
+        "ocr:196",
+        "transcript:5"
+      ],
+      "uncertainties": [
+        "The still does not establish whether the hands are applying, fastening, or adjusting the gauze."
+      ]
+    },
+    {
+      "ledger_id": "ledger:4:5",
+      "chunk_id": "chunk:4",
+      "start_seconds": 110.75,
+      "end_seconds": 115.5,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR reads \u201cVIDEOLEE\u201d and \u201cOLEE\u201d; it also detects \u201c\u56de.\u201d"
+      ],
+      "spoken_content_summary": "No new spoken content is established; the same long transcript segment contains \u201cBye.\u201d",
+      "changes_from_previous_chunk": "A scene boundary is supplied, but no frame establishes what is visible afterward within this chunk.",
+      "confidence": 0.63,
+      "evidence_refs": [
+        "scene:57",
+        "ocr:197",
+        "ocr:198",
+        "ocr:199",
+        "ocr:200",
+        "ocr:201",
+        "ocr:202",
+        "ocr:203",
+        "transcript:5"
+      ],
+      "uncertainties": [
+        "The OCR readings do not establish a new activity or a change of setting."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:0",
+      "chunk_id": "chunk:5",
+      "start_seconds": 115.5,
+      "end_seconds": 118.083,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [
+        "At frame:22, a garlanded man sits at the open rear of a white vehicle with an exposed knee and white bandaging below it; another person's hands are beside the bandaging.",
+        "At frame:23, a light-haired person is beside the vehicle."
+      ],
+      "visible_actions": [
+        "At frame:22, hands hold the white bandaging below the man's knee.",
+        "At frame:23, the seated man and the light-haired person each have a raised hand."
+      ],
+      "visible_text": [
+        "\u201cVIDEOLEE\u201d appears near the top of frame:23; OCR gives this and variant readings."
+      ],
+      "spoken_content_summary": "The long transcript segment contains \u201cBye,\u201d but does not locate the word precisely within this interval.",
+      "changes_from_previous_chunk": "Frame:22 again shows the bandaged leg; frame:23 shows a wider view of the open vehicle and the light-haired person.",
+      "confidence": 0.89,
+      "evidence_refs": [
+        "frame:22",
+        "frame:23",
+        "scene:58",
+        "ocr:204",
+        "ocr:208",
+        "ocr:209",
+        "transcript:5"
+      ],
+      "uncertainties": [
+        "The stills do not establish what happened between the two views.",
+        "The speaker and timing of \u201cBye\u201d within the long transcript segment are not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:1",
+      "chunk_id": "chunk:5",
+      "start_seconds": 119.5,
+      "end_seconds": 123.292,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR reads \u201cChoose\u201d at several points, alongside \u201cVIDEOLEE\u201d variants and fragmentary text."
+      ],
+      "spoken_content_summary": "No new spoken content is established; the long transcript segment still contains \u201cBye.\u201d",
+      "changes_from_previous_chunk": "\u201cChoose\u201d becomes a recurring OCR reading; no supplied frame shows its placement during this interval.",
+      "confidence": 0.68,
+      "evidence_refs": [
+        "ocr:217",
+        "ocr:222",
+        "ocr:227",
+        "ocr:228",
+        "transcript:5",
+        "scene:58"
+      ],
+      "uncertainties": [
+        "Other OCR fragments do not establish complete legible text.",
+        "No frame establishes subjects or actions in this interval."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:2",
+      "chunk_id": "chunk:5",
+      "start_seconds": 123.292,
+      "end_seconds": 127.042,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "At frame:24, the garlanded man sits at the open rear of the white vehicle with his lower leg bandaged; the light-haired person is beside him, and another person is bent near the rear bumper."
+      ],
+      "visible_actions": [
+        "At frame:24, the light-haired person has a hand raised near the seated man."
+      ],
+      "visible_text": [
+        "The back of the light-haired person's shirt shows \u201cChoose\u201d and \u201cToday,\u201d with other lettering between them.",
+        "OCR reads \u201cChoose\u201d and \u201cToday\u201d near frame:24's timestamp."
+      ],
+      "spoken_content_summary": "No new spoken content is established; the long transcript segment contains \u201cBye.\u201d",
+      "changes_from_previous_chunk": "Frame:24 provides a wider view of the vehicle and shows another person near its bumper.",
+      "confidence": 0.87,
+      "evidence_refs": [
+        "scene:59",
+        "frame:24",
+        "ocr:232",
+        "ocr:233",
+        "transcript:5"
+      ],
+      "uncertainties": [
+        "The lettering between \u201cChoose\u201d and \u201cToday\u201d is not fully legible in the supplied still.",
+        "The still does not establish the intervening actions."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:3",
+      "chunk_id": "chunk:5",
+      "start_seconds": 127.042,
+      "end_seconds": 131.792,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "At frame:25, the garlanded man remains seated at the open rear of the white vehicle; the light-haired person is close beside him, and a child is visible at the lower right."
+      ],
+      "visible_actions": [
+        "At frame:25, the seated man and the light-haired person have their arms around each other."
+      ],
+      "visible_text": [
+        "\u201cVIDEOLEE\u201d appears near the top of frame:25; OCR also reads it in this interval."
+      ],
+      "spoken_content_summary": "The long transcript segment containing \u201cBye\u201d continues until 132.16 seconds, without a precise word time.",
+      "changes_from_previous_chunk": "Frame:25 shows the two people with their arms around each other rather than in the positions shown in frame:24.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "scene:60",
+        "frame:25",
+        "ocr:251",
+        "ocr:257",
+        "transcript:5"
+      ],
+      "uncertainties": [
+        "The still does not establish when they took this position or how long it lasted."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:4",
+      "chunk_id": "chunk:5",
+      "start_seconds": 132.0,
+      "end_seconds": 133.16,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR reads \u201cSo if you want to\u201d and then \u201chelp me wear love.\u201d"
+      ],
+      "spoken_content_summary": "A transcript segment says, \u201cHelp me wear love and spread love,\u201d beginning at 132.16 seconds.",
+      "changes_from_previous_chunk": "The supplied scene changes and the transcript begins a new spoken request; no frame is supplied for this short interval.",
+      "confidence": 0.86,
+      "evidence_refs": [
+        "scene:61",
+        "scene:62",
+        "transcript:6",
+        "ocr:259",
+        "ocr:260"
+      ],
+      "uncertainties": [
+        "The OCR includes \u201cSo if you want to,\u201d which is not in the corresponding transcript segment.",
+        "Subjects and actions in this interval are not established by a supplied frame."
+      ],
+      "timing_adjustment": {
+        "reason": "clamped_to_substantive_evidence_envelope",
+        "model_start_seconds": 131.792,
+        "model_end_seconds": 133.16
+      }
+    },
+    {
+      "ledger_id": "ledger:5:5",
+      "chunk_id": "chunk:5",
+      "start_seconds": 133.16,
+      "end_seconds": 136.16,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "OCR reads \u201cand spread love,\u201d followed by \u201cOne Purchase,\u201d \u201cfunds 20 meals to,\u201d and \u201cthose in need.\u201d"
+      ],
+      "spoken_content_summary": "The transcript says, \u201cOne purchase funds 20 meals to those in need.\u201d",
+      "changes_from_previous_chunk": "The spoken content changes from the request to a statement about a purchase funding meals.",
+      "confidence": 0.89,
+      "evidence_refs": [
+        "transcript:7",
+        "ocr:261",
+        "ocr:264",
+        "ocr:266",
+        "ocr:270",
+        "scene:62",
+        "scene:63",
+        "scene:64"
+      ],
+      "uncertainties": [
+        "Several nearby OCR readings are fragmentary or inconsistent.",
+        "No supplied frame in this interval establishes subjects or actions."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:6",
+      "chunk_id": "chunk:5",
+      "start_seconds": 136.16,
+      "end_seconds": 137.25,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "At frame:26, the light-haired person faces a group of children; a child in a checked shirt holds a food tray."
+      ],
+      "visible_actions": [
+        "At frame:26, the child holds the tray in front of them, and the light-haired person holds a hand near it."
+      ],
+      "visible_text": [
+        "A subtitle at frame:26 reads \u201cIf you want to\u201d; OCR reads the same phrase near this time."
+      ],
+      "spoken_content_summary": "The transcript begins, \u201cIf you want to join the movement, buy yours today.\u201d",
+      "changes_from_previous_chunk": "Frame:26 establishes a different setting with the light-haired person and several children.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "scene:65",
+        "frame:26",
+        "ocr:272",
+        "transcript:8"
+      ],
+      "uncertainties": [
+        "The still does not establish a transfer of the tray or who provided its contents."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:7",
+      "chunk_id": "chunk:5",
+      "start_seconds": 137.25,
+      "end_seconds": 138.5,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "At frames:27 and 28, the light-haired person sits outdoors in front of fabric-covered structures, with a small yellow-orange card or packet in hand."
+      ],
+      "visible_actions": [
+        "At frame:27, the person holds the card or packet up near their face.",
+        "At frame:28, the person holds it lower in front of their body."
+      ],
+      "visible_text": [
+        "A subtitle at frame:27 reads \u201cbuy yours today.\u201d; OCR reads the same phrase from 137.5 to 138.5 seconds."
+      ],
+      "spoken_content_summary": "The transcript completes, \u201cIf you want to join the movement, buy yours today,\u201d ending at 138.16 seconds.",
+      "changes_from_previous_chunk": "The supplied scene changes from the group around the food tray to the seated light-haired person.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "scene:66",
+        "frame:27",
+        "frame:28",
+        "ocr:273",
+        "ocr:274",
+        "transcript:8"
+      ],
+      "uncertainties": [
+        "The card or packet's printed text is not legible in the supplied frames.",
+        "The stills do not establish the movement between the two hand positions."
+      ],
+      "timing_adjustment": {
+        "reason": "clamped_to_substantive_evidence_envelope",
+        "model_start_seconds": 137.25,
+        "model_end_seconds": 138.537
+      }
+    }
+  ]
+}

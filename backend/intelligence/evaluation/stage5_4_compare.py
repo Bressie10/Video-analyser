@@ -96,6 +96,18 @@ def main() -> None:
         truth = json.loads((args.truth_dir / f"{ref}.json").read_text())
         results = {name: compact(candidate, compare(candidate, truth))
                    for name, candidate in candidates.items()}
+        for name, candidate in candidates.items():
+            results[name]["missed_reviewed_findings"] = [
+                truth["items"][index] for index in results[name]["missed_reviewed_indices"]]
+            results[name]["unsupported_by_provisional_truth"] = [
+                candidate["semantic_draft"]["findings"][index]
+                for index in results[name]["unsupported_finding_indices"]]
+            results[name]["incompatible_structure_overlap_count"] = len(
+                results[name]["contradictory_structure_pairs"])
+        results["stage5_4"]["synthesis_timing_adjustments"] = candidates["stage5_4"].get(
+            "synthesis_timing_adjustments", [])
+        results["stage5_4"]["ledger_timing_adjustment_count"] = sum(
+            "timing_adjustment" in row for row in candidates["stage5_4"]["evidence_ledger"])
         results["stage5_4"]["evidence_ledger_support_failures"] = ledger_failures(
             candidates["stage5_4"], json.loads((args.results / f"{ref}.json").read_text()))
         rows.append({"source_ref": ref, "truth_version": truth["truth_version"],

@@ -1,0 +1,742 @@
+{
+  "source_ref": "08",
+  "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a",
+  "validation_commit": "df46317aa3a184ce81941941ea76ed6d4ca6e274",
+  "model_passes": [
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:0",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0d75af1033d2eddd016acbf3d59f1087d2a9d07954342bde6d",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:1",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0c72c1239b3a98ed016acbf3e3a06087d2b3ff176770d7ea15",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:2",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0585bb9212498f6a016acbf3eb611087d2bd27f0262697773b",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "c217166ae5e67cd2aa375fa7800bc47d7399ee1a"
+    }
+  ],
+  "chunk_plan": [
+    {
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 8.8,
+      "frame_refs": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "frame:3",
+        "frame:4",
+        "frame:5",
+        "frame:6",
+        "frame:7"
+      ]
+    },
+    {
+      "chunk_id": "chunk:1",
+      "start_seconds": 8.8,
+      "end_seconds": 18.9,
+      "frame_refs": [
+        "frame:8",
+        "frame:9",
+        "frame:10"
+      ]
+    },
+    {
+      "chunk_id": "chunk:2",
+      "start_seconds": 18.9,
+      "end_seconds": 27.469,
+      "frame_refs": [
+        "frame:11",
+        "frame:12",
+        "frame:13",
+        "frame:14",
+        "frame:15"
+      ]
+    }
+  ],
+  "evidence_ledger": [
+    {
+      "ledger_id": "ledger:0:0",
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 1.1,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "Yellow handheld object",
+        "Small yellow dabs on the person's face"
+      ],
+      "visible_actions": [
+        "At 0.1 seconds, the person holds the yellow object against their chin.",
+        "At 0.533 seconds, the person holds a yellow tube close to the camera."
+      ],
+      "visible_text": [
+        "Tap to take the quiz and get a guide",
+        "medicube",
+        "100"
+      ],
+      "spoken_content_summary": "A sustained 'hmm' sound is transcribed from 0 to 2 seconds.",
+      "changes_from_previous_chunk": "No previous chunk supplied.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:0",
+        "frame:1",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3",
+        "ocr:4",
+        "scene:0"
+      ],
+      "uncertainties": [
+        "The stills do not establish how the facial dabs were applied."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:1",
+      "chunk_id": "chunk:0",
+      "start_seconds": 1.1,
+      "end_seconds": 2.1,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "Inverted yellow tube",
+        "Blue handheld tool",
+        "Yellow substance"
+      ],
+      "visible_actions": [
+        "At 1.5 seconds, the person holds the inverted tube above the blue tool; a strand of yellow substance is visible between them."
+      ],
+      "visible_text": [
+        "Tap to take the quiz and get a guide"
+      ],
+      "spoken_content_summary": "The sustained 'hmm' sound continues in the transcript through 2 seconds.",
+      "changes_from_previous_chunk": "Not applicable; the tube and blue tool are visible together.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:2",
+        "transcript:0",
+        "ocr:1",
+        "ocr:5",
+        "scene:1"
+      ],
+      "uncertainties": [
+        "The still does not establish whether the substance is moving."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:2",
+      "chunk_id": "chunk:0",
+      "start_seconds": 2.1,
+      "end_seconds": 2.667,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "White covering on the person's face",
+        "Blue handheld tool"
+      ],
+      "visible_actions": [
+        "At 2.367 seconds, the person holds the blue tool next to their chin."
+      ],
+      "visible_text": [
+        "Tap to take the quiz and get a guide"
+      ],
+      "spoken_content_summary": "No transcribed speech in this interval.",
+      "changes_from_previous_chunk": "The face now has a broad white covering rather than small yellow dabs.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:3",
+        "ocr:1",
+        "ocr:5",
+        "scene:2"
+      ],
+      "uncertainties": [
+        "Application of the white covering between stills is not shown."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:3",
+      "chunk_id": "chunk:0",
+      "start_seconds": 2.667,
+      "end_seconds": 3.733,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "White covering on the person's face",
+        "Blue handheld tool"
+      ],
+      "visible_actions": [
+        "At 3.0 seconds, the person holds the blue tool near their forehead."
+      ],
+      "visible_text": [
+        "Tap to take the quiz and get a guide"
+      ],
+      "spoken_content_summary": "No transcribed speech in this interval.",
+      "changes_from_previous_chunk": "The tool is pictured near the forehead instead of the chin.",
+      "confidence": 0.92,
+      "evidence_refs": [
+        "frame:4",
+        "ocr:1",
+        "ocr:5",
+        "scene:3"
+      ],
+      "uncertainties": [
+        "Movement of the tool between stills is not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:4",
+      "chunk_id": "chunk:0",
+      "start_seconds": 3.733,
+      "end_seconds": 4.4,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "Tap to take the quiz",
+        "and get a guide"
+      ],
+      "spoken_content_summary": "No transcribed speech in this interval.",
+      "changes_from_previous_chunk": "No frame is supplied for this scene interval.",
+      "confidence": 0.5,
+      "evidence_refs": [
+        "scene:4",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "uncertainties": [
+        "The scene reference indicates a boundary, but no supplied frame shows its contents."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:5",
+      "chunk_id": "chunk:0",
+      "start_seconds": 4.4,
+      "end_seconds": 4.933,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "Yellow bottle with pointed nozzle",
+        "Clear-looking liquid on the person's cheek"
+      ],
+      "visible_actions": [
+        "At 4.667 seconds, the person holds the bottle nozzle beside their cheek."
+      ],
+      "visible_text": [
+        "Tap to take the quiz and get a guide",
+        "medicube"
+      ],
+      "spoken_content_summary": "No transcribed speech in this interval.",
+      "changes_from_previous_chunk": "A bottle and liquid on the cheek are now visible; the broad white facial covering is no longer visible.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:5",
+        "ocr:1",
+        "ocr:5",
+        "ocr:8",
+        "scene:5"
+      ],
+      "uncertainties": [
+        "The still does not establish whether liquid is flowing from the nozzle."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:6",
+      "chunk_id": "chunk:0",
+      "start_seconds": 4.933,
+      "end_seconds": 5.867,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "Yellow bottle with pointed nozzle",
+        "Small amount of liquid on the person's forehead"
+      ],
+      "visible_actions": [
+        "At 5.4 seconds, the person holds the bottle nozzle above their forehead."
+      ],
+      "visible_text": [
+        "Tap to take the quiz and get a guide"
+      ],
+      "spoken_content_summary": "No transcribed speech in this interval.",
+      "changes_from_previous_chunk": "The bottle nozzle is pictured above the forehead rather than beside the cheek.",
+      "confidence": 0.92,
+      "evidence_refs": [
+        "frame:6",
+        "ocr:1",
+        "ocr:5",
+        "scene:6"
+      ],
+      "uncertainties": [
+        "The still does not establish liquid movement."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:7",
+      "chunk_id": "chunk:0",
+      "start_seconds": 5.867,
+      "end_seconds": 6.533,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "Tap to take the quiz",
+        "and get a guide"
+      ],
+      "spoken_content_summary": "No transcribed speech in this interval.",
+      "changes_from_previous_chunk": "No frame is supplied for this scene interval.",
+      "confidence": 0.5,
+      "evidence_refs": [
+        "scene:7",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "uncertainties": [
+        "The scene reference indicates a boundary, but no supplied frame shows its contents."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:8",
+      "chunk_id": "chunk:0",
+      "start_seconds": 6.533,
+      "end_seconds": 7.9,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "Yellow tube with a pale blue end"
+      ],
+      "visible_actions": [
+        "At 6.867 seconds, the person holds the tube toward the camera."
+      ],
+      "visible_text": [
+        "Tap to take the quiz and get a guide"
+      ],
+      "spoken_content_summary": "No transcribed speech in this interval.",
+      "changes_from_previous_chunk": "A yellow tube with a pale blue end is visible instead of the pointed-nozzle bottle.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "frame:7",
+        "ocr:1",
+        "ocr:5",
+        "scene:8"
+      ],
+      "uncertainties": [
+        "No later frame establishes what happens after the tube is held up."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:9",
+      "chunk_id": "chunk:0",
+      "start_seconds": 7.9,
+      "end_seconds": 8.8,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "Tap to take the quiz",
+        "and get a guide"
+      ],
+      "spoken_content_summary": "No transcribed speech in this interval.",
+      "changes_from_previous_chunk": "No frame is supplied for this scene interval.",
+      "confidence": 0.5,
+      "evidence_refs": [
+        "scene:9",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "uncertainties": [
+        "The scene reference indicates a boundary, but no supplied frame shows its contents."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:0",
+      "chunk_id": "chunk:1",
+      "start_seconds": 8.8,
+      "end_seconds": 9.533,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "Yellow bottle",
+        "Red fingernails"
+      ],
+      "visible_actions": [
+        "At 9.167 seconds, the person holds the bottle and grips its top."
+      ],
+      "visible_text": [
+        "Tap to take the quiz and get a guide",
+        "medicube*"
+      ],
+      "spoken_content_summary": "No transcript supplied for this chunk.",
+      "changes_from_previous_chunk": "A yellow bottle is visible instead of the previously pictured tube.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:8",
+        "scene:10",
+        "ocr:1",
+        "ocr:5",
+        "ocr:9"
+      ],
+      "uncertainties": [
+        "The still does not establish whether the bottle top is being turned."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:1",
+      "chunk_id": "chunk:1",
+      "start_seconds": 9.533,
+      "end_seconds": 10.6,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "Yellow vertical streak on the forehead",
+        "Hands with red fingernails"
+      ],
+      "visible_actions": [
+        "At 10.067 seconds, the person has both hands against their cheeks."
+      ],
+      "visible_text": [
+        "Tap to take the quiz and get a guide",
+        "medicube"
+      ],
+      "spoken_content_summary": "No transcript supplied for this chunk.",
+      "changes_from_previous_chunk": "The bottle is no longer visible; a yellow streak is visible on the forehead.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:9",
+        "scene:11",
+        "ocr:1",
+        "ocr:5",
+        "ocr:10"
+      ],
+      "uncertainties": [
+        "The still does not show how the forehead streak appeared or establish hand movement."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:2",
+      "chunk_id": "chunk:1",
+      "start_seconds": 10.6,
+      "end_seconds": 13.233,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "Tap to take the quiz",
+        "and get a guide",
+        "nedlcube*",
+        "medlcube"
+      ],
+      "spoken_content_summary": "No transcript supplied for this chunk.",
+      "changes_from_previous_chunk": "No frames are supplied for these scene intervals; additional product-name-like OCR detections occur at 12.0\u201313.0 seconds.",
+      "confidence": 0.55,
+      "evidence_refs": [
+        "scene:12",
+        "scene:13",
+        "scene:14",
+        "scene:15",
+        "ocr:1",
+        "ocr:5",
+        "ocr:11",
+        "ocr:12"
+      ],
+      "uncertainties": [
+        "The OCR spellings differ, and no supplied frame shows the content of these intervals."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:3",
+      "chunk_id": "chunk:1",
+      "start_seconds": 13.233,
+      "end_seconds": 13.933,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "Yellow handheld device with a round metallic-looking head",
+        "Small yellow dabs on the person's face"
+      ],
+      "visible_actions": [
+        "At 13.733 seconds, the person holds the device toward the camera and has a finger beside it."
+      ],
+      "visible_text": [
+        "Tap to take the quiz and get a guide"
+      ],
+      "spoken_content_summary": "No transcript supplied for this chunk.",
+      "changes_from_previous_chunk": "A yellow handheld device and facial dabs are visible in the next supplied frame.",
+      "confidence": 0.92,
+      "evidence_refs": [
+        "frame:10",
+        "scene:16",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "uncertainties": [
+        "The still does not establish how the facial dabs appeared or whether the device is in use."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:4",
+      "chunk_id": "chunk:1",
+      "start_seconds": 13.933,
+      "end_seconds": 18.9,
+      "boundary_reason": "uncertain",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "Tap to take the quiz",
+        "and get a guide"
+      ],
+      "spoken_content_summary": "No transcript supplied for this chunk.",
+      "changes_from_previous_chunk": "No frames are supplied after 13.733 seconds within this chunk.",
+      "confidence": 0.52,
+      "evidence_refs": [
+        "scene:17",
+        "scene:18",
+        "scene:19",
+        "scene:20",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "uncertainties": [
+        "Scene references mark intervals, but their visible contents and any actions are not established by supplied frames."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:0",
+      "chunk_id": "chunk:2",
+      "start_seconds": 18.9,
+      "end_seconds": 20.467,
+      "boundary_reason": "uncertain",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "Tap to take the quiz",
+        "and get a guide"
+      ],
+      "spoken_content_summary": "No transcript supplied.",
+      "changes_from_previous_chunk": "No frame is supplied for this scene interval.",
+      "confidence": 0.5,
+      "evidence_refs": [
+        "scene:21",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "uncertainties": [
+        "The scene's visible contents are not established by a supplied frame."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:1",
+      "chunk_id": "chunk:2",
+      "start_seconds": 20.467,
+      "end_seconds": 21.7,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person in a dark robe",
+        "Clear dropper containing yellow liquid",
+        "Small bottle containing yellow liquid",
+        "Hands with red fingernails"
+      ],
+      "visible_actions": [
+        "At 20.6 seconds, the person holds the dropper above the bottle while holding the bottle near the camera."
+      ],
+      "visible_text": [
+        "Tap to take the quiz",
+        "and get a guide"
+      ],
+      "spoken_content_summary": "No transcript supplied.",
+      "changes_from_previous_chunk": "A person holding a dropper and bottle is visible in the supplied frame; the preceding interval has no supplied frame.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "scene:22",
+        "frame:11",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "uncertainties": [
+        "The still does not establish whether liquid is being dispensed."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:2",
+      "chunk_id": "chunk:2",
+      "start_seconds": 21.7,
+      "end_seconds": 23.233,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "Tap to take the quiz",
+        "and get a guide"
+      ],
+      "spoken_content_summary": "No transcript supplied.",
+      "changes_from_previous_chunk": "No frame is supplied for this scene interval.",
+      "confidence": 0.5,
+      "evidence_refs": [
+        "scene:23",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "uncertainties": [
+        "The scene's visible contents and any actions are not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:3",
+      "chunk_id": "chunk:2",
+      "start_seconds": 23.5,
+      "end_seconds": 24.5,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [
+        "White screen",
+        "Centered text",
+        "Blue rounded bar"
+      ],
+      "visible_actions": [],
+      "visible_text": [
+        "Your Personal",
+        "Plan is Ready!",
+        "100%"
+      ],
+      "spoken_content_summary": "No transcript supplied.",
+      "changes_from_previous_chunk": "At 23.6 seconds, the supplied frame shows a white screen with centered text and a blue bar instead of the earlier text detected by OCR.",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "scene:24",
+        "frame:12",
+        "ocr:13",
+        "ocr:14",
+        "ocr:15",
+        "ocr:16"
+      ],
+      "uncertainties": [
+        "OCR reads \u201c1009\u201d for part of this interval, while the supplied frame visibly reads \u201c100%\u201d.",
+        "The exact transition time from the preceding scene is not shown by a frame."
+      ],
+      "timing_adjustment": {
+        "reason": "clamped_to_substantive_evidence_envelope",
+        "model_start_seconds": 23.233,
+        "model_end_seconds": 24.5
+      }
+    },
+    {
+      "ledger_id": "ledger:2:4",
+      "chunk_id": "chunk:2",
+      "start_seconds": 24.5,
+      "end_seconds": 25.467,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [
+        "White screen",
+        "Centered text",
+        "Blue rounded button"
+      ],
+      "visible_actions": [],
+      "visible_text": [
+        "Your Personal",
+        "Plan is Ready!",
+        "Take the quiz"
+      ],
+      "spoken_content_summary": "No transcript supplied.",
+      "changes_from_previous_chunk": "OCR detects \u201cTake the quiz\u201d in place of the percentage shown in the preceding frame.",
+      "confidence": 0.83,
+      "evidence_refs": [
+        "ocr:13",
+        "ocr:15",
+        "ocr:17"
+      ],
+      "uncertainties": [
+        "No supplied frame falls within this shorter interval; the text change is supported by OCR."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:5",
+      "chunk_id": "chunk:2",
+      "start_seconds": 25.467,
+      "end_seconds": 26.1,
+      "boundary_reason": "visual_change",
+      "visible_subjects_objects": [
+        "White screen",
+        "Centered text",
+        "Blue rounded button",
+        "Hand with an extended index finger"
+      ],
+      "visible_actions": [
+        "At 25.467 seconds, a fingertip rests on or immediately in front of the button.",
+        "At 26.1 seconds, an extended finger is visible below the button."
+      ],
+      "visible_text": [
+        "Your Personal",
+        "Plan is Ready!",
+        "Take the quiz"
+      ],
+      "spoken_content_summary": "No transcript supplied.",
+      "changes_from_previous_chunk": "A hand appears in front of the button in the supplied frames.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "frame:13",
+        "frame:14",
+        "ocr:13",
+        "ocr:15",
+        "ocr:18",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:22"
+      ],
+      "uncertainties": [
+        "The sparse stills do not establish a completed button press.",
+        "OCR produces fragmented readings near 25\u201326 seconds; the frames show the complete button text."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:6",
+      "chunk_id": "chunk:2",
+      "start_seconds": 26.1,
+      "end_seconds": 27.467,
+      "boundary_reason": "visual_change",
+      "visible_subjects_objects": [
+        "White screen",
+        "Centered text",
+        "Blue rounded button"
+      ],
+      "visible_actions": [],
+      "visible_text": [
+        "Your Personal",
+        "Plan is Ready!",
+        "Take the quiz"
+      ],
+      "spoken_content_summary": "No transcript supplied.",
+      "changes_from_previous_chunk": "The hand visible at 26.1 seconds is absent from the supplied frame at 27.367 seconds.",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "frame:15",
+        "ocr:13",
+        "ocr:15",
+        "ocr:22"
+      ],
+      "uncertainties": [
+        "The exact time when the hand left the frame is not established."
+      ],
+      "timing_adjustment": {
+        "reason": "clamped_to_substantive_evidence_envelope",
+        "model_start_seconds": 26.1,
+        "model_end_seconds": 27.469
+      }
+    }
+  ]
+}
