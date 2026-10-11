@@ -1,0 +1,1053 @@
+{
+  "source_ref": "01",
+  "candidate_analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71",
+  "truth_version": "stage5.1-provisional-1",
+  "reviewer_provenance": {
+    "reviewer_type": "AI-assisted visual reviewer (Codex)",
+    "reviewed_at": "2026-10-11T11:27:07.902770+00:00",
+    "saw_model_output_before_annotation": true,
+    "blind": false,
+    "independent_human_review": false,
+    "source_audio_reviewed": false,
+    "review_method": "Decoded timestamped frames across the full runtime at 1.0s spacing (1.5s for 04), plus supplied OCR/transcript; no continuous audio playback. Interval bounds are approximate.",
+    "adjudication_notes": [
+      "Caption span is supported across the sampled runtime, but brief gaps cannot be ruled out; text coverage is partial.",
+      "Both B-roll intervals have supporting product cutaways; precise edit onset/end is approximate and other edits are unreviewed.",
+      "Proof is an interpretation of a speaker claim, not independent verification of compliments."
+    ]
+  },
+  "coverage": {
+    "hook": "complete",
+    "format": "complete",
+    "editing": "partial",
+    "text": "partial",
+    "cta": "complete",
+    "visual": "partial",
+    "audio": "unavailable"
+  },
+  "structure_coverage": "partial",
+  "label": {
+    "tp": 3,
+    "fp": 2,
+    "fn": 1,
+    "precision": 0.6,
+    "recall": 0.75,
+    "f1": 0.6666666666666665,
+    "matched_pairs": [
+      [
+        0,
+        0
+      ],
+      [
+        16,
+        7
+      ],
+      [
+        17,
+        1
+      ]
+    ],
+    "unsupported_prediction_indices": [
+      1,
+      15
+    ],
+    "missed_reviewed_indices": [
+      2
+    ],
+    "abstained_uncertain_prediction_indices": [
+      14
+    ],
+    "scored_prediction_count": 5,
+    "scored_truth_count": 4
+  },
+  "interval_matching": {
+    "0.25": {
+      "tp": 1,
+      "fp": 4,
+      "fn": 3,
+      "precision": 0.2,
+      "recall": 0.25,
+      "f1": 0.22222222222222224,
+      "matched_pairs": [
+        [
+          17,
+          1
+        ]
+      ],
+      "unsupported_prediction_indices": [
+        0,
+        1,
+        15,
+        16
+      ],
+      "missed_reviewed_indices": [
+        0,
+        2,
+        7
+      ],
+      "abstained_uncertain_prediction_indices": [
+        14
+      ],
+      "scored_prediction_count": 5,
+      "scored_truth_count": 4
+    },
+    "0.5": {
+      "tp": 3,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.6,
+      "recall": 0.75,
+      "f1": 0.6666666666666665,
+      "matched_pairs": [
+        [
+          0,
+          0
+        ],
+        [
+          16,
+          7
+        ],
+        [
+          17,
+          1
+        ]
+      ],
+      "unsupported_prediction_indices": [
+        1,
+        15
+      ],
+      "missed_reviewed_indices": [
+        2
+      ],
+      "abstained_uncertain_prediction_indices": [
+        14
+      ],
+      "scored_prediction_count": 5,
+      "scored_truth_count": 4
+    },
+    "1.0": {
+      "tp": 3,
+      "fp": 2,
+      "fn": 1,
+      "precision": 0.6,
+      "recall": 0.75,
+      "f1": 0.6666666666666665,
+      "matched_pairs": [
+        [
+          0,
+          0
+        ],
+        [
+          16,
+          7
+        ],
+        [
+          17,
+          1
+        ]
+      ],
+      "unsupported_prediction_indices": [
+        1,
+        15
+      ],
+      "missed_reviewed_indices": [
+        2
+      ],
+      "abstained_uncertain_prediction_indices": [
+        14
+      ],
+      "scored_prediction_count": 5,
+      "scored_truth_count": 4
+    }
+  },
+  "structure_role_agreement": null,
+  "flags": {
+    "duplicate_prediction_pairs": [],
+    "cta_same_event_pairs": [
+      [
+        14,
+        16
+      ]
+    ],
+    "contradictory_structure_pairs": [],
+    "duplicate_prediction_count": 0,
+    "contradictory_prediction_count": 0
+  },
+  "evidence_interval_audit": [
+    {
+      "kind": "finding",
+      "index": 0,
+      "interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 1,
+      "interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 2,
+      "interval_support": [
+        "transcript:0",
+        "frame:3",
+        "frame:4",
+        "transcript:1",
+        "ocr:8",
+        "ocr:9",
+        "ocr:15",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:23",
+        "transcript:2",
+        "ocr:26"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "transcript:0",
+        "frame:3",
+        "frame:4",
+        "transcript:1",
+        "ocr:8",
+        "ocr:9",
+        "ocr:15",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:23",
+        "transcript:2",
+        "ocr:26"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 3,
+      "interval_support": [
+        "frame:7",
+        "transcript:4",
+        "ocr:42",
+        "ocr:43",
+        "frame:8",
+        "frame:9",
+        "transcript:5",
+        "ocr:53",
+        "ocr:54",
+        "ocr:56",
+        "ocr:57",
+        "ocr:59",
+        "transcript:6",
+        "ocr:62"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:7",
+        "transcript:4",
+        "ocr:42",
+        "ocr:43",
+        "frame:8",
+        "frame:9",
+        "transcript:5",
+        "ocr:53",
+        "ocr:54",
+        "ocr:56",
+        "ocr:57",
+        "ocr:59",
+        "transcript:6",
+        "ocr:62"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 4,
+      "interval_support": [
+        "frame:12",
+        "transcript:9",
+        "ocr:81",
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162",
+        "ocr:173"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:12",
+        "transcript:9",
+        "ocr:81",
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162",
+        "ocr:173"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 5,
+      "interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3",
+        "frame:3",
+        "frame:4",
+        "transcript:1",
+        "ocr:8",
+        "ocr:9",
+        "ocr:15",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:23",
+        "frame:5",
+        "frame:6",
+        "transcript:2",
+        "ocr:26",
+        "ocr:27",
+        "ocr:28",
+        "ocr:29",
+        "transcript:3",
+        "ocr:30",
+        "ocr:31",
+        "ocr:33",
+        "frame:7",
+        "transcript:4",
+        "ocr:42",
+        "ocr:43",
+        "frame:8",
+        "frame:9",
+        "transcript:5",
+        "ocr:53",
+        "ocr:54",
+        "ocr:56",
+        "ocr:57",
+        "ocr:59",
+        "frame:10",
+        "transcript:6",
+        "transcript:7",
+        "ocr:62",
+        "ocr:64",
+        "ocr:67",
+        "ocr:69",
+        "ocr:70",
+        "ocr:72",
+        "ocr:74",
+        "frame:11",
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:76",
+        "ocr:81",
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162",
+        "frame:14",
+        "frame:15",
+        "ocr:173"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3",
+        "frame:3",
+        "frame:4",
+        "transcript:1",
+        "ocr:8",
+        "ocr:9",
+        "ocr:15",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:23",
+        "frame:5",
+        "frame:6",
+        "transcript:2",
+        "ocr:26",
+        "ocr:27",
+        "ocr:28",
+        "ocr:29",
+        "transcript:3",
+        "ocr:30",
+        "ocr:31",
+        "ocr:33",
+        "frame:7",
+        "transcript:4",
+        "ocr:42",
+        "ocr:43",
+        "frame:8",
+        "frame:9",
+        "transcript:5",
+        "ocr:53",
+        "ocr:54",
+        "ocr:56",
+        "ocr:57",
+        "ocr:59",
+        "frame:10",
+        "transcript:6",
+        "transcript:7",
+        "ocr:62",
+        "ocr:64",
+        "ocr:67",
+        "ocr:69",
+        "ocr:70",
+        "ocr:72",
+        "ocr:74",
+        "frame:11",
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:76",
+        "ocr:81",
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162",
+        "frame:14",
+        "frame:15",
+        "ocr:173"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 6,
+      "interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 7,
+      "interval_support": [
+        "frame:5",
+        "frame:6",
+        "transcript:2",
+        "ocr:26",
+        "ocr:27",
+        "ocr:28",
+        "ocr:29"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:5",
+        "frame:6",
+        "transcript:2",
+        "ocr:26",
+        "ocr:27",
+        "ocr:28",
+        "ocr:29"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 8,
+      "interval_support": [
+        "frame:11",
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:76",
+        "ocr:81"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:11",
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:76",
+        "ocr:81"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 9,
+      "interval_support": [
+        "frame:3",
+        "frame:4",
+        "transcript:1",
+        "ocr:8",
+        "ocr:9",
+        "ocr:15",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:23"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:3",
+        "frame:4",
+        "transcript:1",
+        "ocr:8",
+        "ocr:9",
+        "ocr:15",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:23"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 10,
+      "interval_support": [
+        "frame:8",
+        "frame:9",
+        "transcript:5",
+        "ocr:53",
+        "ocr:54",
+        "ocr:56",
+        "ocr:57",
+        "ocr:59"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:8",
+        "frame:9",
+        "transcript:5",
+        "ocr:53",
+        "ocr:54",
+        "ocr:56",
+        "ocr:57",
+        "ocr:59"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 11,
+      "interval_support": [
+        "frame:13",
+        "transcript:9",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:13",
+        "transcript:9",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 12,
+      "interval_support": [
+        "frame:3",
+        "frame:4",
+        "transcript:1",
+        "ocr:8",
+        "ocr:9",
+        "ocr:15",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:23"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:3",
+        "frame:4",
+        "transcript:1",
+        "ocr:8",
+        "ocr:9",
+        "ocr:15",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:23"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 13,
+      "interval_support": [
+        "frame:13",
+        "transcript:9",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:13",
+        "transcript:9",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 14,
+      "interval_support": [
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:81",
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162",
+        "frame:14",
+        "frame:15",
+        "ocr:173"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:81",
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162",
+        "frame:14",
+        "frame:15",
+        "ocr:173"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 15,
+      "interval_support": [
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 16,
+      "interval_support": [
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:81",
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162",
+        "frame:14",
+        "frame:15",
+        "ocr:173"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:81",
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162",
+        "frame:14",
+        "frame:15",
+        "ocr:173"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 17,
+      "interval_support": [
+        "frame:0",
+        "transcript:0",
+        "ocr:0",
+        "scene:0"
+      ],
+      "context_support": [
+        "frame:1",
+        "frame:2",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3",
+        "frame:5",
+        "frame:6",
+        "transcript:2",
+        "ocr:26",
+        "ocr:27",
+        "ocr:28",
+        "ocr:29",
+        "scene:2",
+        "frame:10",
+        "transcript:6",
+        "transcript:7",
+        "ocr:62",
+        "ocr:64",
+        "ocr:67",
+        "ocr:69",
+        "scene:5",
+        "frame:11",
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:76",
+        "ocr:81",
+        "scene:6",
+        "frame:14",
+        "frame:15",
+        "transcript:10",
+        "ocr:173",
+        "scene:8"
+      ],
+      "substantive_interval_support": [
+        "frame:0",
+        "transcript:0",
+        "ocr:0"
+      ],
+      "required": false,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 0,
+      "interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "transcript:0",
+        "ocr:0",
+        "ocr:1",
+        "ocr:2",
+        "ocr:3"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 1,
+      "interval_support": [
+        "frame:3",
+        "frame:4",
+        "transcript:1",
+        "ocr:8",
+        "ocr:9",
+        "ocr:15",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:23"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:3",
+        "frame:4",
+        "transcript:1",
+        "ocr:8",
+        "ocr:9",
+        "ocr:15",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:23"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 2,
+      "interval_support": [
+        "frame:5",
+        "frame:6",
+        "transcript:2",
+        "ocr:26",
+        "ocr:27",
+        "ocr:28",
+        "ocr:29"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:5",
+        "frame:6",
+        "transcript:2",
+        "ocr:26",
+        "ocr:27",
+        "ocr:28",
+        "ocr:29"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 3,
+      "interval_support": [
+        "transcript:3",
+        "ocr:30",
+        "ocr:31",
+        "ocr:33"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "transcript:3",
+        "ocr:30",
+        "ocr:31",
+        "ocr:33"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 4,
+      "interval_support": [
+        "frame:7",
+        "transcript:4",
+        "ocr:42",
+        "ocr:43",
+        "frame:8",
+        "frame:9",
+        "transcript:5",
+        "ocr:53",
+        "ocr:54",
+        "ocr:56",
+        "ocr:57",
+        "ocr:59",
+        "frame:10",
+        "transcript:6",
+        "transcript:7",
+        "ocr:62",
+        "ocr:64",
+        "ocr:67",
+        "ocr:69",
+        "ocr:70",
+        "ocr:72",
+        "ocr:74"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:7",
+        "transcript:4",
+        "ocr:42",
+        "ocr:43",
+        "frame:8",
+        "frame:9",
+        "transcript:5",
+        "ocr:53",
+        "ocr:54",
+        "ocr:56",
+        "ocr:57",
+        "ocr:59",
+        "frame:10",
+        "transcript:6",
+        "transcript:7",
+        "ocr:62",
+        "ocr:64",
+        "ocr:67",
+        "ocr:69",
+        "ocr:70",
+        "ocr:72",
+        "ocr:74"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 5,
+      "interval_support": [
+        "frame:11",
+        "transcript:8",
+        "transcript:9",
+        "ocr:76",
+        "ocr:81"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:11",
+        "transcript:8",
+        "transcript:9",
+        "ocr:76",
+        "ocr:81"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 6,
+      "interval_support": [
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:81",
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162",
+        "frame:14",
+        "frame:15",
+        "ocr:173"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:12",
+        "transcript:8",
+        "transcript:9",
+        "ocr:81",
+        "frame:13",
+        "transcript:10",
+        "ocr:89",
+        "ocr:92",
+        "ocr:162",
+        "frame:14",
+        "frame:15",
+        "ocr:173"
+      ],
+      "required": true,
+      "passes": true
+    }
+  ],
+  "structure_covered_runtime_fraction": 0.989547,
+  "evidence_without_interval_support_count": 0,
+  "unsupported_finding_count": 2,
+  "unsupported_finding_indices": [
+    1,
+    15
+  ],
+  "missed_reviewed_finding_count": 1,
+  "unscored_category_prediction_count": 12
+}

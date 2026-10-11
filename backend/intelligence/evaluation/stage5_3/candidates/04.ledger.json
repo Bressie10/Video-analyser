@@ -1,0 +1,754 @@
+{
+  "source_ref": "04",
+  "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021",
+  "validation_commit": "9b6efdc7f186e8d388a92ab9a5a581b992aa9388",
+  "model_passes": [
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:0",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_070f5dde486d7d33016acb789070a087d28c748bc8a727876e",
+      "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+      "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:1",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0a5575a1e5392162016acb7899baf887d2b1465c8fe3f8d4e4",
+      "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+      "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:2",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_07d16c8acb973211016acb78a0ced487d2a77c82649a8558f2",
+      "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+      "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:3",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0097caff36ea4855016acb78a8241087d28ba8665f85d4d7cc",
+      "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+      "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:4",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0fb50cc2303c6bbe016acb78ae40c887d2b940b48697bd79c5",
+      "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+      "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:5",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_09d52037da64e660016acb78b50a8487d2b251bf1c982f515e",
+      "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+      "analyzer_commit": "fc16490b773d3dec27456fd0c02b04e932af9021"
+    }
+  ],
+  "chunk_plan": [
+    {
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 23.583,
+      "frame_refs": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "frame:3",
+        "frame:4",
+        "frame:5",
+        "frame:6",
+        "frame:7",
+        "frame:8",
+        "frame:9"
+      ]
+    },
+    {
+      "chunk_id": "chunk:1",
+      "start_seconds": 23.583,
+      "end_seconds": 45.458,
+      "frame_refs": [
+        "frame:10",
+        "frame:11",
+        "frame:12"
+      ]
+    },
+    {
+      "chunk_id": "chunk:2",
+      "start_seconds": 45.458,
+      "end_seconds": 68.708,
+      "frame_refs": [
+        "frame:13",
+        "frame:14",
+        "frame:15"
+      ]
+    },
+    {
+      "chunk_id": "chunk:3",
+      "start_seconds": 68.708,
+      "end_seconds": 91.875,
+      "frame_refs": [
+        "frame:16",
+        "frame:17",
+        "frame:18"
+      ]
+    },
+    {
+      "chunk_id": "chunk:4",
+      "start_seconds": 91.875,
+      "end_seconds": 115.5,
+      "frame_refs": [
+        "frame:19",
+        "frame:20",
+        "frame:21"
+      ]
+    },
+    {
+      "chunk_id": "chunk:5",
+      "start_seconds": 115.5,
+      "end_seconds": 138.537,
+      "frame_refs": [
+        "frame:22",
+        "frame:23",
+        "frame:24",
+        "frame:25",
+        "frame:26",
+        "frame:27",
+        "frame:28"
+      ]
+    }
+  ],
+  "evidence_ledger": [
+    {
+      "ledger_id": "ledger:0:0",
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 3.0,
+      "visible_subjects_objects": [
+        "A person with gray hair and a beard sits near the curb beside a poster-covered wall.",
+        "A blond person in a white shirt and red shorts appears on the road, closer to the camera.",
+        "Trees overhang the road."
+      ],
+      "visible_actions": [
+        "The seated person has their hands raised in frame:2.",
+        "The blond person is closer to the seated person in successive stills."
+      ],
+      "visible_text": [
+        "A bottom caption reads \u201cPOV: Beautiful Transformation incoming \u2764\ufe0f.\u201d",
+        "The white shirt appears to read \u201cChoose Today\u201d on the back.",
+        "A yellow \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "No speech is supplied for this interval.",
+      "changes_from_previous_chunk": "No previous chunk supplied.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "ocr:2",
+        "ocr:3",
+        "ocr:4",
+        "ocr:5"
+      ],
+      "uncertainties": [
+        "The stills do not establish what happened between the sampled positions."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:1",
+      "chunk_id": "chunk:0",
+      "start_seconds": 3.0,
+      "end_seconds": 11.208,
+      "visible_subjects_objects": [
+        "The same two people are beside the road and wall.",
+        "A blue patterned mat is visible on the pavement by frame:5."
+      ],
+      "visible_actions": [
+        "In frames:3 and :4, the blond person supports the gray-haired person off the ground.",
+        "In frame:5, the gray-haired person has one hand on the mat while the blond person supports them."
+      ],
+      "visible_text": [
+        "A wall poster in frame:5 reads \u201cELARA IVF.\u201d",
+        "The yellow \u201cVIDEOLEE\u201d mark remains near the top."
+      ],
+      "spoken_content_summary": "No speech is supplied for this interval.",
+      "changes_from_previous_chunk": "The gray-haired person is no longer shown seated at the curb; a blue patterned mat is now visible.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:3",
+        "frame:4",
+        "frame:5",
+        "ocr:26",
+        "ocr:27"
+      ],
+      "uncertainties": [
+        "The placement of the mat and the intervening movements are not shown continuously."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:2",
+      "chunk_id": "chunk:0",
+      "start_seconds": 11.208,
+      "end_seconds": 17.542,
+      "visible_subjects_objects": [
+        "The gray-haired person sits on the blue patterned mat in dark shorts; one leg ends above the foot, with a light-colored covering visible at its end.",
+        "The blond person stands nearby holding a red shirt.",
+        "A dark handheld grooming device is visible beside the seated person's hair in frame:7."
+      ],
+      "visible_actions": [
+        "The gray-haired person is shirtless in frame:6, and the blond person holds the red shirt above them.",
+        "In frame:7, the blond person holds the grooming device against the seated person's hair."
+      ],
+      "visible_text": [
+        "A yellow \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "The supplied transcript records \u201cGood job\u201d at 15.98\u201316.98 seconds and again beginning at 16.98 seconds; the speaker is not established.",
+      "changes_from_previous_chunk": "The gray-haired person is shown seated on the mat without the red shirt; the grooming device is visible by frame:7.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:5",
+        "frame:6",
+        "frame:7",
+        "transcript:0",
+        "transcript:1"
+      ],
+      "uncertainties": [
+        "The transcript's second span continues beyond this chunk; no additional words from it are supplied.",
+        "The stills do not show the complete shirt removal or grooming process."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:3",
+      "chunk_id": "chunk:0",
+      "start_seconds": 17.542,
+      "end_seconds": 23.583,
+      "visible_subjects_objects": [
+        "The shirtless, gray-bearded person remains seated on the blue mat.",
+        "The blond person's tattooed arms and a dark handheld grooming device are visible.",
+        "Another seated person appears in the background of frame:8."
+      ],
+      "visible_actions": [
+        "In frames:8 and :9, the blond person holds up sections of the seated person's hair with the grooming device positioned near the head.",
+        "The seated person's head is angled downward."
+      ],
+      "visible_text": [
+        "A yellow \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "The supplied transcript continues to record \u201cGood job\u201d; the speaker is not established.",
+      "changes_from_previous_chunk": "More of the seated person's hair appears gathered upward, and another seated person is visible in the background of frame:8.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:7",
+        "frame:8",
+        "frame:9",
+        "transcript:1"
+      ],
+      "uncertainties": [
+        "The stills do not establish a completed haircut or the exact changes made between frames.",
+        "The background person's relationship to the others is not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:0",
+      "chunk_id": "chunk:1",
+      "start_seconds": 23.583,
+      "end_seconds": 30.333,
+      "visible_subjects_objects": [
+        "In frame:10, the shirtless gray-bearded person is seated beside the road.",
+        "Another person's hands are at the seated person's head and beard; one holds an orange-and-black grooming device against the beard.",
+        "Part of the blue patterned mat is visible."
+      ],
+      "visible_actions": [
+        "One hand holds hair at the top of the seated person's head while the device rests against the beard in the sampled still."
+      ],
+      "visible_text": [
+        "A yellow \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "The supplied transcript records \u201cGood job\u201d through 30.67 seconds; the speaker is not established.",
+      "changes_from_previous_chunk": "The grooming device is shown at the beard rather than near the hair on top of the head.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:10",
+        "transcript:1",
+        "transcript:2",
+        "transcript:3",
+        "ocr:63"
+      ],
+      "uncertainties": [
+        "The still does not establish how much grooming occurred between sampled frames."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:1",
+      "chunk_id": "chunk:1",
+      "start_seconds": 30.333,
+      "end_seconds": 39.208,
+      "visible_subjects_objects": [
+        "In frame:11, the gray-bearded person sits on the blue patterned mat in dark shorts, with a light-colored covering at the end of one leg.",
+        "The blond person crouches beside a large light-blue bucket and holds a smaller container.",
+        "Dark hair clippings are visible on the mat.",
+        "Vehicles and roadside signs are visible behind them."
+      ],
+      "visible_actions": [
+        "The blond person holds the smaller container over the bucket in the sampled still; the seated person looks downward."
+      ],
+      "visible_text": [
+        "\u201cLEARNING WINGS\u201d is visible on a roadside sign.",
+        "The yellow \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "The supplied transcript records \u201cBye\u201d beginning at 30.67 seconds; the speaker is not established.",
+      "changes_from_previous_chunk": "The view is wider; a bucket, smaller container, and hair clippings are visible, and the seated person's hair appears shorter.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:11",
+        "transcript:4",
+        "ocr:64",
+        "ocr:71",
+        "ocr:72",
+        "ocr:73",
+        "ocr:75"
+      ],
+      "uncertainties": [
+        "The still does not establish whether anything was poured from the smaller container.",
+        "The intervening haircut is not shown continuously."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:2",
+      "chunk_id": "chunk:1",
+      "start_seconds": 39.208,
+      "end_seconds": 45.458,
+      "visible_subjects_objects": [
+        "In frame:12, the gray-bearded person remains seated on the patterned mat, with white foam on the head, face, chest, and arm.",
+        "The blond person crouches nearby holding a pink-and-white foamy item against the seated person's raised arm.",
+        "Roadside signs remain in the background."
+      ],
+      "visible_actions": [
+        "The seated person's arm is raised, and the blond person's hand and the foamy item contact that arm in the sampled still."
+      ],
+      "visible_text": [
+        "\u201cLEARNING WINGS\u201d is visible above the roadside signs.",
+        "The yellow \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "The supplied transcript continues to record \u201cBye\u201d; the speaker is not established.",
+      "changes_from_previous_chunk": "White foam is now visible on the seated person, and the bucket is mostly outside the frame.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:12",
+        "transcript:4",
+        "ocr:84",
+        "ocr:86",
+        "ocr:88"
+      ],
+      "uncertainties": [
+        "The still does not establish how the foam was applied or what happened between frames:11 and :12.",
+        "Smaller sign text is not reliably legible."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:0",
+      "chunk_id": "chunk:2",
+      "start_seconds": 45.458,
+      "end_seconds": 55.0,
+      "visible_subjects_objects": [
+        "In frame:13, the gray-bearded person sits on the blue patterned mat with white foam covering much of the face, chest, and arms.",
+        "Another person's arms and a pink-and-white item are beside the seated person's chin and neck.",
+        "Cars and a roadside wall with posters are visible behind them."
+      ],
+      "visible_actions": [
+        "The pink-and-white item is held against or immediately below the seated person's chin in the sampled still."
+      ],
+      "visible_text": [
+        "A yellow \u201cVIDEOLEE\u201d mark appears near the top.",
+        "\u201cELARA IVF\u201d appears on a background poster."
+      ],
+      "spoken_content_summary": "The supplied transcript records \u201cBye\u201d across this interval; the speaker is not established.",
+      "changes_from_previous_chunk": "The view is closer to the seated person's face and upper body; foam remains visible.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:13",
+        "transcript:4",
+        "ocr:101"
+      ],
+      "uncertainties": [
+        "The still does not establish what happened between frame:12 and frame:13 or whether the item was moving."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:1",
+      "chunk_id": "chunk:2",
+      "start_seconds": 55.0,
+      "end_seconds": 63.458,
+      "visible_subjects_objects": [
+        "In frame:14, the gray-haired person sits on the blue patterned mat with substantially less foam visible on the face and upper body.",
+        "A large white towel surrounds the person's shoulders and torso; another person's hands hold it against the person.",
+        "Dark fabric lies across the seated person's lap."
+      ],
+      "visible_actions": [
+        "The seated person holds part of the towel, while another person's hands hold it against the torso in the sampled still."
+      ],
+      "visible_text": [
+        "A yellow \u201cVIDEOLEE\u201d mark appears near the top.",
+        "Posters with smaller text are visible across the road."
+      ],
+      "spoken_content_summary": "The supplied transcript continues to record \u201cBye\u201d; the speaker is not established.",
+      "changes_from_previous_chunk": "The face and upper body appear less foamy, and a large white towel is now visible around the seated person.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "frame:14",
+        "transcript:4",
+        "ocr:112"
+      ],
+      "uncertainties": [
+        "The still does not establish how the foam was removed or how the towel was placed."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:2",
+      "chunk_id": "chunk:2",
+      "start_seconds": 63.458,
+      "end_seconds": 68.708,
+      "visible_subjects_objects": [
+        "In frame:15, the gray-haired person sits on the blue patterned mat wearing a light-colored long-sleeved shirt and dark shorts.",
+        "The blond person crouches nearby with a light-colored piece of fabric.",
+        "A black-and-white cow stands next to the mat; a scooter with riders and roadside posters are visible in the background."
+      ],
+      "visible_actions": [
+        "Both people are seated or crouched in the sampled still; the cow stands beside them."
+      ],
+      "visible_text": [
+        "A yellow \u201cVIDEOLEE\u201d mark appears near the top.",
+        "\u201cELARA IVF\u201d is visible on a roadside poster."
+      ],
+      "spoken_content_summary": "The supplied transcript records \u201cBye\u201d through this interval, with a new transcript segment beginning at 66.52 seconds; the speaker is not established.",
+      "changes_from_previous_chunk": "The gray-haired person is now shown wearing a long-sleeved shirt rather than wrapped in the large towel, and a cow is visible beside the mat.",
+      "confidence": 0.92,
+      "evidence_refs": [
+        "frame:15",
+        "transcript:4",
+        "transcript:5",
+        "ocr:131",
+        "ocr:132"
+      ],
+      "uncertainties": [
+        "The stills do not show when or how the shirt was put on or establish movement between sampled frames."
+      ]
+    },
+    {
+      "ledger_id": "ledger:3:0",
+      "chunk_id": "chunk:3",
+      "start_seconds": 68.708,
+      "end_seconds": 77.583,
+      "visible_subjects_objects": [
+        "In frame:16, the gray-haired person wears a light-colored shirt and yellow-and-red flower garlands while seated near the roadside.",
+        "The blond person is close beside him, with both hands near the garlands."
+      ],
+      "visible_actions": [
+        "The blond person's hands are beside the seated person's neck and chest in the sampled still."
+      ],
+      "visible_text": [
+        "A yellow \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "The supplied transcript records \u201cBye\u201d across this interval; the speaker and timing within the interval are not established.",
+      "changes_from_previous_chunk": "Flower garlands are now visible around the seated person's neck; the cow shown in frame:15 is not visible in this closer view.",
+      "confidence": 0.92,
+      "evidence_refs": [
+        "frame:16",
+        "transcript:5",
+        "ocr:150",
+        "ocr:152"
+      ],
+      "uncertainties": [
+        "The still does not show when or how the garlands were placed."
+      ]
+    },
+    {
+      "ledger_id": "ledger:3:1",
+      "chunk_id": "chunk:3",
+      "start_seconds": 77.583,
+      "end_seconds": 85.583,
+      "visible_subjects_objects": [
+        "In frame:17, the garlanded person sits on the blue patterned mat beside a metal wheelchair with a black seat and back.",
+        "The blond person stands behind the wheelchair with hands on or near its handles.",
+        "A wall, trees, and roadside posters are visible behind them."
+      ],
+      "visible_actions": [
+        "The blond person holds or rests hands on the wheelchair in the sampled still; the garlanded person sits on the mat and faces toward it."
+      ],
+      "visible_text": [
+        "A yellow \u201cVIDEOLEE\u201d mark appears near the top.",
+        "\u201cELARA IVF\u201d is visible on a background poster."
+      ],
+      "spoken_content_summary": "The supplied transcript records \u201cBye\u201d; the speaker and timing within this interval are not established.",
+      "changes_from_previous_chunk": "The view is wider, and a wheelchair is now visible beside the seated person.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:17",
+        "transcript:5",
+        "ocr:154",
+        "ocr:155",
+        "ocr:156"
+      ],
+      "uncertainties": [
+        "The still does not establish how the wheelchair came to be beside the mat or whether it is moving."
+      ]
+    },
+    {
+      "ledger_id": "ledger:3:2",
+      "chunk_id": "chunk:3",
+      "start_seconds": 85.583,
+      "end_seconds": 91.875,
+      "visible_subjects_objects": [
+        "In frame:18, the garlanded person sits on a wheelchair beside the open rear of a white vehicle.",
+        "The blond person bends beside the wheelchair, with one hand on or near its back.",
+        "The vehicle's rear opening and dark interior are visible."
+      ],
+      "visible_actions": [
+        "The garlanded person faces the vehicle's open rear, with one leg raised toward the opening in the sampled still.",
+        "The blond person is bent beside the wheelchair."
+      ],
+      "visible_text": [
+        "A yellow \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "The supplied transcript records \u201cBye\u201d; the speaker and timing within this interval are not established.",
+      "changes_from_previous_chunk": "The garlanded person is now seated on the wheelchair beside an open vehicle rather than on the mat.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:18",
+        "transcript:5",
+        "ocr:171",
+        "ocr:172"
+      ],
+      "uncertainties": [
+        "The sampled stills do not show how the person got into the wheelchair or establish whether the wheelchair or person moves into the vehicle."
+      ]
+    },
+    {
+      "ledger_id": "ledger:4:0",
+      "chunk_id": "chunk:4",
+      "start_seconds": 91.875,
+      "end_seconds": 94.833,
+      "visible_subjects_objects": [
+        "A garlanded, gray-haired person sits at the open rear of a white vehicle, with a bare lower leg and foot extended over the rear edge.",
+        "Another person's hand holds a bottle near the foot; a second hand holds a white material below it."
+      ],
+      "visible_actions": [
+        "Liquid is visible on the foot and spilling past the vehicle's rear edge in frame:19.",
+        "The bottle is angled toward the foot in the sampled still."
+      ],
+      "visible_text": [
+        "A \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "The supplied transcript records \u201cBye\u201d over a much longer interval; its speaker and timing within this chunk are not established.",
+      "changes_from_previous_chunk": "The garlanded person is now pictured seated at the vehicle's rear opening with the lower leg extended outward; the wheelchair is not visible in this close view.",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "frame:19",
+        "transcript:5",
+        "ocr:177"
+      ],
+      "uncertainties": [
+        "The still does not establish when the liquid was applied or what it is.",
+        "The white material's use is not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:4:1",
+      "chunk_id": "chunk:4",
+      "start_seconds": 94.833,
+      "end_seconds": 105.125,
+      "visible_subjects_objects": [
+        "The garlanded person remains at the open rear of the white vehicle with one lower leg extended.",
+        "A blond person in a white shirt crouches beside the rear bumper, holding the extended foot with both hands."
+      ],
+      "visible_actions": [
+        "The blond person's hands are around the foot in frame:20.",
+        "A reddish area is visible on the extended lower leg."
+      ],
+      "visible_text": [
+        "A \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "No additional speech is established by the supplied transcript for this sampled still.",
+      "changes_from_previous_chunk": "The view is wider, showing the blond person beside the vehicle; the bottle and liquid stream seen in frame:19 are not visible.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:20",
+        "ocr:186"
+      ],
+      "uncertainties": [
+        "The still does not establish what the blond person does to the foot before or after this frame."
+      ]
+    },
+    {
+      "ledger_id": "ledger:4:2",
+      "chunk_id": "chunk:4",
+      "start_seconds": 105.125,
+      "end_seconds": 115.5,
+      "visible_subjects_objects": [
+        "A close view shows the extended lower leg and foot beside the white vehicle's rear edge.",
+        "White gauze-like material encircles the lower leg above an orange sock or foot covering.",
+        "Two hands hold a small strand or edge of the white material."
+      ],
+      "visible_actions": [
+        "The hands touch the material at the front of the lower leg in frame:21.",
+        "The exposed skin above the material appears shiny, with reddish areas."
+      ],
+      "visible_text": [
+        "Part of a \u201cVIDEOLEE\u201d mark appears near the top."
+      ],
+      "spoken_content_summary": "No additional speech is established by the supplied transcript for this sampled still.",
+      "changes_from_previous_chunk": "White material is now visible around the lower leg, and the view is closer than frame:20.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:21",
+        "ocr:196",
+        "transcript:5"
+      ],
+      "uncertainties": [
+        "The sparse stills do not show how or when the white material or orange covering was put on.",
+        "The cause of the reddish areas is not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:0",
+      "chunk_id": "chunk:5",
+      "start_seconds": 115.5,
+      "end_seconds": 118.5,
+      "visible_subjects_objects": [
+        "A gray-haired person wearing yellow flower garlands sits at the open rear of a white vehicle with one lower leg extended.",
+        "White material covers the lower leg below the knee; another person's hands hold it in frame:22.",
+        "A blond person in a white shirt is beside the vehicle in frame:23."
+      ],
+      "visible_actions": [
+        "The hands hold the white material against the lower leg in frame:22.",
+        "The seated person and the blond person each have a hand raised in frame:23."
+      ],
+      "visible_text": [
+        "A \u201cVIDEOLEE\u201d mark is visible near the top of frame:23."
+      ],
+      "spoken_content_summary": "The supplied transcript records \u201cBye\u201d across a longer interval; its speaker and precise timing here are not established.",
+      "changes_from_previous_chunk": "The view widens from the close-up of the lower leg to show both people at the vehicle's rear.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:22",
+        "frame:23",
+        "transcript:5",
+        "ocr:208",
+        "ocr:209"
+      ],
+      "uncertainties": [
+        "The stills do not establish what happens to the leg covering between frames."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:1",
+      "chunk_id": "chunk:5",
+      "start_seconds": 118.5,
+      "end_seconds": 131.792,
+      "visible_subjects_objects": [
+        "The garlanded person remains seated at the open rear of the white vehicle, with the covered lower leg extended.",
+        "The blond person is beside the vehicle in frame:24 and leaning against the seated person in frame:25.",
+        "Another person is visible near the rear bumper in frame:24; a child is at the lower right of frame:25."
+      ],
+      "visible_actions": [
+        "The seated person and blond person have hands extended toward each other in frame:24.",
+        "Their arms are around each other in frame:25."
+      ],
+      "visible_text": [
+        "\u201cVIDEOLEE\u201d appears near the top of frames:24 and :25.",
+        "Text on the back of the blond person's shirt is partly visible in frame:24."
+      ],
+      "spoken_content_summary": "No additional speech is established for these sampled stills; transcript:5 continues to record \u201cBye\u201d over a longer interval.",
+      "changes_from_previous_chunk": "Frame:24 shows more of the street and vehicle; frame:25 shows the two people with their arms around each other. An orange foot covering is visible below the white leg covering.",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "frame:24",
+        "frame:25",
+        "transcript:5",
+        "ocr:233",
+        "ocr:257"
+      ],
+      "uncertainties": [
+        "The intervening movements and the duration of the contact are not established.",
+        "The shirt text is not fully legible in the sampled frame."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:2",
+      "chunk_id": "chunk:5",
+      "start_seconds": 131.792,
+      "end_seconds": 136.25,
+      "visible_subjects_objects": [
+        "A blond person in a white shirt faces a child holding a food tray in frame:26; several other people are visible behind them."
+      ],
+      "visible_actions": [
+        "The blond person holds a hand near the tray; the child holds the tray."
+      ],
+      "visible_text": [
+        "The subtitle \u201cIf you want to\u201d appears in frame:26."
+      ],
+      "spoken_content_summary": "The supplied transcript says, \u201cHelp me wear love and spread love. One purchase funds 20 meals to those in need.\u201d",
+      "changes_from_previous_chunk": "The sampled view changes from the vehicle to a group of people around a food tray.",
+      "confidence": 0.89,
+      "evidence_refs": [
+        "frame:26",
+        "transcript:6",
+        "transcript:7",
+        "ocr:260",
+        "ocr:261",
+        "ocr:264",
+        "ocr:266",
+        "ocr:270",
+        "ocr:272"
+      ],
+      "uncertainties": [
+        "Only one sampled frame is supplied for this view; the transcript wording does not establish who speaks.",
+        "The still does not establish whether food is passed between people."
+      ]
+    },
+    {
+      "ledger_id": "ledger:5:3",
+      "chunk_id": "chunk:5",
+      "start_seconds": 136.25,
+      "end_seconds": 138.537,
+      "visible_subjects_objects": [
+        "A blond person in a white shirt and red shorts sits facing the camera in an outdoor area, holding an orange card in frame:27.",
+        "The person remains seated with the card lower in frame:28."
+      ],
+      "visible_actions": [
+        "The person holds up the orange card in frame:27."
+      ],
+      "visible_text": [
+        "The subtitle \u201cbuy yours today.\u201d appears in frame:27."
+      ],
+      "spoken_content_summary": "The supplied transcript says, \u201cIf you want to join the movement, buy yours today.\u201d",
+      "changes_from_previous_chunk": "The view changes from the group around the food tray to a seated person holding a card.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:27",
+        "frame:28",
+        "transcript:8",
+        "ocr:272",
+        "ocr:273",
+        "ocr:274"
+      ],
+      "uncertainties": [
+        "The card's printed text is not legible.",
+        "The sparse stills do not establish the card's movement between frames."
+      ]
+    }
+  ]
+}

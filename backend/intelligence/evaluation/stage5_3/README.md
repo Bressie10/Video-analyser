@@ -13,3 +13,17 @@ python -m intelligence.evaluation.stage5_3_semantic \
 ```
 
 Set `OPENAI_API_KEY` through the local environment before running. Each candidate records every pass's requested/reported model, response ID, prompt SHA-256, and analyzer commit. A separate `*.ledger.json` stores the derived Pass 1 observations. Compare with provisional Stage 5.1 truth only after all four candidates finish. Stage 5.1 truth is AI-assisted and non-blind; partial and unavailable categories abstain.
+
+Each `*.checkpoint.json` records model responses before local validation and permits a safe resume when prompts and allowlisted content match. A validation fix can have a later `validation_commit`; the per-pass records keep the analyzer commit that actually generated each response. Point-only claims with zero duration are retained in `omitted_point_only_intervals` and omitted from the frozen interval report.
+
+After all four inference outputs exist, run:
+
+```sh
+python -m intelligence.evaluation.stage5_3_compare \
+  --stage5-dir intelligence/evaluation/stage5/pilot \
+  --stage5-2-dir intelligence/evaluation/stage5_2/candidates \
+  --stage5-3-dir intelligence/evaluation/stage5_3/candidates \
+  --truth-dir intelligence/evaluation/stage5_1/truth \
+  --results /private/tmp/cm-v9-pilot/results-stage2 \
+  --output intelligence/evaluation/stage5_3/side_by_side.json
+```

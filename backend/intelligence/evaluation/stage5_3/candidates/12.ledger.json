@@ -1,0 +1,124 @@
+{
+  "source_ref": "12",
+  "analyzer_commit": "9b6efdc7f186e8d388a92ab9a5a581b992aa9388",
+  "validation_commit": "9b6efdc7f186e8d388a92ab9a5a581b992aa9388",
+  "model_passes": [
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:0",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_091f378a08f5e43b016acb79452fd487d28783e1f0cec62ef8",
+      "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+      "analyzer_commit": "9b6efdc7f186e8d388a92ab9a5a581b992aa9388"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:1",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0dc86015881c5391016acb794a25c887d29567506579f3345a",
+      "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+      "analyzer_commit": "9b6efdc7f186e8d388a92ab9a5a581b992aa9388"
+    }
+  ],
+  "chunk_plan": [
+    {
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 17.855,
+      "frame_refs": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "frame:3",
+        "frame:4"
+      ]
+    },
+    {
+      "chunk_id": "chunk:1",
+      "start_seconds": 17.855,
+      "end_seconds": 35.711,
+      "frame_refs": [
+        "frame:5",
+        "frame:6",
+        "frame:7",
+        "frame:8",
+        "frame:9",
+        "frame:10"
+      ]
+    }
+  ],
+  "evidence_ledger": [
+    {
+      "ledger_id": "ledger:0:0",
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 17.855,
+      "visible_subjects_objects": [
+        "A man wearing glasses, a dark suit jacket, light blue shirt, patterned blue tie, and pocket square",
+        "A railing, broad body of water, distant shoreline, and clear sky"
+      ],
+      "visible_actions": [
+        "The man faces the camera in all five supplied stills.",
+        "His hands are raised and apart in frame:1; they appear together near the bottom of frame:3 and frame:4."
+      ],
+      "visible_text": [],
+      "spoken_content_summary": "The speaker asks, \u201cIs your career really moving forward?\u201d He introduces himself as Professor David Costa and says he is at Robert Kennedy College in Switzerland. He says he is introducing online master's programs and that a British master's degree can be completed entirely online in one year. The transcript renders the institution as \u201cUniversity of Soul Food\u201d; that wording is uncertain.",
+      "changes_from_previous_chunk": "Not established; no previous chunk was supplied.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "frame:3",
+        "frame:4",
+        "transcript:0",
+        "transcript:1",
+        "transcript:2",
+        "transcript:3"
+      ],
+      "uncertainties": [
+        "The transcript's \u201cD&E\u201d title and \u201cUniversity of Soul Food\u201d name are unclear; the frames do not verify either wording.",
+        "The final transcript segment continues beyond this chunk, so its precise within-chunk endpoint is not established.",
+        "The supplied stills do not establish what movements occurred between frames.",
+        "The OCR detections are not legible as reliable visible text in the supplied frames."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:0",
+      "chunk_id": "chunk:1",
+      "start_seconds": 17.855,
+      "end_seconds": 35.711,
+      "visible_subjects_objects": [
+        "A man wearing glasses, a dark suit jacket, light blue shirt, patterned blue tie, and pocket square",
+        "A railing, broad body of water, distant shoreline, and clear sky"
+      ],
+      "visible_actions": [
+        "The man faces the camera in the supplied stills.",
+        "His hands appear together near the bottom of frame:5, frame:6, frame:7, frame:9, and frame:10; they appear apart in frame:8.",
+        "He is smiling in frame:9 and frame:10."
+      ],
+      "visible_text": [],
+      "spoken_content_summary": "The speaker finishes saying that a British master's degree can be completed entirely online in one year. He lists specialties including business administration, project management, HR management, marketing, and operations management, then says, \u201cRequest our course catalog and get started today.\u201d",
+      "changes_from_previous_chunk": "The same man and waterfront setting remain visible. The speech changes from describing the online degree to listing specialties and requesting a course catalog.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:5",
+        "frame:6",
+        "frame:7",
+        "frame:8",
+        "frame:9",
+        "frame:10",
+        "transcript:3",
+        "transcript:4",
+        "transcript:5",
+        "transcript:6"
+      ],
+      "uncertainties": [
+        "The supplied stills do not establish movements between frames.",
+        "The OCR detections are not legible as reliable visible text in the supplied frames."
+      ]
+    }
+  ]
+}

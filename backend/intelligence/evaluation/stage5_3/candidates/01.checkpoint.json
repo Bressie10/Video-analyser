@@ -1,0 +1,841 @@
+{
+  "source_ref": "01",
+  "analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71",
+  "content_sha256": "cfd9f8099857eb1e77bbc8a4438e3f0d94bbcfdcfcc13f9ff14d66e1f7740164",
+  "chunk_responses": [
+    {
+      "chunk_id": "chunk:0",
+      "description": {
+        "chunk_start_seconds": 0.0,
+        "chunk_end_seconds": 9.567,
+        "observations": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 2.533,
+            "visible_subjects_objects": [
+              "A brown-haired person in a black top sits inside a car.",
+              "A clear rectangular bottle with a silver-colored top and a label reading \u201c461\u201d is held near the person's chest."
+            ],
+            "visible_actions": [
+              "The person faces the camera in the sampled frames and holds the bottle with both hands in later frames."
+            ],
+            "visible_text": [
+              "\u201cThis is the best\u201d",
+              "\u201cBarracat Rouge dupe\u201d",
+              "\u201c461\u201d"
+            ],
+            "spoken_content_summary": "The speaker says this is the best \u201cBack Rat Root Shoot\u201d they have found; the product name is uncertain from the transcript.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "frame:2",
+              "transcript:0",
+              "ocr:0",
+              "ocr:1",
+              "ocr:2",
+              "ocr:3",
+              "scene:0"
+            ],
+            "uncertainties": [
+              "The transcript's product-name wording is unclear and differs from the visible subtitle \u201cBarracat Rouge dupe\u201d."
+            ]
+          },
+          {
+            "start_seconds": 2.533,
+            "end_seconds": 6.3,
+            "visible_subjects_objects": [
+              "A clear rectangular bottle with a silver-colored top is shown against a gray surface, alongside a white box in one frame.",
+              "Hands holding the bottle have striped nail art.",
+              "The bottle label shows \u201c461\u201d and small text; the box shows \u201cESSENCE VAULT\u201d and \u201c461\u201d."
+            ],
+            "visible_actions": [
+              "In one sampled frame, a hand holds the bottle beside a white box; in another, two hands hold the bottle without the box in view."
+            ],
+            "visible_text": [
+              "\u201cnumber 461\u201d",
+              "\u201cby The Essence Vault\u201d",
+              "\u201cis inspired\u201d",
+              "\u201cby Barracat Rouge\u201d",
+              "\u201c461\u201d",
+              "\u201cESSENCE VAULT\u201d"
+            ],
+            "spoken_content_summary": "The speaker says number 461 by the Essence Vault is inspired by \u201cBack Rat Root\u201d; that name is uncertain from the transcript.",
+            "changes_from_previous_chunk": "The sampled view changes from the person in the car to close views of the bottle and box against a gray surface.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:3",
+              "frame:4",
+              "transcript:1",
+              "ocr:8",
+              "ocr:9",
+              "ocr:15",
+              "ocr:19",
+              "ocr:20",
+              "ocr:21",
+              "ocr:23",
+              "scene:1"
+            ],
+            "uncertainties": [
+              "The transcript's product-name wording is unclear and differs from the OCR reading \u201cBarracat Rouge\u201d.",
+              "Some small packaging text is not legible enough to transcribe confidently."
+            ]
+          },
+          {
+            "start_seconds": 6.3,
+            "end_seconds": 9.567,
+            "visible_subjects_objects": [
+              "The same brown-haired person is shown inside the car with the clear bottle.",
+              "In the later sampled frame, the bottle's silver-colored top is close to the person's nose."
+            ],
+            "visible_actions": [
+              "The person holds the bottle in both sampled frames.",
+              "The person's eyes are closed in the later sampled frame; the still does not establish whether they smell the bottle."
+            ],
+            "visible_text": [
+              "\u201cthe same notes\u201d",
+              "\u201cand it smells\u201d",
+              "\u201cjust like it\u201d"
+            ],
+            "spoken_content_summary": "The speaker says it has all of the same notes and smells just like it.",
+            "changes_from_previous_chunk": "The sampled view returns from the bottle close-up to the person in the car.",
+            "confidence": 0.93,
+            "evidence_refs": [
+              "frame:5",
+              "frame:6",
+              "transcript:2",
+              "ocr:26",
+              "ocr:27",
+              "ocr:28",
+              "ocr:29",
+              "scene:2"
+            ],
+            "uncertainties": [
+              "Whether the person inhales or smells the bottle cannot be established from the sparse stills."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Frames are sparse stills; actions between the supplied timestamps are not established."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:0",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0bfd056e8d6f2f70016acb780a2b0487d29cba9509d0dbb6bf",
+        "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+        "analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71"
+      }
+    },
+    {
+      "chunk_id": "chunk:1",
+      "description": {
+        "chunk_start_seconds": 9.567,
+        "chunk_end_seconds": 19.133,
+        "observations": [
+          {
+            "start_seconds": 9.567,
+            "end_seconds": 11.9,
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "OCR reports \u201cI literally,\u201d \u201ccan't get over,\u201d and \u201cthat smells\u201d; no supplied frame falls in this interval."
+            ],
+            "spoken_content_summary": "The speaker says, \u201cI literally can't get over how good that smells.\u201d",
+            "changes_from_previous_chunk": "Not established by the supplied frames for this interval.",
+            "confidence": 0.83,
+            "evidence_refs": [
+              "transcript:3",
+              "ocr:30",
+              "ocr:31",
+              "ocr:33",
+              "scene:2"
+            ],
+            "uncertainties": [
+              "No supplied still shows this interval; visible subjects or actions cannot be verified.",
+              "OCR between the quoted fragments is unclear."
+            ]
+          },
+          {
+            "start_seconds": 11.9,
+            "end_seconds": 14.233,
+            "visible_subjects_objects": [
+              "At 13.067 seconds, several clear rectangular bottles with silver-colored tops are on a lit shelf; the centered bottle contains amber-colored liquid and has a label showing \u201c82\u201d."
+            ],
+            "visible_actions": [
+              "The centered bottle is shown upright on the shelf."
+            ],
+            "visible_text": [
+              "\u201c82\u201d on the centered bottle",
+              "\u201cmake all of their\u201d"
+            ],
+            "spoken_content_summary": "The speaker says that the Essence Vault makes all of its perfumes strong.",
+            "changes_from_previous_chunk": "Compared with the previous chunk's sampled car view, the supplied frame shows bottles on a shelf.",
+            "confidence": 0.96,
+            "evidence_refs": [
+              "frame:7",
+              "transcript:4",
+              "ocr:42",
+              "ocr:43",
+              "scene:3"
+            ],
+            "uncertainties": [
+              "The other bottles' labels are not fully visible in the supplied still."
+            ]
+          },
+          {
+            "start_seconds": 14.233,
+            "end_seconds": 15.867,
+            "visible_subjects_objects": [
+              "A clear rectangular bottle with a silver-colored top and a label reading \u201cTHE ESSENCE VAULT\u201d and \u201c461\u201d is on a white surface.",
+              "A small potted plant is behind the bottle, and a hand is beside or touching it in both supplied frames."
+            ],
+            "visible_actions": [
+              "At 14.333 and 15.067 seconds, the bottle is upright with a hand beside or against its right side; movement between the stills is not established."
+            ],
+            "visible_text": [
+              "\u201cTHE ESSENCE VAULT\u201d",
+              "\u201c461\u201d",
+              "\u201cand with the\u201d",
+              "\u201csame high quality\u201d"
+            ],
+            "spoken_content_summary": "The speaker says the perfumes have the same high-quality ingredients.",
+            "changes_from_previous_chunk": "The sampled view changes from bottles on a lit shelf to one bottle on a white surface.",
+            "confidence": 0.96,
+            "evidence_refs": [
+              "frame:8",
+              "frame:9",
+              "transcript:5",
+              "ocr:53",
+              "ocr:54",
+              "ocr:56",
+              "ocr:57",
+              "ocr:59",
+              "scene:4"
+            ],
+            "uncertainties": [
+              "Small print on the bottle is difficult to read confidently.",
+              "The stills do not establish whether the hand repositions the bottle."
+            ]
+          },
+          {
+            "start_seconds": 15.867,
+            "end_seconds": 19.133,
+            "visible_subjects_objects": [
+              "At 18.533 seconds, the brown-haired person in a black top is visible inside the car, holding a clear bottle with a silver-colored top."
+            ],
+            "visible_actions": [
+              "The person faces the camera with the bottle held near their chest in the supplied frame."
+            ],
+            "visible_text": [
+              "\u201cfor the crazy\u201d"
+            ],
+            "spoken_content_summary": "The speaker says it can be much cheaper because they are not paying for the \u201ccrazy designer label\u201d; the sentence continues beyond this chunk.",
+            "changes_from_previous_chunk": "The sampled view returns from the bottle on a white surface to the person in the car.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "frame:10",
+              "transcript:6",
+              "transcript:7",
+              "ocr:62",
+              "ocr:64",
+              "ocr:67",
+              "ocr:69",
+              "scene:5"
+            ],
+            "uncertainties": [
+              "Only one frame is supplied for this interval, so actions before or after that instant are not established.",
+              "The final transcript segment continues past the chunk boundary; its later words are not included in this summary."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "The frames are sparse stills; actions between their timestamps are not established."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:1",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_00b93fa0532c9807016acb7811948887d2b71a3fe07b7f76b2",
+        "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+        "analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71"
+      }
+    },
+    {
+      "chunk_id": "chunk:2",
+      "description": {
+        "chunk_start_seconds": 19.133,
+        "chunk_end_seconds": 28.7,
+        "observations": [
+          {
+            "start_seconds": 19.133,
+            "end_seconds": 21.167,
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "OCR reports \u201cdesigner label,\u201d \u201cand marketing,\u201d and \u201cand retail costs\u201d; no supplied frame falls in this interval."
+            ],
+            "spoken_content_summary": "The speaker finishes the sentence with \u201cdesigner label and marketing retail costs.\u201d",
+            "changes_from_previous_chunk": "Not established by supplied frames for this interval.",
+            "confidence": 0.87,
+            "evidence_refs": [
+              "transcript:7",
+              "ocr:70",
+              "ocr:72",
+              "ocr:74",
+              "scene:5"
+            ],
+            "uncertainties": [
+              "No supplied still shows this interval."
+            ]
+          },
+          {
+            "start_seconds": 21.167,
+            "end_seconds": 24.367,
+            "visible_subjects_objects": [
+              "At 21.533 and 24.1 seconds, a brown-haired person in a black top is seated inside a car with a clear rectangular bottle bearing a pale label and silver-colored top."
+            ],
+            "visible_actions": [
+              "In the supplied stills, the person faces the camera and holds the bottle; at 24.1 seconds, their other hand has a finger extended toward the camera."
+            ],
+            "visible_text": [
+              "\u201cthis gets\u201d at 21.533 seconds",
+              "\u201conly buy it on\u201d at 24.1 seconds"
+            ],
+            "spoken_content_summary": "The speaker says, \u201cThis gets me compliments every single time I wear it,\u201d then begins, \u201cand you can only buy it on the Essence Vault website.\u201d",
+            "changes_from_previous_chunk": "The sampled view remains inside the car, with the person and bottle visible again.",
+            "confidence": 0.96,
+            "evidence_refs": [
+              "frame:11",
+              "frame:12",
+              "transcript:8",
+              "transcript:9",
+              "ocr:76",
+              "ocr:81",
+              "scene:6"
+            ],
+            "uncertainties": [
+              "The stills do not establish hand or bottle movement between the sampled moments."
+            ]
+          },
+          {
+            "start_seconds": 24.367,
+            "end_seconds": 27.4,
+            "visible_subjects_objects": [
+              "At 26.7 seconds, a hand holds a clear rectangular bottle with a silver-colored top and a label showing \u201c461\u201d in front of an open laptop.",
+              "The laptop screen shows a product page with a bottle image and product text."
+            ],
+            "visible_actions": [
+              "The bottle is held in front of the laptop screen in the supplied still."
+            ],
+            "visible_text": [
+              "\u201c461\u201d on the held bottle",
+              "\u201cInspired By Baracatt Rouge 540 - 461\u201d on the laptop screen",
+              "\u201cgrab yours\u201d overlaid on the image"
+            ],
+            "spoken_content_summary": "The speaker finishes \u201cand you can only buy it on the Essence Vault website,\u201d then says, \u201cSo go and grab yours because they sell out so quickly.\u201d",
+            "changes_from_previous_chunk": "The sampled view changes from the person in the car to a bottle held before a laptop.",
+            "confidence": 0.93,
+            "evidence_refs": [
+              "frame:13",
+              "transcript:9",
+              "transcript:10",
+              "ocr:89",
+              "ocr:92",
+              "ocr:162",
+              "scene:7"
+            ],
+            "uncertainties": [
+              "Smaller laptop-screen text is difficult to read confidently.",
+              "A single still does not establish interaction with the laptop or movement of the bottle."
+            ]
+          },
+          {
+            "start_seconds": 27.4,
+            "end_seconds": 28.7,
+            "visible_subjects_objects": [
+              "At 28.1 and 28.6 seconds, the brown-haired person in a black top is seated inside the car and holds a clear rectangular bottle with a silver-colored top and a pale label showing \u201c461\u201d."
+            ],
+            "visible_actions": [
+              "The person faces the camera with the bottle held upright; their other hand is raised in both supplied stills."
+            ],
+            "visible_text": [
+              "\u201cout so quickly\u201d at 28.1 seconds",
+              "\u201c461\u201d on the bottle"
+            ],
+            "spoken_content_summary": "The speaker completes the phrase \u201cbecause they sell out so quickly\u201d by 28.4 seconds.",
+            "changes_from_previous_chunk": "The sampled view returns from the laptop and bottle to the person in the car.",
+            "confidence": 0.97,
+            "evidence_refs": [
+              "frame:14",
+              "frame:15",
+              "transcript:10",
+              "ocr:173",
+              "scene:8"
+            ],
+            "uncertainties": [
+              "The stills do not establish movement between 28.1 and 28.6 seconds.",
+              "No further speech is established after the transcript ends at 28.4 seconds."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "The supplied frames are sparse stills; actions between their timestamps are not established.",
+          "Some OCR from the laptop display is inconsistent or unclear."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:2",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0106d17f4ada6d9a016acb781928c487d28c20668accf28507",
+        "prompt_sha256": "88bc2d6d56ac3c6e232dadc4639fca62b6ad6126dbd57c8e031cb3065616ad4d",
+        "analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71"
+      }
+    }
+  ],
+  "synthesis_response": {
+    "draft": {
+      "format_assessments": [
+        {
+          "technique_id": "format.talking_head",
+          "decision": "supported",
+          "rationale": "The speaker faces the camera in the car at the opening, middle, and end; product close views interrupt but do not displace this recurring presentation.",
+          "ledger_refs": [
+            "ledger:0:0",
+            "ledger:0:2",
+            "ledger:1:3",
+            "ledger:2:1",
+            "ledger:2:3"
+          ]
+        },
+        {
+          "technique_id": "format.tutorial",
+          "decision": "unsupported",
+          "rationale": "The speaker describes and recommends a perfume, without teaching a process in steps.",
+          "ledger_refs": [
+            "ledger:0:1",
+            "ledger:0:2",
+            "ledger:1:2",
+            "ledger:2:2"
+          ]
+        },
+        {
+          "technique_id": "format.product_demo",
+          "decision": "uncertain",
+          "rationale": "The bottle is repeatedly held and displayed, but the sampled stills do not establish it being applied or otherwise used.",
+          "ledger_refs": [
+            "ledger:0:0",
+            "ledger:0:1",
+            "ledger:0:2",
+            "ledger:1:2",
+            "ledger:2:2"
+          ]
+        },
+        {
+          "technique_id": "format.storytime",
+          "decision": "unsupported",
+          "rationale": "Claims about scent, ingredients, price, and compliments do not form a narrated event as the main format.",
+          "ledger_refs": [
+            "ledger:0:2",
+            "ledger:1:2",
+            "ledger:1:3",
+            "ledger:2:1"
+          ]
+        },
+        {
+          "technique_id": "format.listicle",
+          "decision": "unsupported",
+          "rationale": "The video focuses on product 461 and its attributes, not numbered or clearly enumerated items; other bottle numbers appear as labels.",
+          "ledger_refs": [
+            "ledger:0:1",
+            "ledger:1:1",
+            "ledger:1:2",
+            "ledger:2:2"
+          ]
+        },
+        {
+          "technique_id": "format.reaction",
+          "decision": "unsupported",
+          "rationale": "The speaker offers their own product assessment rather than responding to another piece of content or event.",
+          "ledger_refs": [
+            "ledger:0:0",
+            "ledger:0:2",
+            "ledger:2:1"
+          ]
+        },
+        {
+          "technique_id": "format.before_after",
+          "decision": "unsupported",
+          "rationale": "The comparison to another fragrance is verbal; no before-and-after states are presented.",
+          "ledger_refs": [
+            "ledger:0:1",
+            "ledger:0:2",
+            "ledger:1:3",
+            "ledger:2:1"
+          ]
+        },
+        {
+          "technique_id": "format.screen_recording",
+          "decision": "unsupported",
+          "rationale": "A laptop product page appears near the end, but car footage and physical bottle views supply the principal visuals; no recorded screen is established.",
+          "ledger_refs": [
+            "ledger:0:0",
+            "ledger:0:1",
+            "ledger:1:2",
+            "ledger:2:2",
+            "ledger:2:3"
+          ]
+        },
+        {
+          "technique_id": "format.interview",
+          "decision": "unsupported",
+          "rationale": "The ledger describes one speaker's product remarks, not a question-and-answer exchange.",
+          "ledger_refs": [
+            "ledger:0:0",
+            "ledger:1:3",
+            "ledger:2:1",
+            "ledger:2:3"
+          ]
+        }
+      ],
+      "cta_events": [
+        {
+          "event_id": "cta:1",
+          "start_seconds": 23.5,
+          "end_seconds": 28.4,
+          "requested_action": "Go to the Essence Vault website and get the perfume; the speaker says to 'go and grab yours' because it sells out quickly.",
+          "ledger_refs": [
+            "ledger:2:1",
+            "ledger:2:2",
+            "ledger:2:3"
+          ]
+        }
+      ],
+      "findings": [
+        {
+          "technique_id": "hook.bold_claim",
+          "start_seconds": 0.0,
+          "end_seconds": 2.533,
+          "confidence": 0.96,
+          "basis": "direct_observation",
+          "rationale": "Opens by calling the bottle the best dupe the speaker has found, echoed by prominent on-screen wording.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "hook.visual",
+          "start_seconds": 0.0,
+          "end_seconds": 2.533,
+          "confidence": 0.83,
+          "basis": "model_interpretation",
+          "rationale": "The bottle is held visibly near the camera-facing speaker during the opening claim.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "editing.b_roll",
+          "start_seconds": 2.533,
+          "end_seconds": 6.3,
+          "confidence": 0.91,
+          "basis": "model_interpretation",
+          "rationale": "Close views of the bottle and box replace the car view while the speaker describes product 461.",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1",
+            "ledger:0:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "editing.b_roll",
+          "start_seconds": 11.9,
+          "end_seconds": 15.867,
+          "confidence": 0.87,
+          "basis": "model_interpretation",
+          "rationale": "Shelf and bottle-on-surface views support the spoken description of the perfumes and ingredients, between sampled car views.",
+          "evidence_refs": [
+            "ledger:0:2",
+            "ledger:1:1",
+            "ledger:1:2",
+            "ledger:1:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "editing.b_roll",
+          "start_seconds": 24.367,
+          "end_seconds": 27.4,
+          "confidence": 0.85,
+          "basis": "model_interpretation",
+          "rationale": "The bottle held before a laptop product page visually supports the website mention before the view returns to the speaker.",
+          "evidence_refs": [
+            "ledger:2:1",
+            "ledger:2:2",
+            "ledger:2:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 0.0,
+          "end_seconds": 28.4,
+          "confidence": 0.94,
+          "basis": "direct_observation",
+          "rationale": "Successive on-screen phrases follow the described speech across the opening, product explanation, price claim, and closing request; coverage within unsampled moments is not established.",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1",
+            "ledger:0:2",
+            "ledger:1:0",
+            "ledger:1:1",
+            "ledger:1:2",
+            "ledger:1:3",
+            "ledger:2:0",
+            "ledger:2:1",
+            "ledger:2:2",
+            "ledger:2:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.face_to_camera",
+          "start_seconds": 0.0,
+          "end_seconds": 2.533,
+          "confidence": 0.96,
+          "basis": "direct_observation",
+          "rationale": "The seated person faces the camera while holding the bottle.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.face_to_camera",
+          "start_seconds": 6.3,
+          "end_seconds": 9.567,
+          "confidence": 0.85,
+          "basis": "direct_observation",
+          "rationale": "The person is shown in the car facing the camera with the bottle in sampled frames.",
+          "evidence_refs": [
+            "ledger:0:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.face_to_camera",
+          "start_seconds": 21.167,
+          "end_seconds": 24.367,
+          "confidence": 0.95,
+          "basis": "direct_observation",
+          "rationale": "The person faces the camera with the bottle at both sampled moments.",
+          "evidence_refs": [
+            "ledger:2:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.product_foreground",
+          "start_seconds": 2.533,
+          "end_seconds": 6.3,
+          "confidence": 0.97,
+          "basis": "direct_observation",
+          "rationale": "The labeled bottle and box dominate the close product views.",
+          "evidence_refs": [
+            "ledger:0:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.product_foreground",
+          "start_seconds": 14.233,
+          "end_seconds": 15.867,
+          "confidence": 0.95,
+          "basis": "direct_observation",
+          "rationale": "Bottle 461 is prominently displayed on the white surface.",
+          "evidence_refs": [
+            "ledger:1:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.product_foreground",
+          "start_seconds": 24.367,
+          "end_seconds": 27.4,
+          "confidence": 0.95,
+          "basis": "direct_observation",
+          "rationale": "A hand holds bottle 461 in front of the laptop product page.",
+          "evidence_refs": [
+            "ledger:2:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.close_up",
+          "start_seconds": 2.533,
+          "end_seconds": 6.3,
+          "confidence": 0.96,
+          "basis": "direct_observation",
+          "rationale": "The sampled product views closely frame the bottle and, in one frame, its box.",
+          "evidence_refs": [
+            "ledger:0:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.screen_content",
+          "start_seconds": 24.367,
+          "end_seconds": 27.4,
+          "confidence": 0.95,
+          "basis": "direct_observation",
+          "rationale": "A laptop screen showing a product page is visible behind the held bottle.",
+          "evidence_refs": [
+            "ledger:2:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "cta.verbal",
+          "start_seconds": 23.5,
+          "end_seconds": 28.4,
+          "confidence": 0.97,
+          "basis": "direct_observation",
+          "rationale": "The speaker names the website and explicitly says, 'go and grab yours,' with a sell-out rationale.",
+          "evidence_refs": [
+            "ledger:2:1",
+            "ledger:2:2",
+            "ledger:2:3"
+          ],
+          "event_id": "cta:1"
+        },
+        {
+          "technique_id": "cta.visual",
+          "start_seconds": 26.5,
+          "end_seconds": 27.0,
+          "confidence": 0.92,
+          "basis": "direct_observation",
+          "rationale": "The on-screen words 'grab yours' visibly request the same action.",
+          "evidence_refs": [
+            "ledger:2:2"
+          ],
+          "event_id": "cta:1"
+        },
+        {
+          "technique_id": "cta.product",
+          "start_seconds": 23.5,
+          "end_seconds": 28.4,
+          "confidence": 0.97,
+          "basis": "direct_observation",
+          "rationale": "The request is to get the featured perfume via the named website.",
+          "evidence_refs": [
+            "ledger:2:1",
+            "ledger:2:2",
+            "ledger:2:3"
+          ],
+          "event_id": "cta:1"
+        }
+      ],
+      "structure": [
+        {
+          "role": "hook",
+          "start_seconds": 0.0,
+          "end_seconds": 2.533,
+          "confidence": 0.96,
+          "rationale": "Opens with a camera-facing bottle presentation and the assertion that it is the best dupe the speaker has found.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ]
+        },
+        {
+          "role": "setup",
+          "start_seconds": 2.533,
+          "end_seconds": 6.3,
+          "confidence": 0.94,
+          "rationale": "Introduces bottle 461, its maker, and the fragrance it is said to be inspired by, alongside product views.",
+          "evidence_refs": [
+            "ledger:0:1"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 6.3,
+          "end_seconds": 9.567,
+          "confidence": 0.93,
+          "rationale": "Explains the claimed similarity in notes and smell.",
+          "evidence_refs": [
+            "ledger:0:2"
+          ]
+        },
+        {
+          "role": "payoff",
+          "start_seconds": 9.567,
+          "end_seconds": 11.9,
+          "confidence": 0.83,
+          "rationale": "The speaker gives a positive reaction to the smell; there is no supplied frame for this interval.",
+          "evidence_refs": [
+            "ledger:1:0"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 11.9,
+          "end_seconds": 21.167,
+          "confidence": 0.9,
+          "rationale": "Speech describes perfume strength, ingredients, and the claimed reason for lower cost, with sampled product views and a later return to the speaker.",
+          "evidence_refs": [
+            "ledger:1:1",
+            "ledger:1:2",
+            "ledger:1:3",
+            "ledger:2:0"
+          ]
+        },
+        {
+          "role": "proof",
+          "start_seconds": 21.167,
+          "end_seconds": 23.5,
+          "confidence": 0.8,
+          "rationale": "The speaker offers a personal testimonial that wearing it brings compliments; this is a claim, not independently verified evidence.",
+          "evidence_refs": [
+            "ledger:2:1"
+          ]
+        },
+        {
+          "role": "cta",
+          "start_seconds": 23.5,
+          "end_seconds": 28.4,
+          "confidence": 0.96,
+          "rationale": "The speaker directs viewers to the website and asks them to get the perfume; the laptop product page and 'grab yours' text accompany part of the request.",
+          "evidence_refs": [
+            "ledger:2:1",
+            "ledger:2:2",
+            "ledger:2:3"
+          ]
+        }
+      ],
+      "uncertainties": [
+        "The transcript's name for the fragrance being imitated conflicts with or differs from the visible wording; the exact name is not resolved.",
+        "Sparse stills do not establish smelling, spraying, or other use of the bottle, nor continuous movement or particular cut types.",
+        "No supplied frame covers 9.567\u201311.9 or 19.133\u201321.167 seconds; structure there relies on transcript and OCR.",
+        "The transcript ends around 28.4 seconds; no further speech or request is established."
+      ]
+    },
+    "provenance": {
+      "stage": "ontology_synthesis",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0706ad99521925cb016acb7820200c87d2b9adf838229c04a1",
+      "prompt_sha256": "8b950810bd422710ac87600edd7887d34fec981c295b8b5ab18e45d9cf0ebec9",
+      "analyzer_commit": "c6a18c77ed7f34160dff617bfaec465a5f53cf71"
+    }
+  }
+}
