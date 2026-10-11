@@ -237,6 +237,8 @@ def validate_synthesis(draft: SynthesisDraft, ledger: list[dict], content: dict,
         references(event.ledger_refs, event.start_seconds, event.end_seconds)
     findings, structure = [], []
     for row in draft.findings:
+        if row.end_seconds is not None and row.end_seconds == row.start_seconds:
+            continue  # A still-only point cannot satisfy the frozen interval contract.
         is_cta = row.technique_id.startswith("cta.")
         if is_cta != (row.event_id is not None):
             raise ValueError("CTA labels need event IDs; other labels cannot use them")
@@ -272,6 +274,8 @@ def validate_synthesis(draft: SynthesisDraft, ledger: list[dict], content: dict,
                                     evidence_refs=references(assessment.ledger_refs, 0, duration,
                                                              require_overlap=False)))
     for row in draft.structure:
+        if row.end_seconds == row.start_seconds:
+            continue  # No positive structure duration is established.
         expanded = references(row.evidence_refs, row.start_seconds, row.end_seconds)
         overlapping = [items[ref] for ref in row.evidence_refs
                        if _overlaps(row.start_seconds, row.end_seconds, items[ref], .5)]
@@ -426,6 +430,11 @@ def run_one(source_ref: str, media_path: Path, result: dict, *, model: str,
             "format_assessments": [row.model_dump(mode="json") for row in draft.format_assessments],
             "cta_events": [row.model_dump(mode="json") for row in draft.cta_events],
             "cta_event_audit": cta_event_audit(draft),
+            "omitted_point_only_intervals": {
+                "findings": [row.model_dump(mode="json") for row in draft.findings
+                             if row.end_seconds is not None and row.end_seconds == row.start_seconds],
+                "structure": [row.model_dump(mode="json") for row in draft.structure
+                              if row.end_seconds == row.start_seconds]},
             "synthesis_draft": draft.model_dump(mode="json"),
             "semantic_draft": flat.model_dump(mode="json"),
             "analysis_report": report.model_dump(mode="json")}

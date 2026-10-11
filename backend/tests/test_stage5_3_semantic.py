@@ -166,6 +166,20 @@ class Stage53Tests(unittest.TestCase):
         validate_synthesis(SynthesisDraft.model_validate(draft), self.ledger,
                            self.content, self.frames)
 
+    def test_point_only_interval_claims_are_omitted_from_frozen_report(self):
+        draft = self.draft()
+        draft["findings"] = [{"technique_id": "visual.product_foreground",
+                              "start_seconds": 9, "end_seconds": 9, "confidence": .8,
+                              "basis": "direct_observation", "rationale": "Product visible",
+                              "evidence_refs": ["ledger:1:0"], "event_id": None}]
+        draft["structure"] = [{"role": "demonstration", "start_seconds": 9,
+                               "end_seconds": 9, "confidence": .8,
+                               "rationale": "Product visible", "evidence_refs": ["ledger:1:0"]}]
+        flat, report = validate_synthesis(SynthesisDraft.model_validate(draft),
+                                          self.ledger, self.content, self.frames)
+        self.assertEqual(flat.findings, [])
+        self.assertEqual(report.structure, [])
+
     def test_cta_event_id_groups_labels_for_one_request(self):
         draft = self.draft()
         draft["cta_events"] = [{"event_id": "event:1", "start_seconds": 8,
