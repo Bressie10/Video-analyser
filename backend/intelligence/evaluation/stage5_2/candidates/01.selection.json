@@ -1,0 +1,1531 @@
+{
+  "source_ref": "01",
+  "low_level_pipeline_commit": "6cfbe673feb76e13a03c98f61533aa16c1cfcbad",
+  "analyzer_commit": "1c376da9fb37bf35738df83b2d7a9e665e304b17",
+  "content_sha256": "cfd9f8099857eb1e77bbc8a4438e3f0d94bbcfdcfcc13f9ff14d66e1f7740164",
+  "selected_frames": [
+    {
+      "ref": "frame:0",
+      "timestamp_seconds": 0.1,
+      "selection_reason": "opening",
+      "jpeg_sha256": "72e300acaa82af78ef079963af660dfdff35232e222f811b4049c6140198d03b"
+    },
+    {
+      "ref": "frame:1",
+      "timestamp_seconds": 0.6,
+      "selection_reason": "ocr_change",
+      "jpeg_sha256": "99500110d9f2aa8b2b061024d6eca6f3d23b4584a1506902f765c43fb11d1932"
+    },
+    {
+      "ref": "frame:2",
+      "timestamp_seconds": 1.5,
+      "selection_reason": "opening",
+      "jpeg_sha256": "5101ca58ff943d0e1d8c2604508e8904918b6de5157b3b9b52518174a04ef3fb"
+    },
+    {
+      "ref": "frame:3",
+      "timestamp_seconds": 3.0,
+      "selection_reason": "opening",
+      "jpeg_sha256": "5e88ad75b1b2f1b494912c3905e8c571033bf8187f1bc6c3bb1636d3cc657f6e"
+    },
+    {
+      "ref": "frame:4",
+      "timestamp_seconds": 4.433,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "af12815630091e3822241b0dbb71327e7d867f862a1f22ad14058df1d567ddd9"
+    },
+    {
+      "ref": "frame:5",
+      "timestamp_seconds": 7.167,
+      "selection_reason": "temporal_coverage",
+      "jpeg_sha256": "55eeb4ecf5f3bea18939e3b4773c40ff43176025e94fecaba1ba0f221314a34b"
+    },
+    {
+      "ref": "frame:6",
+      "timestamp_seconds": 9.1,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "01534406f85654194481b55c70cb77936dd77a91b9d72803f69daaa7bf37f647"
+    },
+    {
+      "ref": "frame:7",
+      "timestamp_seconds": 13.067,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "d8294b2395c330462407d81ec918f0ca9df0592890f6294b55fb6f37af9ee304"
+    },
+    {
+      "ref": "frame:8",
+      "timestamp_seconds": 14.333,
+      "selection_reason": "temporal_coverage",
+      "jpeg_sha256": "87eeaab9a28cb85553b131f068edf16df2dfbf80afdb152a3cfea75d620eb58b"
+    },
+    {
+      "ref": "frame:9",
+      "timestamp_seconds": 15.067,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "78c77f23bd48a0242df8d14f6fd036115097d125a4d1eb9e3cdde8b897e340ed"
+    },
+    {
+      "ref": "frame:10",
+      "timestamp_seconds": 18.533,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "2e6e7a9d25143826d0ddeed95fff315c0391efb9f4cf1f8d52563a8595572b29"
+    },
+    {
+      "ref": "frame:11",
+      "timestamp_seconds": 21.533,
+      "selection_reason": "temporal_coverage",
+      "jpeg_sha256": "c63569a10e2a0f6609e9589f2bf2dc61fc185ebd9f4ff5d33e0bdd1db96410d8"
+    },
+    {
+      "ref": "frame:12",
+      "timestamp_seconds": 24.1,
+      "selection_reason": "ocr_change",
+      "jpeg_sha256": "3681b17c1dc89242a02649f9b58b14acd883c1f794cc7a95995a13bcb8d5e32e"
+    },
+    {
+      "ref": "frame:13",
+      "timestamp_seconds": 26.7,
+      "selection_reason": "final",
+      "jpeg_sha256": "c263f8fd63c113ad0cbc923b2df7ea80cfa66c6a1e0dc376ebee1e96fcaa26b6"
+    },
+    {
+      "ref": "frame:14",
+      "timestamp_seconds": 28.1,
+      "selection_reason": "ocr_change",
+      "jpeg_sha256": "2c322e8c5c1cdd8af41a98bd7589b6a5c34d1f35268a5579904b5dd257097b98"
+    },
+    {
+      "ref": "frame:15",
+      "timestamp_seconds": 28.6,
+      "selection_reason": "final",
+      "jpeg_sha256": "769d775e0aeeae39df547accb608ce6a6c19fd16d332e51bbaab103e1776745a"
+    }
+  ],
+  "frame_coverage": {
+    "selected_frame_count": 16,
+    "largest_frame_gap_seconds": 3.967
+  },
+  "ocr_summary_supplied": [
+    {
+      "normalized_text": "this is the best",
+      "first_appearance_seconds": 0.5,
+      "last_appearance_seconds": 1.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:0"
+      ]
+    },
+    {
+      "normalized_text": "461",
+      "first_appearance_seconds": 1.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 13.5,
+      "source_span_count": 21,
+      "repeated_occurrence_count": 8,
+      "source_refs": [
+        "ocr:2",
+        "ocr:3",
+        "ocr:6",
+        "ocr:7",
+        "ocr:13",
+        "ocr:17",
+        "ocr:20",
+        "ocr:36",
+        "ocr:39",
+        "ocr:54",
+        "ocr:63",
+        "ocr:65",
+        "ocr:66",
+        "ocr:68",
+        "ocr:71",
+        "ocr:75",
+        "ocr:79",
+        "ocr:91",
+        "ocr:126",
+        "ocr:142",
+        "ocr:169"
+      ]
+    },
+    {
+      "normalized_text": "barracat rouge dupe",
+      "first_appearance_seconds": 1.0,
+      "last_appearance_seconds": 2.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:1"
+      ]
+    },
+    {
+      "normalized_text": "i have found",
+      "first_appearance_seconds": 2.0,
+      "last_appearance_seconds": 3.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:4"
+      ]
+    },
+    {
+      "normalized_text": "100m",
+      "first_appearance_seconds": 3.0,
+      "last_appearance_seconds": 26.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:11",
+        "ocr:154"
+      ]
+    },
+    {
+      "normalized_text": "eau de pa",
+      "first_appearance_seconds": 3.0,
+      "last_appearance_seconds": 3.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:10"
+      ]
+    },
+    {
+      "normalized_text": "essence vault",
+      "first_appearance_seconds": 3.0,
+      "last_appearance_seconds": 3.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:8"
+      ]
+    },
+    {
+      "normalized_text": "number 461",
+      "first_appearance_seconds": 3.0,
+      "last_appearance_seconds": 3.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:9"
+      ]
+    },
+    {
+      "normalized_text": "the essence vauly",
+      "first_appearance_seconds": 3.0,
+      "last_appearance_seconds": 4.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:5",
+        "ocr:16"
+      ]
+    },
+    {
+      "normalized_text": "by the essence vault",
+      "first_appearance_seconds": 3.5,
+      "last_appearance_seconds": 4.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:15"
+      ]
+    },
+    {
+      "normalized_text": "eai dr palun",
+      "first_appearance_seconds": 3.5,
+      "last_appearance_seconds": 4.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:14"
+      ]
+    },
+    {
+      "normalized_text": "the essence vault",
+      "first_appearance_seconds": 3.5,
+      "last_appearance_seconds": 25.5,
+      "approximate_persistence_seconds": 4.5,
+      "source_span_count": 5,
+      "repeated_occurrence_count": 3,
+      "source_refs": [
+        "ocr:12",
+        "ocr:19",
+        "ocr:53",
+        "ocr:57",
+        "ocr:127"
+      ]
+    },
+    {
+      "normalized_text": "eas de paciun",
+      "first_appearance_seconds": 4.0,
+      "last_appearance_seconds": 4.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:18"
+      ]
+    },
+    {
+      "normalized_text": "is inspired",
+      "first_appearance_seconds": 4.5,
+      "last_appearance_seconds": 5.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:21"
+      ]
+    },
+    {
+      "normalized_text": "by barracat rouge",
+      "first_appearance_seconds": 5.0,
+      "last_appearance_seconds": 6.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:23"
+      ]
+    },
+    {
+      "normalized_text": "enu te partun",
+      "first_appearance_seconds": 5.0,
+      "last_appearance_seconds": 5.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:22"
+      ]
+    },
+    {
+      "normalized_text": "eas te pa un",
+      "first_appearance_seconds": 5.5,
+      "last_appearance_seconds": 6.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:24"
+      ]
+    },
+    {
+      "normalized_text": "eau de partun",
+      "first_appearance_seconds": 6.0,
+      "last_appearance_seconds": 6.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:25"
+      ]
+    },
+    {
+      "normalized_text": "so it has all of",
+      "first_appearance_seconds": 6.0,
+      "last_appearance_seconds": 7.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:26"
+      ]
+    },
+    {
+      "normalized_text": "the same notes",
+      "first_appearance_seconds": 7.0,
+      "last_appearance_seconds": 7.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:27"
+      ]
+    },
+    {
+      "normalized_text": "and it smells",
+      "first_appearance_seconds": 7.5,
+      "last_appearance_seconds": 8.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:28"
+      ]
+    },
+    {
+      "normalized_text": "just like it",
+      "first_appearance_seconds": 8.5,
+      "last_appearance_seconds": 9.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:29"
+      ]
+    },
+    {
+      "normalized_text": "i literally",
+      "first_appearance_seconds": 10.0,
+      "last_appearance_seconds": 10.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:30"
+      ]
+    },
+    {
+      "normalized_text": "can t get over",
+      "first_appearance_seconds": 10.5,
+      "last_appearance_seconds": 11.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:31"
+      ]
+    },
+    {
+      "normalized_text": "poo mou",
+      "first_appearance_seconds": 11.0,
+      "last_appearance_seconds": 11.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:32"
+      ]
+    },
+    {
+      "normalized_text": "that smells",
+      "first_appearance_seconds": 11.5,
+      "last_appearance_seconds": 12.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:33"
+      ]
+    },
+    {
+      "normalized_text": "82",
+      "first_appearance_seconds": 12.0,
+      "last_appearance_seconds": 14.5,
+      "approximate_persistence_seconds": 2.5,
+      "source_span_count": 5,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:35",
+        "ocr:38",
+        "ocr:42",
+        "ocr:46",
+        "ocr:51"
+      ]
+    },
+    {
+      "normalized_text": "and the essence vault",
+      "first_appearance_seconds": 12.0,
+      "last_appearance_seconds": 13.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:37"
+      ]
+    },
+    {
+      "normalized_text": "erasenck vault",
+      "first_appearance_seconds": 12.0,
+      "last_appearance_seconds": 12.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:34"
+      ]
+    },
+    {
+      "normalized_text": "100m 35fl02",
+      "first_appearance_seconds": 12.5,
+      "last_appearance_seconds": 13.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:40"
+      ]
+    },
+    {
+      "normalized_text": "make all of their",
+      "first_appearance_seconds": 13.0,
+      "last_appearance_seconds": 13.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:43"
+      ]
+    },
+    {
+      "normalized_text": "the esience vault",
+      "first_appearance_seconds": 13.0,
+      "last_appearance_seconds": 13.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:41"
+      ]
+    },
+    {
+      "normalized_text": "444",
+      "first_appearance_seconds": 13.5,
+      "last_appearance_seconds": 14.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:45",
+        "ocr:50"
+      ]
+    },
+    {
+      "normalized_text": "esnence vauly",
+      "first_appearance_seconds": 13.5,
+      "last_appearance_seconds": 14.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:44"
+      ]
+    },
+    {
+      "normalized_text": "perfumes strong",
+      "first_appearance_seconds": 13.5,
+      "last_appearance_seconds": 14.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:47"
+      ]
+    },
+    {
+      "normalized_text": "100m13 5fl02",
+      "first_appearance_seconds": 14.0,
+      "last_appearance_seconds": 14.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:52"
+      ]
+    },
+    {
+      "normalized_text": "soe essence vauy",
+      "first_appearance_seconds": 14.0,
+      "last_appearance_seconds": 14.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:48"
+      ]
+    },
+    {
+      "normalized_text": "the essence va",
+      "first_appearance_seconds": 14.0,
+      "last_appearance_seconds": 14.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:49"
+      ]
+    },
+    {
+      "normalized_text": "100m135flo2",
+      "first_appearance_seconds": 14.5,
+      "last_appearance_seconds": 15.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:55"
+      ]
+    },
+    {
+      "normalized_text": "and with the",
+      "first_appearance_seconds": 14.5,
+      "last_appearance_seconds": 15.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:56"
+      ]
+    },
+    {
+      "normalized_text": "100m 35flo2",
+      "first_appearance_seconds": 15.0,
+      "last_appearance_seconds": 15.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:58"
+      ]
+    },
+    {
+      "normalized_text": "same high quality",
+      "first_appearance_seconds": 15.0,
+      "last_appearance_seconds": 15.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:59"
+      ]
+    },
+    {
+      "normalized_text": "100m135fl02",
+      "first_appearance_seconds": 15.5,
+      "last_appearance_seconds": 16.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:60"
+      ]
+    },
+    {
+      "normalized_text": "ingredients",
+      "first_appearance_seconds": 15.5,
+      "last_appearance_seconds": 16.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:61"
+      ]
+    },
+    {
+      "normalized_text": "it can just",
+      "first_appearance_seconds": 16.0,
+      "last_appearance_seconds": 16.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:62"
+      ]
+    },
+    {
+      "normalized_text": "be way cheaper",
+      "first_appearance_seconds": 16.5,
+      "last_appearance_seconds": 17.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:64"
+      ]
+    },
+    {
+      "normalized_text": "because they re",
+      "first_appearance_seconds": 17.5,
+      "last_appearance_seconds": 18.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:67"
+      ]
+    },
+    {
+      "normalized_text": "for the crazy",
+      "first_appearance_seconds": 18.0,
+      "last_appearance_seconds": 19.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:69"
+      ]
+    },
+    {
+      "normalized_text": "designer label",
+      "first_appearance_seconds": 19.0,
+      "last_appearance_seconds": 20.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:70"
+      ]
+    },
+    {
+      "normalized_text": "61",
+      "first_appearance_seconds": 20.0,
+      "last_appearance_seconds": 20.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:73"
+      ]
+    },
+    {
+      "normalized_text": "and marketing",
+      "first_appearance_seconds": 20.0,
+      "last_appearance_seconds": 20.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:72"
+      ]
+    },
+    {
+      "normalized_text": "and retail costs",
+      "first_appearance_seconds": 20.5,
+      "last_appearance_seconds": 21.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:74"
+      ]
+    },
+    {
+      "normalized_text": "this gets",
+      "first_appearance_seconds": 21.5,
+      "last_appearance_seconds": 22.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:76"
+      ]
+    },
+    {
+      "normalized_text": "me compliments",
+      "first_appearance_seconds": 22.0,
+      "last_appearance_seconds": 22.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:77"
+      ]
+    },
+    {
+      "normalized_text": "every single time",
+      "first_appearance_seconds": 22.5,
+      "last_appearance_seconds": 23.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:78"
+      ]
+    },
+    {
+      "normalized_text": "and you can",
+      "first_appearance_seconds": 23.5,
+      "last_appearance_seconds": 24.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:80"
+      ]
+    },
+    {
+      "normalized_text": "only buy it on",
+      "first_appearance_seconds": 24.0,
+      "last_appearance_seconds": 24.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:81"
+      ]
+    },
+    {
+      "normalized_text": "0",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:112"
+      ]
+    },
+    {
+      "normalized_text": "10",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:82"
+      ]
+    },
+    {
+      "normalized_text": "14 99",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:90"
+      ]
+    },
+    {
+      "normalized_text": "2",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 3.0,
+      "source_span_count": 4,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:96",
+        "ocr:99",
+        "ocr:130",
+        "ocr:158"
+      ]
+    },
+    {
+      "normalized_text": "8",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:94",
+        "ocr:108"
+      ]
+    },
+    {
+      "normalized_text": "a",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 3.0,
+      "source_span_count": 3,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:97",
+        "ocr:145",
+        "ocr:146"
+      ]
+    },
+    {
+      "normalized_text": "bunole a save",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:86"
+      ]
+    },
+    {
+      "normalized_text": "c",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 2.5,
+      "source_span_count": 3,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:105",
+        "ocr:148",
+        "ocr:155"
+      ]
+    },
+    {
+      "normalized_text": "chmmang",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:116"
+      ]
+    },
+    {
+      "normalized_text": "control",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:114"
+      ]
+    },
+    {
+      "normalized_text": "d",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:103"
+      ]
+    },
+    {
+      "normalized_text": "e",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 3.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:102"
+      ]
+    },
+    {
+      "normalized_text": "f",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 2.5,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:106",
+        "ocr:149"
+      ]
+    },
+    {
+      "normalized_text": "g",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:107"
+      ]
+    },
+    {
+      "normalized_text": "h",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:110"
+      ]
+    },
+    {
+      "normalized_text": "home range",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 26.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:85",
+        "ocr:151"
+      ]
+    },
+    {
+      "normalized_text": "inspired by baracatt rouge 540 461",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 3.0,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:89",
+        "ocr:92"
+      ]
+    },
+    {
+      "normalized_text": "intense collection",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 1.5,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:87",
+        "ocr:165"
+      ]
+    },
+    {
+      "normalized_text": "macblook air",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:93"
+      ]
+    },
+    {
+      "normalized_text": "men",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 26.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:83",
+        "ocr:150"
+      ]
+    },
+    {
+      "normalized_text": "n",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:111"
+      ]
+    },
+    {
+      "normalized_text": "only buy it",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:101"
+      ]
+    },
+    {
+      "normalized_text": "option",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:115"
+      ]
+    },
+    {
+      "normalized_text": "q",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 3.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:95"
+      ]
+    },
+    {
+      "normalized_text": "r",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 3.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:104"
+      ]
+    },
+    {
+      "normalized_text": "s",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 26.5,
+      "approximate_persistence_seconds": 1.5,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:100",
+        "ocr:156"
+      ]
+    },
+    {
+      "normalized_text": "to",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 2.0,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:113",
+        "ocr:160"
+      ]
+    },
+    {
+      "normalized_text": "ton",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:109"
+      ]
+    },
+    {
+      "normalized_text": "track your order",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 2.5,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:88",
+        "ocr:153"
+      ]
+    },
+    {
+      "normalized_text": "unsex",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 25.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:84"
+      ]
+    },
+    {
+      "normalized_text": "w",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 2.5,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:98",
+        "ocr:143"
+      ]
+    },
+    {
+      "normalized_text": "14 09",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 2.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:124"
+      ]
+    },
+    {
+      "normalized_text": "401",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 28.5,
+      "approximate_persistence_seconds": 2.5,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:125",
+        "ocr:174"
+      ]
+    },
+    {
+      "normalized_text": "5",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 2.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:129"
+      ]
+    },
+    {
+      "normalized_text": "brend or move",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 27.0,
+      "approximate_persistence_seconds": 2.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:120"
+      ]
+    },
+    {
+      "normalized_text": "cemmand",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 27.0,
+      "approximate_persistence_seconds": 2.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:135"
+      ]
+    },
+    {
+      "normalized_text": "contrel",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 2.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:133"
+      ]
+    },
+    {
+      "normalized_text": "eption",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 26.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:134"
+      ]
+    },
+    {
+      "normalized_text": "est",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 25.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:128"
+      ]
+    },
+    {
+      "normalized_text": "momie rande bundle shve",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 25.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:123"
+      ]
+    },
+    {
+      "normalized_text": "mun unisex",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 25.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:122"
+      ]
+    },
+    {
+      "normalized_text": "new",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:121",
+        "ocr:166"
+      ]
+    },
+    {
+      "normalized_text": "q seanch by pertume",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 26.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:119"
+      ]
+    },
+    {
+      "normalized_text": "tn",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 26.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:132"
+      ]
+    },
+    {
+      "normalized_text": "vaust",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:118",
+        "ocr:163"
+      ]
+    },
+    {
+      "normalized_text": "x",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 2.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:131"
+      ]
+    },
+    {
+      "normalized_text": "\u65e5",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 26.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:117"
+      ]
+    },
+    {
+      "normalized_text": "homie rande dundle shve",
+      "first_appearance_seconds": 25.5,
+      "last_appearance_seconds": 26.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:141"
+      ]
+    },
+    {
+      "normalized_text": "itenme collection",
+      "first_appearance_seconds": 25.5,
+      "last_appearance_seconds": 27.0,
+      "approximate_persistence_seconds": 1.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:137"
+      ]
+    },
+    {
+      "normalized_text": "now",
+      "first_appearance_seconds": 25.5,
+      "last_appearance_seconds": 27.0,
+      "approximate_persistence_seconds": 1.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:138"
+      ]
+    },
+    {
+      "normalized_text": "track your oroer",
+      "first_appearance_seconds": 25.5,
+      "last_appearance_seconds": 26.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:139"
+      ]
+    },
+    {
+      "normalized_text": "un",
+      "first_appearance_seconds": 25.5,
+      "last_appearance_seconds": 26.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:144"
+      ]
+    },
+    {
+      "normalized_text": "unisex",
+      "first_appearance_seconds": 25.5,
+      "last_appearance_seconds": 27.0,
+      "approximate_persistence_seconds": 1.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:140"
+      ]
+    },
+    {
+      "normalized_text": "vault",
+      "first_appearance_seconds": 25.5,
+      "last_appearance_seconds": 27.0,
+      "approximate_persistence_seconds": 1.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:136"
+      ]
+    },
+    {
+      "normalized_text": "website",
+      "first_appearance_seconds": 25.5,
+      "last_appearance_seconds": 26.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:147"
+      ]
+    },
+    {
+      "normalized_text": "and",
+      "first_appearance_seconds": 26.0,
+      "last_appearance_seconds": 26.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:159"
+      ]
+    },
+    {
+      "normalized_text": "bundle save",
+      "first_appearance_seconds": 26.0,
+      "last_appearance_seconds": 26.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:152"
+      ]
+    },
+    {
+      "normalized_text": "t",
+      "first_appearance_seconds": 26.0,
+      "last_appearance_seconds": 26.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:157"
+      ]
+    },
+    {
+      "normalized_text": "grabyours",
+      "first_appearance_seconds": 26.5,
+      "last_appearance_seconds": 27.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:162"
+      ]
+    },
+    {
+      "normalized_text": "q search by pertumi",
+      "first_appearance_seconds": 26.5,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:161"
+      ]
+    },
+    {
+      "normalized_text": "because they sell",
+      "first_appearance_seconds": 27.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:170"
+      ]
+    },
+    {
+      "normalized_text": "brend or more",
+      "first_appearance_seconds": 27.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:164"
+      ]
+    },
+    {
+      "normalized_text": "command",
+      "first_appearance_seconds": 27.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:172"
+      ]
+    },
+    {
+      "normalized_text": "cption",
+      "first_appearance_seconds": 27.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:171"
+      ]
+    },
+    {
+      "normalized_text": "homie rande bundle shve",
+      "first_appearance_seconds": 27.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:168"
+      ]
+    },
+    {
+      "normalized_text": "men unisex",
+      "first_appearance_seconds": 27.0,
+      "last_appearance_seconds": 27.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:167"
+      ]
+    },
+    {
+      "normalized_text": "out so quickly",
+      "first_appearance_seconds": 27.5,
+      "last_appearance_seconds": 28.5,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:173"
+      ]
+    }
+  ],
+  "content_counts": {
+    "transcript": 11,
+    "ocr": 175,
+    "scenes": 9
+  },
+  "model_inference_completed": false
+}

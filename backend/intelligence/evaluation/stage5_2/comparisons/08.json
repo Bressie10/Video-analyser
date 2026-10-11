@@ -1,0 +1,557 @@
+{
+  "source_ref": "08",
+  "candidate_analyzer_commit": "1c376da9fb37bf35738df83b2d7a9e665e304b17",
+  "truth_version": "stage5.1-provisional-1",
+  "reviewer_provenance": {
+    "reviewer_type": "AI-assisted visual reviewer (Codex)",
+    "reviewed_at": "2026-10-11T11:27:07.903511+00:00",
+    "saw_model_output_before_annotation": true,
+    "blind": false,
+    "independent_human_review": false,
+    "source_audio_reviewed": false,
+    "review_method": "Decoded timestamped frames across the full runtime at 1.0s spacing (1.5s for 04), plus supplied OCR/transcript; no continuous audio playback. Interval bounds are approximate.",
+    "adjudication_notes": [
+      "Persistent on-screen quiz directive from 0\u201323.5s is recorded as visible text usage and cta.visual. Frozen ontology has no generic persistent-overlay text technique; do not force it into text.captions.",
+      "The overlay CTA and end-card CTA are two temporal presentations of one request. Stage 5 separately emits cta.visual and cta.product for each; product label remains uncertain.",
+      "Final button begins near 24.8s; Stage 5 starts its closing CTA at 23.5s, before the button is visible."
+    ]
+  },
+  "coverage": {
+    "hook": "complete",
+    "format": "complete",
+    "editing": "partial",
+    "text": "complete",
+    "cta": "complete",
+    "visual": "partial",
+    "audio": "unavailable"
+  },
+  "structure_coverage": "complete",
+  "label": {
+    "tp": 5,
+    "fp": 0,
+    "fn": 0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "matched_pairs": [
+      [
+        0,
+        1
+      ],
+      [
+        1,
+        0
+      ],
+      [
+        5,
+        2
+      ],
+      [
+        7,
+        6
+      ],
+      [
+        8,
+        3
+      ]
+    ],
+    "unsupported_prediction_indices": [],
+    "missed_reviewed_indices": [],
+    "abstained_uncertain_prediction_indices": [
+      6,
+      9
+    ],
+    "scored_prediction_count": 5,
+    "scored_truth_count": 5
+  },
+  "interval_matching": {
+    "0.25": {
+      "tp": 3,
+      "fp": 2,
+      "fn": 2,
+      "precision": 0.6,
+      "recall": 0.6,
+      "f1": 0.6,
+      "matched_pairs": [
+        [
+          0,
+          1
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          7,
+          6
+        ]
+      ],
+      "unsupported_prediction_indices": [
+        1,
+        8
+      ],
+      "missed_reviewed_indices": [
+        0,
+        3
+      ],
+      "abstained_uncertain_prediction_indices": [
+        6,
+        9
+      ],
+      "scored_prediction_count": 5,
+      "scored_truth_count": 5
+    },
+    "0.5": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "matched_pairs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          8,
+          3
+        ]
+      ],
+      "unsupported_prediction_indices": [],
+      "missed_reviewed_indices": [],
+      "abstained_uncertain_prediction_indices": [
+        6,
+        9
+      ],
+      "scored_prediction_count": 5,
+      "scored_truth_count": 5
+    },
+    "1.0": {
+      "tp": 5,
+      "fp": 0,
+      "fn": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "matched_pairs": [
+        [
+          0,
+          1
+        ],
+        [
+          1,
+          0
+        ],
+        [
+          5,
+          2
+        ],
+        [
+          7,
+          6
+        ],
+        [
+          8,
+          3
+        ]
+      ],
+      "unsupported_prediction_indices": [],
+      "missed_reviewed_indices": [],
+      "abstained_uncertain_prediction_indices": [
+        6,
+        9
+      ],
+      "scored_prediction_count": 5,
+      "scored_truth_count": 5
+    }
+  },
+  "structure_role_agreement": {
+    "tp": 3,
+    "fp": 3,
+    "fn": 0,
+    "precision": 0.5,
+    "recall": 1.0,
+    "f1": 0.6666666666666666,
+    "matched_pairs": [
+      [
+        0,
+        0
+      ],
+      [
+        1,
+        1
+      ],
+      [
+        5,
+        2
+      ]
+    ],
+    "unsupported_prediction_indices": [
+      2,
+      3,
+      4
+    ],
+    "missed_reviewed_indices": [],
+    "abstained_uncertain_prediction_indices": [],
+    "scored_prediction_count": 6,
+    "scored_truth_count": 3
+  },
+  "flags": {
+    "duplicate_prediction_pairs": [],
+    "cta_same_event_pairs": [
+      [
+        5,
+        6
+      ],
+      [
+        8,
+        9
+      ]
+    ],
+    "contradictory_structure_pairs": [],
+    "duplicate_prediction_count": 0,
+    "contradictory_prediction_count": 0
+  },
+  "evidence_interval_audit": [
+    {
+      "kind": "finding",
+      "index": 0,
+      "interval_support": [
+        "frame:0"
+      ],
+      "context_support": [
+        "frame:2",
+        "frame:3",
+        "frame:5",
+        "frame:8",
+        "frame:9"
+      ],
+      "substantive_interval_support": [
+        "frame:0"
+      ],
+      "required": false,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 1,
+      "interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:0",
+        "frame:1",
+        "frame:2"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 2,
+      "interval_support": [
+        "frame:0",
+        "frame:3",
+        "frame:4",
+        "frame:8",
+        "frame:9",
+        "frame:10",
+        "frame:11"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:0",
+        "frame:3",
+        "frame:4",
+        "frame:8",
+        "frame:9",
+        "frame:10",
+        "frame:11"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 3,
+      "interval_support": [
+        "frame:1",
+        "frame:2"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:1",
+        "frame:2"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 4,
+      "interval_support": [
+        "frame:9"
+      ],
+      "context_support": [
+        "frame:10"
+      ],
+      "substantive_interval_support": [
+        "frame:9"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 5,
+      "interval_support": [
+        "frame:0",
+        "frame:4",
+        "frame:8",
+        "frame:11",
+        "ocr:0",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:0",
+        "frame:4",
+        "frame:8",
+        "frame:11",
+        "ocr:0",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 6,
+      "interval_support": [
+        "frame:0",
+        "frame:5",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:0",
+        "frame:5",
+        "ocr:1",
+        "ocr:5"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 7,
+      "interval_support": [
+        "frame:12",
+        "frame:13",
+        "frame:15",
+        "ocr:13",
+        "ocr:15"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:12",
+        "frame:13",
+        "frame:15",
+        "ocr:13",
+        "ocr:15"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 8,
+      "interval_support": [
+        "frame:13",
+        "frame:14",
+        "frame:15",
+        "ocr:17",
+        "ocr:22"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:13",
+        "frame:14",
+        "frame:15",
+        "ocr:17",
+        "ocr:22"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "finding",
+      "index": 9,
+      "interval_support": [
+        "frame:13",
+        "frame:15",
+        "ocr:13",
+        "ocr:15",
+        "ocr:17",
+        "ocr:22"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:13",
+        "frame:15",
+        "ocr:13",
+        "ocr:15",
+        "ocr:17",
+        "ocr:22"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 0,
+      "interval_support": [
+        "frame:0",
+        "ocr:0",
+        "ocr:1"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:0",
+        "ocr:0",
+        "ocr:1"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 1,
+      "interval_support": [
+        "frame:1",
+        "frame:2",
+        "frame:3",
+        "frame:4",
+        "frame:5",
+        "frame:6",
+        "frame:7",
+        "frame:8",
+        "frame:9"
+      ],
+      "context_support": [
+        "frame:10"
+      ],
+      "substantive_interval_support": [
+        "frame:1",
+        "frame:2",
+        "frame:3",
+        "frame:4",
+        "frame:5",
+        "frame:6",
+        "frame:7",
+        "frame:8",
+        "frame:9"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 2,
+      "interval_support": [
+        "ocr:1",
+        "ocr:5",
+        "scene:12",
+        "scene:21"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "ocr:1",
+        "ocr:5"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 3,
+      "interval_support": [
+        "frame:11",
+        "scene:22"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:11"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 4,
+      "interval_support": [
+        "scene:23",
+        "scene:24",
+        "ocr:13"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "ocr:13"
+      ],
+      "required": true,
+      "passes": true
+    },
+    {
+      "kind": "structure",
+      "index": 5,
+      "interval_support": [
+        "frame:12",
+        "frame:13",
+        "frame:14",
+        "frame:15",
+        "ocr:13",
+        "ocr:15",
+        "ocr:17",
+        "ocr:22"
+      ],
+      "context_support": [],
+      "substantive_interval_support": [
+        "frame:12",
+        "frame:13",
+        "frame:14",
+        "frame:15",
+        "ocr:13",
+        "ocr:15",
+        "ocr:17",
+        "ocr:22"
+      ],
+      "required": true,
+      "passes": true
+    }
+  ],
+  "structure_covered_runtime_fraction": 1.0,
+  "evidence_without_interval_support_count": 0,
+  "unsupported_finding_count": 0,
+  "unsupported_finding_indices": [],
+  "missed_reviewed_finding_count": 0,
+  "unscored_category_prediction_count": 3
+}

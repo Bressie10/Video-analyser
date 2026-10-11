@@ -2,12 +2,13 @@
 
 import hashlib
 import json
+import tempfile
 import unittest
 from pathlib import Path
 
 from intelligence.evaluation.stage5_1_review import structure_covered_runtime_fraction
 from intelligence.evaluation.stage5_semantic import (
-    SemanticDraft, frame_coverage, model_content, select_frame_timestamps,
+    SemanticDraft, extract_frames, frame_coverage, model_content, select_frame_timestamps,
     semantic_input, summarize_ocr, validate_draft,
 )
 
@@ -46,6 +47,28 @@ class Stage52SemanticTests(unittest.TestCase):
         self.assertTrue(any(row["reason"] == "ocr_change" and row["timestamp_seconds"] >= 130.0
                             for row in plan))
         self.assertLessEqual(frame_coverage(plan, 138.5)["largest_frame_gap_seconds"], 8.0)
+
+    def test_optional_near_duplicate_scene_frames_are_skipped(self):
+        import cv2
+        import numpy as np
+
+        with tempfile.TemporaryDirectory() as directory:
+            video = Path(directory) / "static.avi"
+            writer = cv2.VideoWriter(str(video), cv2.VideoWriter_fourcc(*"MJPG"),
+                                     10.0, (64, 48))
+            self.assertTrue(writer.isOpened())
+            for _ in range(200):
+                writer.write(np.full((48, 64, 3), 100, dtype=np.uint8))
+            writer.release()
+            scenes = [{"start_seconds": i * 2.0, "end_seconds": i * 2.0 + 2.0}
+                      for i in range(10)]
+            plan = select_frame_timestamps(20.0, scenes, [])
+            frames, _ = extract_frames(video, plan)
+            self.assertLess(len(frames), len(plan))
+            self.assertFalse(any(row["selection_reason"] == "scene_representative"
+                                 for row in frames))
+            self.assertTrue(any(row["selection_reason"] == "temporal_coverage"
+                                for row in frames))
 
     def test_ocr_summary_normalizes_and_counts_persistence_without_inventing_text(self):
         rows = [{"ref": "ocr:0", "start_seconds": 0.0, "end_seconds": 2.0,

@@ -1,0 +1,299 @@
+{
+  "source_ref": "08",
+  "low_level_pipeline_commit": "6cfbe673feb76e13a03c98f61533aa16c1cfcbad",
+  "analyzer_commit": "1c376da9fb37bf35738df83b2d7a9e665e304b17",
+  "content_sha256": "3d1be7b77c28ac6e7ebd02f248aa007d0d318e27e81e55b584dea62ade40eda2",
+  "selected_frames": [
+    {
+      "ref": "frame:0",
+      "timestamp_seconds": 0.1,
+      "selection_reason": "opening",
+      "jpeg_sha256": "91eed155942979d898f07fe87f976ed1dd3a5970d273f89320a6b4d1e7aabe9a"
+    },
+    {
+      "ref": "frame:1",
+      "timestamp_seconds": 0.533,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "447bca54f83cc80da88f61bb77ff1afe02e37a95d8857d79a5a8ca996867ef54"
+    },
+    {
+      "ref": "frame:2",
+      "timestamp_seconds": 1.5,
+      "selection_reason": "opening",
+      "jpeg_sha256": "15dca3a05c5c69a87d22aa4e7bcdb87524f9e834634cdf8d2c4f73d6dd38d8f6"
+    },
+    {
+      "ref": "frame:3",
+      "timestamp_seconds": 2.367,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "0fac0f15043bfc7486dfbd63a0937de63984c07dc03fdb84e27646d037ede0dd"
+    },
+    {
+      "ref": "frame:4",
+      "timestamp_seconds": 3.0,
+      "selection_reason": "opening",
+      "jpeg_sha256": "c70d8429f5195b496771fd813a3ba82b7d927e35e3714fabcdc39508fafbbb72"
+    },
+    {
+      "ref": "frame:5",
+      "timestamp_seconds": 4.667,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "a8bc7ac3250016eedd0ba4414f94a2808d972d8c6eb67dd66e9ce2eb2d67519d"
+    },
+    {
+      "ref": "frame:6",
+      "timestamp_seconds": 5.4,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "98014da10a8ce9ae3ce15de2acb3cee5db76221e5be3bc2c2d764f8336fc76b8"
+    },
+    {
+      "ref": "frame:7",
+      "timestamp_seconds": 6.867,
+      "selection_reason": "temporal_coverage",
+      "jpeg_sha256": "19f696ae328dd10876f9d7eda747872f2611ecc988ce35ed0168704e221b0f7b"
+    },
+    {
+      "ref": "frame:8",
+      "timestamp_seconds": 9.167,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "cee591b2733a0742d9e9d2cd1f730ce66d2cdfc2722437431c7539fdcceddf7e"
+    },
+    {
+      "ref": "frame:9",
+      "timestamp_seconds": 10.067,
+      "selection_reason": "scene_representative",
+      "jpeg_sha256": "b102f78137a5f35561cbd407bc2aaf667f74ae8436296ca01af9c98692188b45"
+    },
+    {
+      "ref": "frame:10",
+      "timestamp_seconds": 13.733,
+      "selection_reason": "temporal_coverage",
+      "jpeg_sha256": "1df18dfa9b8f44d8b263ce6d18c64d66561658826deb4449c0b6c1459ad83f73"
+    },
+    {
+      "ref": "frame:11",
+      "timestamp_seconds": 20.6,
+      "selection_reason": "temporal_coverage",
+      "jpeg_sha256": "ee68152a1fc69aac8b1f356d08d8106c6bb2f2f0a1a5d29994b9f6f9652e44ef"
+    },
+    {
+      "ref": "frame:12",
+      "timestamp_seconds": 23.6,
+      "selection_reason": "ocr_change",
+      "jpeg_sha256": "671be0d80f821e2c72407093f402d8c47c85581b6365bf8c21dacec225804352"
+    },
+    {
+      "ref": "frame:13",
+      "timestamp_seconds": 25.467,
+      "selection_reason": "final",
+      "jpeg_sha256": "fb8065d51ece13453ecece459fba406db6ab06dae259ae30d1950913d4a2b460"
+    },
+    {
+      "ref": "frame:14",
+      "timestamp_seconds": 26.1,
+      "selection_reason": "ocr_change",
+      "jpeg_sha256": "04fb5fe9f6a1419634cbff48ac0abae81e54e8676d5e5f0e159f3668d233c566"
+    },
+    {
+      "ref": "frame:15",
+      "timestamp_seconds": 27.367,
+      "selection_reason": "final",
+      "jpeg_sha256": "183a265c993788ad142679c02cfd342c2e00fce14d22b6198ae504026f49ee2c"
+    }
+  ],
+  "frame_coverage": {
+    "selected_frame_count": 16,
+    "largest_frame_gap_seconds": 6.867
+  },
+  "ocr_summary_supplied": [
+    {
+      "normalized_text": "and get a guide",
+      "first_appearance_seconds": 0.0,
+      "last_appearance_seconds": 23.5,
+      "approximate_persistence_seconds": 23.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:1"
+      ]
+    },
+    {
+      "normalized_text": "taptotakethequiz",
+      "first_appearance_seconds": 0.0,
+      "last_appearance_seconds": 0.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:0"
+      ]
+    },
+    {
+      "normalized_text": "100",
+      "first_appearance_seconds": 0.5,
+      "last_appearance_seconds": 24.5,
+      "approximate_persistence_seconds": 1.5,
+      "source_span_count": 3,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:4",
+        "ocr:7",
+        "ocr:16"
+      ]
+    },
+    {
+      "normalized_text": "medlcube",
+      "first_appearance_seconds": 0.5,
+      "last_appearance_seconds": 13.0,
+      "approximate_persistence_seconds": 1.0,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:3",
+        "ocr:12"
+      ]
+    },
+    {
+      "normalized_text": "taptotake thequiz",
+      "first_appearance_seconds": 0.5,
+      "last_appearance_seconds": 1.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:2"
+      ]
+    },
+    {
+      "normalized_text": "medicube",
+      "first_appearance_seconds": 1.0,
+      "last_appearance_seconds": 10.0,
+      "approximate_persistence_seconds": 2.0,
+      "source_span_count": 4,
+      "repeated_occurrence_count": 3,
+      "source_refs": [
+        "ocr:6",
+        "ocr:8",
+        "ocr:9",
+        "ocr:10"
+      ]
+    },
+    {
+      "normalized_text": "tap to take the quiz",
+      "first_appearance_seconds": 1.0,
+      "last_appearance_seconds": 23.5,
+      "approximate_persistence_seconds": 22.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:5"
+      ]
+    },
+    {
+      "normalized_text": "nedlcube",
+      "first_appearance_seconds": 12.0,
+      "last_appearance_seconds": 12.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:11"
+      ]
+    },
+    {
+      "normalized_text": "1009",
+      "first_appearance_seconds": 23.5,
+      "last_appearance_seconds": 24.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:14"
+      ]
+    },
+    {
+      "normalized_text": "your personal",
+      "first_appearance_seconds": 23.5,
+      "last_appearance_seconds": 27.467,
+      "approximate_persistence_seconds": 3.967,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:13"
+      ]
+    },
+    {
+      "normalized_text": "plan is ready",
+      "first_appearance_seconds": 24.0,
+      "last_appearance_seconds": 27.467,
+      "approximate_persistence_seconds": 3.467,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:15"
+      ]
+    },
+    {
+      "normalized_text": "take the quiz",
+      "first_appearance_seconds": 24.5,
+      "last_appearance_seconds": 27.467,
+      "approximate_persistence_seconds": 1.967,
+      "source_span_count": 2,
+      "repeated_occurrence_count": 2,
+      "source_refs": [
+        "ocr:17",
+        "ocr:22"
+      ]
+    },
+    {
+      "normalized_text": "e quiz",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 25.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:19"
+      ]
+    },
+    {
+      "normalized_text": "take",
+      "first_appearance_seconds": 25.0,
+      "last_appearance_seconds": 25.5,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:18"
+      ]
+    },
+    {
+      "normalized_text": "take t",
+      "first_appearance_seconds": 25.5,
+      "last_appearance_seconds": 26.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:20"
+      ]
+    },
+    {
+      "normalized_text": "zunb",
+      "first_appearance_seconds": 25.5,
+      "last_appearance_seconds": 26.0,
+      "approximate_persistence_seconds": 0.5,
+      "source_span_count": 1,
+      "repeated_occurrence_count": 1,
+      "source_refs": [
+        "ocr:21"
+      ]
+    }
+  ],
+  "content_counts": {
+    "transcript": 1,
+    "ocr": 23,
+    "scenes": 25
+  },
+  "model_inference_completed": false
+}
