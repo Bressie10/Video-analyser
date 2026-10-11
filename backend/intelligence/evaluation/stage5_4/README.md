@@ -21,7 +21,11 @@ python -m intelligence.evaluation.stage5_4_semantic \
 Each candidate records model, response ID, prompt hashes, analyzer commit,
 ledger, format assessments, CTA events, and validated report. Checkpoints
 persist model responses before validation and allow resumption with matching
-prompt hashes and low-level content. Only after all four candidates exist, run:
+prompt hashes and low-level content. When a model interval extends beyond its
+cited atomic evidence, unsupported outer edges are trimmed and recorded in
+`synthesis_timing_adjustments`; unsupported internal gaps and incompatible
+primary structure roles still fail validation. Only after all four candidates
+exist, run:
 
 ```sh
 python -m intelligence.evaluation.stage5_4_compare \

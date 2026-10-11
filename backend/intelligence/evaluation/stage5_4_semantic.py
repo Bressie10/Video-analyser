@@ -226,6 +226,39 @@ def _supported_interval(start: float, end: float, refs: list[str], items: dict,
     raise ValueError("Interval broader than cited atomic ledger evidence")
 
 
+def clamp_synthesis_edges(draft: SynthesisDraft, ledger: list[dict]) -> tuple[SynthesisDraft, list[dict]]:
+    """Trim unsupported outer edges; validation still rejects internal gaps and role conflicts."""
+    items = {row["ledger_id"]: row for row in ledger}
+    normalized = draft.model_copy(deep=True)
+    adjustments = []
+    for kind, rows in (("cta_event", normalized.cta_events),
+                       ("finding", normalized.findings),
+                       ("structure", normalized.structure)):
+        for index, row in enumerate(rows):
+            if kind == "finding" and (row.technique_id.startswith("format.") or
+                                      row.end_seconds is None):
+                continue
+            if row.end_seconds == row.start_seconds:
+                continue
+            if not row.evidence_refs or any(ref not in items for ref in row.evidence_refs):
+                continue  # The strict validator reports missing or invalid references.
+            earliest = min(items[ref]["start_seconds"] for ref in row.evidence_refs)
+            latest = max(items[ref]["end_seconds"] for ref in row.evidence_refs)
+            start = max(row.start_seconds, earliest)
+            end = min(row.end_seconds, latest)
+            if start >= end:
+                raise ValueError("Synthesis interval has no positive atomic evidence span")
+            if (start, end) != (row.start_seconds, row.end_seconds):
+                adjustments.append({"kind": kind, "index": index,
+                                    "original_start_seconds": row.start_seconds,
+                                    "original_end_seconds": row.end_seconds,
+                                    "validated_start_seconds": start,
+                                    "validated_end_seconds": end,
+                                    "reason": "clamped_to_cited_atomic_evidence_envelope"})
+                row.start_seconds, row.end_seconds = start, end
+    return normalized, adjustments
+
+
 def pass2_content(content: dict, ledger: list[dict], chunks: list[dict]) -> list[dict]:
     """The second pass receives ledger, summaries, definitions, and no images."""
     ontology = [{"id": row.id, "name": row.name, "description": row.description,
@@ -481,7 +514,8 @@ def run_one(source_ref: str, media_path: Path, result: dict, *, model: str,
                                                 "provenance": synthesis_meta,
                                                 "ledger_sha256": ledger_sha256}
             save_checkpoint()
-    flat, report = validate_synthesis(draft, ledger, content, public)
+    validated_draft, timing_adjustments = clamp_synthesis_edges(draft, ledger)
+    flat, report = validate_synthesis(validated_draft, ledger, content, public)
     report.source.reference_id = source_ref
     report.provenance.run_id = f"stage5-4-{source_ref}-{datetime.now(timezone.utc).strftime('%Y%m%dT%H%M%SZ')}"
     report.provenance.pipeline_version = result["pipeline_version"]
@@ -501,15 +535,16 @@ def run_one(source_ref: str, media_path: Path, result: dict, *, model: str,
             "ocr_summary_supplied": summarize_ocr(content["ocr"]),
             "evidence_refs": sorted(catalog), "cited_evidence": cited_evidence(content, public, flat),
             "chunk_plan": chunks, "evidence_ledger": ledger,
-            "format_assessments": [row.model_dump(mode="json") for row in draft.format_assessments],
-            "cta_events": [row.model_dump(mode="json") for row in draft.cta_events],
-            "cta_event_audit": cta_event_audit(draft),
+            "format_assessments": [row.model_dump(mode="json") for row in validated_draft.format_assessments],
+            "cta_events": [row.model_dump(mode="json") for row in validated_draft.cta_events],
+            "cta_event_audit": cta_event_audit(validated_draft),
+            "synthesis_timing_adjustments": timing_adjustments,
             "omitted_point_only_intervals": {
-                "findings": [row.model_dump(mode="json") for row in draft.findings
+                "findings": [row.model_dump(mode="json") for row in validated_draft.findings
                              if row.end_seconds is not None and row.end_seconds == row.start_seconds],
-                "structure": [row.model_dump(mode="json") for row in draft.structure
+                "structure": [row.model_dump(mode="json") for row in validated_draft.structure
                               if row.end_seconds == row.start_seconds]},
-            "synthesis_draft": draft.model_dump(mode="json"),
+            "synthesis_draft": validated_draft.model_dump(mode="json"),
             "semantic_draft": flat.model_dump(mode="json"),
             "analysis_report": report.model_dump(mode="json")}
 

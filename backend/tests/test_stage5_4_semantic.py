@@ -6,7 +6,7 @@ import unittest
 from pathlib import Path
 
 from intelligence.evaluation.stage5_4_semantic import (
-    ChunkDescription, SynthesisDraft, chunk_plan, cta_event_audit,
+    ChunkDescription, SynthesisDraft, chunk_plan, clamp_synthesis_edges, cta_event_audit,
     pass1_content, pass2_content, validate_chunk, validate_synthesis,
 )
 from intelligence.evaluation.stage5_semantic import evidence_catalog, semantic_input
@@ -213,6 +213,11 @@ class Stage54Tests(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "broader than cited"):
             validate_synthesis(SynthesisDraft.model_validate(draft), self.ledger,
                                self.content, self.frames)
+        normalized, adjustments = clamp_synthesis_edges(SynthesisDraft.model_validate(draft),
+                                                         self.ledger)
+        self.assertEqual(normalized.structure[0].end_seconds, 2)
+        self.assertEqual(adjustments[0]["original_end_seconds"], 5)
+        validate_synthesis(normalized, self.ledger, self.content, self.frames)
 
     def test_other_needs_visible_description(self):
         draft = self.draft()
