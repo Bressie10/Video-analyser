@@ -157,7 +157,7 @@ def validate_chunk(description: ChunkDescription, chunk: dict, catalog: dict) ->
     ontology_ids = set(techniques())
     ledger = []
     for index, item in enumerate(description.observations):
-        if not chunk["start_seconds"] <= item.start_seconds < item.end_seconds <= chunk["end_seconds"]:
+        if not chunk["start_seconds"] <= item.start_seconds <= item.end_seconds <= chunk["end_seconds"]:
             raise ValueError("Ledger item outside chunk")
         if not item.evidence_refs or len(set(item.evidence_refs)) != len(item.evidence_refs):
             raise ValueError("Ledger item needs distinct evidence references")

@@ -87,6 +87,9 @@ class Stage53Tests(unittest.TestCase):
                 "uncertainties": []}
         self.assertEqual(len(validate_chunk(ChunkDescription.model_validate(base),
                                             self.chunks[0], catalog)), 1)
+        base["observations"][0].update(start_seconds=1.0, end_seconds=1.0)
+        validate_chunk(ChunkDescription.model_validate(base), self.chunks[0], catalog)
+        base["observations"][0].update(start_seconds=0.0, end_seconds=2.0)
         base["observations"][0]["visible_text"] = ["format.before_after"]
         with self.assertRaisesRegex(ValueError, "ontology ID"):
             validate_chunk(ChunkDescription.model_validate(base), self.chunks[0], catalog)
