@@ -1,0 +1,1982 @@
+{
+  "source_ref": "07",
+  "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a",
+  "content_sha256": "917a31b8d4af79cbeede9a2612c55f116376d2cef7efbbbc2c2e7012591d5e18",
+  "chunk_responses": [
+    {
+      "chunk_id": "chunk:0",
+      "description": {
+        "chunk_start_seconds": 0.0,
+        "chunk_end_seconds": 21.567,
+        "observations": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 1.2,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [
+              "Person in a black full-face helmet and dark clothing outdoors"
+            ],
+            "visible_actions": [
+              "At 0.6 seconds, a gloved hand is raised beside the helmet visor."
+            ],
+            "visible_text": [],
+            "spoken_content_summary": "No speech established in this interval.",
+            "changes_from_previous_chunk": "Not applicable; first chunk.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "scene:0",
+              "frame:0",
+              "frame:1"
+            ],
+            "uncertainties": [
+              "The stills do not establish the hand's movement between frames."
+            ]
+          },
+          {
+            "start_seconds": 1.2,
+            "end_seconds": 2.333,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Person wearing a light-colored helmet and blue shirt outdoors"
+            ],
+            "visible_actions": [],
+            "visible_text": [],
+            "spoken_content_summary": "Speech begins at 2.16 seconds with a statement about looking for a helmet brand to work with long term.",
+            "changes_from_previous_chunk": "Different helmeted person and outdoor view from the preceding frames.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "scene:1",
+              "frame:2",
+              "transcript:0"
+            ],
+            "uncertainties": [
+              "The transcript begins near the end of this scene; the exact spoken words before 2.333 seconds are not isolated."
+            ]
+          },
+          {
+            "start_seconds": 2.333,
+            "end_seconds": 6.567,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Man in a navy polo shirt",
+              "Helmets displayed behind him",
+              "Large illuminated MY logo"
+            ],
+            "visible_actions": [
+              "At 3.0 and 4.467 seconds, the man is shown with his hands held apart in different positions."
+            ],
+            "visible_text": [
+              "If you're looking for a helmet brand to work with long term",
+              "Jack",
+              "Project Leader",
+              "MY"
+            ],
+            "spoken_content_summary": "The speaker discusses looking for a helmet brand for a long-term working relationship, then says it is not just about current sales.",
+            "changes_from_previous_chunk": "The view changes from an outdoor helmeted person to an indoor shot of a man in front of helmet displays.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "scene:2",
+              "frame:3",
+              "frame:4",
+              "transcript:0",
+              "ocr:0",
+              "ocr:1",
+              "ocr:4",
+              "ocr:6",
+              "ocr:7"
+            ],
+            "uncertainties": [
+              "Hand movement between the two stills is not established."
+            ]
+          },
+          {
+            "start_seconds": 6.567,
+            "end_seconds": 8.9,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Magenta graphic background"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "HION --> CONTEMPORARY DES",
+              "FASHION --> CONTEMPORARY DESIGN",
+              "it's not just about current sales",
+              "What really matters are three things"
+            ],
+            "spoken_content_summary": "The speaker finishes contrasting a long-term brand relationship with current sales and begins introducing three things that matter.",
+            "changes_from_previous_chunk": "The indoor speaker shot is replaced by a magenta text graphic.",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "scene:3",
+              "frame:5",
+              "transcript:0",
+              "ocr:7",
+              "ocr:9",
+              "ocr:11",
+              "ocr:12"
+            ],
+            "uncertainties": [
+              "The large graphic text is cropped in the supplied frame; OCR gives varying partial readings."
+            ]
+          },
+          {
+            "start_seconds": 8.9,
+            "end_seconds": 13.0,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Graphic panels showing black and blue helmets"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "product differentiation consistent quality",
+              "SAFETY -->",
+              "ENGINEERED FOR SAFETY"
+            ],
+            "spoken_content_summary": "The speaker names product differentiation and consistent quality among the three things.",
+            "changes_from_previous_chunk": "The magenta text graphic gives way to helmet imagery in multiple panels.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "scene:4",
+              "scene:5",
+              "scene:6",
+              "frame:6",
+              "transcript:1",
+              "ocr:16",
+              "ocr:20",
+              "ocr:22"
+            ],
+            "uncertainties": [
+              "Only one supplied still falls within these scene spans, so changes between the detected scenes are not visually established."
+            ]
+          },
+          {
+            "start_seconds": 13.0,
+            "end_seconds": 14.5,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "and the ability to grow long term",
+              "CARBON FIBER + VARIOUS COLOR COMBINATIONS"
+            ],
+            "spoken_content_summary": "The speaker adds the ability to grow long term.",
+            "changes_from_previous_chunk": "OCR and speech shift from differentiation and quality to long-term growth.",
+            "confidence": 0.85,
+            "evidence_refs": [
+              "transcript:1",
+              "ocr:23",
+              "ocr:24",
+              "ocr:25",
+              "scene:6",
+              "scene:7"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation; the depicted objects are not established."
+            ]
+          },
+          {
+            "start_seconds": 14.5,
+            "end_seconds": 17.16,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Black helmet on a peach-colored panel",
+              "Blue graphic panel"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "that's exactly what MY is built on",
+              "TRENDY AND VERSATILE -->",
+              "DESIGNED FOR EVERY RIDE"
+            ],
+            "spoken_content_summary": "The speaker says those qualities are what MY is built on.",
+            "changes_from_previous_chunk": "The speech changes from listing qualities to connecting them with MY.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "scene:7",
+              "scene:8",
+              "scene:9",
+              "scene:10",
+              "frame:7",
+              "transcript:1",
+              "ocr:27",
+              "ocr:28",
+              "ocr:31",
+              "ocr:37"
+            ],
+            "uncertainties": [
+              "The supplied frame does not show every text phrase reported by OCR later in this interval."
+            ]
+          },
+          {
+            "start_seconds": 17.16,
+            "end_seconds": 21.567,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Graphic panels showing black and white helmets"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "A WIDE VARIETY OF STYLES -->",
+              "STYLE FOR EVERY RIDER"
+            ],
+            "spoken_content_summary": "The speaker says that before launching MY, they had spent over 20 years in the helmet industry.",
+            "changes_from_previous_chunk": "Speech shifts to experience before MY's launch; the later supplied frame shows a different arrangement of helmet graphics.",
+            "confidence": 0.93,
+            "evidence_refs": [
+              "scene:10",
+              "frame:8",
+              "transcript:2",
+              "ocr:40",
+              "ocr:41"
+            ],
+            "uncertainties": [
+              "The transcript continues past this chunk; only its portion within this interval is described."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Frames are sparse stills and do not establish continuous activity or precise visual transition times between them."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:0",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_07353bfca88cd225016acc050aeeb487d28e53099469bc0dfc",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:1",
+      "description": {
+        "chunk_start_seconds": 21.567,
+        "chunk_end_seconds": 44.667,
+        "observations": [
+          {
+            "start_seconds": 21.567,
+            "end_seconds": 23.833,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [
+              "Aerial view of buildings and trees",
+              "Overlaid text graphic"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "Before launching MY",
+              "Years In The"
+            ],
+            "spoken_content_summary": "The speaker says that before launching MY, they had spent over 20 years in the helmet industry.",
+            "changes_from_previous_chunk": "The helmet graphics seen in the previous chunk are replaced by an aerial view.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "scene:11",
+              "frame:9",
+              "transcript:2",
+              "ocr:45",
+              "ocr:49"
+            ],
+            "uncertainties": [
+              "The larger overlaid number or word is partly obscured in the supplied still; OCR readings vary."
+            ]
+          },
+          {
+            "start_seconds": 23.833,
+            "end_seconds": 26.19,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "20+",
+              "Helmet Industry",
+              "we've already spent over 20 years in the helmet industry"
+            ],
+            "spoken_content_summary": "The speaker finishes the statement about over 20 years in the helmet industry.",
+            "changes_from_previous_chunk": "OCR reports text emphasizing the number of years and the helmet industry; no frame establishes the imagery in this interval.",
+            "confidence": 0.83,
+            "evidence_refs": [
+              "scene:12",
+              "transcript:2",
+              "ocr:51",
+              "ocr:52",
+              "ocr:53",
+              "ocr:58"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; the visual scene change is not independently visible."
+            ]
+          },
+          {
+            "start_seconds": 26.19,
+            "end_seconds": 28.433,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "MY didn't start from zero",
+              "\u6587\u9526\u673a\u8f66\u914d\u4ef6\u6709\u9650\u516c\u53f8"
+            ],
+            "spoken_content_summary": "The speaker says MY did not start from zero and begins describing its manufacturing system.",
+            "changes_from_previous_chunk": "The speech and OCR shift from years of experience to MY's starting point.",
+            "confidence": 0.86,
+            "evidence_refs": [
+              "scene:13",
+              "transcript:3",
+              "ocr:62",
+              "ocr:65",
+              "ocr:73"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; the imagery and exact timing of the spoken sentence within it are not established."
+            ]
+          },
+          {
+            "start_seconds": 28.433,
+            "end_seconds": 30.6,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "Indoor room with long tables, equipment, and a green floor"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "It's built on a complete and mature manufacturing system"
+            ],
+            "spoken_content_summary": "The speaker describes MY as built on a manufacturing system; the transcript's wording is unclear, while the on-screen text reads 'complete and mature manufacturing system.'",
+            "changes_from_previous_chunk": "A supplied frame now shows an indoor equipment-filled room; OCR changes to a manufacturing-system statement.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "scene:14",
+              "frame:10",
+              "transcript:3",
+              "ocr:75",
+              "ocr:77"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the equipment is operating."
+            ]
+          },
+          {
+            "start_seconds": 30.6,
+            "end_seconds": 34.0,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "From production to supply chain"
+            ],
+            "spoken_content_summary": "The speaker turns to production and supply chain.",
+            "changes_from_previous_chunk": "The narration moves from the manufacturing system to production and supply chain.",
+            "confidence": 0.83,
+            "evidence_refs": [
+              "scene:15",
+              "scene:16",
+              "transcript:4",
+              "ocr:82",
+              "ocr:84"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; OCR reports 'supply chain,' while the transcript renders the phrase differently."
+            ]
+          },
+          {
+            "start_seconds": 34.0,
+            "end_seconds": 37.433,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "we ensure stable output and scalable capacity",
+              "INTEGRATED MANUFACTURING SYSTEM",
+              "Fully Integrated Production",
+              "Stable Supply Chain",
+              "Scalable Capacity",
+              "Full Process Control"
+            ],
+            "spoken_content_summary": "The speaker says they ensure stable output and scalable capacity.",
+            "changes_from_previous_chunk": "OCR shifts from the production-to-supply-chain phrase to output, capacity, and a manufacturing-system graphic.",
+            "confidence": 0.84,
+            "evidence_refs": [
+              "scene:16",
+              "scene:17",
+              "transcript:4",
+              "ocr:85",
+              "ocr:86",
+              "ocr:90",
+              "ocr:91",
+              "ocr:92",
+              "ocr:96",
+              "ocr:97"
+            ],
+            "uncertainties": [
+              "No supplied frame falls before 37.433 seconds, so the graphic's appearance and any activity in these scenes are not visually established."
+            ]
+          },
+          {
+            "start_seconds": 37.433,
+            "end_seconds": 40.19,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Close-up of a suspended machine part above a circular metal piece",
+              "Pale material on both sides",
+              "Text graphic at left"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "MY",
+              "INTEGRATED MANUFACTURING SYSTEM",
+              "Fully Integrated Production",
+              "Stable Supply Chain",
+              "Scalable Capacity",
+              "Full Process Control",
+              "And that's exactly the kind of security our partners care about"
+            ],
+            "spoken_content_summary": "The speaker says this provides the kind of security partners care about.",
+            "changes_from_previous_chunk": "The supplied frame shows a machine close-up with the manufacturing-system text graphic.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "scene:18",
+              "frame:11",
+              "transcript:4",
+              "ocr:98",
+              "ocr:91",
+              "ocr:92",
+              "ocr:96",
+              "ocr:100",
+              "ocr:101"
+            ],
+            "uncertainties": [
+              "The still does not establish machine movement or interaction with the pale material."
+            ]
+          },
+          {
+            "start_seconds": 40.19,
+            "end_seconds": 43.167,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "Fully Integrated Production"
+            ],
+            "spoken_content_summary": "The speaker begins describing MY's range of product lines for different market needs.",
+            "changes_from_previous_chunk": "The narration changes from partner security to product lines; OCR continues reporting part of the manufacturing graphic.",
+            "confidence": 0.82,
+            "evidence_refs": [
+              "scene:19",
+              "scene:20",
+              "transcript:5",
+              "ocr:105",
+              "ocr:107"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; the visual content after the machine close-up is not established."
+            ]
+          },
+          {
+            "start_seconds": 43.167,
+            "end_seconds": 44.667,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "1"
+            ],
+            "spoken_content_summary": "The speaker continues the statement about product lines meeting different market needs.",
+            "changes_from_previous_chunk": "A new scene is marked, but no supplied frame establishes its appearance.",
+            "confidence": 0.72,
+            "evidence_refs": [
+              "scene:21",
+              "transcript:5",
+              "ocr:108"
+            ],
+            "uncertainties": [
+              "OCR for '1' starts at 44.5 seconds and extends beyond this chunk; its context is not established."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Supplied frames are sparse stills; scene references and OCR do not establish continuous visual activity or precise visual transitions between frames."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:1",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0f029ec89cae695f016acc05180afc87d288f8b77156efe652",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:2",
+      "description": {
+        "chunk_start_seconds": 44.667,
+        "chunk_end_seconds": 67.5,
+        "observations": [
+          {
+            "start_seconds": 44.667,
+            "end_seconds": 46.3,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Hands, a dark curved shell, and an overhead tool"
+            ],
+            "visible_actions": [
+              "Hands hold the shell beneath the tool in the still at 44.9 seconds."
+            ],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker continues describing product lines for different market needs.",
+            "changes_from_previous_chunk": "A supplied frame now shows a close-up of hands, a shell, and a tool; the previous chunk had no frame for its final scene.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "scene:22",
+              "frame:12",
+              "transcript:5"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the tool operates or how the shell moves."
+            ]
+          },
+          {
+            "start_seconds": 46.3,
+            "end_seconds": 51.0,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "MY offers a full range of product lines to meet different market needs"
+            ],
+            "spoken_content_summary": "The speaker describes MY's product lines as meeting different market needs.",
+            "changes_from_previous_chunk": "OCR adds the product-lines statement; no supplied frame shows the imagery in this interval.",
+            "confidence": 0.83,
+            "evidence_refs": [
+              "scene:23",
+              "scene:24",
+              "transcript:5",
+              "ocr:109"
+            ],
+            "uncertainties": [
+              "The imagery and exact visual transition between supplied stills are not established."
+            ]
+          },
+          {
+            "start_seconds": 51.0,
+            "end_seconds": 54.54,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "Rows of helmets on angled shelves, including a black, red, and gray helmet",
+              "Overlaid text graphic"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "MY",
+              "MULTI-TIER PRODUCT STRATEGY",
+              "Designed for Different Markets",
+              "Healthy Profit Margins",
+              "Global Expansion",
+              "Strong Market Presence",
+              "and helps our partners build a clear and sustainable profit structure"
+            ],
+            "spoken_content_summary": "The speaker says the product lines help partners build a clear and sustainable profit structure.",
+            "changes_from_previous_chunk": "The frame at 52.4 seconds shows helmet shelves and a text graphic; OCR changes to product-strategy and profit-structure wording.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "scene:25",
+              "scene:26",
+              "scene:27",
+              "frame:13",
+              "transcript:5",
+              "ocr:116",
+              "ocr:118",
+              "ocr:119",
+              "ocr:121",
+              "ocr:125",
+              "ocr:127"
+            ],
+            "uncertainties": [
+              "The frame establishes the display at 52.4 seconds, not continuous visibility across this interval."
+            ]
+          },
+          {
+            "start_seconds": 54.54,
+            "end_seconds": 60.0,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "At the same time",
+              "we're expanding globally and building a solid market presence"
+            ],
+            "spoken_content_summary": "The speaker turns to global expansion and building a market presence.",
+            "changes_from_previous_chunk": "The narration changes from partners' profit structure to global expansion.",
+            "confidence": 0.82,
+            "evidence_refs": [
+              "transcript:6",
+              "ocr:144",
+              "ocr:146",
+              "ocr:147",
+              "scene:28",
+              "scene:29",
+              "scene:30"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; its imagery is not established."
+            ]
+          },
+          {
+            "start_seconds": 60.0,
+            "end_seconds": 63.54,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "Person wearing a blue helmet and dark jacket outdoors",
+              "Roadside railing and trees"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "MY is not just an idea\u2014it's already happening in real markets"
+            ],
+            "spoken_content_summary": "The speaker says MY is not just an idea and is already happening in real markets.",
+            "changes_from_previous_chunk": "The frame at 59.867 seconds, just before this interval, shows a helmeted person outdoors; OCR changes to the real-markets statement.",
+            "confidence": 0.83,
+            "evidence_refs": [
+              "frame:14",
+              "transcript:6",
+              "ocr:148",
+              "ocr:152",
+              "scene:30",
+              "scene:31",
+              "scene:32",
+              "scene:33"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation; the outdoor image is established only at 59.867 seconds, not throughout this interval."
+            ]
+          },
+          {
+            "start_seconds": 63.54,
+            "end_seconds": 66.5,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "E2TCTTER."
+            ],
+            "spoken_content_summary": "The speaker begins saying MY is about more than design, then mentions safety, comfort, and overall performance.",
+            "changes_from_previous_chunk": "The narration changes from real markets to product qualities.",
+            "confidence": 0.74,
+            "evidence_refs": [
+              "transcript:7",
+              "ocr:155",
+              "scene:33",
+              "scene:34"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; the brief OCR reading is unclear."
+            ]
+          },
+          {
+            "start_seconds": 66.5,
+            "end_seconds": 67.5,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "Close-up of a metal apparatus beside a blue panel",
+              "Overlaid text graphic"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "ECE 22.06 / DOT CERTIFIED"
+            ],
+            "spoken_content_summary": "The speaker continues discussing safety, comfort, and overall performance in every product.",
+            "changes_from_previous_chunk": "The frame at 67.367 seconds shows a metal apparatus and certification text.",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "scene:34",
+              "frame:15",
+              "transcript:7",
+              "ocr:156"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the apparatus is operating or what it is doing."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Frames are sparse point observations; scene references and OCR do not establish continuous actions or exact visual transitions between stills."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:2",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_06377fd971b72781016acc0524fa6087d29f13b8c68c8af9fe",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:3",
+      "description": {
+        "chunk_start_seconds": 67.5,
+        "chunk_end_seconds": 90.333,
+        "observations": [
+          {
+            "start_seconds": 67.5,
+            "end_seconds": 72.0,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "ECE 22.06 / DOT CERTIFIED",
+              "MY is not more than just design"
+            ],
+            "spoken_content_summary": "The speaker says MY is about more than design and discusses safety, comfort, and performance.",
+            "changes_from_previous_chunk": "OCR adds the design statement while certification wording remains detected.",
+            "confidence": 0.82,
+            "evidence_refs": [
+              "transcript:7",
+              "ocr:156",
+              "ocr:159",
+              "scene:35",
+              "scene:36",
+              "scene:37"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; its imagery is not established."
+            ]
+          },
+          {
+            "start_seconds": 72.0,
+            "end_seconds": 75.54,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "At 74.833 seconds, a person in white gloves and an apron stands beside a stack of curved components in a workspace."
+            ],
+            "visible_actions": [
+              "At 74.833 seconds, the person's gloved hands are raised beside the stack."
+            ],
+            "visible_text": [
+              "We focus on safety comfort and overall performance in every product"
+            ],
+            "spoken_content_summary": "The speaker emphasizes safety, comfort, and overall performance in every product.",
+            "changes_from_previous_chunk": "OCR changes to the safety, comfort, and performance statement; a supplied still shows a person and stacked components.",
+            "confidence": 0.89,
+            "evidence_refs": [
+              "frame:16",
+              "transcript:7",
+              "ocr:161",
+              "scene:38",
+              "scene:39",
+              "scene:40"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the components are being lifted or moved."
+            ]
+          },
+          {
+            "start_seconds": 75.54,
+            "end_seconds": 78.0,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "More importantly"
+            ],
+            "spoken_content_summary": "The speaker begins a new statement about helmet development and manufacturing standards.",
+            "changes_from_previous_chunk": "The narration changes from product qualities to international standards.",
+            "confidence": 0.86,
+            "evidence_refs": [
+              "transcript:8",
+              "ocr:162",
+              "scene:40",
+              "scene:41"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval."
+            ]
+          },
+          {
+            "start_seconds": 78.0,
+            "end_seconds": 83.0,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "At 82.333 seconds, white-gloved hands, a dark curved object, and a tabletop measuring device with a display."
+            ],
+            "visible_actions": [
+              "At 82.333 seconds, the gloved hands hold the dark object beside the device."
+            ],
+            "visible_text": [
+              "every helmet is developed and manufactured in line with international standards",
+              "22.4"
+            ],
+            "spoken_content_summary": "The speaker says every helmet is developed and manufactured in line with international standards.",
+            "changes_from_previous_chunk": "OCR expands the standards statement; the supplied still shows gloved hands and a measuring device.",
+            "confidence": 0.89,
+            "evidence_refs": [
+              "frame:17",
+              "transcript:8",
+              "ocr:163",
+              "ocr:166",
+              "scene:42",
+              "scene:43"
+            ],
+            "uncertainties": [
+              "The still does not establish whether a measurement is being taken or what the displayed number measures."
+            ]
+          },
+          {
+            "start_seconds": 83.0,
+            "end_seconds": 87.0,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "such as ECE 22.06 and DOT"
+            ],
+            "spoken_content_summary": "The speaker names ECE 22.06 and DOT as standards.",
+            "changes_from_previous_chunk": "OCR and narration specify the named standards.",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "transcript:8",
+              "ocr:169",
+              "scene:43",
+              "scene:44",
+              "scene:45",
+              "scene:46"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval."
+            ]
+          },
+          {
+            "start_seconds": 87.0,
+            "end_seconds": 88.85,
+            "boundary_reason": "uncertain",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [],
+            "spoken_content_summary": "Not established by the supplied transcript for this interval.",
+            "changes_from_previous_chunk": "The standards OCR ends before the next transcript begins.",
+            "confidence": 0.63,
+            "evidence_refs": [
+              "ocr:169",
+              "transcript:8",
+              "transcript:9",
+              "scene:46",
+              "scene:47"
+            ],
+            "uncertainties": [
+              "The intervening imagery and any speech are not established by supplied frames or transcript."
+            ]
+          },
+          {
+            "start_seconds": 88.85,
+            "end_seconds": 90.333,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At 89.833 seconds, a room with large blue equipment, shelves, and a person near the equipment."
+            ],
+            "visible_actions": [
+              "At 89.833 seconds, the person stands beside the blue equipment."
+            ],
+            "visible_text": [
+              "SYSTEMATIC QUALITY CONTROL",
+              "ISO 9001 Certified",
+              "Quality comes from systems and experience"
+            ],
+            "spoken_content_summary": "The speaker begins saying quality comes from systems and experience and mentions ISO 9001 standards and in-house laboratory testing.",
+            "changes_from_previous_chunk": "The narration changes from named helmet standards to quality systems; a supplied still shows a different room and a quality-control text graphic.",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "frame:18",
+              "transcript:9",
+              "ocr:177",
+              "ocr:178",
+              "ocr:179",
+              "scene:47"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the equipment is operating or what the person is doing beyond their visible position."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Frames are sparse point observations; they do not establish continuous actions or exact visual transitions between stills."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:3",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0a353f26668d9a40016acc052fa7ac87d29e37446f0fa676c8",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:4",
+      "description": {
+        "chunk_start_seconds": 90.333,
+        "chunk_end_seconds": 112.333,
+        "observations": [
+          {
+            "start_seconds": 90.333,
+            "end_seconds": 94.0,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "SYSTEMATIC QUALITY CONTROL",
+              "ISO 9001 Certified",
+              "In-house Testing",
+              "Rigorous Quality Inspection",
+              "We follow ISO 9001 standards and run in-house laboratory testing"
+            ],
+            "spoken_content_summary": "The speaker says they follow ISO 9001 standards and conduct in-house laboratory testing.",
+            "changes_from_previous_chunk": "The quality-systems statement continues; OCR adds testing and inspection wording.",
+            "confidence": 0.84,
+            "evidence_refs": [
+              "transcript:9",
+              "ocr:179",
+              "ocr:181",
+              "ocr:183",
+              "ocr:186",
+              "ocr:187",
+              "scene:48",
+              "scene:49"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; the scenes do not establish their visible contents."
+            ]
+          },
+          {
+            "start_seconds": 94.0,
+            "end_seconds": 96.85,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "E1",
+              "SGS",
+              "Kraftfahrt-Bundesamt",
+              "E13",
+              "SNCH"
+            ],
+            "spoken_content_summary": "The speaker finishes the statement about ISO 9001 standards and in-house laboratory testing.",
+            "changes_from_previous_chunk": "OCR changes from quality-control statements to document markings and names.",
+            "confidence": 0.77,
+            "evidence_refs": [
+              "transcript:9",
+              "ocr:189",
+              "ocr:190",
+              "ocr:192",
+              "ocr:194",
+              "ocr:198",
+              "ocr:200",
+              "scene:50",
+              "scene:51",
+              "scene:52"
+            ],
+            "uncertainties": [
+              "OCR includes short, inconsistently detected markings; no supplied frame falls in this interval."
+            ]
+          },
+          {
+            "start_seconds": 96.85,
+            "end_seconds": 101.85,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At 97.3 seconds, a document graphic appears at left; a dark rounded object hangs within a blue-framed apparatus at right.",
+              "At 97.3 seconds, part of a person is visible at the right edge."
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "SNCH",
+              "E13",
+              "Every batch is carefully inspected to ensure consistent quality"
+            ],
+            "spoken_content_summary": "The speaker says every batch is carefully inspected to ensure consistent quality.",
+            "changes_from_previous_chunk": "The narration changes to batch inspection; the supplied frame shows an apparatus and document graphic.",
+            "confidence": 0.87,
+            "evidence_refs": [
+              "frame:19",
+              "transcript:10",
+              "ocr:198",
+              "ocr:200",
+              "ocr:203",
+              "ocr:210",
+              "scene:52",
+              "scene:53",
+              "scene:54",
+              "scene:55"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the apparatus is operating or an inspection is occurring; transcript wording differs from the displayed sentence."
+            ]
+          },
+          {
+            "start_seconds": 101.85,
+            "end_seconds": 105.5,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At 104.8 seconds, a person with glasses and a dark collared shirt stands among open boxes, packages, and white wrapped material."
+            ],
+            "visible_actions": [
+              "At 104.8 seconds, the person has one hand on a dark object beside an open box."
+            ],
+            "visible_text": [
+              "MY is already building a growing presence worldwide"
+            ],
+            "spoken_content_summary": "The speaker says MY is building a growing presence worldwide.",
+            "changes_from_previous_chunk": "The narration changes from inspection to worldwide presence; the supplied frame shows a different setting with boxes and packages.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "frame:20",
+              "transcript:11",
+              "ocr:215",
+              "ocr:218",
+              "scene:56",
+              "scene:57"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the dark object is being placed into or removed from a box."
+            ]
+          },
+          {
+            "start_seconds": 105.5,
+            "end_seconds": 109.533,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "Most of our products are in stock or available with short lead times",
+              "MODEL:FFE",
+              "SIZE:",
+              "QTY:",
+              "MADE IN CHINA",
+              "FAST MARKET RESPONSE",
+              "In-stock availability",
+              "Fast delivery"
+            ],
+            "spoken_content_summary": "The speaker says most products are in stock or available after a short delay.",
+            "changes_from_previous_chunk": "OCR changes from worldwide presence to availability wording, box-label fields, and a market-response graphic.",
+            "confidence": 0.84,
+            "evidence_refs": [
+              "transcript:11",
+              "ocr:219",
+              "ocr:220",
+              "ocr:223",
+              "ocr:224",
+              "ocr:236",
+              "ocr:248",
+              "ocr:251",
+              "ocr:255",
+              "scene:58",
+              "scene:59",
+              "scene:60"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; several box-label readings are brief or inconsistent."
+            ]
+          },
+          {
+            "start_seconds": 109.533,
+            "end_seconds": 111.85,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "FAST MARKET RESPONSE",
+              "In-stock availability",
+              "Fast delivery",
+              "Stable supply capacity",
+              "so we can respond quickly to market demand"
+            ],
+            "spoken_content_summary": "The speaker says they can respond quickly to market demand.",
+            "changes_from_previous_chunk": "OCR adds the quick-response sentence and stable-supply wording.",
+            "confidence": 0.87,
+            "evidence_refs": [
+              "transcript:11",
+              "ocr:248",
+              "ocr:251",
+              "ocr:255",
+              "ocr:258",
+              "ocr:259",
+              "scene:61",
+              "scene:62"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval."
+            ]
+          },
+          {
+            "start_seconds": 111.85,
+            "end_seconds": 112.333,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At 112.267 seconds, a person with glasses and a dark collared shirt stands beside stacked cardboard boxes, holding a blue clipboard or folder."
+            ],
+            "visible_actions": [
+              "At 112.267 seconds, the person holds and looks down at the blue clipboard or folder."
+            ],
+            "visible_text": [
+              "FAST MARKET RESPONSE",
+              "In-stock availability",
+              "Fast delivery",
+              "Stable supply capacity",
+              "MODEL: F935",
+              "SIZE: M"
+            ],
+            "spoken_content_summary": "The speaker begins saying MY is more than a product supplier and provides a complete support system.",
+            "changes_from_previous_chunk": "The narration begins a support-system statement while the market-response graphic remains visible in the supplied frame.",
+            "confidence": 0.87,
+            "evidence_refs": [
+              "frame:21",
+              "transcript:12",
+              "ocr:248",
+              "ocr:251",
+              "ocr:255",
+              "ocr:284",
+              "ocr:276",
+              "scene:62"
+            ],
+            "uncertainties": [
+              "The clipboard text is not established; box-label readings vary across OCR detections."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "The three supplied frames are point observations and do not establish continuous actions or exact visual transitions between them."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:4",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0c7664c36112f918016acc0539b46087d28335cba7ac88b522",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:5",
+      "description": {
+        "chunk_start_seconds": 112.333,
+        "chunk_end_seconds": 135.4,
+        "observations": [
+          {
+            "start_seconds": 112.333,
+            "end_seconds": 115.767,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "MY is more than just a product supplier",
+              "we provide a complete support system"
+            ],
+            "spoken_content_summary": "The speaker says MY is more than a product supplier and provides a complete support system.",
+            "changes_from_previous_chunk": "The support-system statement begun in the previous chunk continues; OCR replaces the market-response wording.",
+            "confidence": 0.84,
+            "evidence_refs": [
+              "transcript:12",
+              "ocr:292",
+              "ocr:295",
+              "scene:63",
+              "scene:64",
+              "scene:65"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; visible scene contents are not established."
+            ]
+          },
+          {
+            "start_seconds": 115.767,
+            "end_seconds": 119.4,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "PRODUCTS",
+              "CONTACT US",
+              "Full Face Helmets",
+              "Open Face Helmets",
+              "Flip Up Helmets",
+              "From product to market"
+            ],
+            "spoken_content_summary": "The speaker describes support extending from product to market.",
+            "changes_from_previous_chunk": "OCR briefly shows product-category and navigation wording, then a product-to-market statement.",
+            "confidence": 0.8,
+            "evidence_refs": [
+              "transcript:12",
+              "ocr:296",
+              "ocr:300",
+              "ocr:301",
+              "ocr:302",
+              "ocr:303",
+              "ocr:305",
+              "ocr:311",
+              "ocr:314",
+              "scene:66",
+              "scene:67",
+              "scene:68"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; several brief OCR readings are inconsistent."
+            ]
+          },
+          {
+            "start_seconds": 119.4,
+            "end_seconds": 121.85,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "At 119.767 seconds, a computer screen displays an email-style interface; part of a person is visible at the right edge."
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "from marketing support to after-sales service"
+            ],
+            "spoken_content_summary": "The speaker describes marketing support and says what sounds like \u201chealth and sales service\u201d; the displayed wording reads \u201cafter-sales service.\u201d",
+            "changes_from_previous_chunk": "The supplied frame shows a computer screen rather than the boxes seen in the previous chunk; OCR changes to service wording.",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "frame:22",
+              "transcript:12",
+              "ocr:315",
+              "scene:69"
+            ],
+            "uncertainties": [
+              "The screen\u2019s smaller text is not legible here; the transcript and displayed service wording differ."
+            ]
+          },
+          {
+            "start_seconds": 121.85,
+            "end_seconds": 128.0,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At 127.233 seconds, a graphic contains a photograph of people beside a display of helmets."
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "COMPLETE SUPPORT SYSTEM",
+              "Marketing support",
+              "Brand materials",
+              "Business growth support",
+              "we work side by side with our partners",
+              "to build a sustainable business together"
+            ],
+            "spoken_content_summary": "The speaker says they work side by side with partners to build a sustainable business together.",
+            "changes_from_previous_chunk": "The narration changes to partners and sustainable business; the supplied frame shows a support-system graphic with a different inset image.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:23",
+              "transcript:13",
+              "ocr:324",
+              "ocr:325",
+              "ocr:332",
+              "ocr:334",
+              "ocr:339",
+              "ocr:341",
+              "scene:69"
+            ],
+            "uncertainties": [
+              "The still does not establish what the people are doing or when the inset image appeared."
+            ]
+          },
+          {
+            "start_seconds": 128.0,
+            "end_seconds": 132.85,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "MY is focused on long-term growth",
+              "Through continuous R&D and improvement"
+            ],
+            "spoken_content_summary": "The speaker says MY focuses on a long-term role through continuous R&D and improvement.",
+            "changes_from_previous_chunk": "OCR changes from partner and support wording to long-term growth and R&D wording.",
+            "confidence": 0.85,
+            "evidence_refs": [
+              "transcript:13",
+              "ocr:361",
+              "ocr:363",
+              "scene:69",
+              "scene:70"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; transcript says \u201clong-term role,\u201d while OCR says \u201clong-term growth.\u201d"
+            ]
+          },
+          {
+            "start_seconds": 132.85,
+            "end_seconds": 135.4,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At 134.733 seconds, a person on a motorcycle faces the camera on a paved road bordered by fields and trees."
+            ],
+            "visible_actions": [
+              "At 134.733 seconds, the person is seated on the motorcycle with both arms extended toward its handlebars."
+            ],
+            "visible_text": [
+              "we are steadily expanding into global markets"
+            ],
+            "spoken_content_summary": "The speaker begins a statement about expanding into global markets.",
+            "changes_from_previous_chunk": "The narration changes to global markets; the supplied frame shows a road scene instead of the earlier support-system graphic.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "frame:24",
+              "transcript:14",
+              "ocr:364",
+              "scene:70"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the motorcycle is moving; the spoken sentence continues beyond this chunk."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "The supplied frames are point observations and do not establish continuous activity or exact visual transitions between them."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:5",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0acb817e2c966515016acc05453dec87d296e81350634a733c",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:6",
+      "description": {
+        "chunk_start_seconds": 135.4,
+        "chunk_end_seconds": 157.183,
+        "observations": [
+          {
+            "start_seconds": 135.4,
+            "end_seconds": 137.833,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [
+              "At 136.1 seconds, a road bordered by trees, with multiple motorcycles visible along it."
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "and building something that lasts"
+            ],
+            "spoken_content_summary": "The speaker finishes a statement about expanding into global markets and building something that lasts.",
+            "changes_from_previous_chunk": "The road setting continues, now shown from above; the displayed wording changes to building something that lasts.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "frame:25",
+              "transcript:14",
+              "ocr:367",
+              "scene:71"
+            ],
+            "uncertainties": [
+              "The frame does not establish whether the motorcycles are moving; the transcript's last phrase is unclear, while OCR supplies the displayed wording."
+            ]
+          },
+          {
+            "start_seconds": 137.833,
+            "end_seconds": 140.0,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "The market never lacks products"
+            ],
+            "spoken_content_summary": "The speaker begins a statement about the market and products.",
+            "changes_from_previous_chunk": "The supplied scene reference marks a scene change; no frame is supplied before 142.2 seconds to establish its contents.",
+            "confidence": 0.78,
+            "evidence_refs": [
+              "scene:72",
+              "transcript:15",
+              "ocr:368"
+            ],
+            "uncertainties": [
+              "The transcript says \u201cnow lacks products,\u201d whereas OCR reads \u201cnever lacks products\u201d; no frame falls within this observation."
+            ]
+          },
+          {
+            "start_seconds": 140.0,
+            "end_seconds": 142.967,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "At 142.2 seconds, a person stands in front of a wall displaying helmets; a large illuminated logo is beside him."
+            ],
+            "visible_actions": [
+              "At 142.2 seconds, the person holds both hands in front of his torso."
+            ],
+            "visible_text": [
+              "Jack",
+              "Project Leader",
+              "What's truly rare are brands with differentiation"
+            ],
+            "spoken_content_summary": "The speaker describes brands with differentiation.",
+            "changes_from_previous_chunk": "The displayed wording shifts from products to differentiated brands; the supplied frame shows a person beside a helmet display.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:26",
+              "transcript:15",
+              "ocr:371",
+              "ocr:373",
+              "ocr:374",
+              "scene:72"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the person's hands are moving."
+            ]
+          },
+          {
+            "start_seconds": 142.967,
+            "end_seconds": 146.0,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "stable quality and long-term potential"
+            ],
+            "spoken_content_summary": "The speaker continues with stable quality and long-term potential.",
+            "changes_from_previous_chunk": "A new scene is marked, and the displayed wording changes to quality and long-term potential.",
+            "confidence": 0.84,
+            "evidence_refs": [
+              "scene:73",
+              "transcript:15",
+              "ocr:386"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this interval; OCR contains several variant readings of the phrase."
+            ]
+          },
+          {
+            "start_seconds": 146.0,
+            "end_seconds": 148.5,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "That's exactly what MY is building",
+              "OF606",
+              "OEM/ODM"
+            ],
+            "spoken_content_summary": "The speaker says this is what MY is building.",
+            "changes_from_previous_chunk": "The spoken and displayed wording changes from brand qualities to what MY is building.",
+            "confidence": 0.86,
+            "evidence_refs": [
+              "transcript:16",
+              "ocr:391",
+              "ocr:411",
+              "ocr:416",
+              "scene:73"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this interval; some short product and logo OCR readings conflict."
+            ]
+          },
+          {
+            "start_seconds": 148.5,
+            "end_seconds": 151.5,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "At 149.7 seconds, a collage of photographs shows groups of people, helmets, and display areas."
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "And we look forward to growing this business with you"
+            ],
+            "spoken_content_summary": "The speaker says they look forward to growing the business with the listener.",
+            "changes_from_previous_chunk": "The wording changes to growing the business together; the supplied frame shows a photo collage.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "frame:27",
+              "transcript:16",
+              "ocr:444",
+              "scene:73"
+            ],
+            "uncertainties": [
+              "The still does not establish the activities or identities of people depicted in the photographs."
+            ]
+          },
+          {
+            "start_seconds": 151.5,
+            "end_seconds": 157.183,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "At 154.6, 155.167, and 157.067 seconds, a stylized dark logo appears centered against a pale background."
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "AV"
+            ],
+            "spoken_content_summary": "No transcript content is supplied after 150.85 seconds.",
+            "changes_from_previous_chunk": "The photo collage is replaced in the supplied frames by a centered logo; the earlier sentence is no longer present in the later OCR.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "frame:28",
+              "frame:29",
+              "frame:30",
+              "ocr:453",
+              "scene:73"
+            ],
+            "uncertainties": [
+              "The logo's lettering is stylized; OCR reads \u201cAV.\u201d The exact transition from the collage is not established by the sparse frames."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Frames are point observations and do not establish continuous activity or exact visual transitions between stills."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:6",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_02b58f6069375e15016acc054ebdb087d28eb683af5b05a19b",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    }
+  ],
+  "synthesis_response": {
+    "draft": {
+      "format_assessments": [
+        {
+          "technique_id": "format.talking_head",
+          "ontology_definition": "Speaker addresses the camera for a substantial part of the video.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [
+            "ledger:0:2",
+            "ledger:6:2"
+          ],
+          "counterevidence_limitations": "The person appears in two brief indoor intervals; the intervening video uses other imagery. Still frames do not establish sustained camera-addressing speech.",
+          "criterion_explanation": "Substantial camera-addressing speech is not established."
+        },
+        {
+          "technique_id": "format.tutorial",
+          "ontology_definition": "Explains a process or teaches a skill in steps.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The narration presents brand attributes and business capabilities rather than instructions.",
+          "criterion_explanation": "No stepwise teaching is established."
+        },
+        {
+          "technique_id": "format.product_demo",
+          "ontology_definition": "Shows a product or service in use.",
+          "decision": "uncertain",
+          "positive_ledger_refs": [
+            "ledger:5:5",
+            "ledger:6:0"
+          ],
+          "counterevidence_limitations": "A person is seated on a motorcycle and motorcycles appear on a road, but the stills do not establish movement, helmet use, or whether an identifiable MY product is being used. Other helmet views show displays or equipment, not established use.",
+          "criterion_explanation": "A localized use segment would suffice, but product use is not established."
+        },
+        {
+          "technique_id": "format.storytime",
+          "ontology_definition": "Narrates an event as the main format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "A statement about experience before launch appears, but the main narration describes capabilities and offerings.",
+          "criterion_explanation": "Event narration is not the main format."
+        },
+        {
+          "technique_id": "format.listicle",
+          "ontology_definition": "Presents numbered or clearly enumerated items.",
+          "decision": "supported",
+          "positive_ledger_refs": [
+            "ledger:0:3",
+            "ledger:0:4",
+            "ledger:0:5"
+          ],
+          "counterevidence_limitations": "The three-item enumeration is localized near the opening; later sections are not numbered.",
+          "criterion_explanation": "The speaker explicitly introduces three things, then names differentiation, quality, and long-term growth."
+        },
+        {
+          "technique_id": "format.reaction",
+          "ontology_definition": "Responds to another piece of content or event.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "No response to another piece of content or event is established.",
+          "criterion_explanation": "The video presents its own claims rather than reacting."
+        },
+        {
+          "technique_id": "format.before_after",
+          "ontology_definition": "Compares a state before and after a change.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "References to the period before launch do not establish paired before-and-after states.",
+          "criterion_explanation": "No two states are compared as a before-and-after."
+        },
+        {
+          "technique_id": "format.screen_recording",
+          "ontology_definition": "Recorded screen is a principal visual source.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [
+            "ledger:5:2"
+          ],
+          "counterevidence_limitations": "One brief view contains a computer screen; the broader visual presentation is not established as a recorded screen.",
+          "criterion_explanation": "A recorded screen is not shown to be a principal visual source."
+        },
+        {
+          "technique_id": "format.interview",
+          "ontology_definition": "Question and answer exchange is a principal format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "No question-and-answer exchange is established.",
+          "criterion_explanation": "The supplied speech is a presentation, not an interview."
+        }
+      ],
+      "cta_events": [],
+      "findings": [
+        {
+          "technique_id": "hook.visual",
+          "start_seconds": 0.1,
+          "end_seconds": 0.6,
+          "confidence": 0.84,
+          "basis": "direct_observation",
+          "rationale": "The opening shows a prominent helmeted person outdoors before established speech.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "hook.problem_statement",
+          "start_seconds": 2.333,
+          "end_seconds": 6.567,
+          "confidence": 0.73,
+          "basis": "model_interpretation",
+          "rationale": "The opening frames finding a helmet brand for a long-term working relationship as the issue to address, contrasting it with current sales.",
+          "evidence_refs": [
+            "ledger:0:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "format.listicle",
+          "start_seconds": 6.567,
+          "end_seconds": 14.5,
+          "confidence": 0.92,
+          "basis": "direct_observation",
+          "rationale": "The speaker introduces three things that matter and names product differentiation, consistent quality, and the ability to grow long term.",
+          "evidence_refs": [
+            "ledger:0:3",
+            "ledger:0:4",
+            "ledger:0:5"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 2.333,
+          "end_seconds": 8.9,
+          "confidence": 0.92,
+          "basis": "direct_observation",
+          "rationale": "Displayed sentences track the statements about a long-term helmet brand, current sales, and three things that matter.",
+          "evidence_refs": [
+            "ledger:0:2",
+            "ledger:0:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 96.85,
+          "end_seconds": 111.85,
+          "confidence": 0.9,
+          "basis": "direct_observation",
+          "rationale": "On-screen statements follow the narration about inspection, worldwide presence, stock availability, and market response.",
+          "evidence_refs": [
+            "ledger:4:2",
+            "ledger:4:3",
+            "ledger:4:4",
+            "ledger:4:5"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.headline",
+          "start_seconds": 51.0,
+          "end_seconds": 54.54,
+          "confidence": 0.86,
+          "basis": "direct_observation",
+          "rationale": "The prominent 'MULTI-TIER PRODUCT STRATEGY' graphic frames the helmet display and accompanying claims.",
+          "evidence_refs": [
+            "ledger:2:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.headline",
+          "start_seconds": 88.85,
+          "end_seconds": 94.0,
+          "confidence": 0.84,
+          "basis": "direct_observation",
+          "rationale": "The 'SYSTEMATIC QUALITY CONTROL' title frames the accompanying certification, testing, and inspection text.",
+          "evidence_refs": [
+            "ledger:3:6",
+            "ledger:4:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.headline",
+          "start_seconds": 121.85,
+          "end_seconds": 128.0,
+          "confidence": 0.88,
+          "basis": "direct_observation",
+          "rationale": "The 'COMPLETE SUPPORT SYSTEM' title heads the support graphic.",
+          "evidence_refs": [
+            "ledger:5:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.product_foreground",
+          "start_seconds": 51.0,
+          "end_seconds": 54.54,
+          "confidence": 0.9,
+          "basis": "direct_observation",
+          "rationale": "Rows of helmets are prominent in the supplied display frame.",
+          "evidence_refs": [
+            "ledger:2:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.screen_content",
+          "start_seconds": 119.4,
+          "end_seconds": 121.85,
+          "confidence": 0.91,
+          "basis": "direct_observation",
+          "rationale": "A computer screen displaying an email-style interface is visible.",
+          "evidence_refs": [
+            "ledger:5:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "editing.b_roll",
+          "start_seconds": 28.433,
+          "end_seconds": 30.6,
+          "confidence": 0.76,
+          "basis": "model_interpretation",
+          "rationale": "An equipment-filled room illustrates the ongoing narration about a manufacturing system rather than showing the speaker.",
+          "evidence_refs": [
+            "ledger:1:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "editing.b_roll",
+          "start_seconds": 78.0,
+          "end_seconds": 83.0,
+          "confidence": 0.78,
+          "basis": "model_interpretation",
+          "rationale": "The measuring-device and component image supports narration about manufacturing standards; no measurement action is inferred.",
+          "evidence_refs": [
+            "ledger:3:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "editing.split_screen",
+          "start_seconds": 37.433,
+          "end_seconds": 40.19,
+          "confidence": 0.69,
+          "basis": "model_interpretation",
+          "rationale": "The supplied frame places a manufacturing-system text graphic at left beside a machine close-up.",
+          "evidence_refs": [
+            "ledger:1:6"
+          ],
+          "event_id": null
+        }
+      ],
+      "structure": [
+        {
+          "role": "hook",
+          "start_seconds": 0.1,
+          "end_seconds": 0.6,
+          "confidence": 0.82,
+          "rationale": "A helmeted person provides the first salient image, before established speech.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ]
+        },
+        {
+          "role": "setup",
+          "start_seconds": 1.5,
+          "end_seconds": 2.333,
+          "confidence": 0.72,
+          "rationale": "Speech begins introducing the search for a long-term helmet brand.",
+          "evidence_refs": [
+            "ledger:0:1"
+          ]
+        },
+        {
+          "role": "problem",
+          "start_seconds": 2.333,
+          "end_seconds": 8.9,
+          "confidence": 0.76,
+          "rationale": "The speaker frames the long-term brand choice as more than current sales, then introduces what matters.",
+          "evidence_refs": [
+            "ledger:0:2",
+            "ledger:0:3"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 8.96,
+          "end_seconds": 17.16,
+          "confidence": 0.9,
+          "rationale": "Three desired qualities are named and connected to MY.",
+          "evidence_refs": [
+            "ledger:0:4",
+            "ledger:0:5",
+            "ledger:0:6"
+          ]
+        },
+        {
+          "role": "proof",
+          "start_seconds": 17.16,
+          "end_seconds": 40.19,
+          "confidence": 0.82,
+          "rationale": "Claims about industry experience, manufacturing capacity, and partner security are presented with supporting workplace and equipment imagery; the unevidenced interval between 30.6 and 31.19 seconds is excluded.",
+          "evidence_refs": [
+            "ledger:0:7",
+            "ledger:1:0",
+            "ledger:1:1",
+            "ledger:1:2",
+            "ledger:1:3",
+            "ledger:1:4",
+            "ledger:1:5",
+            "ledger:1:6"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 40.19,
+          "end_seconds": 60.0,
+          "confidence": 0.84,
+          "rationale": "Narration explains product lines, partner profit structure, and the claimed global-market strategy.",
+          "evidence_refs": [
+            "ledger:1:7",
+            "ledger:1:8",
+            "ledger:2:0",
+            "ledger:2:1",
+            "ledger:2:2",
+            "ledger:2:3"
+          ]
+        },
+        {
+          "role": "proof",
+          "start_seconds": 60.0,
+          "end_seconds": 63.54,
+          "confidence": 0.71,
+          "rationale": "The speaker asserts that the brand is already present in real markets; the ledger does not independently verify the claim.",
+          "evidence_refs": [
+            "ledger:2:4"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 63.54,
+          "end_seconds": 75.54,
+          "confidence": 0.85,
+          "rationale": "The presentation shifts to safety, comfort, performance, and certification wording.",
+          "evidence_refs": [
+            "ledger:2:5",
+            "ledger:2:6",
+            "ledger:3:0",
+            "ledger:3:1"
+          ]
+        },
+        {
+          "role": "proof",
+          "start_seconds": 75.54,
+          "end_seconds": 87.0,
+          "confidence": 0.82,
+          "rationale": "Named standards and a device image accompany claims about helmet development and manufacturing; actual testing is not established.",
+          "evidence_refs": [
+            "ledger:3:2",
+            "ledger:3:3",
+            "ledger:3:4"
+          ]
+        },
+        {
+          "role": "proof",
+          "start_seconds": 88.85,
+          "end_seconds": 101.85,
+          "confidence": 0.8,
+          "rationale": "The speaker describes quality systems, laboratory testing, and batch inspection alongside equipment and document graphics, without observed operation.",
+          "evidence_refs": [
+            "ledger:3:6",
+            "ledger:4:0",
+            "ledger:4:1",
+            "ledger:4:2"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 101.85,
+          "end_seconds": 121.85,
+          "confidence": 0.86,
+          "rationale": "The narration describes worldwide presence, availability, market response, and the offered support system.",
+          "evidence_refs": [
+            "ledger:4:3",
+            "ledger:4:4",
+            "ledger:4:5",
+            "ledger:4:6",
+            "ledger:5:0",
+            "ledger:5:1",
+            "ledger:5:2"
+          ]
+        },
+        {
+          "role": "payoff",
+          "start_seconds": 121.85,
+          "end_seconds": 137.833,
+          "confidence": 0.79,
+          "rationale": "The presentation connects partner support, sustainable business, R&D, and expansion to its long-term-growth message.",
+          "evidence_refs": [
+            "ledger:5:3",
+            "ledger:5:4",
+            "ledger:5:5",
+            "ledger:6:0"
+          ]
+        },
+        {
+          "role": "payoff",
+          "start_seconds": 137.85,
+          "end_seconds": 151.0,
+          "confidence": 0.87,
+          "rationale": "The closing returns to differentiated brands, stable quality, and long-term potential, ending with an expression of interest in growing the business together, not an explicit action request.",
+          "evidence_refs": [
+            "ledger:6:1",
+            "ledger:6:2",
+            "ledger:6:3",
+            "ledger:6:4",
+            "ledger:6:5"
+          ]
+        }
+      ],
+      "uncertainties": [
+        "Sparse still frames do not establish equipment operation, helmet use, motorcycle movement, or transitions and motion between frames.",
+        "'CONTACT US' appears as brief navigation wording in ledger:5:1, without an established viewer-directed request; the closing expression in ledger:6:5 likewise does not explicitly ask the viewer to act. No physical CTA event is established.",
+        "Claims about experience, certifications, testing, inventory, and market presence are reported as video claims, not independently verified."
+      ]
+    },
+    "provenance": {
+      "stage": "ontology_synthesis",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0ff72688fb3c5b68016acc05590b8887d2ac53b341b3ed68f6",
+      "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+      "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+    },
+    "ledger_sha256": "9f405db48a9e3374e227de7b224715ccc87e60226e59266d46f8d071dcbb86be"
+  }
+}

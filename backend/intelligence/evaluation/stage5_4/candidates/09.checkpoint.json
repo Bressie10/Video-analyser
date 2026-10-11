@@ -1,0 +1,410 @@
+{
+  "source_ref": "09",
+  "analyzer_commit": "699c4c6d0e2a6421b36c2f0c3c031a04b1487524",
+  "content_sha256": "34e5d656fede049e639479dedd65ae3132bcd624215550a47923dc471bec4c1b",
+  "chunk_responses": [
+    {
+      "chunk_id": "chunk:0",
+      "description": {
+        "chunk_start_seconds": 0.0,
+        "chunk_end_seconds": 10.2,
+        "observations": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 2.2,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [
+              "A man in a dark suit stands at the center of a floor area.",
+              "A small surrounding group holds phones."
+            ],
+            "visible_actions": [
+              "Several surrounding people look down at phones."
+            ],
+            "visible_text": [
+              "15 followers \u2705"
+            ],
+            "spoken_content_summary": "The transcript says, \u201cYou can ask the flowers.\u201d",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.96,
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "transcript:0",
+              "ocr:0",
+              "scene:0"
+            ],
+            "uncertainties": [
+              "The stills do not establish what happens between the sampled frames."
+            ]
+          },
+          {
+            "start_seconds": 2.2,
+            "end_seconds": 6.1,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "The man remains at the center of the floor area.",
+              "A larger surrounding group holds phones."
+            ],
+            "visible_actions": [
+              "People around the man look at or hold up phones."
+            ],
+            "visible_text": [
+              "150 followers \ud83e\udd13"
+            ],
+            "spoken_content_summary": "The transcript says, \u201cI sit for hours,\u201d beginning at 4.31 seconds.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "scene:1",
+              "frame:2",
+              "frame:3",
+              "ocr:1",
+              "transcript:1"
+            ],
+            "uncertainties": [
+              "The frames establish different crowd sizes, but not how the crowd changed between stills."
+            ]
+          },
+          {
+            "start_seconds": 6.1,
+            "end_seconds": 10.2,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "The man is at the center of a floor area.",
+              "A much larger surrounding crowd is visible, with many phones."
+            ],
+            "visible_actions": [
+              "People in the crowd hold up phones."
+            ],
+            "visible_text": [
+              "600 followers \ud83d\ude33"
+            ],
+            "spoken_content_summary": "The transcript says, \u201cTelling all the blue birds,\u201d beginning at 6.31 seconds.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.93,
+            "evidence_refs": [
+              "scene:2",
+              "frame:4",
+              "ocr:2",
+              "transcript:2"
+            ],
+            "uncertainties": [
+              "The transcript segment extends beyond this chunk; the still does not establish activity between sampled frames."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Scene boundaries and OCR spans are supplied detector observations; the sparse frames do not establish exact visual transition times."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:0",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_03c117039cc479ab016acc0745c92087d2858df3ee5b8d83e4",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "699c4c6d0e2a6421b36c2f0c3c031a04b1487524"
+      }
+    },
+    {
+      "chunk_id": "chunk:1",
+      "description": {
+        "chunk_start_seconds": 10.2,
+        "chunk_end_seconds": 16.669,
+        "observations": [
+          {
+            "start_seconds": 10.2,
+            "end_seconds": 10.56,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "600 followers"
+            ],
+            "spoken_content_summary": "The transcript phrase \u201cTelling all the blue birds\u201d ends at 10.56 seconds.",
+            "changes_from_previous_chunk": "The spoken phrase from the previous chunk continues briefly.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "transcript:2",
+              "ocr:2",
+              "ocr:3"
+            ],
+            "uncertainties": [
+              "No frame is supplied within this interval. OCR records a change at 10.5 seconds, but the exact visual transition is not established."
+            ]
+          },
+          {
+            "start_seconds": 10.56,
+            "end_seconds": 14.5,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "A person stands near the center of an open circular floor area.",
+              "A dense crowd surrounds the area."
+            ],
+            "visible_actions": [
+              "Some people in the crowd hold up phones."
+            ],
+            "visible_text": [
+              "900 followers \ud83d\ude2f"
+            ],
+            "spoken_content_summary": "No further speech is supplied.",
+            "changes_from_previous_chunk": "The displayed follower count changes from 600 to 900; frame:5 shows a larger crowd around the central area.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "frame:5",
+              "ocr:3",
+              "scene:3"
+            ],
+            "uncertainties": [
+              "Frame:5 is a still at 11.1 seconds; it does not establish activity throughout this interval.",
+              "The emoji is visible in the frame but is not included in the OCR text."
+            ]
+          },
+          {
+            "start_seconds": 14.5,
+            "end_seconds": 16.669,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "A person stands near the center of an open circular floor area.",
+              "A very dense crowd fills concentric rings around the area."
+            ],
+            "visible_actions": [
+              "Some people in the crowd hold up phones."
+            ],
+            "visible_text": [
+              "1,300 followers \ud83c\udf89"
+            ],
+            "spoken_content_summary": "No speech is supplied.",
+            "changes_from_previous_chunk": "The displayed follower count changes from 900 to 1,300. The supplied frames show the crowd extending farther across the image.",
+            "confidence": 0.95,
+            "evidence_refs": [
+              "frame:6",
+              "frame:7",
+              "frame:8",
+              "ocr:4",
+              "scene:4",
+              "scene:5"
+            ],
+            "uncertainties": [
+              "Frame:6 is at 14.667 seconds, before the supplied start of scene:5; the frames do not establish an exact visual change at the scene boundary.",
+              "OCR ends at 16.533 seconds, before the chunk ends.",
+              "The emoji is visible in the frames but is not included in the OCR text."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Scene and OCR boundaries are detector observations; sparse stills do not establish continuous activity or exact changes between frames."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:1",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_066ac97f744bc0ae016acc074c7fe487d2b329c636c397ff62",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "699c4c6d0e2a6421b36c2f0c3c031a04b1487524"
+      }
+    }
+  ],
+  "synthesis_response": {
+    "draft": {
+      "format_assessments": [
+        {
+          "technique_id": "format.talking_head",
+          "ontology_definition": "Speaker addresses the camera for a substantial part of the video.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The ledger shows a central person and supplies brief transcript phrases, but does not establish camera-addressing speech.",
+          "criterion_explanation": "A visible person and speech alone do not establish a talking head."
+        },
+        {
+          "technique_id": "format.tutorial",
+          "ontology_definition": "Explains a process or teaches a skill in steps.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The follower counts change, but no process or instructional steps are described.",
+          "criterion_explanation": "There is no evidenced teaching sequence."
+        },
+        {
+          "technique_id": "format.product_demo",
+          "ontology_definition": "Shows a product or service in use.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "People hold phones, but no identifiable product or service is shown in use as a demonstration.",
+          "criterion_explanation": "Phone presence alone does not establish a product demonstration."
+        },
+        {
+          "technique_id": "format.storytime",
+          "ontology_definition": "Narrates an event as the main format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The supplied speech consists of short phrases; the changing crowd and counts do not establish narrated events.",
+          "criterion_explanation": "Event narration is not established as the main format."
+        },
+        {
+          "technique_id": "format.listicle",
+          "ontology_definition": "Presents numbered or clearly enumerated items.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The numbers are successive follower counts, not enumerated items.",
+          "criterion_explanation": "A changing metric is not a list."
+        },
+        {
+          "technique_id": "format.reaction",
+          "ontology_definition": "Responds to another piece of content or event.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "No response to another piece of content or event is established.",
+          "criterion_explanation": "The required response format is not observed."
+        },
+        {
+          "technique_id": "format.before_after",
+          "ontology_definition": "Compares a state before and after a change.",
+          "decision": "uncertain",
+          "positive_ledger_refs": [
+            "ledger:0:0",
+            "ledger:0:1",
+            "ledger:0:2",
+            "ledger:1:1",
+            "ledger:1:2"
+          ],
+          "counterevidence_limitations": "The ledger documents earlier and later follower counts and different crowd sizes, but does not establish a defined change whose before and after states are being compared; the stills do not show how the crowd changed.",
+          "criterion_explanation": "Both earlier and later states are visible, but whether they constitute a before-and-after comparison remains uncertain."
+        },
+        {
+          "technique_id": "format.screen_recording",
+          "ontology_definition": "Recorded screen is a principal visual source.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "Phones are visible, but no recorded screen is identified as a principal visual source.",
+          "criterion_explanation": "Visible devices are not evidence of screen recording."
+        },
+        {
+          "technique_id": "format.interview",
+          "ontology_definition": "Question and answer exchange is a principal format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "No question-and-answer exchange is supplied.",
+          "criterion_explanation": "The defining exchange is absent."
+        }
+      ],
+      "cta_events": [],
+      "findings": [
+        {
+          "technique_id": "hook.visual",
+          "start_seconds": 0.0,
+          "end_seconds": 2.2,
+          "confidence": 0.82,
+          "basis": "model_interpretation",
+          "rationale": "The opening shows a suited man centered among people holding phones, alongside a prominent follower count.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.multiple_subjects",
+          "start_seconds": 0.0,
+          "end_seconds": 2.2,
+          "confidence": 0.96,
+          "basis": "direct_observation",
+          "rationale": "A central man and a surrounding group share the frame.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.multiple_subjects",
+          "start_seconds": 2.5,
+          "end_seconds": 6.1,
+          "confidence": 0.94,
+          "basis": "direct_observation",
+          "rationale": "The central man and a larger surrounding group are visible.",
+          "evidence_refs": [
+            "ledger:0:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.multiple_subjects",
+          "start_seconds": 6.31,
+          "end_seconds": 10.2,
+          "confidence": 0.93,
+          "basis": "direct_observation",
+          "rationale": "The central man and a much larger surrounding crowd are visible.",
+          "evidence_refs": [
+            "ledger:0:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.multiple_subjects",
+          "start_seconds": 10.56,
+          "end_seconds": 14.5,
+          "confidence": 0.94,
+          "basis": "direct_observation",
+          "rationale": "A central person and a dense surrounding crowd are visible.",
+          "evidence_refs": [
+            "ledger:1:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.multiple_subjects",
+          "start_seconds": 14.5,
+          "end_seconds": 16.533,
+          "confidence": 0.95,
+          "basis": "direct_observation",
+          "rationale": "A central person and a very dense surrounding crowd are visible.",
+          "evidence_refs": [
+            "ledger:1:2"
+          ],
+          "event_id": null
+        }
+      ],
+      "structure": [
+        {
+          "role": "hook",
+          "start_seconds": 0.0,
+          "end_seconds": 2.2,
+          "confidence": 0.76,
+          "rationale": "The initial central figure, phone-holding group, and displayed \u201815 followers\u2019 introduce the visual sequence.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ]
+        },
+        {
+          "role": "payoff",
+          "start_seconds": 14.5,
+          "end_seconds": 16.533,
+          "confidence": 0.72,
+          "rationale": "The sequence reaches its highest displayed follower count, \u20181,300 followers,\u2019 alongside the densest pictured crowd.",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1",
+            "ledger:0:2",
+            "ledger:1:1",
+            "ledger:1:2"
+          ]
+        }
+      ],
+      "uncertainties": [
+        "The supplied stills do not establish movement or the mechanism behind changes in crowd size or follower count.",
+        "No spoken or visible request to the viewer is recorded; \u2018followers\u2019 labels report counts rather than ask for a follow.",
+        "The supplied transcript does not establish that its words are captions or that the speaker addresses the camera."
+      ]
+    },
+    "provenance": {
+      "stage": "ontology_synthesis",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0f94bdc24f25c162016acc0752fcac87d2964448ee695eaee7",
+      "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+      "analyzer_commit": "699c4c6d0e2a6421b36c2f0c3c031a04b1487524"
+    },
+    "ledger_sha256": "fb31191be998ca81129511518075ba324e5a5c10fbf9b57476c1f27755ab6678"
+  }
+}

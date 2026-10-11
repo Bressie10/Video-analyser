@@ -1,0 +1,1103 @@
+{
+  "source_ref": "10",
+  "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a",
+  "content_sha256": "98d6bccb028821213a98e44b9823e39f83195cf7b8d69c5fab9d4f9639de0186",
+  "chunk_responses": [
+    {
+      "chunk_id": "chunk:0",
+      "description": {
+        "chunk_start_seconds": 0.0,
+        "chunk_end_seconds": 10.467,
+        "observations": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 2.267,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [
+              "Close-up of a person with short dark hair and glasses"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "nighttime skincare routine",
+              "I'm 40, but I look 25, and no"
+            ],
+            "spoken_content_summary": "The speaker says they are 40 but look 25, and begins saying this is not luck.",
+            "changes_from_previous_chunk": "not established",
+            "confidence": 0.95,
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "transcript:0",
+              "ocr:0",
+              "ocr:1",
+              "scene:0"
+            ],
+            "uncertainties": [
+              "The stills do not establish movement between the two views."
+            ]
+          },
+          {
+            "start_seconds": 2.267,
+            "end_seconds": 3.64,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Person with glasses",
+              "Green cylindrical container"
+            ],
+            "visible_actions": [
+              "At 3.0 seconds, the person holds the green container in front of the camera."
+            ],
+            "visible_text": [
+              "it's not luck, it's skincare",
+              "cleansing balm",
+              "PURE GRINDING CLEANSN"
+            ],
+            "spoken_content_summary": "The speaker finishes: it is not luck; it is skincare.",
+            "changes_from_previous_chunk": "not established",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "frame:2",
+              "transcript:0",
+              "ocr:2",
+              "ocr:4",
+              "ocr:5",
+              "scene:1",
+              "scene:2"
+            ],
+            "uncertainties": [
+              "Small container-label text is not reliably legible."
+            ]
+          },
+          {
+            "start_seconds": 3.64,
+            "end_seconds": 4.6,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Person with glasses",
+              "Open green container with pale material on its lid"
+            ],
+            "visible_actions": [
+              "At 3.867 seconds, the person holds the open container toward the camera."
+            ],
+            "visible_text": [
+              "cleansing balm",
+              "I just started the 28 day K-Beauty Challenge",
+              "with Lovi, and it changed everything"
+            ],
+            "spoken_content_summary": "The speaker begins saying they started a 28-day K-Beauty Challenge with Lovie.",
+            "changes_from_previous_chunk": "not established",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "frame:3",
+              "transcript:1",
+              "ocr:5",
+              "ocr:8",
+              "ocr:9",
+              "scene:2"
+            ],
+            "uncertainties": [
+              "The transcript says \u201cLovie\u201d; the detected on-screen text reads \u201cLovi.\u201d"
+            ]
+          },
+          {
+            "start_seconds": 4.6,
+            "end_seconds": 6.167,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Person in a black shirt",
+              "Pale substance on a fingertip near the cheek"
+            ],
+            "visible_actions": [
+              "At 4.867 seconds, the person holds a fingertip with pale substance against or immediately beside their cheek."
+            ],
+            "visible_text": [
+              "I just started the 28 day K-Beauty Challenge",
+              "with Lovi, and it changed everything",
+              "cleansing balm"
+            ],
+            "spoken_content_summary": "The speaker says the challenge with Lovie changed everything.",
+            "changes_from_previous_chunk": "not established",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:4",
+              "transcript:1",
+              "ocr:8",
+              "ocr:9",
+              "ocr:10",
+              "ocr:5",
+              "scene:3",
+              "scene:4"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the substance is being spread."
+            ]
+          },
+          {
+            "start_seconds": 6.167,
+            "end_seconds": 7.6,
+            "boundary_reason": "visual_change",
+            "visible_subjects_objects": [
+              "Person partly visible",
+              "White tube held in both hands"
+            ],
+            "visible_actions": [
+              "At 6.167 seconds, the person holds a white tube toward the camera."
+            ],
+            "visible_text": [
+              "cleanser",
+              "I just started the 28 day K-Beauty Challenge",
+              "with Lovi, and it changed everything"
+            ],
+            "spoken_content_summary": "The speaker completes the statement that the challenge changed everything.",
+            "changes_from_previous_chunk": "not established",
+            "confidence": 0.89,
+            "evidence_refs": [
+              "frame:5",
+              "transcript:1",
+              "ocr:12",
+              "ocr:9",
+              "ocr:13",
+              "scene:5",
+              "scene:6"
+            ],
+            "uncertainties": [
+              "The tube's smaller printed text is not reliably legible."
+            ]
+          },
+          {
+            "start_seconds": 7.6,
+            "end_seconds": 8.3,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "This Al cosmetologist scans your face",
+              "cleanser"
+            ],
+            "spoken_content_summary": "The speaker begins describing an AI cosmetologist that scans your face.",
+            "changes_from_previous_chunk": "not established",
+            "confidence": 0.78,
+            "evidence_refs": [
+              "transcript:2",
+              "ocr:14",
+              "ocr:13",
+              "scene:6"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation; the OCR renders \u201cAI\u201d as \u201cAl.\u201d"
+            ]
+          },
+          {
+            "start_seconds": 8.3,
+            "end_seconds": 10.467,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Hands",
+              "Small pink-and-white cylindrical container",
+              "Part of a black shirt"
+            ],
+            "visible_actions": [
+              "At 8.733 seconds, hands hold the small container toward the camera."
+            ],
+            "visible_text": [
+              "This Al cosmetologist scans your face",
+              "clay mask",
+              "learns your skin, and builds a routine tailored"
+            ],
+            "spoken_content_summary": "The speaker says the AI cosmetologist scans your face, learns your skin, and builds a tailored routine; the sentence continues beyond this chunk.",
+            "changes_from_previous_chunk": "not established",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "frame:6",
+              "transcript:2",
+              "ocr:14",
+              "ocr:15",
+              "ocr:16",
+              "ocr:17",
+              "scene:7",
+              "scene:8"
+            ],
+            "uncertainties": [
+              "The frame at 8.733 seconds does not establish what is visible after it; the spoken sentence extends beyond the chunk."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Sparse stills do not establish continuous actions or exact visual transitions between sampled frames."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:0",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0eb8b3050da85904016acc056f967487d28f9ebe32a8bf4ee3",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:1",
+      "description": {
+        "chunk_start_seconds": 10.467,
+        "chunk_end_seconds": 20.633,
+        "observations": [
+          {
+            "start_seconds": 10.467,
+            "end_seconds": 11.633,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Person in a black shirt",
+              "Pale material covering much of the face",
+              "Hand near forehead"
+            ],
+            "visible_actions": [
+              "At 11.067 seconds, a hand touches the person's forehead."
+            ],
+            "visible_text": [
+              "learns your skin, and builds a routine tailored",
+              "clay mask"
+            ],
+            "spoken_content_summary": "The speaker continues saying the AI cosmetologist learns your skin and builds a tailored routine.",
+            "changes_from_previous_chunk": "The sampled view changes from hands holding a small container to a person's face covered with pale material.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "frame:7",
+              "transcript:2",
+              "ocr:16",
+              "ocr:17",
+              "scene:9"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the hand is spreading the material."
+            ]
+          },
+          {
+            "start_seconds": 11.633,
+            "end_seconds": 13.06,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Hands",
+              "Tall transparent bottle with green cap and green label"
+            ],
+            "visible_actions": [
+              "At 12.333 seconds, hands hold the bottle toward the camera."
+            ],
+            "visible_text": [
+              "essence",
+              "exactly for you",
+              "MUGWO",
+              "ESSENT"
+            ],
+            "spoken_content_summary": "The speaker finishes the sentence: the routine is tailored exactly for you.",
+            "changes_from_previous_chunk": "A bottle replaces the face close-up in the sampled frame.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "frame:8",
+              "transcript:2",
+              "transcript:3",
+              "ocr:19",
+              "ocr:20",
+              "ocr:21",
+              "ocr:22",
+              "scene:10",
+              "scene:11"
+            ],
+            "uncertainties": [
+              "The detected bottle-label text is incomplete."
+            ]
+          },
+          {
+            "start_seconds": 13.06,
+            "end_seconds": 14.367,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Hands",
+              "Small light-colored bottle"
+            ],
+            "visible_actions": [
+              "At 14.033 seconds, hands hold the small bottle toward the camera."
+            ],
+            "visible_text": [
+              "No more random creams",
+              "serum",
+              "Anua",
+              "7+"
+            ],
+            "spoken_content_summary": "The speaker begins saying there are no more random creams and no more wasting money on trends.",
+            "changes_from_previous_chunk": "The sampled bottle changes from a tall green-capped bottle to a smaller light-colored one.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:9",
+              "transcript:4",
+              "ocr:24",
+              "ocr:25",
+              "ocr:26",
+              "ocr:27",
+              "scene:12"
+            ],
+            "uncertainties": [
+              "The smaller bottle-label print is not reliably legible."
+            ]
+          },
+          {
+            "start_seconds": 14.367,
+            "end_seconds": 15.96,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Person in a black shirt",
+              "Hand against cheek"
+            ],
+            "visible_actions": [
+              "At 15.433 seconds, the person's hand rests against their cheek."
+            ],
+            "visible_text": [
+              "no more wasting money on trends",
+              "serum"
+            ],
+            "spoken_content_summary": "The speaker completes the statement about not wasting money on trends.",
+            "changes_from_previous_chunk": "The sampled view changes from a bottle held toward the camera to the person's face.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "frame:10",
+              "transcript:4",
+              "ocr:27",
+              "ocr:28",
+              "scene:14",
+              "scene:15"
+            ],
+            "uncertainties": [
+              "The still does not establish whether the hand is rubbing the cheek."
+            ]
+          },
+          {
+            "start_seconds": 15.96,
+            "end_seconds": 19.4,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Person in a black shirt",
+              "Pale spots on forehead, cheeks, and chin",
+              "Both hands against cheeks"
+            ],
+            "visible_actions": [
+              "At 18.533 seconds, both hands touch the person's cheeks."
+            ],
+            "visible_text": [
+              "Now I've got a simple routine",
+              "that makes my skin hydrated",
+              "moisturizer",
+              "plump, and glowing"
+            ],
+            "spoken_content_summary": "The speaker says they now have a simple routine that makes their skin hydrated, plump, and glowing.",
+            "changes_from_previous_chunk": "Pale spots are visible on the face, and both hands are against the cheeks in the later sampled frame.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:11",
+              "transcript:5",
+              "ocr:30",
+              "ocr:33",
+              "ocr:34",
+              "ocr:39",
+              "scene:15",
+              "scene:18"
+            ],
+            "uncertainties": [
+              "The sampled frame does not establish how or when the pale spots were applied.",
+              "The 'plump, and glowing' text is detected at 19.0 seconds, after the sampled frame."
+            ]
+          },
+          {
+            "start_seconds": 19.4,
+            "end_seconds": 20.633,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "Like I just stepped out of Seoul",
+              "moisturizer"
+            ],
+            "spoken_content_summary": "The speaker begins the comparison, 'Like I just stepped out of soul,' as rendered in the transcript.",
+            "changes_from_previous_chunk": "No frame establishes a visual change in this interval.",
+            "confidence": 0.76,
+            "evidence_refs": [
+              "transcript:6",
+              "ocr:34",
+              "ocr:40",
+              "scene:18",
+              "scene:19"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation.",
+              "The transcript renders the final word as 'soul'; OCR renders it as 'Seoul'.",
+              "The spoken sentence continues beyond this chunk."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Sparse stills do not establish continuous activity or the exact visual transitions between sampled frames."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:1",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0d21d0b8c889d4d5016acc057a31b487d295fd5ca4f6816273",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:2",
+      "description": {
+        "chunk_start_seconds": 20.633,
+        "chunk_end_seconds": 30.869,
+        "observations": [
+          {
+            "start_seconds": 20.633,
+            "end_seconds": 20.74,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "Like I just stepped out of Seoul",
+              "moisturizer"
+            ],
+            "spoken_content_summary": "The speaker finishes the comparison rendered as \u201csoul\u201d in the transcript.",
+            "changes_from_previous_chunk": "The same spoken sentence continues from the previous chunk.",
+            "confidence": 0.8,
+            "evidence_refs": [
+              "transcript:6",
+              "ocr:40",
+              "ocr:34",
+              "scene:20"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; OCR renders the final word as \u201cSeoul.\u201d"
+            ]
+          },
+          {
+            "start_seconds": 20.74,
+            "end_seconds": 24.08,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "Avene",
+              "Cicalfate",
+              "If I can take 15 years off my skin",
+              "with the right products, so can you",
+              "cr\u00e8me"
+            ],
+            "spoken_content_summary": "The speaker says, \u201cIf I can take 15 years off my skin with the right products, so can you.\u201d",
+            "changes_from_previous_chunk": "A new spoken sentence begins; no supplied frame establishes the appearance during it.",
+            "confidence": 0.86,
+            "evidence_refs": [
+              "transcript:7",
+              "ocr:41",
+              "ocr:42",
+              "ocr:45",
+              "ocr:46",
+              "ocr:47",
+              "scene:21",
+              "scene:22",
+              "scene:23"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; the depicted objects and actions are not established."
+            ]
+          },
+          {
+            "start_seconds": 24.08,
+            "end_seconds": 25.76,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Person in a black shirt",
+              "Hands",
+              "Small tube with a dark cap"
+            ],
+            "visible_actions": [
+              "At 24.7 seconds, the person holds the tube toward the camera."
+            ],
+            "visible_text": [
+              "Try Lovi and see the difference yourself",
+              "lip care",
+              "Eucerin",
+              "Aquphor"
+            ],
+            "spoken_content_summary": "The speaker says, \u201cTry Lovie and see the difference yourself.\u201d",
+            "changes_from_previous_chunk": "The sampled frame shows a person holding a tube; the spoken sentence changes to a request to try Lovie.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:12",
+              "transcript:8",
+              "ocr:49",
+              "ocr:50",
+              "ocr:51",
+              "ocr:52",
+              "scene:24"
+            ],
+            "uncertainties": [
+              "The transcript spells the name \u201cLovie,\u201d while OCR renders \u201cLovi\u201d; the smaller tube-label text is not fully clear."
+            ]
+          },
+          {
+            "start_seconds": 25.76,
+            "end_seconds": 27.0,
+            "boundary_reason": "visual_change",
+            "visible_subjects_objects": [
+              "Person in a black shirt wearing glasses",
+              "Hand near chin"
+            ],
+            "visible_actions": [
+              "At 26.1 seconds, a finger touches the person's chin."
+            ],
+            "visible_text": [
+              "Try Lovi and see the difference yourself",
+              "all glassy and glowy"
+            ],
+            "spoken_content_summary": "No supplied transcript speech is timed to this interval.",
+            "changes_from_previous_chunk": "The sampled view changes from a held tube to a close-up of the person wearing glasses.",
+            "confidence": 0.93,
+            "evidence_refs": [
+              "frame:13",
+              "ocr:51",
+              "ocr:54",
+              "scene:25",
+              "scene:26"
+            ],
+            "uncertainties": [
+              "The still does not establish movement of the finger or any action between frames."
+            ]
+          },
+          {
+            "start_seconds": 27.0,
+            "end_seconds": 28.0,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "Your Personal",
+              "Plan is Ready!",
+              "100%"
+            ],
+            "spoken_content_summary": "No supplied transcript speech is timed to this interval.",
+            "changes_from_previous_chunk": "OCR changes to text saying a personal plan is ready.",
+            "confidence": 0.84,
+            "evidence_refs": [
+              "ocr:55",
+              "ocr:56",
+              "ocr:57",
+              "scene:26"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; OCR alone does not establish the full layout."
+            ]
+          },
+          {
+            "start_seconds": 28.0,
+            "end_seconds": 30.869,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "White background",
+              "Blue rounded button",
+              "Hand in the 28.867-second frame"
+            ],
+            "visible_actions": [
+              "At 28.867 seconds, a fingertip is against the blue button."
+            ],
+            "visible_text": [
+              "Your Personal Plan is Ready!",
+              "Take the quiz"
+            ],
+            "spoken_content_summary": "No supplied transcript speech is timed to this interval.",
+            "changes_from_previous_chunk": "A blue \u201cTake the quiz\u201d button appears in the OCR; the 28.867-second frame shows a finger against it, while the 30.767-second frame shows the text and button without a hand.",
+            "confidence": 0.96,
+            "evidence_refs": [
+              "frame:14",
+              "frame:15",
+              "ocr:55",
+              "ocr:56",
+              "ocr:58",
+              "ocr:61",
+              "scene:26"
+            ],
+            "uncertainties": [
+              "The still frames do not establish whether the button was pressed or what happened between the two frames."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Sparse frames do not establish continuous activity or exact visual transitions between sampled times."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:2",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0dd27a0f969aec90016acc0583f15487d28bb5c2960af7ceb4",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    }
+  ],
+  "synthesis_response": {
+    "draft": {
+      "format_assessments": [
+        {
+          "technique_id": "format.talking_head",
+          "ontology_definition": "Speaker addresses the camera for a substantial part of the video.",
+          "decision": "uncertain",
+          "positive_ledger_refs": [
+            "ledger:0:0",
+            "ledger:0:1",
+            "ledger:1:3",
+            "ledger:1:4"
+          ],
+          "counterevidence_limitations": "A speaking person appears in several sampled close-ups, but the ledger does not establish direct camera address for a substantial portion; other sampled views feature products.",
+          "criterion_explanation": "Visible speech and close-ups alone do not establish sustained camera-addressing speech."
+        },
+        {
+          "technique_id": "format.tutorial",
+          "ontology_definition": "Explains a process or teaches a skill in steps.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [
+            "ledger:0:3",
+            "ledger:1:0"
+          ],
+          "counterevidence_limitations": "Skincare items and face-touching are shown, but no sequence of instructional steps is established.",
+          "criterion_explanation": "A routine is mentioned, not taught in steps."
+        },
+        {
+          "technique_id": "format.product_demo",
+          "ontology_definition": "Shows a product or service in use.",
+          "decision": "supported",
+          "positive_ledger_refs": [
+            "ledger:0:2",
+            "ledger:0:3",
+            "ledger:1:0",
+            "ledger:1:4"
+          ],
+          "counterevidence_limitations": "Still frames do not establish spreading or a complete application sequence; the service interface is not shown in use.",
+          "criterion_explanation": "The open skincare container, substance held against a cheek, and pale material on the face provide localized evidence of skincare products in use."
+        },
+        {
+          "technique_id": "format.storytime",
+          "ontology_definition": "Narrates an event as the main format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [
+            "ledger:0:2",
+            "ledger:0:3"
+          ],
+          "counterevidence_limitations": "The speaker briefly says they started a challenge and it changed things; most subsequent speech describes a service, routine, claimed result, and requests.",
+          "criterion_explanation": "A brief retrospective claim does not make event narration the main format."
+        },
+        {
+          "technique_id": "format.listicle",
+          "ontology_definition": "Presents numbered or clearly enumerated items.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "Several products appear, but they are not presented as numbered or clearly enumerated items.",
+          "criterion_explanation": "The required list organization is absent."
+        },
+        {
+          "technique_id": "format.reaction",
+          "ontology_definition": "Responds to another piece of content or event.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "No distinct content or event being reacted to is established.",
+          "criterion_explanation": "Describing a personal routine is not a reaction format."
+        },
+        {
+          "technique_id": "format.before_after",
+          "ontology_definition": "Compares a state before and after a change.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [
+            "ledger:1:2",
+            "ledger:1:4",
+            "ledger:2:1"
+          ],
+          "counterevidence_limitations": "The speaker claims improved skin and contrasts the routine with random creams, but no identifiable before-state and after-state comparison is established.",
+          "criterion_explanation": "An improvement claim does not establish both compared states."
+        },
+        {
+          "technique_id": "format.screen_recording",
+          "ontology_definition": "Recorded screen is a principal visual source.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [
+            "ledger:2:4",
+            "ledger:2:5"
+          ],
+          "counterevidence_limitations": "A plan and button appear at the end, but the ledger does not establish recorded-screen footage as a principal visual source.",
+          "criterion_explanation": "An end-card interface alone does not establish a screen-recording format."
+        },
+        {
+          "technique_id": "format.interview",
+          "ontology_definition": "Question and answer exchange is a principal format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "No question-and-answer exchange is described.",
+          "criterion_explanation": "The principal interview criterion is absent."
+        }
+      ],
+      "cta_events": [
+        {
+          "event_id": "cta:1",
+          "start_seconds": 24.08,
+          "end_seconds": 27.0,
+          "requested_action": "Try Lovi/Lovie and see the difference yourself.",
+          "ledger_refs": [
+            "ledger:2:2",
+            "ledger:2:3"
+          ]
+        },
+        {
+          "event_id": "cta:2",
+          "start_seconds": 28.0,
+          "end_seconds": 30.867,
+          "requested_action": "Take the quiz.",
+          "ledger_refs": [
+            "ledger:2:5"
+          ]
+        }
+      ],
+      "findings": [
+        {
+          "technique_id": "hook.bold_claim",
+          "start_seconds": 0.0,
+          "end_seconds": 3.64,
+          "confidence": 0.94,
+          "basis": "direct_observation",
+          "rationale": "Opens by claiming to be 40 but look 25, then attributes it to skincare rather than luck.",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "hook.result_first",
+          "start_seconds": 0.0,
+          "end_seconds": 3.64,
+          "confidence": 0.86,
+          "basis": "model_interpretation",
+          "rationale": "The claimed youthful-looking result precedes the account of the challenge and tailored routine.",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1",
+            "ledger:0:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.headline",
+          "start_seconds": 0.0,
+          "end_seconds": 2.267,
+          "confidence": 0.9,
+          "basis": "direct_observation",
+          "rationale": "The opening text frames the content as a nighttime skincare routine.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 0.0,
+          "end_seconds": 3.64,
+          "confidence": 0.96,
+          "basis": "direct_observation",
+          "rationale": "Displayed text follows the opening spoken claim and its skincare explanation.",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 3.64,
+          "end_seconds": 7.6,
+          "confidence": 0.94,
+          "basis": "direct_observation",
+          "rationale": "Displayed text follows the spoken account of starting the challenge and its claimed effect.",
+          "evidence_refs": [
+            "ledger:0:2",
+            "ledger:0:3",
+            "ledger:0:4"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 7.6,
+          "end_seconds": 13.06,
+          "confidence": 0.91,
+          "basis": "direct_observation",
+          "rationale": "Displayed text tracks the description of the AI cosmetologist and tailored routine.",
+          "evidence_refs": [
+            "ledger:0:5",
+            "ledger:0:6",
+            "ledger:1:0",
+            "ledger:1:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 13.06,
+          "end_seconds": 20.74,
+          "confidence": 0.92,
+          "basis": "direct_observation",
+          "rationale": "Displayed wording follows the speech about random creams, the simpler routine, and its claimed results.",
+          "evidence_refs": [
+            "ledger:1:2",
+            "ledger:1:3",
+            "ledger:1:4",
+            "ledger:1:5",
+            "ledger:2:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 20.74,
+          "end_seconds": 25.76,
+          "confidence": 0.93,
+          "basis": "direct_observation",
+          "rationale": "Displayed text follows the speaker's claimed result and spoken invitation to try Lovie.",
+          "evidence_refs": [
+            "ledger:2:1",
+            "ledger:2:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.product_foreground",
+          "start_seconds": 2.267,
+          "end_seconds": 4.6,
+          "confidence": 0.91,
+          "basis": "direct_observation",
+          "rationale": "A green skincare container is held toward the camera, then shown open.",
+          "evidence_refs": [
+            "ledger:0:1",
+            "ledger:0:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.product_foreground",
+          "start_seconds": 6.167,
+          "end_seconds": 7.6,
+          "confidence": 0.88,
+          "basis": "direct_observation",
+          "rationale": "A white tube is held toward the camera.",
+          "evidence_refs": [
+            "ledger:0:4"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.product_foreground",
+          "start_seconds": 8.3,
+          "end_seconds": 10.467,
+          "confidence": 0.86,
+          "basis": "direct_observation",
+          "rationale": "Hands hold a small container toward the camera.",
+          "evidence_refs": [
+            "ledger:0:6"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.product_foreground",
+          "start_seconds": 11.633,
+          "end_seconds": 14.367,
+          "confidence": 0.89,
+          "basis": "direct_observation",
+          "rationale": "Hands present a tall bottle, followed by a smaller bottle, toward the camera.",
+          "evidence_refs": [
+            "ledger:1:1",
+            "ledger:1:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.product_foreground",
+          "start_seconds": 24.08,
+          "end_seconds": 25.76,
+          "confidence": 0.9,
+          "basis": "direct_observation",
+          "rationale": "The person holds a small tube toward the camera.",
+          "evidence_refs": [
+            "ledger:2:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "cta.verbal",
+          "start_seconds": 24.08,
+          "end_seconds": 25.76,
+          "confidence": 0.96,
+          "basis": "direct_observation",
+          "rationale": "The speaker asks the viewer to try Lovie.",
+          "evidence_refs": [
+            "ledger:2:2"
+          ],
+          "event_id": "cta:1"
+        },
+        {
+          "technique_id": "cta.visual",
+          "start_seconds": 24.08,
+          "end_seconds": 27.0,
+          "confidence": 0.97,
+          "basis": "direct_observation",
+          "rationale": "On-screen wording asks the viewer to try Lovi and see the difference.",
+          "evidence_refs": [
+            "ledger:2:2",
+            "ledger:2:3"
+          ],
+          "event_id": "cta:1"
+        },
+        {
+          "technique_id": "cta.product",
+          "start_seconds": 24.08,
+          "end_seconds": 27.0,
+          "confidence": 0.97,
+          "basis": "direct_observation",
+          "rationale": "Trying the named skincare service or product is a product-related request.",
+          "evidence_refs": [
+            "ledger:2:2",
+            "ledger:2:3"
+          ],
+          "event_id": "cta:1"
+        },
+        {
+          "technique_id": "cta.visual",
+          "start_seconds": 28.0,
+          "end_seconds": 30.867,
+          "confidence": 0.98,
+          "basis": "direct_observation",
+          "rationale": "A visible button explicitly asks the viewer to take the quiz.",
+          "evidence_refs": [
+            "ledger:2:5"
+          ],
+          "event_id": "cta:2"
+        },
+        {
+          "technique_id": "cta.product",
+          "start_seconds": 28.0,
+          "end_seconds": 30.867,
+          "confidence": 0.87,
+          "basis": "model_interpretation",
+          "rationale": "The quiz request appears beside a ready personal plan, following the described tailored skincare service.",
+          "evidence_refs": [
+            "ledger:0:6",
+            "ledger:1:0",
+            "ledger:2:4",
+            "ledger:2:5"
+          ],
+          "event_id": "cta:2"
+        }
+      ],
+      "structure": [
+        {
+          "role": "hook",
+          "start_seconds": 0.0,
+          "end_seconds": 3.64,
+          "confidence": 0.95,
+          "rationale": "The opening age-versus-appearance claim is immediately explained as skincare rather than luck.",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1"
+          ]
+        },
+        {
+          "role": "setup",
+          "start_seconds": 3.64,
+          "end_seconds": 7.6,
+          "confidence": 0.91,
+          "rationale": "The speaker introduces starting the 28-day challenge and says it changed everything.",
+          "evidence_refs": [
+            "ledger:0:2",
+            "ledger:0:3",
+            "ledger:0:4"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 7.6,
+          "end_seconds": 13.06,
+          "confidence": 0.94,
+          "rationale": "The speaker describes how the AI cosmetologist scans skin and builds a tailored routine.",
+          "evidence_refs": [
+            "ledger:0:5",
+            "ledger:0:6",
+            "ledger:1:0",
+            "ledger:1:1"
+          ]
+        },
+        {
+          "role": "problem",
+          "start_seconds": 13.06,
+          "end_seconds": 15.96,
+          "confidence": 0.88,
+          "rationale": "The speaker contrasts the proposed routine with random creams and money spent on trends.",
+          "evidence_refs": [
+            "ledger:1:2",
+            "ledger:1:3"
+          ]
+        },
+        {
+          "role": "payoff",
+          "start_seconds": 15.96,
+          "end_seconds": 24.08,
+          "confidence": 0.89,
+          "rationale": "The speaker claims a simpler routine, hydrated and glowing skin, and a result others could achieve.",
+          "evidence_refs": [
+            "ledger:1:4",
+            "ledger:1:5",
+            "ledger:2:0",
+            "ledger:2:1"
+          ]
+        },
+        {
+          "role": "cta",
+          "start_seconds": 24.08,
+          "end_seconds": 27.0,
+          "confidence": 0.96,
+          "rationale": "The spoken and displayed request asks viewers to try Lovie/Lovi.",
+          "evidence_refs": [
+            "ledger:2:2",
+            "ledger:2:3"
+          ]
+        },
+        {
+          "role": "cta",
+          "start_seconds": 28.0,
+          "end_seconds": 30.867,
+          "confidence": 0.97,
+          "rationale": "The end-card button asks viewers to take the quiz.",
+          "evidence_refs": [
+            "ledger:2:5"
+          ]
+        }
+      ],
+      "uncertainties": [
+        "The ledger does not establish motion between sparse still frames, whether a substance was spread, or whether the end-card button was pressed.",
+        "The transcript spells the name \u201cLovie,\u201d while OCR reads \u201cLovi\u201d; the Seoul/soul wording also differs.",
+        "Claims about age and skin results are the speaker's claims, not independently verified before-and-after evidence."
+      ]
+    },
+    "provenance": {
+      "stage": "ontology_synthesis",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_046eb25daa5f1f07016acc058d42ac87d2a60dee3fb95e8ba0",
+      "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+      "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+    },
+    "ledger_sha256": "3133f926d1dfafd8762db942d6cdca0b642d97556a0f159321585c53471a9dfe"
+  }
+}

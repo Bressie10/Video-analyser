@@ -1,0 +1,1289 @@
+{
+  "source_ref": "11",
+  "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a",
+  "content_sha256": "056d38c95c1a128f657b21d73fd456a41d150a9097ce5c6932cb47a2eae4c99b",
+  "chunk_responses": [
+    {
+      "chunk_id": "chunk:0",
+      "description": {
+        "chunk_start_seconds": 0.0,
+        "chunk_end_seconds": 19.686,
+        "observations": [
+          {
+            "start_seconds": 0.0,
+            "end_seconds": 4.713,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [
+              "Person in a blue shirt and light jeans, partly obscured or cropped in the sampled frames",
+              "Dark background"
+            ],
+            "visible_actions": [
+              "The person's hands are together near their waist in frame:1."
+            ],
+            "visible_text": [
+              "Anonymous insider leaks the TRUTH about designer perfume brands",
+              "IF THEY KNOW",
+              "I'M HERE",
+              "I'M HONESTLY",
+              "GETTING FIRED"
+            ],
+            "spoken_content_summary": "The speaker says that if others know they are here, they could be fired.",
+            "changes_from_previous_chunk": "Not established; this is the first chunk.",
+            "confidence": 0.93,
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "frame:2",
+              "frame:3",
+              "transcript:0",
+              "ocr:0",
+              "ocr:1",
+              "ocr:2",
+              "ocr:3",
+              "ocr:6",
+              "ocr:7",
+              "ocr:8",
+              "scene:0"
+            ],
+            "uncertainties": [
+              "The stills do not establish the person's movement between frames."
+            ]
+          },
+          {
+            "start_seconds": 4.713,
+            "end_seconds": 8.008,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Person wearing a black face covering, blue shirt, and light jeans",
+              "Dark background and chair"
+            ],
+            "visible_actions": [
+              "The person is seated with hands together in their lap in frame:4."
+            ],
+            "visible_text": [
+              "Anonymous insider leaks the TRUTH about designer perfume brands",
+              "TO TALK ABOUT"
+            ],
+            "spoken_content_summary": "The speaker says this is not something they are supposed to talk about.",
+            "changes_from_previous_chunk": "The sampled view changes from a partly cropped or obscured person to a front-facing seated view.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "scene:1",
+              "scene:2",
+              "frame:4",
+              "transcript:0",
+              "ocr:10",
+              "ocr:11",
+              "ocr:12",
+              "ocr:14",
+              "ocr:15",
+              "ocr:16",
+              "ocr:17",
+              "ocr:18",
+              "ocr:19",
+              "ocr:20",
+              "ocr:0",
+              "ocr:1",
+              "ocr:2"
+            ],
+            "uncertainties": [
+              "The precise visual change within the gap between sampled frames is not shown."
+            ]
+          },
+          {
+            "start_seconds": 8.008,
+            "end_seconds": 9.87,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "Seated person wearing a black face covering and blue shirt"
+            ],
+            "visible_actions": [
+              "The person is seated with hands together and head angled downward in frame:5."
+            ],
+            "visible_text": [
+              "ANONYMOUS",
+              "Luxury Brand Employee"
+            ],
+            "spoken_content_summary": "No speech is established by the supplied transcript for this interval.",
+            "changes_from_previous_chunk": "The red text block is replaced by a white on-screen descriptor.",
+            "confidence": 0.93,
+            "evidence_refs": [
+              "frame:5",
+              "ocr:21",
+              "ocr:22",
+              "scene:2"
+            ],
+            "uncertainties": [
+              "The on-screen descriptor does not independently verify the person's identity or employment."
+            ]
+          },
+          {
+            "start_seconds": 9.87,
+            "end_seconds": 12.638,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Person wearing a black face covering and blue shirt"
+            ],
+            "visible_actions": [
+              "The person is shown seated in a side-facing view in frame:6."
+            ],
+            "visible_text": [
+              "ANONYMOUS",
+              "Luxury Brand Employee",
+              "SO I WORKED AT",
+              "ONE OF THE",
+              "BIG LUXURY"
+            ],
+            "spoken_content_summary": "The speaker says they worked at one of the big luxury fragrance houses.",
+            "changes_from_previous_chunk": "Speech begins a new account about working at a fragrance house; the sampled camera view is now from the side.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "transcript:1",
+              "frame:6",
+              "ocr:21",
+              "ocr:22",
+              "ocr:23",
+              "ocr:24",
+              "ocr:25",
+              "ocr:26",
+              "ocr:29",
+              "scene:3",
+              "scene:4"
+            ],
+            "uncertainties": [
+              "The claim about employment is spoken content, not independently established by the frames."
+            ]
+          },
+          {
+            "start_seconds": 12.638,
+            "end_seconds": 14.306,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Glass dropper above a small open bottle",
+              "Round platform and dark base"
+            ],
+            "visible_actions": [
+              "A dropper is positioned above the bottle opening in frame:7."
+            ],
+            "visible_text": [
+              "FRAGRANCE HOUSES",
+              "AND PEOPLE THINK"
+            ],
+            "spoken_content_summary": "The speaker finishes referring to fragrance houses and begins saying what people think about the bottles.",
+            "changes_from_previous_chunk": "The sampled image changes from the seated person to a close view of a dropper and bottle.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "frame:7",
+              "scene:5",
+              "transcript:1",
+              "ocr:30",
+              "ocr:31"
+            ],
+            "uncertainties": [
+              "The still does not establish whether liquid is dispensed."
+            ]
+          },
+          {
+            "start_seconds": 14.306,
+            "end_seconds": 15.47,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Hand holding a pale bottle with a spray nozzle",
+              "Dark background"
+            ],
+            "visible_actions": [
+              "A hand holds the bottle while a visible mist extends from its nozzle in frame:8."
+            ],
+            "visible_text": [
+              "THOSE \u00a3200"
+            ],
+            "spoken_content_summary": "The speaker refers to bottles costing about \u00a3200.",
+            "changes_from_previous_chunk": "The sampled image changes from a dropper and small bottle to a hand-held spray bottle.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:8",
+              "scene:6",
+              "transcript:1",
+              "ocr:32"
+            ],
+            "uncertainties": [
+              "The single frame shows mist but does not establish when or how the nozzle was pressed."
+            ]
+          },
+          {
+            "start_seconds": 15.47,
+            "end_seconds": 19.686,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "BOTTLES",
+              "ARE EXPENSIVE",
+              "THE INGREDIENTS",
+              "RIGHT",
+              "LIKE RARE OILS"
+            ],
+            "spoken_content_summary": "The speaker says people think the bottles are expensive because of ingredients, mentioning rare oils. The supplied transcript continues beyond this chunk.",
+            "changes_from_previous_chunk": "The speech shifts from the bottles' price to a proposed reason for that price; no frame is supplied after frame:8 within this interval.",
+            "confidence": 0.87,
+            "evidence_refs": [
+              "transcript:2",
+              "ocr:33",
+              "ocr:34",
+              "ocr:37",
+              "ocr:38",
+              "ocr:39",
+              "ocr:40",
+              "scene:7",
+              "scene:8"
+            ],
+            "uncertainties": [
+              "Visual subjects and actions after 14.515 seconds are not established by a supplied frame.",
+              "Transcript:2 extends past the chunk boundary, so its later wording is not attributed to this interval."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Frames are sparse stills; appearances in separate frames do not establish continuous actions between them."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:0",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_042dd9ae926a2a5e016acc05a2b04887d2a64b14622d75e935",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:1",
+      "description": {
+        "chunk_start_seconds": 19.686,
+        "chunk_end_seconds": 40.29,
+        "observations": [
+          {
+            "start_seconds": 19.686,
+            "end_seconds": 21.438,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "FANCY STUFF",
+              "NO"
+            ],
+            "spoken_content_summary": "The speaker finishes the reference to rare oils and fancy ingredients, then says no.",
+            "changes_from_previous_chunk": "The spoken explanation about supposed ingredients turns toward a correction; no frame is supplied for this interval.",
+            "confidence": 0.87,
+            "evidence_refs": [
+              "transcript:2",
+              "ocr:41",
+              "ocr:42",
+              "scene:9",
+              "scene:10"
+            ],
+            "uncertainties": [
+              "The scene references mark intervals but do not establish what is visible without a supplied frame."
+            ]
+          },
+          {
+            "start_seconds": 21.438,
+            "end_seconds": 24.983,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Person in a black face covering and blue shirt against a dark background"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "THE ACTUAL",
+              "LIQUID COST",
+              "LIKE \u00a34 MAYBE",
+              "\u00a35 TO MAKE"
+            ],
+            "spoken_content_summary": "The speaker says the liquid costs about four or five pounds to make.",
+            "changes_from_previous_chunk": "The speech changes from presumed expensive ingredients to an asserted cost for the liquid. Frame:9 shows the covered person in a close view.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:9",
+              "transcript:2",
+              "transcript:3",
+              "ocr:43",
+              "ocr:44",
+              "ocr:45",
+              "ocr:46",
+              "scene:11"
+            ],
+            "uncertainties": [
+              "The cost is a spoken claim, not established by the frame."
+            ]
+          },
+          {
+            "start_seconds": 24.983,
+            "end_seconds": 27.63,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "AND",
+              "WATER IT",
+              "DOWN",
+              "DON'T REALIZE",
+              "MOST OF THOSE"
+            ],
+            "spoken_content_summary": "The speaker says the liquid is watered down and begins saying people do not realize something about most of those perfumes.",
+            "changes_from_previous_chunk": "The speech shifts from production cost to dilution.",
+            "confidence": 0.89,
+            "evidence_refs": [
+              "transcript:3",
+              "ocr:47",
+              "ocr:48",
+              "ocr:49",
+              "ocr:50",
+              "ocr:51",
+              "scene:12",
+              "scene:13"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation; the visuals are not established."
+            ]
+          },
+          {
+            "start_seconds": 27.63,
+            "end_seconds": 32.324,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Person in a black face covering and blue shirt against a dark background"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "LUXURY PERFUMES",
+              "ARE ONLY",
+              "LIKE 5% OIL",
+              "WHEN YOU SPRAY IT",
+              "BY LUNCH TIME"
+            ],
+            "spoken_content_summary": "The speaker says most luxury perfumes are about five percent oil and starts describing what happens after spraying one.",
+            "changes_from_previous_chunk": "The speech specifies the asserted oil percentage and turns to scent after spraying. Frame:10 again shows the covered person.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "frame:10",
+              "transcript:4",
+              "ocr:52",
+              "ocr:53",
+              "ocr:54",
+              "ocr:55",
+              "ocr:56",
+              "ocr:57",
+              "scene:13",
+              "scene:14"
+            ],
+            "uncertainties": [
+              "The oil percentage is a spoken claim, not verified by the frame; no spraying is shown in the supplied frame."
+            ]
+          },
+          {
+            "start_seconds": 32.324,
+            "end_seconds": 34.159,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "YOU CAN'T SMELL",
+              "A THING"
+            ],
+            "spoken_content_summary": "The speaker says that by lunchtime you cannot smell anything.",
+            "changes_from_previous_chunk": "The speech completes the statement about scent after spraying.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "transcript:5",
+              "ocr:58",
+              "ocr:59",
+              "scene:15"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation."
+            ]
+          },
+          {
+            "start_seconds": 34.159,
+            "end_seconds": 36.43,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Person in a black face covering and blue shirt against a dark background"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "BUT THE PRICE TAG",
+              "MAKES YOU BELIEVE",
+              "IT'S SPECIAL",
+              "IT'S NOT THE PERFUME"
+            ],
+            "spoken_content_summary": "The speaker says the price tag makes the perfume seem special, then says it is not the perfume.",
+            "changes_from_previous_chunk": "The speech moves from how long the scent lasts to the impression created by its price. Frame:11 shows the covered person.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:11",
+              "transcript:5",
+              "ocr:60",
+              "ocr:61",
+              "ocr:62",
+              "ocr:63",
+              "scene:16",
+              "scene:17"
+            ],
+            "uncertainties": [
+              "The statement about what a price tag makes people believe is the speaker's claim."
+            ]
+          },
+          {
+            "start_seconds": 36.43,
+            "end_seconds": 40.29,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "YOU'RE PAYING FOR",
+              "FOR A START",
+              "THE",
+              "BOTTLE COSTS",
+              "MORE",
+              "THAN",
+              "THN AHE",
+              "JUICE",
+              "INSIDE"
+            ],
+            "spoken_content_summary": "The speaker says the perfume is not what you are paying for and claims the bottle costs more than the liquid inside.",
+            "changes_from_previous_chunk": "The speech shifts to a claimed cost comparison between bottle and contents.",
+            "confidence": 0.87,
+            "evidence_refs": [
+              "transcript:6",
+              "ocr:64",
+              "ocr:65",
+              "ocr:66",
+              "ocr:67",
+              "ocr:68",
+              "ocr:69",
+              "ocr:70",
+              "ocr:71",
+              "ocr:72",
+              "ocr:73",
+              "scene:17",
+              "scene:18"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation.",
+              "The OCR reading 'THN AHE' appears garbled; 'JUICE' and 'INSIDE' begin at 40.04 seconds, just before the chunk ends.",
+              "Transcript:6 continues beyond this chunk; its later mention of billboards is not attributed to this interval."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Frames are sparse stills and do not establish continuous activity between their timestamps.",
+          "Spoken statements about costs, dilution, and oil content are not independently verified by the supplied visuals."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:1",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0e8a1a1fb28b1cf4016acc05af3c1887d2abd6cc6fb6e23bfd",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:2",
+      "description": {
+        "chunk_start_seconds": 40.29,
+        "chunk_end_seconds": 61.77,
+        "observations": [
+          {
+            "start_seconds": 40.541,
+            "end_seconds": 43.043,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "THEN IT'S",
+              "THE BILLBOARDS",
+              "AND",
+              "CELEBRITIES",
+              "TEMEPO"
+            ],
+            "spoken_content_summary": "The speaker continues the cost discussion, mentioning billboards and celebrities.",
+            "changes_from_previous_chunk": "The speech moves from the bottle and its contents to billboards and celebrities.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "transcript:6",
+              "transcript:7",
+              "ocr:74",
+              "ocr:75",
+              "ocr:76",
+              "ocr:77",
+              "ocr:78"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this interval; the OCR reading 'TEMEPO' is unclear."
+            ]
+          },
+          {
+            "start_seconds": 43.043,
+            "end_seconds": 47.047,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At frame:12, a person stands outdoors near metal barriers; part of another person or object is at the right edge."
+            ],
+            "visible_actions": [
+              "The person is standing near the barriers at frame:12."
+            ],
+            "visible_text": [
+              "LIKE",
+              "DO YOU THINK",
+              "DAVID BECKHAM",
+              "ACTUALLY",
+              "WEARS THIS STUFF"
+            ],
+            "spoken_content_summary": "The speaker asks whether David Beckham actually wears the product being discussed.",
+            "changes_from_previous_chunk": "The speech changes from mentioning celebrities to a question about one celebrity.",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "frame:12",
+              "transcript:7",
+              "ocr:79",
+              "ocr:80",
+              "ocr:81",
+              "ocr:82",
+              "ocr:83"
+            ],
+            "uncertainties": [
+              "The transcript renders the name as 'David Becker'; OCR reads 'DAVID BECKHAM'.",
+              "The frame does not establish whether the visible person is connected to the person named in the question."
+            ]
+          },
+          {
+            "start_seconds": 47.047,
+            "end_seconds": 50.551,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "THAT'S",
+              "WHEN I FOUND",
+              "THE ESSENCE",
+              "VAULT",
+              "I WAS",
+              "HONESTLY SHOCKED"
+            ],
+            "spoken_content_summary": "The speaker says they found The Essence Vault and were shocked.",
+            "changes_from_previous_chunk": "The speech changes from a question about a celebrity to naming The Essence Vault.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "transcript:7",
+              "transcript:8",
+              "ocr:84",
+              "ocr:85",
+              "ocr:86",
+              "ocr:87",
+              "ocr:88",
+              "ocr:89"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation."
+            ]
+          },
+          {
+            "start_seconds": 50.551,
+            "end_seconds": 53.554,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At frame:13, a seated person in a black face covering, blue shirt, and light trousers against a dark background."
+            ],
+            "visible_actions": [
+              "The person is seated facing the camera at frame:13."
+            ],
+            "visible_text": [
+              "USE THE",
+              "SAME",
+              "INGREDIENTS",
+              "SAME",
+              "CONCENTRATION"
+            ],
+            "spoken_content_summary": "The speaker claims the products use the same ingredients and concentration.",
+            "changes_from_previous_chunk": "The speech moves from finding the named company to claims about its ingredients and concentration.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "frame:13",
+              "transcript:8",
+              "ocr:90",
+              "ocr:91",
+              "ocr:92",
+              "ocr:93",
+              "ocr:94"
+            ],
+            "uncertainties": [
+              "The comparison is a spoken claim, not verified by the frame."
+            ]
+          },
+          {
+            "start_seconds": 53.554,
+            "end_seconds": 56.557,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "BUT THEY'RE",
+              "NOT OUT HERE",
+              "BLOWING MILLIONS",
+              "ON MARKETING"
+            ],
+            "spoken_content_summary": "The speaker says the company is not spending millions on marketing.",
+            "changes_from_previous_chunk": "The speech changes from product-composition claims to a claim about marketing spending.",
+            "confidence": 0.91,
+            "evidence_refs": [
+              "transcript:9",
+              "ocr:95",
+              "ocr:96",
+              "ocr:97",
+              "ocr:98"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation; the spending claim is not independently verified."
+            ]
+          },
+          {
+            "start_seconds": 56.557,
+            "end_seconds": 60.06,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At frame:14, a person in a black face covering and blue shirt, seen from an angled view against a dark background."
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "SO INSTEAD OF \u00a3200",
+              "IT'S WHAT",
+              "\u00a325?",
+              "IT'S WHAT"
+            ],
+            "spoken_content_summary": "The speaker contrasts a price of \u00a3200 with about \u00a325.",
+            "changes_from_previous_chunk": "The speech moves from marketing spending to a price comparison.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:14",
+              "transcript:9",
+              "ocr:99",
+              "ocr:100",
+              "ocr:101"
+            ],
+            "uncertainties": [
+              "The prices are presented in speech and text; no transaction or price tag is shown in the supplied frame.",
+              "'IT'S WHAT' is visible in frame:14, while its OCR interval is later than that frame timestamp."
+            ]
+          },
+          {
+            "start_seconds": 60.11,
+            "end_seconds": 61.77,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "ACTUALLY LASTS"
+            ],
+            "spoken_content_summary": "The speaker says it actually lasts, then begins saying they felt they had to say something.",
+            "changes_from_previous_chunk": "The speech moves from price to a claim about how long it lasts and starts a further explanation.",
+            "confidence": 0.86,
+            "evidence_refs": [
+              "transcript:10",
+              "ocr:102"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation.",
+              "Transcript:10 continues beyond the chunk; its later remarks are not attributed to this interval.",
+              "OCR:102 continues beyond the chunk endpoint."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Supplied frames are sparse stills and do not establish continuous activity between their timestamps.",
+          "The product, spending, and price comparisons are speaker claims rather than facts established by the frames."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:2",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0990b0191a49094d016acc05bab12487d2b76936bc87fb889f",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:3",
+      "description": {
+        "chunk_start_seconds": 61.77,
+        "chunk_end_seconds": 79.723,
+        "observations": [
+          {
+            "start_seconds": 61.77,
+            "end_seconds": 65.482,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At frame:15, a person in a black face covering, blue shirt, and light trousers is seated against a dark background."
+            ],
+            "visible_actions": [
+              "The person is seated with hands together at frame:15."
+            ],
+            "visible_text": [
+              "I FEEL",
+              "LIKE",
+              "I HAD",
+              "TO SAY",
+              "IT",
+              "BECAUSE I'VE",
+              "SEEN",
+              "TOO MANY",
+              "TEENAGERS"
+            ],
+            "spoken_content_summary": "The speaker says they felt they had to say something because they have seen too many teenagers.",
+            "changes_from_previous_chunk": "The speech continues the explanation begun in the previous chunk, shifting from the claim that the product lasts to why the speaker felt compelled to speak.",
+            "confidence": 0.93,
+            "evidence_refs": [
+              "frame:15",
+              "transcript:10",
+              "ocr:103",
+              "ocr:104",
+              "ocr:105",
+              "ocr:106",
+              "ocr:107",
+              "ocr:108",
+              "ocr:109",
+              "ocr:110",
+              "ocr:111",
+              "scene:27"
+            ],
+            "uncertainties": [
+              "The still does not establish movement or who is speaking."
+            ]
+          },
+          {
+            "start_seconds": 65.482,
+            "end_seconds": 68.068,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "SINGLE MOMS",
+              "PEOPLE",
+              "STARTING"
+            ],
+            "spoken_content_summary": "The speaker also mentions single mothers and people starting their lives.",
+            "changes_from_previous_chunk": "A scene boundary is supplied at 65.482; the speech moves from teenagers to other groups.",
+            "confidence": 0.85,
+            "evidence_refs": [
+              "scene:28",
+              "transcript:10",
+              "transcript:11",
+              "ocr:112",
+              "ocr:113",
+              "ocr:114"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this interval; the scene's appearance is not established by a frame."
+            ]
+          },
+          {
+            "start_seconds": 68.068,
+            "end_seconds": 70.571,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At frame:16, a person in a black face covering and blue shirt is shown from an angled view against a dark background."
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "SPENDING HUNDREDS",
+              "OF POUNDS"
+            ],
+            "spoken_content_summary": "The speaker says people are spending hundreds of pounds.",
+            "changes_from_previous_chunk": "The speech moves from naming groups of people to the amount they spend.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:16",
+              "transcript:11",
+              "ocr:115",
+              "ocr:116"
+            ],
+            "uncertainties": [
+              "The amount spent is a spoken claim, not verified by the frame."
+            ]
+          },
+          {
+            "start_seconds": 70.571,
+            "end_seconds": 75.075,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "At frame:17, a person in a black face covering and blue shirt is shown from an angled view against a dark background."
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "THAT",
+              "SHOULD",
+              "HAVE",
+              "COULD HAVE",
+              "BEEN",
+              "GOING TOWARDS",
+              "SOMETHING BIGGER"
+            ],
+            "spoken_content_summary": "The speaker says the money could have gone toward something bigger.",
+            "changes_from_previous_chunk": "The speech changes from how much people spend to an alternative use for the money.",
+            "confidence": 0.92,
+            "evidence_refs": [
+              "frame:17",
+              "transcript:11",
+              "transcript:12",
+              "ocr:117",
+              "ocr:118",
+              "ocr:119",
+              "ocr:120",
+              "ocr:121",
+              "ocr:122",
+              "ocr:123",
+              "scene:29",
+              "scene:30",
+              "scene:31",
+              "scene:32"
+            ],
+            "uncertainties": [
+              "The supplied scenes mark additional boundaries, but only frame:17 shows the person within this interval; their appearance across those boundaries is not established.",
+              "No further speech is supplied after transcript:12 ends at 75.39."
+            ]
+          },
+          {
+            "start_seconds": 75.576,
+            "end_seconds": 79.705,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "Frames 18\u201320 show a black background with centered website text."
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "theessencevault.co.uk"
+            ],
+            "spoken_content_summary": "No spoken content is supplied for this interval.",
+            "changes_from_previous_chunk": "The pictured person is no longer visible in the supplied frames; the website text appears on a black background.",
+            "confidence": 0.97,
+            "evidence_refs": [
+              "frame:18",
+              "frame:19",
+              "frame:20",
+              "ocr:124",
+              "scene:32"
+            ],
+            "uncertainties": [
+              "The frames do not establish the exact instant the black text screen first appeared; scene:32 begins at 74.908, while the OCR interval begins at 75.576.",
+              "The supplied OCR interval ends at 79.705, before the chunk endpoint."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Frames are sparse stills and do not establish continuous activity between their timestamps.",
+          "The supplied transcript stops before the chunk ends."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:3",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_046b3d430cb6e5d3016acc05c64c8c87d2b54a825f3421f4ca",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    }
+  ],
+  "synthesis_response": {
+    "draft": {
+      "format_assessments": [
+        {
+          "technique_id": "format.talking_head",
+          "ontology_definition": "Speaker addresses the camera for a substantial part of the video.",
+          "decision": "uncertain",
+          "positive_ledger_refs": [
+            "ledger:0:1",
+            "ledger:2:3",
+            "ledger:3:0"
+          ],
+          "counterevidence_limitations": "A person is shown seated facing the camera, but sparse stills do not establish camera-addressing speech for a substantial portion.",
+          "criterion_explanation": "Facing the camera in sampled frames is insufficient to establish the required duration of camera-addressing speech."
+        },
+        {
+          "technique_id": "format.tutorial",
+          "ontology_definition": "Explains a process or teaches a skill in steps.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The speaker makes claims about perfume costs and composition, without teaching a process in steps.",
+          "criterion_explanation": "No step-by-step instruction is established."
+        },
+        {
+          "technique_id": "format.product_demo",
+          "ontology_definition": "Shows a product or service in use.",
+          "decision": "supported",
+          "positive_ledger_refs": [
+            "ledger:0:5"
+          ],
+          "counterevidence_limitations": "The visible mist supports a spray bottle being shown in use; the still does not establish how its nozzle was pressed or identify its brand.",
+          "criterion_explanation": "A localized view of a hand-held spray bottle emitting mist meets the definition."
+        },
+        {
+          "technique_id": "format.storytime",
+          "ontology_definition": "Narrates an event as the main format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [
+            "ledger:2:2"
+          ],
+          "counterevidence_limitations": "The speaker briefly says they found The Essence Vault, but most established speech consists of claims and comparisons rather than event narration.",
+          "criterion_explanation": "An event is mentioned, but narration of an event is not the main format."
+        },
+        {
+          "technique_id": "format.listicle",
+          "ontology_definition": "Presents numbered or clearly enumerated items.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "Several claims are made, but they are not presented as numbered or clearly enumerated items.",
+          "criterion_explanation": "No list organization is established."
+        },
+        {
+          "technique_id": "format.reaction",
+          "ontology_definition": "Responds to another piece of content or event.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "A rhetorical question about a celebrity is present, but no distinct content or event being reacted to is established.",
+          "criterion_explanation": "The video is not shown responding to another piece of content or event."
+        },
+        {
+          "technique_id": "format.before_after",
+          "ontology_definition": "Compares a state before and after a change.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "Price and product claims are contrasted, but no before and after states are established.",
+          "criterion_explanation": "The required two states around a change are absent."
+        },
+        {
+          "technique_id": "format.screen_recording",
+          "ontology_definition": "Recorded screen is a principal visual source.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The supplied visuals show a person, objects, and an end card, not a recorded screen.",
+          "criterion_explanation": "No recorded screen is established as a principal visual source."
+        },
+        {
+          "technique_id": "format.interview",
+          "ontology_definition": "Question and answer exchange is a principal format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "Only one speaker's account is established; the celebrity question is rhetorical rather than evidence of an interview exchange.",
+          "criterion_explanation": "No question-and-answer exchange between participants is established."
+        }
+      ],
+      "cta_events": [],
+      "findings": [
+        {
+          "technique_id": "hook.bold_claim",
+          "start_seconds": 0.0,
+          "end_seconds": 4.713,
+          "confidence": 0.9,
+          "basis": "direct_observation",
+          "rationale": "The opening title promises the 'TRUTH about designer perfume brands,' while the speaker says they could be fired if others know they are here.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "hook.story_open",
+          "start_seconds": 0.0,
+          "end_seconds": 8.008,
+          "confidence": 0.85,
+          "basis": "model_interpretation",
+          "rationale": "The opening sets up a situation in which the speaker says they could be fired and are not supposed to discuss the subject.",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "format.product_demo",
+          "start_seconds": 14.306,
+          "end_seconds": 15.47,
+          "confidence": 0.89,
+          "basis": "direct_observation",
+          "rationale": "A hand holds a spray bottle with mist visible extending from its nozzle.",
+          "evidence_refs": [
+            "ledger:0:5"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "editing.b_roll",
+          "start_seconds": 12.638,
+          "end_seconds": 15.47,
+          "confidence": 0.84,
+          "basis": "model_interpretation",
+          "rationale": "Close views of a dropper and then a spraying bottle interrupt the seated-person footage while the speaker discusses perfume bottles.",
+          "evidence_refs": [
+            "ledger:0:3",
+            "ledger:0:4",
+            "ledger:0:5"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.headline",
+          "start_seconds": 0.0,
+          "end_seconds": 8.008,
+          "confidence": 0.97,
+          "basis": "direct_observation",
+          "rationale": "The opening displays the prominent framing title 'Anonymous insider leaks the TRUTH about designer perfume brands.'",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 0.0,
+          "end_seconds": 8.008,
+          "confidence": 0.94,
+          "basis": "direct_observation",
+          "rationale": "Successive on-screen phrases track the opening spoken statements about being fired and not being supposed to talk.",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 14.306,
+          "end_seconds": 21.438,
+          "confidence": 0.92,
+          "basis": "direct_observation",
+          "rationale": "On-screen phrases track the spoken discussion of \u00a3200 bottles, supposed ingredients, and the subsequent 'no.'",
+          "evidence_refs": [
+            "ledger:0:5",
+            "ledger:0:6",
+            "ledger:1:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 21.438,
+          "end_seconds": 32.324,
+          "confidence": 0.94,
+          "basis": "direct_observation",
+          "rationale": "Displayed phrases follow the spoken claims about liquid cost, dilution, oil percentage, and spraying.",
+          "evidence_refs": [
+            "ledger:1:1",
+            "ledger:1:2",
+            "ledger:1:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 32.51,
+          "end_seconds": 47.047,
+          "confidence": 0.93,
+          "basis": "direct_observation",
+          "rationale": "Displayed phrases follow speech about scent, the price tag, bottle and advertising costs, and the celebrity question.",
+          "evidence_refs": [
+            "ledger:1:4",
+            "ledger:1:5",
+            "ledger:1:6",
+            "ledger:2:0",
+            "ledger:2:1"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.captions",
+          "start_seconds": 47.047,
+          "end_seconds": 75.075,
+          "confidence": 0.94,
+          "basis": "direct_observation",
+          "rationale": "Successive displayed phrases follow the speaker's remarks about The Essence Vault, comparative claims, prices, and spending.",
+          "evidence_refs": [
+            "ledger:2:2",
+            "ledger:2:3",
+            "ledger:2:4",
+            "ledger:2:5",
+            "ledger:2:6",
+            "ledger:3:0",
+            "ledger:3:1",
+            "ledger:3:2",
+            "ledger:3:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.text_reveal",
+          "start_seconds": 0.0,
+          "end_seconds": 4.713,
+          "confidence": 0.83,
+          "basis": "model_interpretation",
+          "rationale": "The ledger records successive short opening text phrases corresponding to the unfolding speech.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.product_foreground",
+          "start_seconds": 12.638,
+          "end_seconds": 15.47,
+          "confidence": 0.88,
+          "basis": "direct_observation",
+          "rationale": "The sampled views prominently feature a dropper over a bottle and then a hand-held spray bottle.",
+          "evidence_refs": [
+            "ledger:0:4",
+            "ledger:0:5"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.close_up",
+          "start_seconds": 12.638,
+          "end_seconds": 15.47,
+          "confidence": 0.87,
+          "basis": "direct_observation",
+          "rationale": "The bottle-related objects are shown in close views against dark backgrounds.",
+          "evidence_refs": [
+            "ledger:0:4",
+            "ledger:0:5"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.close_up",
+          "start_seconds": 21.438,
+          "end_seconds": 24.983,
+          "confidence": 0.88,
+          "basis": "direct_observation",
+          "rationale": "The covered person appears in a close view in the supplied frame.",
+          "evidence_refs": [
+            "ledger:1:1"
+          ],
+          "event_id": null
+        }
+      ],
+      "structure": [
+        {
+          "role": "hook",
+          "start_seconds": 0.0,
+          "end_seconds": 8.008,
+          "confidence": 0.9,
+          "rationale": "The opening title and statements about risking dismissal and discussing a restricted subject establish the opening premise.",
+          "evidence_refs": [
+            "ledger:0:0",
+            "ledger:0:1"
+          ]
+        },
+        {
+          "role": "setup",
+          "start_seconds": 8.008,
+          "end_seconds": 12.638,
+          "confidence": 0.83,
+          "rationale": "The on-screen descriptor presents the speaker as anonymous, followed by their stated account of having worked at a luxury fragrance house; the employment claim is unverified.",
+          "evidence_refs": [
+            "ledger:0:2",
+            "ledger:0:3"
+          ]
+        },
+        {
+          "role": "problem",
+          "start_seconds": 12.638,
+          "end_seconds": 21.438,
+          "confidence": 0.86,
+          "rationale": "The speaker introduces the belief that costly perfume bottles owe their price to expensive ingredients, then rejects it.",
+          "evidence_refs": [
+            "ledger:0:4",
+            "ledger:0:5",
+            "ledger:0:6",
+            "ledger:1:0"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 21.438,
+          "end_seconds": 47.047,
+          "confidence": 0.88,
+          "rationale": "The speaker gives asserted costs, dilution and scent claims, then attributes price to the bottle, billboards, and celebrities; these are claims rather than verified facts.",
+          "evidence_refs": [
+            "ledger:1:1",
+            "ledger:1:2",
+            "ledger:1:3",
+            "ledger:1:4",
+            "ledger:1:5",
+            "ledger:1:6",
+            "ledger:2:0",
+            "ledger:2:1"
+          ]
+        },
+        {
+          "role": "payoff",
+          "start_seconds": 47.047,
+          "end_seconds": 60.06,
+          "confidence": 0.86,
+          "rationale": "The speaker names The Essence Vault and presents it as a lower-priced alternative, making comparative composition and marketing claims.",
+          "evidence_refs": [
+            "ledger:2:2",
+            "ledger:2:3",
+            "ledger:2:4",
+            "ledger:2:5"
+          ]
+        },
+        {
+          "role": "payoff",
+          "start_seconds": 60.11,
+          "end_seconds": 61.77,
+          "confidence": 0.75,
+          "rationale": "The speaker adds a claim that the alternative lasts.",
+          "evidence_refs": [
+            "ledger:2:6"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 61.77,
+          "end_seconds": 75.075,
+          "confidence": 0.86,
+          "rationale": "The speaker explains why they felt compelled to speak, citing people spending hundreds of pounds that could have gone toward something bigger.",
+          "evidence_refs": [
+            "ledger:3:0",
+            "ledger:3:1",
+            "ledger:3:2",
+            "ledger:3:3"
+          ]
+        }
+      ],
+      "uncertainties": [
+        "The end card displays 'theessencevault.co.uk' at 75.576\u201379.705, but contains no explicit request to visit it; no physical CTA event or CTA label is established.",
+        "The claims about employment, perfume composition, costs, marketing, and longevity are speaker assertions, not independently verified facts.",
+        "Sparse still frames do not establish continuous camera-addressing speech, exact shot transitions, or movement between samples."
+      ]
+    },
+    "provenance": {
+      "stage": "ontology_synthesis",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_09c4598331af5f6a016acc05cf9cb887d2891a3e0a58dcae86",
+      "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+      "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+    },
+    "ledger_sha256": "c1043bbd9318befb666d538eba98183e1d81d140ec101b44b711970a5f08d6dc"
+  }
+}

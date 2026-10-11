@@ -1,0 +1,954 @@
+{
+  "source_ref": "03",
+  "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a",
+  "validation_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a",
+  "model_passes": [
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:0",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0d65014045cc2d67016acc04375ec087d2b066ae9bb1c93a05",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:1",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0a0ffe071f293588016acc044500f087d284bbfe3cb0970ebd",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:2",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_040d8ed3a934efb2016acc0451342887d2aa1210629341e7b2",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+    }
+  ],
+  "chunk_plan": [
+    {
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 17.918,
+      "frame_refs": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "frame:3",
+        "frame:4",
+        "frame:5",
+        "frame:6",
+        "frame:7",
+        "frame:8"
+      ]
+    },
+    {
+      "chunk_id": "chunk:1",
+      "start_seconds": 17.918,
+      "end_seconds": 36.703,
+      "frame_refs": [
+        "frame:9",
+        "frame:10",
+        "frame:11"
+      ]
+    },
+    {
+      "chunk_id": "chunk:2",
+      "start_seconds": 36.703,
+      "end_seconds": 54.613,
+      "frame_refs": [
+        "frame:12",
+        "frame:13",
+        "frame:14",
+        "frame:15",
+        "frame:16",
+        "frame:17"
+      ]
+    }
+  ],
+  "evidence_ledger": [
+    {
+      "ledger_id": "ledger:0:0",
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 1.001,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [
+        "Person beside a whiteboard on a stage",
+        "People seated at tables"
+      ],
+      "visible_actions": [],
+      "visible_text": [
+        "ACT AS IF"
+      ],
+      "spoken_content_summary": "The speaker begins, \u201cAct as if all your dreams have come true\u2026\u201d",
+      "changes_from_previous_chunk": "not established",
+      "confidence": 0.97,
+      "evidence_refs": [
+        "frame:0",
+        "transcript:0",
+        "ocr:0",
+        "scene:0"
+      ],
+      "uncertainties": []
+    },
+    {
+      "ledger_id": "ledger:0:1",
+      "chunk_id": "chunk:0",
+      "start_seconds": 1.001,
+      "end_seconds": 2.503,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Sailboat on water",
+        "Hand holding sunglasses against a water background"
+      ],
+      "visible_actions": [
+        "A hand holds sunglasses."
+      ],
+      "visible_text": [
+        "ALL YOUR DREAMS",
+        "HAVE COME TRUE"
+      ],
+      "spoken_content_summary": "The sentence continues about dreams having come true.",
+      "changes_from_previous_chunk": "The supplied frame shows water and sunglasses instead of the stage.",
+      "confidence": 0.96,
+      "evidence_refs": [
+        "frame:1",
+        "transcript:0",
+        "ocr:1",
+        "ocr:2",
+        "scene:2"
+      ],
+      "uncertainties": [
+        "The supplied still does not establish movement of the sailboat."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:2",
+      "chunk_id": "chunk:0",
+      "start_seconds": 2.503,
+      "end_seconds": 3.504,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Woman in a pink top standing on a paved walkway"
+      ],
+      "visible_actions": [
+        "The woman stands facing the camera."
+      ],
+      "visible_text": [
+        "AND THEN",
+        "CHALLENGE"
+      ],
+      "spoken_content_summary": "The speaker says, \u201c\u2026and then challenge\u2026\u201d",
+      "changes_from_previous_chunk": "The frame changes from water imagery to a woman on a walkway.",
+      "confidence": 0.97,
+      "evidence_refs": [
+        "frame:2",
+        "transcript:0",
+        "ocr:3",
+        "ocr:4",
+        "scene:3"
+      ],
+      "uncertainties": []
+    },
+    {
+      "ledger_id": "ledger:0:3",
+      "chunk_id": "chunk:0",
+      "start_seconds": 3.504,
+      "end_seconds": 5.52,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Close view of a person in a dark jacket wearing a headset microphone"
+      ],
+      "visible_actions": [],
+      "visible_text": [
+        "YOUR REALITY",
+        "TO CATCH UP."
+      ],
+      "spoken_content_summary": "The speaker completes the sentence: \u201c\u2026your reality to catch up.\u201d",
+      "changes_from_previous_chunk": "A close view of the person speaking replaces the walkway shot.",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "frame:3",
+        "transcript:0",
+        "ocr:5",
+        "ocr:6",
+        "scene:4"
+      ],
+      "uncertainties": [
+        "The frame at 5.072 seconds establishes appearance at that instant, not the precise time of the visual transition."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:4",
+      "chunk_id": "chunk:0",
+      "start_seconds": 5.52,
+      "end_seconds": 7.007,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "Person in a dark jacket near a projection screen"
+      ],
+      "visible_actions": [
+        "The person is bent forward in the supplied frame."
+      ],
+      "visible_text": [
+        "INSTEADOF",
+        "THINKING,"
+      ],
+      "spoken_content_summary": "The speaker begins, \u201cInstead of thinking\u2026\u201d",
+      "changes_from_previous_chunk": "The spoken content changes from the quoted sentence to an explanation.",
+      "confidence": 0.89,
+      "evidence_refs": [
+        "frame:4",
+        "transcript:1",
+        "ocr:7",
+        "ocr:8",
+        "scene:5",
+        "scene:6"
+      ],
+      "uncertainties": [
+        "The OCR renders \u201cINSTEADOF\u201d without a space."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:5",
+      "chunk_id": "chunk:0",
+      "start_seconds": 7.007,
+      "end_seconds": 9.009,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [
+        "Person in a dark jacket near a projection screen"
+      ],
+      "visible_actions": [
+        "The person is bent forward in the supplied frame."
+      ],
+      "visible_text": [
+        "THIS IS WHERE",
+        "I AM AT."
+      ],
+      "spoken_content_summary": "The speaker says, \u201cThis is where I am at.\u201d",
+      "changes_from_previous_chunk": "The overlaid words change to \u201cTHIS IS WHERE I AM AT.\u201d",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "frame:5",
+        "transcript:1",
+        "ocr:10",
+        "ocr:11",
+        "scene:6"
+      ],
+      "uncertainties": []
+    },
+    {
+      "ledger_id": "ledger:0:6",
+      "chunk_id": "chunk:0",
+      "start_seconds": 9.009,
+      "end_seconds": 10.48,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "LET'S SAY",
+        "THIS IS WHERE",
+        "YOU'RE AT."
+      ],
+      "spoken_content_summary": "The speaker says, \u201cLet's say this is where you're at.\u201d",
+      "changes_from_previous_chunk": "The wording changes from \u201cI AM AT\u201d to \u201cYOU'RE AT.\u201d",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "transcript:1",
+        "ocr:12",
+        "ocr:13",
+        "ocr:15",
+        "scene:7"
+      ],
+      "uncertainties": [
+        "No supplied frame falls within this observation; its visual subjects and actions are not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:7",
+      "chunk_id": "chunk:0",
+      "start_seconds": 10.48,
+      "end_seconds": 12.012,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "Close view of a man's face and hand"
+      ],
+      "visible_actions": [
+        "His finger rests near his eyebrow in the supplied frame."
+      ],
+      "visible_text": [
+        "NOT HAPPY,"
+      ],
+      "spoken_content_summary": "The speaker says, \u201cNot happy\u2026\u201d",
+      "changes_from_previous_chunk": "The speech changes to dissatisfaction; the supplied frame shows a close-up of a different person.",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "frame:6",
+        "transcript:2",
+        "ocr:16",
+        "scene:8"
+      ],
+      "uncertainties": [
+        "The still does not establish what the man is looking at."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:8",
+      "chunk_id": "chunk:0",
+      "start_seconds": 12.012,
+      "end_seconds": 14.014,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "NOT SATISFIED WITH",
+        "WHERE YOU ARE."
+      ],
+      "spoken_content_summary": "The speaker says, \u201c\u2026not satisfied with where you are.\u201d",
+      "changes_from_previous_chunk": "The overlaid wording changes from \u201cNOT HAPPY\u201d to \u201cNOT SATISFIED WITH WHERE YOU ARE.\u201d",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "transcript:2",
+        "ocr:17",
+        "ocr:18",
+        "scene:9",
+        "scene:10"
+      ],
+      "uncertainties": [
+        "No supplied frame within these times establishes the visual subjects or actions."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:9",
+      "chunk_id": "chunk:0",
+      "start_seconds": 14.014,
+      "end_seconds": 15.849,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [
+        "Person at a whiteboard on a stage",
+        "People seated at tables"
+      ],
+      "visible_actions": [
+        "The person stands facing the whiteboard with an arm raised in the supplied frame."
+      ],
+      "visible_text": [
+        "YOU WANT TO",
+        "GET TO",
+        "WHERE YOU",
+        "WANT TO GO."
+      ],
+      "spoken_content_summary": "The speaker says, \u201cYou want to get to where you want to go.\u201d",
+      "changes_from_previous_chunk": "The wording turns to where someone wants to go; the supplied frame returns to a wide room view.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:8",
+        "transcript:2",
+        "ocr:19",
+        "ocr:20",
+        "ocr:21",
+        "ocr:22",
+        "scene:10",
+        "scene:11"
+      ],
+      "uncertainties": [
+        "Frame:7 shows a blurred room view at 13.647 seconds, before this observation; the exact transition into the wide room view is not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:10",
+      "chunk_id": "chunk:0",
+      "start_seconds": 15.849,
+      "end_seconds": 17.918,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "WHEN YOU ACT",
+        "AS IF ALL",
+        "YOUR DREAMS",
+        "HAS COME TRUE"
+      ],
+      "spoken_content_summary": "The speaker begins repeating the earlier idea: \u201cWhen you act as if all your dreams have come true and then challenge\u2026\u201d The supplied transcript continues beyond the chunk.",
+      "changes_from_previous_chunk": "A new spoken sentence begins, repeating the earlier wording.",
+      "confidence": 0.87,
+      "evidence_refs": [
+        "transcript:3",
+        "ocr:24",
+        "ocr:25",
+        "ocr:26",
+        "ocr:27",
+        "scene:12"
+      ],
+      "uncertainties": [
+        "No supplied frame falls within this interval.",
+        "OCR reads \u201cHAS COME TRUE,\u201d while the transcript says \u201chave come true.\u201d",
+        "The sentence extends past the chunk end; its completion is not established here."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:0",
+      "chunk_id": "chunk:1",
+      "start_seconds": 17.918,
+      "end_seconds": 20.02,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "AND THEN",
+        "CHALLENGE",
+        "REALITY",
+        "TO CATCH UP,"
+      ],
+      "spoken_content_summary": "The speaker completes the repeated sentence: \u201c\u2026and then challenge reality to catch up.\u201d",
+      "changes_from_previous_chunk": "The sentence begun in the previous chunk continues and ends.",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "transcript:3",
+        "transcript:4",
+        "ocr:28",
+        "ocr:29",
+        "ocr:30",
+        "ocr:31",
+        "scene:13"
+      ],
+      "uncertainties": [
+        "No supplied frame in this interval establishes visible subjects or actions."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:1",
+      "chunk_id": "chunk:1",
+      "start_seconds": 20.02,
+      "end_seconds": 22.022,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "Person in a dark jacket wearing a headset microphone",
+        "Curtain"
+      ],
+      "visible_actions": [
+        "The person has one arm extended in the supplied frame."
+      ],
+      "visible_text": [
+        "THE MOST",
+        "DIFFICULT",
+        "THING TO DO IS"
+      ],
+      "spoken_content_summary": "The speaker says, \u201cThe most difficult thing to do is\u2026\u201d",
+      "changes_from_previous_chunk": "The speech moves from the repeated sentence to a new explanation.",
+      "confidence": 0.96,
+      "evidence_refs": [
+        "frame:9",
+        "transcript:4",
+        "ocr:32",
+        "ocr:33",
+        "ocr:34",
+        "scene:14",
+        "scene:15"
+      ],
+      "uncertainties": [
+        "The frame establishes the arm position at 20.487 seconds, not a continuing gesture."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:2",
+      "chunk_id": "chunk:1",
+      "start_seconds": 22.022,
+      "end_seconds": 24.024,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "HOW COULD YOU",
+        "MAKE DECISIONS"
+      ],
+      "spoken_content_summary": "The speaker asks how someone could make decisions.",
+      "changes_from_previous_chunk": "The displayed words change to a question about making decisions.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "transcript:4",
+        "ocr:35",
+        "ocr:36",
+        "scene:15",
+        "scene:16"
+      ],
+      "uncertainties": [
+        "No supplied frame in this interval establishes visible subjects or actions."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:3",
+      "chunk_id": "chunk:1",
+      "start_seconds": 24.024,
+      "end_seconds": 27.027,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "NOT FROM HERE,",
+        "BUT FROM HERE?"
+      ],
+      "spoken_content_summary": "The speaker contrasts making decisions \u201cnot from here, but from here.\u201d",
+      "changes_from_previous_chunk": "The displayed wording changes to \u201cNOT FROM HERE, BUT FROM HERE?\u201d",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "transcript:5",
+        "ocr:37",
+        "ocr:38",
+        "scene:16",
+        "scene:17",
+        "scene:18"
+      ],
+      "uncertainties": [
+        "Neither the transcript nor a supplied frame establishes what either \u201chere\u201d refers to."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:4",
+      "chunk_id": "chunk:1",
+      "start_seconds": 27.027,
+      "end_seconds": 29.029,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "Person in a dark jacket beside a flip chart",
+        "Seated people in the foreground",
+        "Marks on the flip chart"
+      ],
+      "visible_actions": [
+        "The person stands with an arm extended toward the flip chart in the supplied frame."
+      ],
+      "visible_text": [
+        "YOU HAVE A",
+        "$250K BUSINESS.",
+        "KING"
+      ],
+      "spoken_content_summary": "The speaker introduces an example: \u201cYou have a $250,000 business.\u201d",
+      "changes_from_previous_chunk": "The speech shifts to a business example; the supplied frame shows a wider room view.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:10",
+        "transcript:5",
+        "ocr:39",
+        "ocr:40",
+        "ocr:41",
+        "ocr:42",
+        "scene:18",
+        "scene:19"
+      ],
+      "uncertainties": [
+        "OCR renders the amount as \u201c$25OK BUSINESS\u201d; the frame text and transcript support \u201c$250K\u201d and \u201c$250,000,\u201d respectively."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:5",
+      "chunk_id": "chunk:1",
+      "start_seconds": 29.029,
+      "end_seconds": 32.533,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "AS YOU'RE",
+        "EXPANDING",
+        "YOUMAY BE",
+        "THINKING,",
+        "\"WELL, WE ARE KIND",
+        "OF GROWING, HUH?"
+      ],
+      "spoken_content_summary": "The speaker says that, while expanding, someone may think the business is growing.",
+      "changes_from_previous_chunk": "The example moves from the business amount to thoughts about expansion.",
+      "confidence": 0.92,
+      "evidence_refs": [
+        "transcript:6",
+        "ocr:43",
+        "ocr:44",
+        "ocr:45",
+        "ocr:46",
+        "ocr:47",
+        "ocr:48",
+        "scene:19",
+        "scene:20",
+        "scene:21"
+      ],
+      "uncertainties": [
+        "No supplied frame in this interval establishes visible subjects or actions.",
+        "OCR joins the words in \u201cYOUMAY BE.\u201d"
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:6",
+      "chunk_id": "chunk:1",
+      "start_seconds": 32.533,
+      "end_seconds": 35.035,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "Close view of a person wearing round glasses",
+        "Hands near the person's mouth"
+      ],
+      "visible_actions": [
+        "The person's hands rest near their mouth in the supplied frame."
+      ],
+      "visible_text": [
+        "CANIAFFORD",
+        "TO HIRE",
+        "THAT PERSON?"
+      ],
+      "spoken_content_summary": "The speaker asks, \u201cCould I afford to hire that person?\u201d",
+      "changes_from_previous_chunk": "The speech changes from describing growth to a hiring-cost question; the supplied frame shows a close view of a person with glasses.",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "frame:11",
+        "transcript:6",
+        "transcript:7",
+        "ocr:49",
+        "ocr:50",
+        "ocr:51",
+        "scene:21",
+        "scene:22"
+      ],
+      "uncertainties": [
+        "OCR reads \u201cCANIAFFORD,\u201d while the transcript says \u201cCould I afford.\u201d",
+        "The still does not establish what the person with glasses is thinking."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:7",
+      "chunk_id": "chunk:1",
+      "start_seconds": 35.035,
+      "end_seconds": 36.703,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "CANIAFFORD",
+        "TO DO THAT",
+        "MARKETING?"
+      ],
+      "spoken_content_summary": "The speaker asks whether they could afford to do that marketing.",
+      "changes_from_previous_chunk": "The question changes from hiring a person to paying for marketing.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "transcript:7",
+        "ocr:52",
+        "ocr:53",
+        "ocr:54",
+        "scene:22"
+      ],
+      "uncertainties": [
+        "The transcript continues beyond this chunk.",
+        "No supplied frame in this interval establishes visible subjects or actions."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:0",
+      "chunk_id": "chunk:2",
+      "start_seconds": 36.703,
+      "end_seconds": 38.539,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "MAYBE NOT.",
+        "I DON'T KNOW."
+      ],
+      "spoken_content_summary": "The speaker says, \u201cMaybe not. I don't know.\u201d",
+      "changes_from_previous_chunk": "The answer follows the question about affording marketing.",
+      "confidence": 0.96,
+      "evidence_refs": [
+        "transcript:7",
+        "ocr:55",
+        "ocr:56",
+        "scene:23"
+      ],
+      "uncertainties": [
+        "No supplied frame establishes visible subjects or actions in this interval."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:1",
+      "chunk_id": "chunk:2",
+      "start_seconds": 38.539,
+      "end_seconds": 40.04,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "I'M NOT",
+        "SO SURE.\""
+      ],
+      "spoken_content_summary": "The speaker says, \u201cI'm not so sure.\u201d",
+      "changes_from_previous_chunk": "The displayed words change from \u201cMAYBE NOT. I DON'T KNOW.\u201d",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "transcript:7",
+        "ocr:58",
+        "ocr:59",
+        "scene:24"
+      ],
+      "uncertainties": [
+        "OCR also detects partial text \u201cKIN\u201d and \u201cKING\u201d; its context is not established.",
+        "No supplied frame establishes visible subjects or actions in this interval."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:2",
+      "chunk_id": "chunk:2",
+      "start_seconds": 40.04,
+      "end_seconds": 41.041,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "Person in a dark jacket",
+        "Flip chart"
+      ],
+      "visible_actions": [
+        "At 40.974 seconds, the person has one arm extended toward the flip chart and holds a small object in the other hand."
+      ],
+      "visible_text": [
+        "LET ME ASK YOU",
+        "A QUESTION,"
+      ],
+      "spoken_content_summary": "The speaker says, \u201cLet me ask a question.\u201d",
+      "changes_from_previous_chunk": "The speech changes from uncertainty about the marketing expense to a new question.",
+      "confidence": 0.96,
+      "evidence_refs": [
+        "transcript:8",
+        "ocr:62",
+        "ocr:63",
+        "frame:12",
+        "scene:25",
+        "scene:26"
+      ],
+      "uncertainties": [
+        "The transcript says \u201cLet me ask a question\u201d; the displayed text includes \u201cYOU.\u201d",
+        "The frame establishes the arm position only at its timestamp."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:3",
+      "chunk_id": "chunk:2",
+      "start_seconds": 41.041,
+      "end_seconds": 44.545,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "IF YOU RUN",
+        "A $5 MILLION",
+        "BUSINESS TODAY,",
+        "HOW WOULD",
+        "YOU MAKE",
+        "THOSE",
+        "DECISIONS?"
+      ],
+      "spoken_content_summary": "The speaker asks how someone running a five-million-dollar business today would make those decisions.",
+      "changes_from_previous_chunk": "The question specifies a five-million-dollar business and asks about decisions.",
+      "confidence": 0.97,
+      "evidence_refs": [
+        "transcript:8",
+        "transcript:9",
+        "ocr:64",
+        "ocr:65",
+        "ocr:66",
+        "ocr:67",
+        "ocr:68",
+        "ocr:69",
+        "ocr:70",
+        "scene:26",
+        "scene:27"
+      ],
+      "uncertainties": [
+        "No supplied frame within this observation establishes visible subjects or actions."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:4",
+      "chunk_id": "chunk:2",
+      "start_seconds": 44.545,
+      "end_seconds": 47.047,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "THE KEY IS",
+        "HOW DO WE",
+        "TRICK OUR MIND"
+      ],
+      "spoken_content_summary": "The speaker asks how to trick our minds.",
+      "changes_from_previous_chunk": "The speech changes from the business question to a question about thinking.",
+      "confidence": 0.95,
+      "evidence_refs": [
+        "transcript:9",
+        "ocr:71",
+        "ocr:72",
+        "ocr:73",
+        "scene:28",
+        "scene:29"
+      ],
+      "uncertainties": [
+        "The transcript says \u201cminds\u201d; OCR displays \u201cMIND.\u201d",
+        "No supplied frame establishes visible subjects or actions in this interval."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:5",
+      "chunk_id": "chunk:2",
+      "start_seconds": 47.047,
+      "end_seconds": 48.048,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [
+        "Person in a dark jacket",
+        "Flip chart with drawn marks"
+      ],
+      "visible_actions": [
+        "At 47.147 and 47.781 seconds, the person's arm is extended toward the flip chart."
+      ],
+      "visible_text": [
+        "SO WE MAKE",
+        "DECISIONS"
+      ],
+      "spoken_content_summary": "The speaker says, \u201cSo we make decisions\u2026\u201d",
+      "changes_from_previous_chunk": "The displayed text changes from the question about the mind to making decisions.",
+      "confidence": 0.97,
+      "evidence_refs": [
+        "transcript:9",
+        "ocr:74",
+        "ocr:75",
+        "frame:13",
+        "frame:14",
+        "scene:29"
+      ],
+      "uncertainties": [
+        "The two frames show arm positions at their timestamps, not continuous movement."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:6",
+      "chunk_id": "chunk:2",
+      "start_seconds": 48.048,
+      "end_seconds": 50.05,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "FROM WHERE",
+        "WE WANT TO GO,"
+      ],
+      "spoken_content_summary": "The speaker says decisions should be made from where we want to go.",
+      "changes_from_previous_chunk": "The displayed text completes the preceding phrase about making decisions.",
+      "confidence": 0.97,
+      "evidence_refs": [
+        "transcript:9",
+        "transcript:10",
+        "ocr:76",
+        "ocr:77",
+        "scene:29",
+        "scene:30"
+      ],
+      "uncertainties": [
+        "No supplied frame establishes visible subjects or actions in this interval."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:7",
+      "chunk_id": "chunk:2",
+      "start_seconds": 50.05,
+      "end_seconds": 51.051,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "NOT FROM",
+        "WHERE WE ARE."
+      ],
+      "spoken_content_summary": "The speaker contrasts that with making decisions from where we are.",
+      "changes_from_previous_chunk": "The displayed wording changes from \u201cWHERE WE WANT TO GO\u201d to \u201cWHERE WE ARE.\u201d",
+      "confidence": 0.97,
+      "evidence_refs": [
+        "transcript:10",
+        "ocr:78",
+        "ocr:79",
+        "scene:30",
+        "scene:31"
+      ],
+      "uncertainties": [
+        "No supplied frame establishes visible subjects or actions in this interval."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:8",
+      "chunk_id": "chunk:2",
+      "start_seconds": 51.051,
+      "end_seconds": 53.053,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "Person in a dark jacket near a flip chart",
+        "Seated people",
+        "Tables and chairs"
+      ],
+      "visible_actions": [
+        "At 52.619 seconds, the person stands near the flip chart with an arm extended toward it; people are seated at tables."
+      ],
+      "visible_text": [
+        "THAT'S THE",
+        "IDENTITY SHIFT."
+      ],
+      "spoken_content_summary": "The speaker says, \u201cThat's the identity shift.\u201d",
+      "changes_from_previous_chunk": "The speaker names the preceding contrast an identity shift; the supplied frame shows a wider room view.",
+      "confidence": 0.97,
+      "evidence_refs": [
+        "transcript:10",
+        "ocr:81",
+        "ocr:82",
+        "frame:15",
+        "scene:31",
+        "scene:32"
+      ],
+      "uncertainties": [
+        "Additional OCR detections \u201c7,\u201d \u201cnr,\u201d \u201cKIND,\u201d and \u201cKING\u201d are unclear.",
+        "The frame establishes positions at 52.619 seconds only."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:9",
+      "chunk_id": "chunk:2",
+      "start_seconds": 53.053,
+      "end_seconds": 54.613,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [
+        "Person in a dark jacket wearing a headset microphone",
+        "Flip chart",
+        "Seated people and tables in the wider frame"
+      ],
+      "visible_actions": [
+        "At 53.153 seconds, the person stands near the flip chart with an arm extended toward it.",
+        "At 54.521 seconds, the person's arm is extended toward the edge of the flip chart."
+      ],
+      "visible_text": [
+        "EASY TO SAY,",
+        "NOT EASY TO DO."
+      ],
+      "spoken_content_summary": "The speaker says it is easy to say and refers to doing it; the transcript wording is \u201cnow it's in the do.\u201d",
+      "changes_from_previous_chunk": "The displayed text changes from \u201cIDENTITY SHIFT\u201d to \u201cEASY TO SAY, NOT EASY TO DO.\u201d",
+      "confidence": 0.93,
+      "evidence_refs": [
+        "transcript:10",
+        "ocr:86",
+        "ocr:87",
+        "frame:16",
+        "frame:17",
+        "scene:32",
+        "scene:33"
+      ],
+      "uncertainties": [
+        "The transcript and displayed wording differ after \u201cEasy to say.\u201d",
+        "The frames do not establish continuous activity between their timestamps."
+      ]
+    }
+  ]
+}

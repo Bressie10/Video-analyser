@@ -1,0 +1,1055 @@
+{
+  "source_ref": "06",
+  "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a",
+  "content_sha256": "f8486a253686b05dd12d018a30dfee3902a02fecef1604d0acabd4f730c61e67",
+  "chunk_responses": [
+    {
+      "chunk_id": "chunk:0",
+      "description": {
+        "chunk_start_seconds": 0.0,
+        "chunk_end_seconds": 18.467,
+        "observations": [
+          {
+            "start_seconds": 0.1,
+            "end_seconds": 3.0,
+            "boundary_reason": "chunk_boundary",
+            "visible_subjects_objects": [
+              "Coastline, rocky shore, beach, road, buildings, hillside",
+              "Large translucent 21 graphic"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "21"
+            ],
+            "spoken_content_summary": "The speaker asks listeners to imagine building a real estate career in an iconic South African location.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.95,
+            "evidence_refs": [
+              "frame:0",
+              "frame:1",
+              "frame:2",
+              "transcript:0",
+              "ocr:0",
+              "scene:0"
+            ],
+            "uncertainties": [
+              "The frames do not establish the exact location."
+            ]
+          },
+          {
+            "start_seconds": 3.233,
+            "end_seconds": 6.52,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Interior with vertical wood paneling, a wall of plants, pale seating, and glass partitions"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "CENTURY21",
+              "CityBowl\u00b7Camps Bay"
+            ],
+            "spoken_content_summary": "The speaker finishes the invitation to imagine building a real estate career in an iconic South African location.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "frame:3",
+              "transcript:0",
+              "ocr:2",
+              "ocr:3",
+              "scene:1"
+            ],
+            "uncertainties": [
+              "The OCR text is reported near 3.5\u20134.5 seconds but is not clearly legible in the supplied still."
+            ]
+          },
+          {
+            "start_seconds": 6.52,
+            "end_seconds": 6.867,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker begins describing joining an office and a community associated with City Bowl and Camps Bay.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.82,
+            "evidence_refs": [
+              "transcript:1",
+              "scene:1"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this short interval.",
+              "The transcript's organization name is unclear as transcribed."
+            ]
+          },
+          {
+            "start_seconds": 6.867,
+            "end_seconds": 10.167,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Woman in a striped shirt holding a green item",
+              "Man in a light shirt",
+              "Modern kitchen with dark cabinets, island, and stools"
+            ],
+            "visible_actions": [
+              "At frame:4, the woman extends an arm toward a small plant.",
+              "At frame:5, the woman points toward the left."
+            ],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker describes joining an office and a community built on excellence and growth.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.93,
+            "evidence_refs": [
+              "frame:4",
+              "frame:5",
+              "transcript:1",
+              "scene:2"
+            ],
+            "uncertainties": [
+              "The stills do not establish movement between the pictured gestures."
+            ]
+          },
+          {
+            "start_seconds": 10.167,
+            "end_seconds": 10.833,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Brick-walled interior, counter with coffee equipment, glass-walled room"
+            ],
+            "visible_actions": [],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker continues describing the community.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.89,
+            "evidence_refs": [
+              "frame:6",
+              "transcript:1",
+              "scene:3"
+            ],
+            "uncertainties": []
+          },
+          {
+            "start_seconds": 10.833,
+            "end_seconds": 13.733,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Meeting room with brick walls, wooden table, chairs, plants, and wall-mounted screen"
+            ],
+            "visible_actions": [],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker mentions the joy of helping people find their perfect home.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.9,
+            "evidence_refs": [
+              "frame:7",
+              "transcript:1",
+              "scene:4"
+            ],
+            "uncertainties": []
+          },
+          {
+            "start_seconds": 13.733,
+            "end_seconds": 15.0,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Four adults outside a modern building",
+              "Landscaping and lawn"
+            ],
+            "visible_actions": [
+              "At frame:8, the four adults face the camera on the lawn."
+            ],
+            "visible_text": [
+              "Grow With Elite C"
+            ],
+            "spoken_content_summary": "The speaker continues the statement about helping people find their perfect home.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.88,
+            "evidence_refs": [
+              "frame:8",
+              "transcript:1",
+              "ocr:11",
+              "scene:5"
+            ],
+            "uncertainties": [
+              "The OCR captures only a partial phrase during this interval.",
+              "A still frame does not establish that the group is walking."
+            ]
+          },
+          {
+            "start_seconds": 15.0,
+            "end_seconds": 18.467,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "Four adults outside a modern building",
+              "Landscaping and lawn",
+              "Translucent lower text panel"
+            ],
+            "visible_actions": [
+              "At frame:9, several people have raised or extended arms."
+            ],
+            "visible_text": [
+              "Grow With Elite Coaching",
+              "& World-Class Support."
+            ],
+            "spoken_content_summary": "The speaker continues the statement about the community and helping people find a home; the supplied transcript extends beyond this chunk.",
+            "changes_from_previous_chunk": "Not applicable; this is the first chunk.",
+            "confidence": 0.94,
+            "evidence_refs": [
+              "frame:9",
+              "transcript:1",
+              "ocr:12",
+              "ocr:14",
+              "scene:5"
+            ],
+            "uncertainties": [
+              "The supplied transcript does not establish which words occur specifically before 18.467 seconds."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "The transcript extends to 19.08 seconds, beyond this chunk's endpoint; only its overlapping portion is described.",
+          "Scene boundaries establish cuts, but sparse frames do not establish actions between sampled timestamps."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:0",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_043a460ec8741f23016acc04aa555c87d2998759f7ae9516e6",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:1",
+      "description": {
+        "chunk_start_seconds": 18.467,
+        "chunk_end_seconds": 34.367,
+        "observations": [
+          {
+            "start_seconds": 18.467,
+            "end_seconds": 19.08,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "CORE"
+            ],
+            "spoken_content_summary": "The speaker finishes the statement about a community and helping people find a home.",
+            "changes_from_previous_chunk": "The previous chunk showed four adults outdoors; a new scene begins here, but no frame shows it.",
+            "confidence": 0.76,
+            "evidence_refs": [
+              "scene:6",
+              "transcript:1",
+              "ocr:15"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval.",
+              "The OCR reports only a fragment of the on-screen text."
+            ]
+          },
+          {
+            "start_seconds": 19.08,
+            "end_seconds": 20.767,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "RE"
+            ],
+            "spoken_content_summary": "The speaker begins describing world-class training, marketing support, and a brand with local and global reach.",
+            "changes_from_previous_chunk": "Not established beyond the scene change at 18.467 seconds.",
+            "confidence": 0.78,
+            "evidence_refs": [
+              "transcript:2",
+              "ocr:16",
+              "scene:6"
+            ],
+            "uncertainties": [
+              "No supplied frame shows this interval.",
+              "The OCR reports only a text fragment."
+            ]
+          },
+          {
+            "start_seconds": 20.767,
+            "end_seconds": 23.533,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Two women beside a kitchen counter",
+              "Tablet",
+              "Split-screen dark text panel"
+            ],
+            "visible_actions": [
+              "At frame:10, one woman holds a tablet while both face it."
+            ],
+            "visible_text": [
+              "ABOVE & BEYOND",
+              "GOING",
+              "IS IN OUR AGENTS'",
+              "DNA"
+            ],
+            "spoken_content_summary": "The speaker continues describing training, marketing support, and the brand's local and global reach.",
+            "changes_from_previous_chunk": "A supplied frame now shows two women and a text panel; the intervening visuals are not established.",
+            "confidence": 0.89,
+            "evidence_refs": [
+              "scene:7",
+              "frame:10",
+              "transcript:2",
+              "ocr:17",
+              "ocr:18",
+              "ocr:20",
+              "ocr:21"
+            ],
+            "uncertainties": [
+              "The last two text lines are reported by OCR after the supplied frame's timestamp.",
+              "The still does not establish interaction or movement between frames."
+            ]
+          },
+          {
+            "start_seconds": 23.533,
+            "end_seconds": 27.967,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "129,500* PROPERTY PRACTITIONERS",
+              "11,000* OFFICES & COUNTING",
+              "79* COUNTRIES & TERRITORIES"
+            ],
+            "spoken_content_summary": "The speaker continues the statement about training, marketing support, and local and global reach.",
+            "changes_from_previous_chunk": "A new scene and different OCR text are reported; no supplied frame shows this interval.",
+            "confidence": 0.81,
+            "evidence_refs": [
+              "scene:8",
+              "transcript:2",
+              "ocr:22",
+              "ocr:23",
+              "ocr:24",
+              "ocr:25",
+              "ocr:26",
+              "ocr:27"
+            ],
+            "uncertainties": [
+              "The appearance and placement of the reported text cannot be checked against a supplied frame."
+            ]
+          },
+          {
+            "start_seconds": 27.967,
+            "end_seconds": 29.08,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Brick-walled room",
+              "Desk, chairs, plant, and glazed partition"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "This Is Where",
+              "Extraordinary Agents",
+              "Are Made."
+            ],
+            "spoken_content_summary": "The speaker finishes the statement about a brand with local and global reach by 28.08 seconds.",
+            "changes_from_previous_chunk": "The supplied frame shows a brick-walled room instead of the earlier kitchen split-screen.",
+            "confidence": 0.85,
+            "evidence_refs": [
+              "scene:9",
+              "frame:11",
+              "transcript:2",
+              "ocr:28",
+              "ocr:30",
+              "ocr:32"
+            ],
+            "uncertainties": [
+              "The text is reported by OCR beginning at 29.0 seconds, after frame:11; it is not established as visible in that still.",
+              "No speech is supplied for 28.08\u201329.08 seconds."
+            ]
+          },
+          {
+            "start_seconds": 29.08,
+            "end_seconds": 30.633,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "This Is Where",
+              "Extraordinary Agents",
+              "Are Made."
+            ],
+            "spoken_content_summary": "The speaker begins saying that, whether experienced or brand-new, this is a moment to grow a business and unlock opportunities.",
+            "changes_from_previous_chunk": "The spoken topic changes; no further supplied frame shows the visuals.",
+            "confidence": 0.84,
+            "evidence_refs": [
+              "transcript:3",
+              "ocr:28",
+              "ocr:30",
+              "ocr:32",
+              "scene:9"
+            ],
+            "uncertainties": [
+              "The transcript's opening phrase is unclear as transcribed.",
+              "No supplied frame falls in this interval."
+            ]
+          },
+          {
+            "start_seconds": 30.633,
+            "end_seconds": 31.433,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "This Is Where",
+              "Extraordinary Agents",
+              "Are Made."
+            ],
+            "spoken_content_summary": "The speaker continues the statement about growing a business and unlocking opportunities.",
+            "changes_from_previous_chunk": "A new scene is marked, but its visuals are not established by a supplied frame.",
+            "confidence": 0.77,
+            "evidence_refs": [
+              "scene:10",
+              "transcript:3",
+              "ocr:32",
+              "ocr:33",
+              "ocr:30"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval."
+            ]
+          },
+          {
+            "start_seconds": 31.433,
+            "end_seconds": 34.367,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "This Is Where",
+              "Extraordinary Agents",
+              "Are Made."
+            ],
+            "spoken_content_summary": "The speaker continues the statement about growing a business and unlocking new opportunities; the transcript extends beyond this chunk.",
+            "changes_from_previous_chunk": "Another scene is marked, but no supplied frame shows its contents.",
+            "confidence": 0.77,
+            "evidence_refs": [
+              "scene:11",
+              "transcript:3",
+              "ocr:32",
+              "ocr:36",
+              "ocr:37"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval.",
+              "The OCR evidence ends at 33.0 seconds, so later on-screen text is not established.",
+              "The transcript continues beyond 34.367 seconds."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Only two frames are supplied for this chunk; scene markers and OCR do not establish the unpictured visuals or actions between them."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:1",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0f90da6e78e34362016acc04b58f1487d2821768da3775abda",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    },
+    {
+      "chunk_id": "chunk:2",
+      "description": {
+        "chunk_start_seconds": 34.367,
+        "chunk_end_seconds": 49.782,
+        "observations": [
+          {
+            "start_seconds": 34.367,
+            "end_seconds": 34.933,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [],
+            "spoken_content_summary": "The speaker continues the statement about growing a business and unlocking new opportunities.",
+            "changes_from_previous_chunk": "A new scene is marked; its contents are not shown in a supplied frame.",
+            "confidence": 0.75,
+            "evidence_refs": [
+              "scene:12",
+              "transcript:3"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval."
+            ]
+          },
+          {
+            "start_seconds": 34.933,
+            "end_seconds": 36.08,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [
+              "Black background",
+              "Centered lettering"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "JOIN",
+              "THE RELENTLESS",
+              "APPLY TODAY!"
+            ],
+            "spoken_content_summary": "The speaker finishes the statement about growing a business and unlocking new opportunities.",
+            "changes_from_previous_chunk": "A new scene is marked, and frame:12 shows centered text on black.",
+            "confidence": 0.95,
+            "evidence_refs": [
+              "scene:13",
+              "frame:12",
+              "ocr:38",
+              "ocr:39",
+              "ocr:40",
+              "transcript:3"
+            ],
+            "uncertainties": [
+              "The scene boundary precedes frame:12; the frame establishes the image only at 35.567 seconds."
+            ]
+          },
+          {
+            "start_seconds": 36.08,
+            "end_seconds": 40.0,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Black background and centered lettering at frame:12"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "JOIN",
+              "THE RELENTLESS",
+              "APPLY TODAY!"
+            ],
+            "spoken_content_summary": "The speaker asks, \u201cReady to take the next step?\u201d and says to join a named City Bowl\u2013Camps Bay organization today.",
+            "changes_from_previous_chunk": "The spoken content changes from describing opportunities to a direct request.",
+            "confidence": 0.86,
+            "evidence_refs": [
+              "transcript:4",
+              "ocr:38",
+              "ocr:39",
+              "ocr:40",
+              "scene:13"
+            ],
+            "uncertainties": [
+              "No supplied frame falls within this observation; the appearance here is supported by OCR and the earlier frame:12, not by a new still.",
+              "The organization's name is unclear in the transcript as supplied."
+            ]
+          },
+          {
+            "start_seconds": 40.0,
+            "end_seconds": 41.633,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "CENTURY 21",
+              "City Bowl \u2022 Camps Bay"
+            ],
+            "spoken_content_summary": "The speaker continues the request to join, ending at 42.08 seconds.",
+            "changes_from_previous_chunk": "OCR reports different text beginning at 40.0 seconds.",
+            "confidence": 0.79,
+            "evidence_refs": [
+              "ocr:41",
+              "ocr:42",
+              "transcript:4",
+              "scene:13"
+            ],
+            "uncertainties": [
+              "No supplied frame falls in this interval; the text's appearance and placement are not directly shown."
+            ]
+          },
+          {
+            "start_seconds": 41.633,
+            "end_seconds": 42.08,
+            "boundary_reason": "scene_boundary",
+            "visible_subjects_objects": [],
+            "visible_actions": [],
+            "visible_text": [
+              "CENTURY 21",
+              "City Bowl \u2022 Camps Bay"
+            ],
+            "spoken_content_summary": "The speaker finishes the request to join.",
+            "changes_from_previous_chunk": "A new scene is marked, but no supplied frame shows its start.",
+            "confidence": 0.78,
+            "evidence_refs": [
+              "scene:14",
+              "ocr:41",
+              "ocr:42",
+              "transcript:4"
+            ],
+            "uncertainties": [
+              "The OCR text is reported across the scene boundary; its exact appearance at the boundary is not shown."
+            ]
+          },
+          {
+            "start_seconds": 42.08,
+            "end_seconds": 44.0,
+            "boundary_reason": "transcript_change",
+            "visible_subjects_objects": [
+              "Black background",
+              "Centered gold-colored lettering"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "CENTURY 21",
+              "City Bowl \u2022 Camps Bay"
+            ],
+            "spoken_content_summary": "No further speech is supplied after 42.08 seconds.",
+            "changes_from_previous_chunk": "Frame:13 directly shows the reported lettering.",
+            "confidence": 0.96,
+            "evidence_refs": [
+              "frame:13",
+              "ocr:41",
+              "ocr:42",
+              "transcript:4",
+              "scene:14"
+            ],
+            "uncertainties": [
+              "Frame:13 establishes the image at 42.667 seconds, not throughout this interval."
+            ]
+          },
+          {
+            "start_seconds": 44.0,
+            "end_seconds": 49.0,
+            "boundary_reason": "ocr_change",
+            "visible_subjects_objects": [
+              "Black background",
+              "Square black-and-white code with a central circular 21 mark"
+            ],
+            "visible_actions": [],
+            "visible_text": [
+              "21"
+            ],
+            "spoken_content_summary": "No speech is supplied.",
+            "changes_from_previous_chunk": "Frame:14 shows a square code instead of the earlier lettering; frame:15 shows the same type of image.",
+            "confidence": 0.97,
+            "evidence_refs": [
+              "frame:14",
+              "frame:15",
+              "ocr:43",
+              "scene:14"
+            ],
+            "uncertainties": [
+              "The supplied stills do not establish the exact moment the image changed."
+            ]
+          },
+          {
+            "start_seconds": 49.0,
+            "end_seconds": 49.782,
+            "boundary_reason": "visual_change",
+            "visible_subjects_objects": [
+              "Black screen at frame:16"
+            ],
+            "visible_actions": [],
+            "visible_text": [],
+            "spoken_content_summary": "No speech is supplied.",
+            "changes_from_previous_chunk": "Frame:16 is black rather than showing the code seen at frame:15.",
+            "confidence": 0.95,
+            "evidence_refs": [
+              "frame:15",
+              "frame:16",
+              "scene:14"
+            ],
+            "uncertainties": [
+              "The exact time between frames:15 and frame:16 when the code disappeared is not established."
+            ]
+          }
+        ],
+        "uncertainties": [
+          "Frames are sparse point observations; visuals between their timestamps are not established by the stills."
+        ]
+      },
+      "provenance": {
+        "stage": "evidence_description",
+        "chunk_id": "chunk:2",
+        "model_requested": "gpt-6-sol",
+        "model_reported": "gpt-6-sol",
+        "response_id": "resp_0efde23391610734016acc04c1a2ac87d2ad6438af5dbd3b15",
+        "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+        "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+      }
+    }
+  ],
+  "synthesis_response": {
+    "draft": {
+      "format_assessments": [
+        {
+          "technique_id": "format.talking_head",
+          "ontology_definition": "Speaker addresses the camera for a substantial part of the video.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "Speech is reported, but no frame establishes a speaker addressing the camera; the pictured group facing the camera is not shown speaking (ledger:0:6).",
+          "criterion_explanation": "Camera-addressing speech for a substantial part is not established."
+        },
+        {
+          "technique_id": "format.tutorial",
+          "ontology_definition": "Explains a process or teaches a skill in steps.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The narration describes a career opportunity and support, without instructional steps (ledger:0:3, ledger:1:1, ledger:1:5).",
+          "criterion_explanation": "No process or skill is taught step by step."
+        },
+        {
+          "technique_id": "format.product_demo",
+          "ontology_definition": "Shows a product or service in use.",
+          "decision": "uncertain",
+          "positive_ledger_refs": [
+            "ledger:0:3",
+            "ledger:1:2"
+          ],
+          "counterevidence_limitations": "People are pictured in a kitchen, and two women face a tablet, but neither scene clearly establishes a particular product or service being used (ledger:0:3, ledger:1:2).",
+          "criterion_explanation": "The visible activity does not clearly meet the in-use criterion."
+        },
+        {
+          "technique_id": "format.storytime",
+          "ontology_definition": "Narrates an event as the main format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "The narration invites the viewer to imagine a career and describes an opportunity rather than recounting an event (ledger:0:0, ledger:1:5).",
+          "criterion_explanation": "Event narration is not the main format."
+        },
+        {
+          "technique_id": "format.listicle",
+          "ontology_definition": "Presents numbered or clearly enumerated items.",
+          "decision": "uncertain",
+          "positive_ledger_refs": [
+            "ledger:1:3"
+          ],
+          "counterevidence_limitations": "Three statistics are displayed, but they are not explicitly numbered or framed as a list of items (ledger:1:3).",
+          "criterion_explanation": "A grouped set of figures may be list-like, but clear enumeration is not established."
+        },
+        {
+          "technique_id": "format.reaction",
+          "ontology_definition": "Responds to another piece of content or event.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "No content or event being reacted to is identified in the ledger.",
+          "criterion_explanation": "A response to another piece of content or event is not established."
+        },
+        {
+          "technique_id": "format.before_after",
+          "ontology_definition": "Compares a state before and after a change.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "No paired before and after states are documented.",
+          "criterion_explanation": "Both states and their comparison are absent."
+        },
+        {
+          "technique_id": "format.screen_recording",
+          "ontology_definition": "Recorded screen is a principal visual source.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [
+            "ledger:1:2"
+          ],
+          "counterevidence_limitations": "A tablet and a text panel appear, but neither is identified as a recorded screen (ledger:1:2).",
+          "criterion_explanation": "A recorded screen as a principal visual source is not established."
+        },
+        {
+          "technique_id": "format.interview",
+          "ontology_definition": "Question and answer exchange is a principal format.",
+          "decision": "unsupported",
+          "positive_ledger_refs": [],
+          "counterevidence_limitations": "No exchange between interviewer and respondent is reported.",
+          "criterion_explanation": "The required question-and-answer format is absent."
+        }
+      ],
+      "cta_events": [
+        {
+          "event_id": "cta:1",
+          "start_seconds": 34.933,
+          "end_seconds": 40.0,
+          "requested_action": "Apply today and join the named organization; the spoken request to join begins at 36.08 seconds.",
+          "ledger_refs": [
+            "ledger:2:1",
+            "ledger:2:2"
+          ]
+        },
+        {
+          "event_id": "cta:2",
+          "start_seconds": 40.0,
+          "end_seconds": 42.08,
+          "requested_action": "Join the named City Bowl\u2013Camps Bay organization today, as requested in speech.",
+          "ledger_refs": [
+            "ledger:2:3",
+            "ledger:2:4"
+          ]
+        }
+      ],
+      "findings": [
+        {
+          "technique_id": "hook.question",
+          "start_seconds": 0.1,
+          "end_seconds": 3.0,
+          "confidence": 0.92,
+          "basis": "direct_observation",
+          "rationale": "The opening speech asks listeners to imagine building a real estate career.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "hook.visual",
+          "start_seconds": 0.1,
+          "end_seconds": 3.0,
+          "confidence": 0.89,
+          "basis": "model_interpretation",
+          "rationale": "The opening presents a coastline and large translucent \u201c21\u201d graphic alongside the spoken invitation.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "editing.b_roll",
+          "start_seconds": 0.1,
+          "end_seconds": 3.0,
+          "confidence": 0.83,
+          "basis": "model_interpretation",
+          "rationale": "Coastline footage supports the narrated invitation to imagine a real estate career in a South African location.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "editing.split_screen",
+          "start_seconds": 20.767,
+          "end_seconds": 23.533,
+          "confidence": 0.91,
+          "basis": "direct_observation",
+          "rationale": "A split-screen text panel shares the image with two women and a tablet.",
+          "evidence_refs": [
+            "ledger:1:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.multiple_subjects",
+          "start_seconds": 6.867,
+          "end_seconds": 10.167,
+          "confidence": 0.91,
+          "basis": "direct_observation",
+          "rationale": "A woman and a man are pictured together in the kitchen.",
+          "evidence_refs": [
+            "ledger:0:3"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.multiple_subjects",
+          "start_seconds": 13.733,
+          "end_seconds": 18.467,
+          "confidence": 0.9,
+          "basis": "direct_observation",
+          "rationale": "Four adults share the outdoor frame.",
+          "evidence_refs": [
+            "ledger:0:6",
+            "ledger:0:7"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "visual.screen_content",
+          "start_seconds": 20.767,
+          "end_seconds": 23.533,
+          "confidence": 0.87,
+          "basis": "direct_observation",
+          "rationale": "A tablet is visible as the two women face it; its displayed contents are not specified.",
+          "evidence_refs": [
+            "ledger:1:2"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "text.headline",
+          "start_seconds": 27.967,
+          "end_seconds": 30.633,
+          "confidence": 0.81,
+          "basis": "model_interpretation",
+          "rationale": "The reported prominent phrase \u201cThis Is Where Extraordinary Agents Are Made\u201d frames the recruiting message.",
+          "evidence_refs": [
+            "ledger:1:4",
+            "ledger:1:5"
+          ],
+          "event_id": null
+        },
+        {
+          "technique_id": "cta.visual",
+          "start_seconds": 34.933,
+          "end_seconds": 40.0,
+          "confidence": 0.95,
+          "basis": "direct_observation",
+          "rationale": "The visible end-card wording explicitly says \u201cJOIN THE RELENTLESS\u201d and \u201cAPPLY TODAY!\u201d",
+          "evidence_refs": [
+            "ledger:2:1",
+            "ledger:2:2"
+          ],
+          "event_id": "cta:1"
+        },
+        {
+          "technique_id": "cta.verbal",
+          "start_seconds": 36.08,
+          "end_seconds": 40.0,
+          "confidence": 0.85,
+          "basis": "direct_observation",
+          "rationale": "The speaker asks whether the viewer is ready to take the next step and requests that they join today.",
+          "evidence_refs": [
+            "ledger:2:2"
+          ],
+          "event_id": "cta:1"
+        },
+        {
+          "technique_id": "cta.product",
+          "start_seconds": 34.933,
+          "end_seconds": 40.0,
+          "confidence": 0.88,
+          "basis": "model_interpretation",
+          "rationale": "\u201cAPPLY TODAY!\u201d and the spoken invitation request an application to or joining the promoted real estate organization.",
+          "evidence_refs": [
+            "ledger:2:1",
+            "ledger:2:2"
+          ],
+          "event_id": "cta:1"
+        },
+        {
+          "technique_id": "cta.verbal",
+          "start_seconds": 40.0,
+          "end_seconds": 42.08,
+          "confidence": 0.82,
+          "basis": "direct_observation",
+          "rationale": "The spoken request to join continues and ends at 42.08 seconds.",
+          "evidence_refs": [
+            "ledger:2:3",
+            "ledger:2:4"
+          ],
+          "event_id": "cta:2"
+        },
+        {
+          "technique_id": "cta.product",
+          "start_seconds": 40.0,
+          "end_seconds": 42.08,
+          "confidence": 0.8,
+          "basis": "model_interpretation",
+          "rationale": "The continuing request is to join the promoted real estate organization.",
+          "evidence_refs": [
+            "ledger:2:3",
+            "ledger:2:4"
+          ],
+          "event_id": "cta:2"
+        }
+      ],
+      "structure": [
+        {
+          "role": "hook",
+          "start_seconds": 0.1,
+          "end_seconds": 3.0,
+          "confidence": 0.91,
+          "rationale": "An opening invitation asks viewers to imagine a real estate career, accompanied by coastline imagery.",
+          "evidence_refs": [
+            "ledger:0:0"
+          ]
+        },
+        {
+          "role": "setup",
+          "start_seconds": 3.233,
+          "end_seconds": 6.52,
+          "confidence": 0.81,
+          "rationale": "The invitation continues over an interior bearing the organization's reported name and area.",
+          "evidence_refs": [
+            "ledger:0:1"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 6.52,
+          "end_seconds": 13.733,
+          "confidence": 0.84,
+          "rationale": "Speech describes the office, community, growth, and helping people find homes.",
+          "evidence_refs": [
+            "ledger:0:2",
+            "ledger:0:3",
+            "ledger:0:4",
+            "ledger:0:5"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 13.733,
+          "end_seconds": 18.467,
+          "confidence": 0.88,
+          "rationale": "The community message continues, while the visible wording highlights coaching and support.",
+          "evidence_refs": [
+            "ledger:0:6",
+            "ledger:0:7"
+          ]
+        },
+        {
+          "role": "explanation",
+          "start_seconds": 19.08,
+          "end_seconds": 23.533,
+          "confidence": 0.84,
+          "rationale": "The speaker describes training, marketing support, and reach; the pictured split-screen adds a statement about agents.",
+          "evidence_refs": [
+            "ledger:1:1",
+            "ledger:1:2"
+          ]
+        },
+        {
+          "role": "proof",
+          "start_seconds": 23.533,
+          "end_seconds": 27.967,
+          "confidence": 0.82,
+          "rationale": "Reported figures for practitioners, offices, and countries or territories substantiate the reach claim.",
+          "evidence_refs": [
+            "ledger:1:3"
+          ]
+        },
+        {
+          "role": "payoff",
+          "start_seconds": 27.967,
+          "end_seconds": 34.933,
+          "confidence": 0.78,
+          "rationale": "The reported headline presents the agent outcome, followed by speech framing this as an opportunity to grow a business.",
+          "evidence_refs": [
+            "ledger:1:4",
+            "ledger:1:5",
+            "ledger:1:6",
+            "ledger:1:7",
+            "ledger:2:0"
+          ]
+        },
+        {
+          "role": "cta",
+          "start_seconds": 34.933,
+          "end_seconds": 42.08,
+          "confidence": 0.9,
+          "rationale": "An application and joining request appears on the end card and is then spoken through 42.08 seconds.",
+          "evidence_refs": [
+            "ledger:2:1",
+            "ledger:2:2",
+            "ledger:2:3",
+            "ledger:2:4"
+          ]
+        }
+      ],
+      "uncertainties": [
+        "The supplied ledger does not establish the exact location of the opening coastline or clarify the organization's spoken name.",
+        "Sparse stills do not establish motion-based editing techniques or the exact instant the final code appears or disappears.",
+        "The final code has no accompanying visible or spoken action request in its cited interval (ledger:2:6); it is not labeled as a separate CTA.",
+        "The spoken join request crosses the 40-second OCR change. It is represented as two adjacent physical CTA events because the ledger separates the displayed application card from the subsequent organization-name card; the latter card's name alone does not support a visual CTA."
+      ]
+    },
+    "provenance": {
+      "stage": "ontology_synthesis",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0343fa3b14643c4a016acc04cc95d087d2af8530708ce890c5",
+      "prompt_sha256": "117850c2e1705d0fbb58c08a438cef7e1022c7054ed04f6f8ceeca402428dd27",
+      "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+    },
+    "ledger_sha256": "87ebc3acf2653799046426e229e4104bfd575c294d131c94f04cc7efa6551e50"
+  }
+}

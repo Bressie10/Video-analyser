@@ -1,0 +1,7 @@
+{
+  "source_ref": "07",
+  "validation_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a",
+  "error_type": "ValueError",
+  "error": "Interval crosses unsupported ledger gap",
+  "checkpoint": "07.checkpoint.json"
+}

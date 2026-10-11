@@ -1,0 +1,660 @@
+{
+  "source_ref": "05",
+  "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a",
+  "validation_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a",
+  "model_passes": [
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:0",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_0686093c37dd7532016acc04714f9887d2848c95f260d50e33",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:1",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_038e68f01b311d3b016acc047dce3087d28c005c581e71431c",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+    },
+    {
+      "stage": "evidence_description",
+      "chunk_id": "chunk:2",
+      "model_requested": "gpt-6-sol",
+      "model_reported": "gpt-6-sol",
+      "response_id": "resp_02c3d1a1855506b4016acc048978ec87d2ae0eafd2e3e4c0a2",
+      "prompt_sha256": "b6b6e28ddc272a547dd71e04bb587e58926cb0d420e0c7bc52b1bbed73dd57ce",
+      "analyzer_commit": "a784d8d6195b79e28075eabc133d9c4d4632212a"
+    }
+  ],
+  "chunk_plan": [
+    {
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.0,
+      "end_seconds": 17.017,
+      "frame_refs": [
+        "frame:0",
+        "frame:1",
+        "frame:2",
+        "frame:3",
+        "frame:4",
+        "frame:5",
+        "frame:6",
+        "frame:7",
+        "frame:8"
+      ]
+    },
+    {
+      "chunk_id": "chunk:1",
+      "start_seconds": 17.017,
+      "end_seconds": 33.634,
+      "frame_refs": [
+        "frame:9",
+        "frame:10",
+        "frame:11",
+        "frame:12"
+      ]
+    },
+    {
+      "chunk_id": "chunk:2",
+      "start_seconds": 33.634,
+      "end_seconds": 50.369,
+      "frame_refs": [
+        "frame:13",
+        "frame:14",
+        "frame:15",
+        "frame:16"
+      ]
+    }
+  ],
+  "evidence_ledger": [
+    {
+      "ledger_id": "ledger:0:0",
+      "chunk_id": "chunk:0",
+      "start_seconds": 0.1,
+      "end_seconds": 0.534,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [
+        "Purple graphic with colorful shapes",
+        "Woman in a pink ZUMBA top at 0.534"
+      ],
+      "visible_actions": [
+        "The woman faces left with her mouth open and arms spread at 0.534."
+      ],
+      "visible_text": [
+        "ZUMBA on the pink top"
+      ],
+      "spoken_content_summary": "Speech begins at 0.62; no spoken words are established within these frames.",
+      "changes_from_previous_chunk": "Not applicable; this is the opening chunk.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:0",
+        "frame:1",
+        "scene:0"
+      ],
+      "uncertainties": [
+        "The graphic and woman appear in separate sparse frames; the intervening change is not shown."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:1",
+      "chunk_id": "chunk:0",
+      "start_seconds": 1.502,
+      "end_seconds": 5.62,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "People in an indoor room with large windows",
+        "Woman in a neon-yellow top seen from behind",
+        "Close-up of a smiling person in a pink top"
+      ],
+      "visible_actions": [
+        "A person holds one hand up at 1.502.",
+        "The woman in yellow has both arms raised at 3.003.",
+        "The person in pink has an open mouth at 5.339."
+      ],
+      "visible_text": [
+        "Mach deine Liebe zum Tanzen zum Beruf oder Nebenjob"
+      ],
+      "spoken_content_summary": "The speaker says to turn a love of dance into a fun, fulfilling career or side job; the transcript's final word is rendered uncertainly as \u201cdinosaur.\u201d",
+      "changes_from_previous_chunk": "The opening graphic gives way to views of people indoors.",
+      "confidence": 0.88,
+      "evidence_refs": [
+        "frame:2",
+        "frame:3",
+        "frame:4",
+        "transcript:0",
+        "ocr:5",
+        "ocr:6",
+        "scene:1",
+        "scene:2",
+        "scene:5"
+      ],
+      "uncertainties": [
+        "The transcript's \u201cdinosaur\u201d conflicts with the career-or-side-job wording visible in the subtitles.",
+        "Movement between the stills is not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:2",
+      "chunk_id": "chunk:0",
+      "start_seconds": 5.62,
+      "end_seconds": 8.509,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "Several people in an indoor exercise space"
+      ],
+      "visible_actions": [
+        "At 7.207, a foreground person stands with their body turned sideways while others are visible behind them."
+      ],
+      "visible_text": [
+        "DEINE BEDINGUNGEN",
+        "Als Zumba-Trainer*in arbeitest du nach deinen Bedingungen"
+      ],
+      "spoken_content_summary": "The speaker says that as a Zumba instructor, one can work on one's own terms.",
+      "changes_from_previous_chunk": "The speech shifts from a dance-related career to working terms; the on-screen text changes accordingly.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:5",
+        "transcript:1",
+        "ocr:11",
+        "ocr:12",
+        "ocr:13"
+      ],
+      "uncertainties": [
+        "The transcript renders the name as \u201cZoom,\u201d while the visible text says \u201cZumba.\u201d"
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:3",
+      "chunk_id": "chunk:0",
+      "start_seconds": 8.509,
+      "end_seconds": 12.513,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [
+        "People in an indoor exercise space",
+        "Colorful overlaid graphics"
+      ],
+      "visible_actions": [
+        "At 9.51, a foreground person has an open mouth and one arm bent across their chest.",
+        "At 11.311, a foreground person stands with arms extended sideways."
+      ],
+      "visible_text": [
+        "MEHR EINKOMMEN +GESUNDHEIT",
+        "HEALTH + WEALTH",
+        "Mehr Einkommen und Gesundheit und: du ver\u00e4nderst Leben"
+      ],
+      "spoken_content_summary": "The speaker continues with claims about increased wealth, helping others, and changing lives.",
+      "changes_from_previous_chunk": "The text about working on one's own terms is replaced by income and health text.",
+      "confidence": 0.87,
+      "evidence_refs": [
+        "frame:6",
+        "frame:7",
+        "transcript:1",
+        "ocr:20",
+        "ocr:21",
+        "ocr:24",
+        "ocr:25",
+        "ocr:26",
+        "ocr:27",
+        "ocr:28"
+      ],
+      "uncertainties": [
+        "The transcript wording \u201chelp, and change life\u201d is imprecise.",
+        "The frames do not establish continuous exercise movement."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:4",
+      "chunk_id": "chunk:0",
+      "start_seconds": 12.513,
+      "end_seconds": 15.015,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "Person against a pink background wearing a black ZUMBA shirt"
+      ],
+      "visible_actions": [
+        "The person faces the camera with hands together at 14.381."
+      ],
+      "visible_text": [
+        "ZUMBA\u00ae BASIC 1 SCHULUNG",
+        "Werde Zumba-Trainer*in im Pr\u00e4senzkurs"
+      ],
+      "spoken_content_summary": "The speaker says instructor training can be taken in person.",
+      "changes_from_previous_chunk": "The exercise-space views change to a person against a solid pink background, with Basic 1 training text.",
+      "confidence": 0.94,
+      "evidence_refs": [
+        "frame:8",
+        "scene:13",
+        "scene:14",
+        "transcript:2",
+        "ocr:30",
+        "ocr:33",
+        "ocr:34",
+        "ocr:35",
+        "ocr:36"
+      ],
+      "uncertainties": [
+        "Only one supplied frame shows this scene."
+      ]
+    },
+    {
+      "ledger_id": "ledger:0:5",
+      "chunk_id": "chunk:0",
+      "start_seconds": 15.015,
+      "end_seconds": 17.017,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "PR\u00c4SENZKURS oder ONLINE-KURS",
+        "oder mach deine Lizenz online",
+        "IN PERSON OR ON-DEMAND"
+      ],
+      "spoken_content_summary": "The speaker offers getting the license online; at 16.62, the next transcript segment begins describing what trainees will learn.",
+      "changes_from_previous_chunk": "OCR changes from in-person Basic 1 training to in-person or online options.",
+      "confidence": 0.82,
+      "evidence_refs": [
+        "transcript:2",
+        "transcript:3",
+        "ocr:39",
+        "ocr:40",
+        "ocr:42",
+        "ocr:43",
+        "ocr:44",
+        "ocr:45",
+        "scene:15",
+        "scene:16"
+      ],
+      "uncertainties": [
+        "No supplied frame falls within this interval, so its visuals and any visible activity are not established.",
+        "The portion of the next spoken sentence before 17.017 is not separately timed."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:0",
+      "chunk_id": "chunk:1",
+      "start_seconds": 17.017,
+      "end_seconds": 20.02,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [
+        "Close views of people in an indoor space at 17.317 and 19.119"
+      ],
+      "visible_actions": [
+        "At 19.119, a person faces the camera with an open mouth."
+      ],
+      "visible_text": [
+        "BASIC STEPS",
+        "Du lernst die Grundlagen f\u00fcr die Anwendung der Zumba\u00ae-Formel um das perfekte Workout zusammenzustellen"
+      ],
+      "spoken_content_summary": "The speaker describes learning basic steps and using a formula to put together a workout.",
+      "changes_from_previous_chunk": "The text changes from in-person or online course options to basic steps and workout preparation.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:9",
+        "frame:10",
+        "transcript:3",
+        "ocr:46",
+        "ocr:47",
+        "ocr:49",
+        "ocr:50",
+        "ocr:51",
+        "ocr:52"
+      ],
+      "uncertainties": [
+        "The transcript renders the name as \u201cZoom\u201d; the visible text says \u201cZumba.\u201d",
+        "The frames do not establish activity between the two stills."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:1",
+      "chunk_id": "chunk:1",
+      "start_seconds": 20.02,
+      "end_seconds": 21.62,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [
+        "Close-up of a person wearing a dark cap at 21.588"
+      ],
+      "visible_actions": [
+        "At 21.588, the person is shown in profile with an open mouth."
+      ],
+      "visible_text": [
+        "DIE ZUMBA\u00ae-FORMEL",
+        "THE ZUMBA FORMULA"
+      ],
+      "spoken_content_summary": "The speaker finishes describing how to put together a workout.",
+      "changes_from_previous_chunk": "The prominent basic-steps text changes to Zumba-formula text.",
+      "confidence": 0.89,
+      "evidence_refs": [
+        "frame:11",
+        "transcript:3",
+        "ocr:58",
+        "ocr:59",
+        "ocr:61",
+        "ocr:62"
+      ],
+      "uncertainties": [
+        "The close-up does not establish what the person is doing beyond the captured pose."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:2",
+      "chunk_id": "chunk:1",
+      "start_seconds": 21.62,
+      "end_seconds": 25.526,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "MY FIRST CLASS\u2122",
+        "Du bekommst eine fertige Kursstunde an die Hand und kannst so sofort selbst Kurse geben"
+      ],
+      "spoken_content_summary": "The speaker says trainees receive a complete class and can start teaching right away.",
+      "changes_from_previous_chunk": "The spoken topic and OCR change from assembling a workout to receiving a ready-made class.",
+      "confidence": 0.86,
+      "evidence_refs": [
+        "transcript:4",
+        "ocr:64",
+        "ocr:65",
+        "ocr:66",
+        "ocr:67",
+        "ocr:68",
+        "ocr:81",
+        "scene:24",
+        "scene:26"
+      ],
+      "uncertainties": [
+        "No supplied frame falls in this interval; visible subjects and activity are not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:3",
+      "chunk_id": "chunk:1",
+      "start_seconds": 25.526,
+      "end_seconds": 29.53,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [
+        "At 28.795, a person in a black ZUMBA top stands against a pink background"
+      ],
+      "visible_actions": [
+        "At 28.795, the person faces the camera with an open mouth and hands visible near the lower edge of the frame."
+      ],
+      "visible_text": [
+        "ZUMBA\u00ae INSTRUCTOR NETWORK",
+        "Au\u00dferdem hast du Zugang zum ZIN f\u00fcr kontinuierlichen Support",
+        "ZUMBA on the top"
+      ],
+      "spoken_content_summary": "From 26.62, the speaker describes joining an instructor network for ongoing support.",
+      "changes_from_previous_chunk": "The ready-made-class text changes to instructor-network and support text; a person against a pink background is visible.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:12",
+        "transcript:5",
+        "ocr:90",
+        "ocr:91",
+        "ocr:92",
+        "ocr:93",
+        "ocr:94",
+        "scene:27",
+        "scene:28"
+      ],
+      "uncertainties": [
+        "The transcript renders the name as \u201cZoom\u201d; the OCR says \u201cZumba.\u201d",
+        "The supplied frame does not establish movement before or after 28.795."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:4",
+      "chunk_id": "chunk:1",
+      "start_seconds": 29.53,
+      "end_seconds": 31.62,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "JEDEN MONAT NEUE MUSIK+CHOREOS",
+        "MARKETING-TOOLS",
+        "MONTHLY MUSIC + CHOREO"
+      ],
+      "spoken_content_summary": "The speaker mentions monthly music and choreography as examples of ongoing support.",
+      "changes_from_previous_chunk": "OCR shifts from network access to monthly music, choreography, and marketing-related text.",
+      "confidence": 0.86,
+      "evidence_refs": [
+        "transcript:5",
+        "ocr:103",
+        "ocr:104",
+        "ocr:105",
+        "ocr:106",
+        "ocr:107",
+        "ocr:115",
+        "ocr:116",
+        "scene:29"
+      ],
+      "uncertainties": [
+        "No supplied frame falls in this interval, so the accompanying visuals are not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:5",
+      "chunk_id": "chunk:1",
+      "start_seconds": 31.62,
+      "end_seconds": 33.62,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "MARKETING-TOOLS",
+        "personalisierbares Marketingmaterial",
+        "MARKETING TOOLS"
+      ],
+      "spoken_content_summary": "The speaker mentions personalized marketing materials; the transcript renders this as \u201cPersonalize marking materials.\u201d",
+      "changes_from_previous_chunk": "The speech shifts from monthly music and choreography to marketing materials.",
+      "confidence": 0.84,
+      "evidence_refs": [
+        "transcript:6",
+        "ocr:105",
+        "ocr:108",
+        "ocr:109",
+        "ocr:138",
+        "ocr:139",
+        "scene:30"
+      ],
+      "uncertainties": [
+        "No supplied frame falls in this interval; visible activity is not established."
+      ]
+    },
+    {
+      "ledger_id": "ledger:1:6",
+      "chunk_id": "chunk:1",
+      "start_seconds": 33.62,
+      "end_seconds": 33.634,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "MARKETING TOOLS"
+      ],
+      "spoken_content_summary": "A new transcript segment begins about instructor apps to promote classes; only its beginning falls within this chunk.",
+      "changes_from_previous_chunk": "The spoken topic begins shifting from marketing materials to instructor apps.",
+      "confidence": 0.69,
+      "evidence_refs": [
+        "transcript:7",
+        "ocr:138",
+        "ocr:139"
+      ],
+      "uncertainties": [
+        "The transcript does not time individual words within this 0.014-second overlap.",
+        "No supplied frame establishes visuals at this moment."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:0",
+      "chunk_id": "chunk:2",
+      "start_seconds": 33.634,
+      "end_seconds": 35.62,
+      "boundary_reason": "chunk_boundary",
+      "visible_subjects_objects": [
+        "At 35.969, a phone graphic appears against an orange and pink background."
+      ],
+      "visible_actions": [],
+      "visible_text": [
+        "MARKETING TOOLS",
+        "Trainer-Apps zum Bewerben deiner Kurse"
+      ],
+      "spoken_content_summary": "The speaker mentions instructor apps for promoting classes.",
+      "changes_from_previous_chunk": "The spoken topic changes from marketing materials to instructor apps; the phone graphic is visible at 35.969.",
+      "confidence": 0.9,
+      "evidence_refs": [
+        "frame:13",
+        "transcript:7",
+        "ocr:138",
+        "ocr:139",
+        "ocr:144",
+        "ocr:145",
+        "scene:31"
+      ],
+      "uncertainties": [
+        "The frame establishes the phone graphic only at 35.969, not its appearance throughout the interval."
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:1",
+      "chunk_id": "chunk:2",
+      "start_seconds": 35.62,
+      "end_seconds": 39.54,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "SUPPORT DER COMMUNITY",
+        "Unsere globale",
+        "Trainer-Community",
+        "steht hinter dir",
+        "COMMUNITY SUPPORT"
+      ],
+      "spoken_content_summary": "The speaker says a global instructor community offers support.",
+      "changes_from_previous_chunk": "Speech and OCR change from instructor apps to community support.",
+      "confidence": 0.84,
+      "evidence_refs": [
+        "transcript:8",
+        "ocr:162",
+        "ocr:170",
+        "ocr:172",
+        "ocr:181",
+        "ocr:182",
+        "ocr:184",
+        "scene:32",
+        "scene:33"
+      ],
+      "uncertainties": [
+        "No supplied frame falls within the community-support text interval.",
+        "The transcript says \u201cGlobe Instructor community\u201d; the OCR reads \u201cUnsere globale Trainer-Community.\u201d"
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:2",
+      "chunk_id": "chunk:2",
+      "start_seconds": 39.54,
+      "end_seconds": 41.62,
+      "boundary_reason": "ocr_change",
+      "visible_subjects_objects": [],
+      "visible_actions": [],
+      "visible_text": [
+        "TRAINERLIZENZ",
+        "deine Trainerlizenz",
+        "verf\u00e4llt nie",
+        "ZUMBA TEACHING LICENSE"
+      ],
+      "spoken_content_summary": "The speaker says the license to teach does not expire.",
+      "changes_from_previous_chunk": "The prominent OCR changes from community support to the teaching license.",
+      "confidence": 0.85,
+      "evidence_refs": [
+        "transcript:8",
+        "ocr:187",
+        "ocr:190",
+        "ocr:191",
+        "ocr:193",
+        "ocr:194",
+        "ocr:195",
+        "scene:34",
+        "scene:35"
+      ],
+      "uncertainties": [
+        "No supplied frame falls within this text interval.",
+        "The transcript renders \u201cnever aspires\u201d; the OCR says \u201cverf\u00e4llt nie.\u201d"
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:3",
+      "chunk_id": "chunk:2",
+      "start_seconds": 41.62,
+      "end_seconds": 45.62,
+      "boundary_reason": "transcript_change",
+      "visible_subjects_objects": [
+        "At 43.177, a smiling person in a bright green ZUMBA top is shown in close-up."
+      ],
+      "visible_actions": [
+        "At 43.177, the person has an open mouth."
+      ],
+      "visible_text": [
+        "Mach den ersten Schritt und",
+        "werdenoch heute Trainer*in",
+        "ZUMBA on the top"
+      ],
+      "spoken_content_summary": "The speaker asks the listener to become an instructor today.",
+      "changes_from_previous_chunk": "Speech changes from the teaching license to a request to become an instructor; a person appears in the supplied frame.",
+      "confidence": 0.91,
+      "evidence_refs": [
+        "frame:14",
+        "transcript:9",
+        "ocr:199",
+        "ocr:200",
+        "scene:35",
+        "scene:36",
+        "scene:37"
+      ],
+      "uncertainties": [
+        "The frame does not establish the person's movement before or after 43.177.",
+        "The transcript's \u201cMake your moves\u201d differs from the German OCR's \u201cMach den ersten Schritt.\u201d"
+      ]
+    },
+    {
+      "ledger_id": "ledger:2:4",
+      "chunk_id": "chunk:2",
+      "start_seconds": 46.547,
+      "end_seconds": 50.35,
+      "boundary_reason": "scene_boundary",
+      "visible_subjects_objects": [
+        "A purple full-screen graphic is visible at 48.382 and 50.284."
+      ],
+      "visible_actions": [],
+      "visible_text": [
+        "ZUMBA",
+        "BECOME AN INSTRUCTOR"
+      ],
+      "spoken_content_summary": "No transcript segment is supplied for this interval.",
+      "changes_from_previous_chunk": "The close-up is replaced by a purple text graphic in the supplied stills.",
+      "confidence": 0.96,
+      "evidence_refs": [
+        "frame:15",
+        "frame:16",
+        "ocr:208",
+        "ocr:213",
+        "ocr:215",
+        "scene:38"
+      ],
+      "uncertainties": [
+        "The supplied stills do not establish the exact moment the purple graphic appeared.",
+        "OCR ends at 50.35, slightly before the chunk ends."
+      ],
+      "timing_adjustment": {
+        "reason": "clamped_to_substantive_evidence_envelope",
+        "model_start_seconds": 46.547,
+        "model_end_seconds": 50.369
+      }
+    }
+  ]
+}

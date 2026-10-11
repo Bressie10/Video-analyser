@@ -1,0 +1,3038 @@
+{
+  "scope": "Descriptive contract audit of accepted candidates only; no human truth or accuracy estimate",
+  "sources": [
+    {
+      "source_ref": "01",
+      "status": "pass",
+      "failures": [],
+      "ledger_support_failures": 0,
+      "frame_coverage": {
+        "selected_frame_count": 16,
+        "largest_frame_gap_seconds": 3.967
+      },
+      "formats": [
+        "format.product_demo"
+      ],
+      "hooks": [
+        "hook.bold_claim"
+      ],
+      "ctas": [
+        "cta.product",
+        "cta.verbal",
+        "cta.visual"
+      ],
+      "structure_roles": [
+        "hook",
+        "explanation",
+        "demonstration",
+        "proof",
+        "explanation",
+        "proof",
+        "explanation",
+        "cta"
+      ],
+      "uncertainty_count": 4,
+      "uncertainties": [
+        "The spoken fragrance name appears mistranscribed and differs from the on-screen spelling.",
+        "Sparse still frames do not establish spraying, inhalation, hand movement, or the exact timing of camera address.",
+        "The website view establishes a visible product page, not viewer interaction or a screen recording.",
+        "The final CTA's request is supported through the spoken 'grab yours' and its displayed caption; the later 'sell out quickly' wording supplies urgency, not a separate request."
+      ],
+      "cta_events": [
+        {
+          "interval": [
+            25.68,
+            28.4
+          ],
+          "action": "Grab or buy the fragrance for yourself.",
+          "labels": [
+            "cta.verbal",
+            "cta.visual",
+            "cta.product"
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "time": [
+            0.1,
+            2.48
+          ],
+          "visual": [
+            "A woman seated in a car",
+            "A rectangular bottle with a silver-colored top",
+            "The woman holds the bottle in front of her chest at frame:1 and frame:2."
+          ],
+          "text": [
+            "This is the best",
+            "Barracat Rouge dupe"
+          ],
+          "spoken": "The speaker says this is the best \u201cBack Rat Root Shoot\u201d she has found; the name is uncertain in the transcript."
+        },
+        {
+          "time": [
+            2.533,
+            6.3
+          ],
+          "visual": [
+            "A rectangular bottle",
+            "A white box",
+            "A hand holds the bottle beside the box at frame:3.",
+            "Hands hold the bottle at frame:4."
+          ],
+          "text": [
+            "461",
+            "THE ESSENCE VAULT"
+          ],
+          "spoken": "The speaker says number 461 by the Essence Vault is inspired by \u201cBack Rat Root.\u201d"
+        },
+        {
+          "time": [
+            6.3,
+            9.1
+          ],
+          "visual": [
+            "A woman seated in a car",
+            "A rectangular bottle",
+            "The woman holds the bottle in front of her at frame:5.",
+            "The woman holds the bottle close to her nose with her eyes closed at frame:6."
+          ],
+          "text": [
+            "the same notes",
+            "and it smells"
+          ],
+          "spoken": "The speaker says it has all the same notes and smells just like it."
+        },
+        {
+          "time": [
+            9.68,
+            11.76
+          ],
+          "visual": [],
+          "text": [
+            "I literally",
+            "can't get over"
+          ],
+          "spoken": "The speaker says she cannot get over how good it smells."
+        },
+        {
+          "time": [
+            11.9,
+            14.233
+          ],
+          "visual": [
+            "Several rectangular bottles with silver-colored tops; one centered bottle is labeled 82."
+          ],
+          "text": [
+            "82",
+            "make all of their"
+          ],
+          "spoken": "The speaker says the Essence Vault makes all its perfumes strong."
+        },
+        {
+          "time": [
+            14.233,
+            15.867
+          ],
+          "visual": [
+            "A rectangular bottle labeled THE ESSENCE VAULT and 461 on a white surface",
+            "A hand beside the bottle",
+            "A hand touches the bottle at frame:8 and frame:9."
+          ],
+          "text": [
+            "THE ESSENCE VAULT",
+            "461"
+          ],
+          "spoken": "The speaker says the perfumes have the same high-quality ingredients."
+        },
+        {
+          "time": [
+            15.867,
+            17.84
+          ],
+          "visual": [],
+          "text": [
+            "it can just",
+            "be way cheaper"
+          ],
+          "spoken": "The speaker says it can be much cheaper because they are not paying for something; the explanation continues after this interval."
+        },
+        {
+          "time": [
+            17.84,
+            19.133
+          ],
+          "visual": [
+            "A woman seated in a car",
+            "A rectangular bottle with a silver-colored top",
+            "The woman holds the bottle at frame:10."
+          ],
+          "text": [
+            "for the crazy",
+            "designer label"
+          ],
+          "spoken": "The speaker continues that they are not paying for the expensive designer label and marketing retail costs; the sentence extends beyond this chunk."
+        },
+        {
+          "time": [
+            19.133,
+            21.04
+          ],
+          "visual": [],
+          "text": [
+            "designer label",
+            "and marketing"
+          ],
+          "spoken": "The speaker finishes saying they are not paying for the designer label, marketing, and retail costs."
+        },
+        {
+          "time": [
+            21.04,
+            23.44
+          ],
+          "visual": [
+            "A woman seated in a car",
+            "A rectangular bottle",
+            "The woman holds the bottle at frame:11."
+          ],
+          "text": [
+            "this gets",
+            "me compliments"
+          ],
+          "spoken": "The speaker says she gets compliments every time she wears it."
+        },
+        {
+          "time": [
+            23.44,
+            24.367
+          ],
+          "visual": [
+            "A woman seated in a car",
+            "A rectangular bottle",
+            "The woman holds the bottle and points a finger toward the camera at frame:12."
+          ],
+          "text": [
+            "and you can",
+            "only buy it on"
+          ],
+          "spoken": "The speaker begins saying it can only be bought on the Essence Vault website."
+        },
+        {
+          "time": [
+            24.367,
+            25.68
+          ],
+          "visual": [
+            "A laptop displaying a product page for a bottle labeled 461",
+            "A hand holding a rectangular bottle labeled 461 in front of the laptop"
+          ],
+          "text": [
+            "Inspired By Baracatt Rouge 540 - 461",
+            "461"
+          ],
+          "spoken": "The speaker finishes saying it can only be bought on the Essence Vault website."
+        },
+        {
+          "time": [
+            25.68,
+            27.4
+          ],
+          "visual": [
+            "A laptop showing a product page",
+            "A hand holding a rectangular bottle labeled 461",
+            "A hand holds the bottle in front of the laptop at frame:13."
+          ],
+          "text": [
+            "Inspired By Baracatt Rouge 540 - 461",
+            "461"
+          ],
+          "spoken": "The speaker asks viewers to grab theirs, saying they sell out quickly."
+        },
+        {
+          "time": [
+            27.4,
+            28.6
+          ],
+          "visual": [
+            "A woman seated in a car",
+            "A rectangular bottle labeled 461",
+            "The woman holds the bottle at frame:14 and frame:15.",
+            "Her other hand is raised with fingers apart at frame:14 and frame:15."
+          ],
+          "text": [
+            "out so quickly",
+            "461"
+          ],
+          "spoken": "The speaker finishes saying they sell out quickly; the supplied transcript ends at 28.4 seconds."
+        }
+      ]
+    },
+    {
+      "source_ref": "03",
+      "status": "pass",
+      "failures": [],
+      "ledger_support_failures": 0,
+      "frame_coverage": {
+        "selected_frame_count": 18,
+        "largest_frame_gap_seconds": 6.84
+      },
+      "formats": [],
+      "hooks": [
+        "hook.bold_claim",
+        "hook.visual"
+      ],
+      "ctas": [],
+      "structure_roles": [
+        "hook",
+        "setup",
+        "problem",
+        "explanation",
+        "explanation",
+        "explanation",
+        "payoff",
+        "explanation"
+      ],
+      "uncertainty_count": 4,
+      "uncertainties": [
+        "Sparse still frames do not establish continuous gestures, camera address, or precise visual cut times.",
+        "The references of 'here' at 24.024\u201327.027 seconds are not established.",
+        "OCR and transcript differ in several places, notably the final sentence; no source-audio technique is inferred.",
+        "No physical viewer-directed CTA request is established."
+      ],
+      "cta_events": [],
+      "observations": [
+        {
+          "time": [
+            0.0,
+            1.001
+          ],
+          "visual": [
+            "Person beside a whiteboard on a stage",
+            "People seated at tables"
+          ],
+          "text": [
+            "ACT AS IF"
+          ],
+          "spoken": "The speaker begins, \u201cAct as if all your dreams have come true\u2026\u201d"
+        },
+        {
+          "time": [
+            1.001,
+            2.503
+          ],
+          "visual": [
+            "Sailboat on water",
+            "Hand holding sunglasses against a water background",
+            "A hand holds sunglasses."
+          ],
+          "text": [
+            "ALL YOUR DREAMS",
+            "HAVE COME TRUE"
+          ],
+          "spoken": "The sentence continues about dreams having come true."
+        },
+        {
+          "time": [
+            2.503,
+            3.504
+          ],
+          "visual": [
+            "Woman in a pink top standing on a paved walkway",
+            "The woman stands facing the camera."
+          ],
+          "text": [
+            "AND THEN",
+            "CHALLENGE"
+          ],
+          "spoken": "The speaker says, \u201c\u2026and then challenge\u2026\u201d"
+        },
+        {
+          "time": [
+            3.504,
+            5.52
+          ],
+          "visual": [
+            "Close view of a person in a dark jacket wearing a headset microphone"
+          ],
+          "text": [
+            "YOUR REALITY",
+            "TO CATCH UP."
+          ],
+          "spoken": "The speaker completes the sentence: \u201c\u2026your reality to catch up.\u201d"
+        },
+        {
+          "time": [
+            5.52,
+            7.007
+          ],
+          "visual": [
+            "Person in a dark jacket near a projection screen",
+            "The person is bent forward in the supplied frame."
+          ],
+          "text": [
+            "INSTEADOF",
+            "THINKING,"
+          ],
+          "spoken": "The speaker begins, \u201cInstead of thinking\u2026\u201d"
+        },
+        {
+          "time": [
+            7.007,
+            9.009
+          ],
+          "visual": [
+            "Person in a dark jacket near a projection screen",
+            "The person is bent forward in the supplied frame."
+          ],
+          "text": [
+            "THIS IS WHERE",
+            "I AM AT."
+          ],
+          "spoken": "The speaker says, \u201cThis is where I am at.\u201d"
+        },
+        {
+          "time": [
+            9.009,
+            10.48
+          ],
+          "visual": [],
+          "text": [
+            "LET'S SAY",
+            "THIS IS WHERE"
+          ],
+          "spoken": "The speaker says, \u201cLet's say this is where you're at.\u201d"
+        },
+        {
+          "time": [
+            10.48,
+            12.012
+          ],
+          "visual": [
+            "Close view of a man's face and hand",
+            "His finger rests near his eyebrow in the supplied frame."
+          ],
+          "text": [
+            "NOT HAPPY,"
+          ],
+          "spoken": "The speaker says, \u201cNot happy\u2026\u201d"
+        },
+        {
+          "time": [
+            12.012,
+            14.014
+          ],
+          "visual": [],
+          "text": [
+            "NOT SATISFIED WITH",
+            "WHERE YOU ARE."
+          ],
+          "spoken": "The speaker says, \u201c\u2026not satisfied with where you are.\u201d"
+        },
+        {
+          "time": [
+            14.014,
+            15.849
+          ],
+          "visual": [
+            "Person at a whiteboard on a stage",
+            "People seated at tables",
+            "The person stands facing the whiteboard with an arm raised in the supplied frame."
+          ],
+          "text": [
+            "YOU WANT TO",
+            "GET TO"
+          ],
+          "spoken": "The speaker says, \u201cYou want to get to where you want to go.\u201d"
+        },
+        {
+          "time": [
+            15.849,
+            17.918
+          ],
+          "visual": [],
+          "text": [
+            "WHEN YOU ACT",
+            "AS IF ALL"
+          ],
+          "spoken": "The speaker begins repeating the earlier idea: \u201cWhen you act as if all your dreams have come true and then challenge\u2026\u201d The supplied transcript continues beyond the chunk."
+        },
+        {
+          "time": [
+            17.918,
+            20.02
+          ],
+          "visual": [],
+          "text": [
+            "AND THEN",
+            "CHALLENGE"
+          ],
+          "spoken": "The speaker completes the repeated sentence: \u201c\u2026and then challenge reality to catch up.\u201d"
+        },
+        {
+          "time": [
+            20.02,
+            22.022
+          ],
+          "visual": [
+            "Person in a dark jacket wearing a headset microphone",
+            "Curtain",
+            "The person has one arm extended in the supplied frame."
+          ],
+          "text": [
+            "THE MOST",
+            "DIFFICULT"
+          ],
+          "spoken": "The speaker says, \u201cThe most difficult thing to do is\u2026\u201d"
+        },
+        {
+          "time": [
+            22.022,
+            24.024
+          ],
+          "visual": [],
+          "text": [
+            "HOW COULD YOU",
+            "MAKE DECISIONS"
+          ],
+          "spoken": "The speaker asks how someone could make decisions."
+        },
+        {
+          "time": [
+            24.024,
+            27.027
+          ],
+          "visual": [],
+          "text": [
+            "NOT FROM HERE,",
+            "BUT FROM HERE?"
+          ],
+          "spoken": "The speaker contrasts making decisions \u201cnot from here, but from here.\u201d"
+        },
+        {
+          "time": [
+            27.027,
+            29.029
+          ],
+          "visual": [
+            "Person in a dark jacket beside a flip chart",
+            "Seated people in the foreground",
+            "The person stands with an arm extended toward the flip chart in the supplied frame."
+          ],
+          "text": [
+            "YOU HAVE A",
+            "$250K BUSINESS."
+          ],
+          "spoken": "The speaker introduces an example: \u201cYou have a $250,000 business.\u201d"
+        },
+        {
+          "time": [
+            29.029,
+            32.533
+          ],
+          "visual": [],
+          "text": [
+            "AS YOU'RE",
+            "EXPANDING"
+          ],
+          "spoken": "The speaker says that, while expanding, someone may think the business is growing."
+        },
+        {
+          "time": [
+            32.533,
+            35.035
+          ],
+          "visual": [
+            "Close view of a person wearing round glasses",
+            "Hands near the person's mouth",
+            "The person's hands rest near their mouth in the supplied frame."
+          ],
+          "text": [
+            "CANIAFFORD",
+            "TO HIRE"
+          ],
+          "spoken": "The speaker asks, \u201cCould I afford to hire that person?\u201d"
+        },
+        {
+          "time": [
+            35.035,
+            36.703
+          ],
+          "visual": [],
+          "text": [
+            "CANIAFFORD",
+            "TO DO THAT"
+          ],
+          "spoken": "The speaker asks whether they could afford to do that marketing."
+        },
+        {
+          "time": [
+            36.703,
+            38.539
+          ],
+          "visual": [],
+          "text": [
+            "MAYBE NOT.",
+            "I DON'T KNOW."
+          ],
+          "spoken": "The speaker says, \u201cMaybe not. I don't know.\u201d"
+        },
+        {
+          "time": [
+            38.539,
+            40.04
+          ],
+          "visual": [],
+          "text": [
+            "I'M NOT",
+            "SO SURE.\""
+          ],
+          "spoken": "The speaker says, \u201cI'm not so sure.\u201d"
+        },
+        {
+          "time": [
+            40.04,
+            41.041
+          ],
+          "visual": [
+            "Person in a dark jacket",
+            "Flip chart",
+            "At 40.974 seconds, the person has one arm extended toward the flip chart and holds a small object in the other hand."
+          ],
+          "text": [
+            "LET ME ASK YOU",
+            "A QUESTION,"
+          ],
+          "spoken": "The speaker says, \u201cLet me ask a question.\u201d"
+        },
+        {
+          "time": [
+            41.041,
+            44.545
+          ],
+          "visual": [],
+          "text": [
+            "IF YOU RUN",
+            "A $5 MILLION"
+          ],
+          "spoken": "The speaker asks how someone running a five-million-dollar business today would make those decisions."
+        },
+        {
+          "time": [
+            44.545,
+            47.047
+          ],
+          "visual": [],
+          "text": [
+            "THE KEY IS",
+            "HOW DO WE"
+          ],
+          "spoken": "The speaker asks how to trick our minds."
+        },
+        {
+          "time": [
+            47.047,
+            48.048
+          ],
+          "visual": [
+            "Person in a dark jacket",
+            "Flip chart with drawn marks",
+            "At 47.147 and 47.781 seconds, the person's arm is extended toward the flip chart."
+          ],
+          "text": [
+            "SO WE MAKE",
+            "DECISIONS"
+          ],
+          "spoken": "The speaker says, \u201cSo we make decisions\u2026\u201d"
+        },
+        {
+          "time": [
+            48.048,
+            50.05
+          ],
+          "visual": [],
+          "text": [
+            "FROM WHERE",
+            "WE WANT TO GO,"
+          ],
+          "spoken": "The speaker says decisions should be made from where we want to go."
+        },
+        {
+          "time": [
+            50.05,
+            51.051
+          ],
+          "visual": [],
+          "text": [
+            "NOT FROM",
+            "WHERE WE ARE."
+          ],
+          "spoken": "The speaker contrasts that with making decisions from where we are."
+        },
+        {
+          "time": [
+            51.051,
+            53.053
+          ],
+          "visual": [
+            "Person in a dark jacket near a flip chart",
+            "Seated people",
+            "At 52.619 seconds, the person stands near the flip chart with an arm extended toward it; people are seated at tables."
+          ],
+          "text": [
+            "THAT'S THE",
+            "IDENTITY SHIFT."
+          ],
+          "spoken": "The speaker says, \u201cThat's the identity shift.\u201d"
+        },
+        {
+          "time": [
+            53.053,
+            54.613
+          ],
+          "visual": [
+            "Person in a dark jacket wearing a headset microphone",
+            "Flip chart",
+            "At 53.153 seconds, the person stands near the flip chart with an arm extended toward it.",
+            "At 54.521 seconds, the person's arm is extended toward the edge of the flip chart."
+          ],
+          "text": [
+            "EASY TO SAY,",
+            "NOT EASY TO DO."
+          ],
+          "spoken": "The speaker says it is easy to say and refers to doing it; the transcript wording is \u201cnow it's in the do.\u201d"
+        }
+      ]
+    },
+    {
+      "source_ref": "04",
+      "status": "pass",
+      "failures": [],
+      "ledger_support_failures": 0,
+      "frame_coverage": {
+        "selected_frame_count": 29,
+        "largest_frame_gap_seconds": 7.292
+      },
+      "formats": [
+        "format.before_after",
+        "format.product_demo"
+      ],
+      "hooks": [
+        "hook.curiosity_gap"
+      ],
+      "ctas": [
+        "cta.product",
+        "cta.verbal",
+        "cta.verbal",
+        "cta.visual",
+        "cta.visual"
+      ],
+      "structure_roles": [
+        "hook",
+        "setup",
+        "demonstration",
+        "demonstration",
+        "demonstration",
+        "demonstration",
+        "payoff",
+        "payoff",
+        "demonstration",
+        "demonstration",
+        "demonstration",
+        "payoff",
+        "cta",
+        "proof",
+        "cta"
+      ],
+      "uncertainty_count": 4,
+      "uncertainties": [
+        "Sparse stills do not establish continuous motion, how changes between frames occurred, or activity in intervals without supplied frames.",
+        "The long 'Bye' transcript segments do not locate that word precisely or identify its speaker.",
+        "The purchased item's identity, the card or packet's printed text, and whether the closing speaker addresses the camera are not established.",
+        "'One purchase funds 20 meals' is an on-screen and spoken claim, not independently verified evidence of meals delivered."
+      ],
+      "cta_events": [
+        {
+          "interval": [
+            132.16,
+            133.16
+          ],
+          "action": "Help the speaker wear love and spread love.",
+          "labels": [
+            "cta.verbal",
+            "cta.visual"
+          ]
+        },
+        {
+          "interval": [
+            136.16,
+            138.5
+          ],
+          "action": "Join the movement and buy yours today.",
+          "labels": [
+            "cta.verbal",
+            "cta.visual",
+            "cta.product"
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "time": [
+            0.0,
+            2.542
+          ],
+          "visual": [
+            "A man in a white shirt and red shorts on a road",
+            "A man in a red shirt seated beside a wall",
+            "At frame:0 and frame:1, the man in white faces the seated man with an arm extended."
+          ],
+          "text": [
+            "POV: Beautiful Transformation incoming \u2764\ufe0f",
+            "Text on the back of the white shirt appears to read \u201cChoose Today\u201d"
+          ],
+          "spoken": "No supplied speech in this interval."
+        },
+        {
+          "time": [
+            2.542,
+            5.5
+          ],
+          "visual": [
+            "The seated man in red",
+            "The man in white and red shorts",
+            "At frame:2, both men have their hands raised toward one another."
+          ],
+          "text": [
+            "POV: Beautiful Transformation incoming \u2764\ufe0f"
+          ],
+          "spoken": "No supplied speech in this interval."
+        },
+        {
+          "time": [
+            6.5,
+            7.292
+          ],
+          "visual": [
+            "The two men beside the roadside wall",
+            "An elevated roadway",
+            "At frame:3, the man in white supports the man in red, whose arm is around his shoulders.",
+            "At frame:4, the man in white holds the man in red across his arms."
+          ],
+          "text": [
+            "A small \u201cVIDEOLEE\u201d mark near the top of the frames"
+          ],
+          "spoken": "No supplied speech in this interval."
+        },
+        {
+          "time": [
+            7.5,
+            10.375
+          ],
+          "visual": [
+            "The two men",
+            "Roadside wall and posters"
+          ],
+          "text": [
+            "OCR variously reads \u201cVIDEOLEE\u201d and similar forms."
+          ],
+          "spoken": "No supplied speech in this interval."
+        },
+        {
+          "time": [
+            10.5,
+            11.5
+          ],
+          "visual": [
+            "The two men on a blue patterned mat beside the road",
+            "Wall poster",
+            "At frame:5, the man in red braces a hand on the mat while the man in white supports him."
+          ],
+          "text": [
+            "A wall poster includes \u201cELARA IVF\u201d"
+          ],
+          "spoken": "No supplied speech in this interval."
+        },
+        {
+          "time": [
+            14.583,
+            14.583
+          ],
+          "visual": [
+            "The formerly red-shirted man seated shirtless on the blue mat",
+            "The man in white holding a red shirt",
+            "At frame:6, the man in white holds the red shirt above the seated man."
+          ],
+          "text": [
+            "A small \u201cVIDEOLEE\u201d mark near the top"
+          ],
+          "spoken": "No supplied speech in this interval."
+        },
+        {
+          "time": [
+            15.5,
+            16.708
+          ],
+          "visual": [
+            "The shirtless seated man",
+            "The man in white",
+            "At frame:7, the man in white holds a clipper against the seated man's hair."
+          ],
+          "text": [
+            "A small top-of-frame mark, read inconsistently by OCR as \u201cVIDLOLEE\u201d and similar text"
+          ],
+          "spoken": "A voice says, \u201cGood job,\u201d from 15.98 to 16.98 seconds."
+        },
+        {
+          "time": [
+            16.708,
+            18.417
+          ],
+          "visual": [
+            "The seated man with hair gathered upward",
+            "Another person's hands and a black clipper",
+            "At frame:7, a clipper rests against the seated man's hair.",
+            "At frame:8, hands hold up the seated man's hair while a clipper is near his head."
+          ],
+          "text": [
+            "A small \u201cVIDEOLEE\u201d mark is visible near the top"
+          ],
+          "spoken": "A voice says, \u201cGood job.\u201d The supplied transcript begins a second \u201cGood job\u201d at 16.98 seconds."
+        },
+        {
+          "time": [
+            18.417,
+            22.125
+          ],
+          "visual": [
+            "The shirtless seated man",
+            "Another person's arm, hand, and clipper",
+            "At frame:8, a hand holds the man's gathered hair near a clipper."
+          ],
+          "text": [
+            "OCR reads \u201cVIDEOLEE\u201d or a similar top-of-frame mark."
+          ],
+          "spoken": "The second transcript segment contains \u201cGood job\u201d and spans this interval."
+        },
+        {
+          "time": [
+            22.125,
+            23.583
+          ],
+          "visual": [
+            "The shirtless seated man",
+            "Another person's hands",
+            "At frame:9, one hand holds the man's hair up while the other holds a clipper beside it."
+          ],
+          "text": [
+            "A small top-of-frame mark read by OCR as \u201cVIDEQLEE\u201d or \u201c\u00a9 VIDEOLEE\u201d"
+          ],
+          "spoken": "The supplied second \u201cGood job\u201d transcript segment continues across this interval."
+        },
+        {
+          "time": [
+            23.583,
+            28.67
+          ],
+          "visual": [],
+          "text": [
+            "OCR repeatedly reads a small mark as \u201cVIDEOLEE\u201d or similar.",
+            "OCR includes \u201cELARA\u201d and partial vehicle-plate text."
+          ],
+          "spoken": "The supplied transcript segment says \u201cGood job.\u201d"
+        },
+        {
+          "time": [
+            28.67,
+            29.67
+          ],
+          "visual": [
+            "A shirtless seated man with short hair and gray facial hair",
+            "Two other people's hands",
+            "At frame:10, one hand rests on the seated man's hair while another holds a clipper against his beard."
+          ],
+          "text": [
+            "A small top-of-frame mark reads \u201cVIDEOLEE\u201d or a similar form."
+          ],
+          "spoken": "A voice says, \u201cGood job.\u201d"
+        },
+        {
+          "time": [
+            29.67,
+            30.67
+          ],
+          "visual": [],
+          "text": [
+            "OCR reads \u201c\u00a9 VIDEOLEE.\u201d"
+          ],
+          "spoken": "A voice says, \u201cGood job.\u201d"
+        },
+        {
+          "time": [
+            30.67,
+            36.458
+          ],
+          "visual": [
+            "At frame:11, a man in a white shirt and red shorts and a shirtless man are on a blue patterned mat beside a road.",
+            "A light-blue bucket, a vehicle, and roadside signs are visible.",
+            "At frame:11, the man in white crouches beside the bucket with his hands on its rim; the shirtless man sits on the mat."
+          ],
+          "text": [
+            "At frame:11, a roadside sign reads \u201cLEARNING WINGS\u201d; another sign includes \u201cELARA IVF.\u201d",
+            "OCR reads \u201cVIDEOLEE\u201d and similar variants."
+          ],
+          "spoken": "A transcript segment beginning at 30.67 seconds says \u201cBye.\u201d"
+        },
+        {
+          "time": [
+            36.458,
+            43.75
+          ],
+          "visual": [
+            "At frame:11, the two men, blue bucket, and patterned mat remain visible.",
+            "At frame:11, the man in white has his hands on the bucket rim while the shirtless man sits nearby."
+          ],
+          "text": [
+            "OCR includes partial readings of \u201cELARA IVF\u201d and \u201cLEARNING WINGS,\u201d along with variants of \u201cVIDEOLEE.\u201d"
+          ],
+          "spoken": "The supplied transcript segment containing \u201cBye\u201d continues across this interval."
+        },
+        {
+          "time": [
+            43.75,
+            45.458
+          ],
+          "visual": [
+            "The man in a white shirt and red shorts",
+            "The seated man, with white foam on his face and upper body",
+            "At frame:12, the man in white crouches beside the seated man and holds a pink item against his raised arm."
+          ],
+          "text": [
+            "A roadside sign reads \u201cLEARNING WINGS\u201d and contains smaller text and numbers; OCR includes \u201cJODNPUR\u201d and \u201c84.\u201d"
+          ],
+          "spoken": "The supplied transcript segment containing \u201cBye\u201d continues across this interval."
+        },
+        {
+          "time": [
+            45.458,
+            51.125
+          ],
+          "visual": [
+            "At frame:13, a seated shirtless man has white foam on his face and upper body.",
+            "Another person's arms and a pink cloth are beside his face.",
+            "At frame:13, a hand holds the pink cloth against the seated man's neck and jaw."
+          ],
+          "text": [
+            "OCR reads variants of \u201cVIDEOLEE\u201d and \u201cELARA IVF.\u201d"
+          ],
+          "spoken": "The transcript segment containing \u201cBye\u201d spans this interval; it does not locate the utterance more precisely."
+        },
+        {
+          "time": [
+            51.125,
+            58.917
+          ],
+          "visual": [
+            "At frame:14, the seated man has short hair and little visible foam on his face.",
+            "A second person in a white shirt and red shorts is beside him.",
+            "At frame:14, the seated man holds an edge of the towel near his shoulder while the second person has an arm against the towel."
+          ],
+          "text": [
+            "OCR reads \u201cELARA IVF\u201d and variants of \u201cVIDEOLEE.\u201d"
+          ],
+          "spoken": "The supplied transcript segment containing \u201cBye\u201d continues; no new spoken topic is supplied."
+        },
+        {
+          "time": [
+            58.917,
+            66.52
+          ],
+          "visual": [
+            "At frame:15, the man wears a light-colored shirt and sits on the blue patterned mat.",
+            "The person in a white shirt and red shorts crouches beside him.",
+            "At frame:15, the crouching person holds a large pale sheet or towel while the other man sits nearby."
+          ],
+          "text": [
+            "A wall poster reads \u201cELARA IVF.\u201d",
+            "OCR also reads parts of \u201cLEARNING WINGS,\u201d \u201c84,\u201d and variants of \u201cVIDEOLEE.\u201d"
+          ],
+          "spoken": "The transcript segment containing \u201cBye\u201d continues to 66.52 seconds."
+        },
+        {
+          "time": [
+            66.52,
+            68.708
+          ],
+          "visual": [],
+          "text": [
+            "OCR reads \u201cELARA IVF\u201d and \u201c84\u201d in this interval."
+          ],
+          "spoken": "A new transcript segment begins at 66.52 seconds and contains \u201cBye.\u201d"
+        },
+        {
+          "time": [
+            68.708,
+            70.292
+          ],
+          "visual": [],
+          "text": [
+            "OCR reads \u201c84\u201d and fragments including \u201c2500\u201d and \u201cEL.\u201d"
+          ],
+          "spoken": "The transcript segment containing \u201cBye\u201d spans this interval; its exact timing and speaker are not established."
+        },
+        {
+          "time": [
+            70.292,
+            73.833
+          ],
+          "visual": [
+            "At frame:16, a seated man in a light-colored shirt wears a yellow-and-orange flower garland.",
+            "A second person with light hair and a white shirt is close to him; a road and wall are behind them.",
+            "At frame:16, the second person's hands are near the seated man's shoulders and garland."
+          ],
+          "text": [
+            "OCR reads \u201cLEARNING WINGS,\u201d \u201c84,\u201d and variants of \u201cVIDEOLEE.\u201d"
+          ],
+          "spoken": "The same transcript segment contains \u201cBye\u201d; no new spoken topic is supplied."
+        },
+        {
+          "time": [
+            73.833,
+            79.875
+          ],
+          "visual": [],
+          "text": [
+            "OCR reads variants of \u201cVIDEOLEE.\u201d"
+          ],
+          "spoken": "No transcript change is supplied; the segment containing \u201cBye\u201d continues."
+        },
+        {
+          "time": [
+            79.875,
+            83.167
+          ],
+          "visual": [
+            "At frame:17, the garlanded man sits on a blue patterned mat beside a wheelchair.",
+            "The light-haired person in a white shirt and red shorts stands behind the wheelchair.",
+            "At frame:17, the standing person has both hands on the wheelchair handles."
+          ],
+          "text": [
+            "A wall poster reads \u201cELARA IVF.\u201d",
+            "OCR also reads variants of \u201cVIDEOLEE.\u201d"
+          ],
+          "spoken": "No transcript change is supplied; the segment containing \u201cBye\u201d continues."
+        },
+        {
+          "time": [
+            83.167,
+            87.042
+          ],
+          "visual": [],
+          "text": [
+            "OCR reads \u201cELARA IVF\u201d and fragments resembling \u201cVIDEOLEE.\u201d"
+          ],
+          "spoken": "No transcript change is supplied; the segment containing \u201cBye\u201d continues."
+        },
+        {
+          "time": [
+            87.042,
+            91.875
+          ],
+          "visual": [
+            "At frame:18, the garlanded man is positioned at the open rear of a white vehicle, with a wheelchair beneath and beside him.",
+            "The light-haired person in a white shirt and red shorts is bent beside the wheelchair.",
+            "At frame:18, the garlanded man has one hand on the wheelchair and one leg raised toward the vehicle interior.",
+            "At frame:18, the second person has a hand on the wheelchair."
+          ],
+          "text": [
+            "OCR reads variants of \u201cVIDEOLEE\u201d; several other OCR fragments are unclear."
+          ],
+          "spoken": "No transcript change is supplied; the segment containing \u201cBye\u201d continues."
+        },
+        {
+          "time": [
+            91.875,
+            94.833
+          ],
+          "visual": [
+            "At frame:19, the garlanded man sits at the open rear of a white vehicle with one leg extended.",
+            "Another person's hands, a bottle, and a white cloth are visible near his exposed knee.",
+            "At frame:19, a hand holds a tilted bottle over the man's knee, with liquid visible on the knee and dripping below it.",
+            "Another hand holds a white cloth below the knee."
+          ],
+          "text": [
+            "\u201cVIDEOLEE\u201d appears near the top of frame:19; OCR also gives variants of that text."
+          ],
+          "spoken": "The supplied transcript segment contains \u201cBye,\u201d but does not establish when within its long span it was said."
+        },
+        {
+          "time": [
+            94.833,
+            101.625
+          ],
+          "visual": [],
+          "text": [
+            "OCR repeatedly reads \u201cVIDEOLEE\u201d or close variants; two additional fragments read \u201cktterth\u201d and \u201cutterf.\u201d"
+          ],
+          "spoken": "No new spoken content is established; the same long transcript segment contains \u201cBye.\u201d"
+        },
+        {
+          "time": [
+            101.625,
+            105.125
+          ],
+          "visual": [
+            "At frame:20, the garlanded man sits at the open rear of the white vehicle with his leg extended.",
+            "A light-haired person in a white shirt and red shorts is beside the vehicle, with hands around the man's lower leg.",
+            "At frame:20, the light-haired person holds the man's lower leg with both hands."
+          ],
+          "text": [
+            "\u201cVIDEOLEE\u201d appears near the top of frame:20; OCR reads \u201cVIDEOLEE\u201d and close variants."
+          ],
+          "spoken": "No new spoken content is established; the same long transcript segment contains \u201cBye.\u201d"
+        },
+        {
+          "time": [
+            105.125,
+            109.25
+          ],
+          "visual": [],
+          "text": [
+            "OCR reads variants of \u201cVIDEOLEE.\u201d"
+          ],
+          "spoken": "No new spoken content is established; the same long transcript segment contains \u201cBye.\u201d"
+        },
+        {
+          "time": [
+            109.25,
+            110.75
+          ],
+          "visual": [
+            "At frame:21, a close view shows the man's exposed knee, white gauze around his lower leg, a reddish sock, and two hands near the gauze.",
+            "At frame:21, the hands hold the lower edge of the gauze near the sock."
+          ],
+          "text": [
+            "\u201cVIDEOLEE\u201d appears near the top of frame:21; OCR gives a variant reading, \u201c\u00a9VIOLOLCE.\u201d"
+          ],
+          "spoken": "No new spoken content is established; the same long transcript segment contains \u201cBye.\u201d"
+        },
+        {
+          "time": [
+            110.75,
+            115.5
+          ],
+          "visual": [],
+          "text": [
+            "OCR reads \u201cVIDEOLEE\u201d and \u201cOLEE\u201d; it also detects \u201c\u56de.\u201d"
+          ],
+          "spoken": "No new spoken content is established; the same long transcript segment contains \u201cBye.\u201d"
+        },
+        {
+          "time": [
+            115.5,
+            118.083
+          ],
+          "visual": [
+            "At frame:22, a garlanded man sits at the open rear of a white vehicle with an exposed knee and white bandaging below it; another person's hands are beside the bandaging.",
+            "At frame:23, a light-haired person is beside the vehicle.",
+            "At frame:22, hands hold the white bandaging below the man's knee.",
+            "At frame:23, the seated man and the light-haired person each have a raised hand."
+          ],
+          "text": [
+            "\u201cVIDEOLEE\u201d appears near the top of frame:23; OCR gives this and variant readings."
+          ],
+          "spoken": "The long transcript segment contains \u201cBye,\u201d but does not locate the word precisely within this interval."
+        },
+        {
+          "time": [
+            119.5,
+            123.292
+          ],
+          "visual": [],
+          "text": [
+            "OCR reads \u201cChoose\u201d at several points, alongside \u201cVIDEOLEE\u201d variants and fragmentary text."
+          ],
+          "spoken": "No new spoken content is established; the long transcript segment still contains \u201cBye.\u201d"
+        },
+        {
+          "time": [
+            123.292,
+            127.042
+          ],
+          "visual": [
+            "At frame:24, the garlanded man sits at the open rear of the white vehicle with his lower leg bandaged; the light-haired person is beside him, and another person is bent near the rear bumper.",
+            "At frame:24, the light-haired person has a hand raised near the seated man."
+          ],
+          "text": [
+            "The back of the light-haired person's shirt shows \u201cChoose\u201d and \u201cToday,\u201d with other lettering between them.",
+            "OCR reads \u201cChoose\u201d and \u201cToday\u201d near frame:24's timestamp."
+          ],
+          "spoken": "No new spoken content is established; the long transcript segment contains \u201cBye.\u201d"
+        },
+        {
+          "time": [
+            127.042,
+            131.792
+          ],
+          "visual": [
+            "At frame:25, the garlanded man remains seated at the open rear of the white vehicle; the light-haired person is close beside him, and a child is visible at the lower right.",
+            "At frame:25, the seated man and the light-haired person have their arms around each other."
+          ],
+          "text": [
+            "\u201cVIDEOLEE\u201d appears near the top of frame:25; OCR also reads it in this interval."
+          ],
+          "spoken": "The long transcript segment containing \u201cBye\u201d continues until 132.16 seconds, without a precise word time."
+        },
+        {
+          "time": [
+            132.0,
+            133.16
+          ],
+          "visual": [],
+          "text": [
+            "OCR reads \u201cSo if you want to\u201d and then \u201chelp me wear love.\u201d"
+          ],
+          "spoken": "A transcript segment says, \u201cHelp me wear love and spread love,\u201d beginning at 132.16 seconds."
+        },
+        {
+          "time": [
+            133.16,
+            136.16
+          ],
+          "visual": [],
+          "text": [
+            "OCR reads \u201cand spread love,\u201d followed by \u201cOne Purchase,\u201d \u201cfunds 20 meals to,\u201d and \u201cthose in need.\u201d"
+          ],
+          "spoken": "The transcript says, \u201cOne purchase funds 20 meals to those in need.\u201d"
+        },
+        {
+          "time": [
+            136.16,
+            137.25
+          ],
+          "visual": [
+            "At frame:26, the light-haired person faces a group of children; a child in a checked shirt holds a food tray.",
+            "At frame:26, the child holds the tray in front of them, and the light-haired person holds a hand near it."
+          ],
+          "text": [
+            "A subtitle at frame:26 reads \u201cIf you want to\u201d; OCR reads the same phrase near this time."
+          ],
+          "spoken": "The transcript begins, \u201cIf you want to join the movement, buy yours today.\u201d"
+        },
+        {
+          "time": [
+            137.25,
+            138.5
+          ],
+          "visual": [
+            "At frames:27 and 28, the light-haired person sits outdoors in front of fabric-covered structures, with a small yellow-orange card or packet in hand.",
+            "At frame:27, the person holds the card or packet up near their face.",
+            "At frame:28, the person holds it lower in front of their body."
+          ],
+          "text": [
+            "A subtitle at frame:27 reads \u201cbuy yours today.\u201d; OCR reads the same phrase from 137.5 to 138.5 seconds."
+          ],
+          "spoken": "The transcript completes, \u201cIf you want to join the movement, buy yours today,\u201d ending at 138.16 seconds."
+        }
+      ]
+    },
+    {
+      "source_ref": "05",
+      "status": "pass",
+      "failures": [],
+      "ledger_support_failures": 0,
+      "frame_coverage": {
+        "selected_frame_count": 17,
+        "largest_frame_gap_seconds": 7.208
+      },
+      "formats": [],
+      "hooks": [
+        "hook.bold_claim",
+        "hook.visual"
+      ],
+      "ctas": [
+        "cta.product",
+        "cta.product",
+        "cta.product",
+        "cta.product",
+        "cta.verbal",
+        "cta.verbal",
+        "cta.visual",
+        "cta.visual",
+        "cta.visual",
+        "cta.visual"
+      ],
+      "structure_roles": [
+        "hook",
+        "setup",
+        "explanation",
+        "cta",
+        "explanation",
+        "cta",
+        "cta"
+      ],
+      "uncertainty_count": 4,
+      "uncertainties": [
+        "Sparse still frames do not establish continuous exercise, a product or training service being used, or exact visual transitions.",
+        "Several transcript words conflict with the German OCR; the synthesis relies on the overlapping meaning where available.",
+        "The opening graphic and subsequent person are separate sampled frames, so no specific transition is labeled.",
+        "No transcript is supplied for the end card, so its request is labeled visual but not verbal."
+      ],
+      "cta_events": [
+        {
+          "interval": [
+            13.013,
+            15.015
+          ],
+          "action": "Become a Zumba instructor through an in-person course.",
+          "labels": [
+            "cta.visual",
+            "cta.product"
+          ]
+        },
+        {
+          "interval": [
+            15.015,
+            17.017
+          ],
+          "action": "Get an instructor license online as an alternative to the in-person course.",
+          "labels": [
+            "cta.verbal",
+            "cta.visual",
+            "cta.product"
+          ]
+        },
+        {
+          "interval": [
+            41.62,
+            45.62
+          ],
+          "action": "Take the first step and become an instructor today.",
+          "labels": [
+            "cta.verbal",
+            "cta.visual",
+            "cta.product"
+          ]
+        },
+        {
+          "interval": [
+            46.547,
+            50.35
+          ],
+          "action": "Become an instructor.",
+          "labels": [
+            "cta.visual",
+            "cta.product"
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "time": [
+            0.1,
+            0.534
+          ],
+          "visual": [
+            "Purple graphic with colorful shapes",
+            "Woman in a pink ZUMBA top at 0.534",
+            "The woman faces left with her mouth open and arms spread at 0.534."
+          ],
+          "text": [
+            "ZUMBA on the pink top"
+          ],
+          "spoken": "Speech begins at 0.62; no spoken words are established within these frames."
+        },
+        {
+          "time": [
+            1.502,
+            5.62
+          ],
+          "visual": [
+            "People in an indoor room with large windows",
+            "Woman in a neon-yellow top seen from behind",
+            "A person holds one hand up at 1.502.",
+            "The woman in yellow has both arms raised at 3.003."
+          ],
+          "text": [
+            "Mach deine Liebe zum Tanzen zum Beruf oder Nebenjob"
+          ],
+          "spoken": "The speaker says to turn a love of dance into a fun, fulfilling career or side job; the transcript's final word is rendered uncertainly as \u201cdinosaur.\u201d"
+        },
+        {
+          "time": [
+            5.62,
+            8.509
+          ],
+          "visual": [
+            "Several people in an indoor exercise space",
+            "At 7.207, a foreground person stands with their body turned sideways while others are visible behind them."
+          ],
+          "text": [
+            "DEINE BEDINGUNGEN",
+            "Als Zumba-Trainer*in arbeitest du nach deinen Bedingungen"
+          ],
+          "spoken": "The speaker says that as a Zumba instructor, one can work on one's own terms."
+        },
+        {
+          "time": [
+            8.509,
+            12.513
+          ],
+          "visual": [
+            "People in an indoor exercise space",
+            "Colorful overlaid graphics",
+            "At 9.51, a foreground person has an open mouth and one arm bent across their chest.",
+            "At 11.311, a foreground person stands with arms extended sideways."
+          ],
+          "text": [
+            "MEHR EINKOMMEN +GESUNDHEIT",
+            "HEALTH + WEALTH"
+          ],
+          "spoken": "The speaker continues with claims about increased wealth, helping others, and changing lives."
+        },
+        {
+          "time": [
+            12.513,
+            15.015
+          ],
+          "visual": [
+            "Person against a pink background wearing a black ZUMBA shirt",
+            "The person faces the camera with hands together at 14.381."
+          ],
+          "text": [
+            "ZUMBA\u00ae BASIC 1 SCHULUNG",
+            "Werde Zumba-Trainer*in im Pr\u00e4senzkurs"
+          ],
+          "spoken": "The speaker says instructor training can be taken in person."
+        },
+        {
+          "time": [
+            15.015,
+            17.017
+          ],
+          "visual": [],
+          "text": [
+            "PR\u00c4SENZKURS oder ONLINE-KURS",
+            "oder mach deine Lizenz online"
+          ],
+          "spoken": "The speaker offers getting the license online; at 16.62, the next transcript segment begins describing what trainees will learn."
+        },
+        {
+          "time": [
+            17.017,
+            20.02
+          ],
+          "visual": [
+            "Close views of people in an indoor space at 17.317 and 19.119",
+            "At 19.119, a person faces the camera with an open mouth."
+          ],
+          "text": [
+            "BASIC STEPS",
+            "Du lernst die Grundlagen f\u00fcr die Anwendung der Zumba\u00ae-Formel um das perfekte Workout zusammenzustellen"
+          ],
+          "spoken": "The speaker describes learning basic steps and using a formula to put together a workout."
+        },
+        {
+          "time": [
+            20.02,
+            21.62
+          ],
+          "visual": [
+            "Close-up of a person wearing a dark cap at 21.588",
+            "At 21.588, the person is shown in profile with an open mouth."
+          ],
+          "text": [
+            "DIE ZUMBA\u00ae-FORMEL",
+            "THE ZUMBA FORMULA"
+          ],
+          "spoken": "The speaker finishes describing how to put together a workout."
+        },
+        {
+          "time": [
+            21.62,
+            25.526
+          ],
+          "visual": [],
+          "text": [
+            "MY FIRST CLASS\u2122",
+            "Du bekommst eine fertige Kursstunde an die Hand und kannst so sofort selbst Kurse geben"
+          ],
+          "spoken": "The speaker says trainees receive a complete class and can start teaching right away."
+        },
+        {
+          "time": [
+            25.526,
+            29.53
+          ],
+          "visual": [
+            "At 28.795, a person in a black ZUMBA top stands against a pink background",
+            "At 28.795, the person faces the camera with an open mouth and hands visible near the lower edge of the frame."
+          ],
+          "text": [
+            "ZUMBA\u00ae INSTRUCTOR NETWORK",
+            "Au\u00dferdem hast du Zugang zum ZIN f\u00fcr kontinuierlichen Support"
+          ],
+          "spoken": "From 26.62, the speaker describes joining an instructor network for ongoing support."
+        },
+        {
+          "time": [
+            29.53,
+            31.62
+          ],
+          "visual": [],
+          "text": [
+            "JEDEN MONAT NEUE MUSIK+CHOREOS",
+            "MARKETING-TOOLS"
+          ],
+          "spoken": "The speaker mentions monthly music and choreography as examples of ongoing support."
+        },
+        {
+          "time": [
+            31.62,
+            33.62
+          ],
+          "visual": [],
+          "text": [
+            "MARKETING-TOOLS",
+            "personalisierbares Marketingmaterial"
+          ],
+          "spoken": "The speaker mentions personalized marketing materials; the transcript renders this as \u201cPersonalize marking materials.\u201d"
+        },
+        {
+          "time": [
+            33.62,
+            33.634
+          ],
+          "visual": [],
+          "text": [
+            "MARKETING TOOLS"
+          ],
+          "spoken": "A new transcript segment begins about instructor apps to promote classes; only its beginning falls within this chunk."
+        },
+        {
+          "time": [
+            33.634,
+            35.62
+          ],
+          "visual": [
+            "At 35.969, a phone graphic appears against an orange and pink background."
+          ],
+          "text": [
+            "MARKETING TOOLS",
+            "Trainer-Apps zum Bewerben deiner Kurse"
+          ],
+          "spoken": "The speaker mentions instructor apps for promoting classes."
+        },
+        {
+          "time": [
+            35.62,
+            39.54
+          ],
+          "visual": [],
+          "text": [
+            "SUPPORT DER COMMUNITY",
+            "Unsere globale"
+          ],
+          "spoken": "The speaker says a global instructor community offers support."
+        },
+        {
+          "time": [
+            39.54,
+            41.62
+          ],
+          "visual": [],
+          "text": [
+            "TRAINERLIZENZ",
+            "deine Trainerlizenz"
+          ],
+          "spoken": "The speaker says the license to teach does not expire."
+        },
+        {
+          "time": [
+            41.62,
+            45.62
+          ],
+          "visual": [
+            "At 43.177, a smiling person in a bright green ZUMBA top is shown in close-up.",
+            "At 43.177, the person has an open mouth."
+          ],
+          "text": [
+            "Mach den ersten Schritt und",
+            "werdenoch heute Trainer*in"
+          ],
+          "spoken": "The speaker asks the listener to become an instructor today."
+        },
+        {
+          "time": [
+            46.547,
+            50.35
+          ],
+          "visual": [
+            "A purple full-screen graphic is visible at 48.382 and 50.284."
+          ],
+          "text": [
+            "ZUMBA",
+            "BECOME AN INSTRUCTOR"
+          ],
+          "spoken": "No transcript segment is supplied for this interval."
+        }
+      ]
+    },
+    {
+      "source_ref": "06",
+      "status": "pass",
+      "failures": [],
+      "ledger_support_failures": 0,
+      "frame_coverage": {
+        "selected_frame_count": 17,
+        "largest_frame_gap_seconds": 7.134
+      },
+      "formats": [],
+      "hooks": [
+        "hook.question",
+        "hook.visual"
+      ],
+      "ctas": [
+        "cta.product",
+        "cta.product",
+        "cta.verbal",
+        "cta.verbal",
+        "cta.visual"
+      ],
+      "structure_roles": [
+        "hook",
+        "setup",
+        "explanation",
+        "explanation",
+        "explanation",
+        "proof",
+        "payoff",
+        "cta"
+      ],
+      "uncertainty_count": 4,
+      "uncertainties": [
+        "The supplied ledger does not establish the exact location of the opening coastline or clarify the organization's spoken name.",
+        "Sparse stills do not establish motion-based editing techniques or the exact instant the final code appears or disappears.",
+        "The final code has no accompanying visible or spoken action request in its cited interval (ledger:2:6); it is not labeled as a separate CTA.",
+        "The spoken join request crosses the 40-second OCR change. It is represented as two adjacent physical CTA events because the ledger separates the displayed application card from the subsequent organization-name card; the latter card's name alone does not support a visual CTA."
+      ],
+      "cta_events": [
+        {
+          "interval": [
+            34.933,
+            40.0
+          ],
+          "action": "Apply today and join the named organization; the spoken request to join begins at 36.08 seconds.",
+          "labels": [
+            "cta.visual",
+            "cta.verbal",
+            "cta.product"
+          ]
+        },
+        {
+          "interval": [
+            40.0,
+            42.08
+          ],
+          "action": "Join the named City Bowl\u2013Camps Bay organization today, as requested in speech.",
+          "labels": [
+            "cta.verbal",
+            "cta.product"
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "time": [
+            0.1,
+            3.0
+          ],
+          "visual": [
+            "Coastline, rocky shore, beach, road, buildings, hillside",
+            "Large translucent 21 graphic"
+          ],
+          "text": [
+            "21"
+          ],
+          "spoken": "The speaker asks listeners to imagine building a real estate career in an iconic South African location."
+        },
+        {
+          "time": [
+            3.233,
+            6.52
+          ],
+          "visual": [
+            "Interior with vertical wood paneling, a wall of plants, pale seating, and glass partitions"
+          ],
+          "text": [
+            "CENTURY21",
+            "CityBowl\u00b7Camps Bay"
+          ],
+          "spoken": "The speaker finishes the invitation to imagine building a real estate career in an iconic South African location."
+        },
+        {
+          "time": [
+            6.52,
+            6.867
+          ],
+          "visual": [],
+          "text": [],
+          "spoken": "The speaker begins describing joining an office and a community associated with City Bowl and Camps Bay."
+        },
+        {
+          "time": [
+            6.867,
+            10.167
+          ],
+          "visual": [
+            "Woman in a striped shirt holding a green item",
+            "Man in a light shirt",
+            "At frame:4, the woman extends an arm toward a small plant.",
+            "At frame:5, the woman points toward the left."
+          ],
+          "text": [],
+          "spoken": "The speaker describes joining an office and a community built on excellence and growth."
+        },
+        {
+          "time": [
+            10.167,
+            10.833
+          ],
+          "visual": [
+            "Brick-walled interior, counter with coffee equipment, glass-walled room"
+          ],
+          "text": [],
+          "spoken": "The speaker continues describing the community."
+        },
+        {
+          "time": [
+            10.833,
+            13.733
+          ],
+          "visual": [
+            "Meeting room with brick walls, wooden table, chairs, plants, and wall-mounted screen"
+          ],
+          "text": [],
+          "spoken": "The speaker mentions the joy of helping people find their perfect home."
+        },
+        {
+          "time": [
+            13.733,
+            15.0
+          ],
+          "visual": [
+            "Four adults outside a modern building",
+            "Landscaping and lawn",
+            "At frame:8, the four adults face the camera on the lawn."
+          ],
+          "text": [
+            "Grow With Elite C"
+          ],
+          "spoken": "The speaker continues the statement about helping people find their perfect home."
+        },
+        {
+          "time": [
+            15.0,
+            18.467
+          ],
+          "visual": [
+            "Four adults outside a modern building",
+            "Landscaping and lawn",
+            "At frame:9, several people have raised or extended arms."
+          ],
+          "text": [
+            "Grow With Elite Coaching",
+            "& World-Class Support."
+          ],
+          "spoken": "The speaker continues the statement about the community and helping people find a home; the supplied transcript extends beyond this chunk."
+        },
+        {
+          "time": [
+            18.467,
+            19.08
+          ],
+          "visual": [],
+          "text": [
+            "CORE"
+          ],
+          "spoken": "The speaker finishes the statement about a community and helping people find a home."
+        },
+        {
+          "time": [
+            19.08,
+            20.767
+          ],
+          "visual": [],
+          "text": [
+            "RE"
+          ],
+          "spoken": "The speaker begins describing world-class training, marketing support, and a brand with local and global reach."
+        },
+        {
+          "time": [
+            20.767,
+            23.533
+          ],
+          "visual": [
+            "Two women beside a kitchen counter",
+            "Tablet",
+            "At frame:10, one woman holds a tablet while both face it."
+          ],
+          "text": [
+            "ABOVE & BEYOND",
+            "GOING"
+          ],
+          "spoken": "The speaker continues describing training, marketing support, and the brand's local and global reach."
+        },
+        {
+          "time": [
+            23.533,
+            27.967
+          ],
+          "visual": [],
+          "text": [
+            "129,500* PROPERTY PRACTITIONERS",
+            "11,000* OFFICES & COUNTING"
+          ],
+          "spoken": "The speaker continues the statement about training, marketing support, and local and global reach."
+        },
+        {
+          "time": [
+            27.967,
+            29.08
+          ],
+          "visual": [
+            "Brick-walled room",
+            "Desk, chairs, plant, and glazed partition"
+          ],
+          "text": [
+            "This Is Where",
+            "Extraordinary Agents"
+          ],
+          "spoken": "The speaker finishes the statement about a brand with local and global reach by 28.08 seconds."
+        },
+        {
+          "time": [
+            29.08,
+            30.633
+          ],
+          "visual": [],
+          "text": [
+            "This Is Where",
+            "Extraordinary Agents"
+          ],
+          "spoken": "The speaker begins saying that, whether experienced or brand-new, this is a moment to grow a business and unlock opportunities."
+        },
+        {
+          "time": [
+            30.633,
+            31.433
+          ],
+          "visual": [],
+          "text": [
+            "This Is Where",
+            "Extraordinary Agents"
+          ],
+          "spoken": "The speaker continues the statement about growing a business and unlocking opportunities."
+        },
+        {
+          "time": [
+            31.433,
+            34.367
+          ],
+          "visual": [],
+          "text": [
+            "This Is Where",
+            "Extraordinary Agents"
+          ],
+          "spoken": "The speaker continues the statement about growing a business and unlocking new opportunities; the transcript extends beyond this chunk."
+        },
+        {
+          "time": [
+            34.367,
+            34.933
+          ],
+          "visual": [],
+          "text": [],
+          "spoken": "The speaker continues the statement about growing a business and unlocking new opportunities."
+        },
+        {
+          "time": [
+            34.933,
+            36.08
+          ],
+          "visual": [
+            "Black background",
+            "Centered lettering"
+          ],
+          "text": [
+            "JOIN",
+            "THE RELENTLESS"
+          ],
+          "spoken": "The speaker finishes the statement about growing a business and unlocking new opportunities."
+        },
+        {
+          "time": [
+            36.08,
+            40.0
+          ],
+          "visual": [
+            "Black background and centered lettering at frame:12"
+          ],
+          "text": [
+            "JOIN",
+            "THE RELENTLESS"
+          ],
+          "spoken": "The speaker asks, \u201cReady to take the next step?\u201d and says to join a named City Bowl\u2013Camps Bay organization today."
+        },
+        {
+          "time": [
+            40.0,
+            41.633
+          ],
+          "visual": [],
+          "text": [
+            "CENTURY 21",
+            "City Bowl \u2022 Camps Bay"
+          ],
+          "spoken": "The speaker continues the request to join, ending at 42.08 seconds."
+        },
+        {
+          "time": [
+            41.633,
+            42.08
+          ],
+          "visual": [],
+          "text": [
+            "CENTURY 21",
+            "City Bowl \u2022 Camps Bay"
+          ],
+          "spoken": "The speaker finishes the request to join."
+        },
+        {
+          "time": [
+            42.08,
+            44.0
+          ],
+          "visual": [
+            "Black background",
+            "Centered gold-colored lettering"
+          ],
+          "text": [
+            "CENTURY 21",
+            "City Bowl \u2022 Camps Bay"
+          ],
+          "spoken": "No further speech is supplied after 42.08 seconds."
+        },
+        {
+          "time": [
+            44.0,
+            49.0
+          ],
+          "visual": [
+            "Black background",
+            "Square black-and-white code with a central circular 21 mark"
+          ],
+          "text": [
+            "21"
+          ],
+          "spoken": "No speech is supplied."
+        },
+        {
+          "time": [
+            49.0,
+            49.667
+          ],
+          "visual": [
+            "Black screen at frame:16"
+          ],
+          "text": [],
+          "spoken": "No speech is supplied."
+        }
+      ]
+    },
+    {
+      "source_ref": "07",
+      "status": "rejected",
+      "failures": [
+        "Interval crosses unsupported ledger gap"
+      ],
+      "ledger_support_failures": null,
+      "frame_coverage": {
+        "selected_frame_count": 31,
+        "largest_frame_gap_seconds": 7.5
+      },
+      "formats": [],
+      "hooks": [],
+      "ctas": [],
+      "structure_roles": [],
+      "uncertainty_count": 0,
+      "uncertainties": [],
+      "cta_events": [],
+      "observations": []
+    },
+    {
+      "source_ref": "08",
+      "status": "pass",
+      "failures": [],
+      "ledger_support_failures": 0,
+      "frame_coverage": {
+        "selected_frame_count": 16,
+        "largest_frame_gap_seconds": 6.867
+      },
+      "formats": [
+        "format.product_demo"
+      ],
+      "hooks": [
+        "hook.visual"
+      ],
+      "ctas": [
+        "cta.product",
+        "cta.product",
+        "cta.visual",
+        "cta.visual"
+      ],
+      "structure_roles": [
+        "hook",
+        "demonstration",
+        "demonstration",
+        "demonstration",
+        "cta"
+      ],
+      "uncertainty_count": 4,
+      "uncertainties": [
+        "Sparse stills do not establish product-application motion, liquid dispensing, a completed button press, or an outcome comparison (ledger:0:1, ledger:0:5, ledger:2:5).",
+        "No transcript is supplied after the opening chunk, so later spoken requests or explanations cannot be assessed (ledger:1:0, ledger:2:0).",
+        "Several intervals contain OCR but no supplied frame; their actions and visual contents cannot be established (ledger:1:2, ledger:1:4, ledger:2:0, ledger:2:2).",
+        "The product relationship of the quiz is contextual rather than explicit in the end-card text (ledger:2:1, ledger:2:4)."
+      ],
+      "cta_events": [
+        {
+          "interval": [
+            0.0,
+            23.233
+          ],
+          "action": "Tap to take the quiz and get a guide.",
+          "labels": [
+            "cta.visual",
+            "cta.product"
+          ]
+        },
+        {
+          "interval": [
+            24.5,
+            27.467
+          ],
+          "action": "Take the quiz.",
+          "labels": [
+            "cta.visual",
+            "cta.product"
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "time": [
+            0.0,
+            1.1
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "Yellow handheld object",
+            "At 0.1 seconds, the person holds the yellow object against their chin.",
+            "At 0.533 seconds, the person holds a yellow tube close to the camera."
+          ],
+          "text": [
+            "Tap to take the quiz and get a guide",
+            "medicube"
+          ],
+          "spoken": "A sustained 'hmm' sound is transcribed from 0 to 2 seconds."
+        },
+        {
+          "time": [
+            1.1,
+            2.1
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "Inverted yellow tube",
+            "At 1.5 seconds, the person holds the inverted tube above the blue tool; a strand of yellow substance is visible between them."
+          ],
+          "text": [
+            "Tap to take the quiz and get a guide"
+          ],
+          "spoken": "The sustained 'hmm' sound continues in the transcript through 2 seconds."
+        },
+        {
+          "time": [
+            2.1,
+            2.667
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "White covering on the person's face",
+            "At 2.367 seconds, the person holds the blue tool next to their chin."
+          ],
+          "text": [
+            "Tap to take the quiz and get a guide"
+          ],
+          "spoken": "No transcribed speech in this interval."
+        },
+        {
+          "time": [
+            2.667,
+            3.733
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "White covering on the person's face",
+            "At 3.0 seconds, the person holds the blue tool near their forehead."
+          ],
+          "text": [
+            "Tap to take the quiz and get a guide"
+          ],
+          "spoken": "No transcribed speech in this interval."
+        },
+        {
+          "time": [
+            3.733,
+            4.4
+          ],
+          "visual": [],
+          "text": [
+            "Tap to take the quiz",
+            "and get a guide"
+          ],
+          "spoken": "No transcribed speech in this interval."
+        },
+        {
+          "time": [
+            4.4,
+            4.933
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "Yellow bottle with pointed nozzle",
+            "At 4.667 seconds, the person holds the bottle nozzle beside their cheek."
+          ],
+          "text": [
+            "Tap to take the quiz and get a guide",
+            "medicube"
+          ],
+          "spoken": "No transcribed speech in this interval."
+        },
+        {
+          "time": [
+            4.933,
+            5.867
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "Yellow bottle with pointed nozzle",
+            "At 5.4 seconds, the person holds the bottle nozzle above their forehead."
+          ],
+          "text": [
+            "Tap to take the quiz and get a guide"
+          ],
+          "spoken": "No transcribed speech in this interval."
+        },
+        {
+          "time": [
+            5.867,
+            6.533
+          ],
+          "visual": [],
+          "text": [
+            "Tap to take the quiz",
+            "and get a guide"
+          ],
+          "spoken": "No transcribed speech in this interval."
+        },
+        {
+          "time": [
+            6.533,
+            7.9
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "Yellow tube with a pale blue end",
+            "At 6.867 seconds, the person holds the tube toward the camera."
+          ],
+          "text": [
+            "Tap to take the quiz and get a guide"
+          ],
+          "spoken": "No transcribed speech in this interval."
+        },
+        {
+          "time": [
+            7.9,
+            8.8
+          ],
+          "visual": [],
+          "text": [
+            "Tap to take the quiz",
+            "and get a guide"
+          ],
+          "spoken": "No transcribed speech in this interval."
+        },
+        {
+          "time": [
+            8.8,
+            9.533
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "Yellow bottle",
+            "At 9.167 seconds, the person holds the bottle and grips its top."
+          ],
+          "text": [
+            "Tap to take the quiz and get a guide",
+            "medicube*"
+          ],
+          "spoken": "No transcript supplied for this chunk."
+        },
+        {
+          "time": [
+            9.533,
+            10.6
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "Yellow vertical streak on the forehead",
+            "At 10.067 seconds, the person has both hands against their cheeks."
+          ],
+          "text": [
+            "Tap to take the quiz and get a guide",
+            "medicube"
+          ],
+          "spoken": "No transcript supplied for this chunk."
+        },
+        {
+          "time": [
+            10.6,
+            13.233
+          ],
+          "visual": [],
+          "text": [
+            "Tap to take the quiz",
+            "and get a guide"
+          ],
+          "spoken": "No transcript supplied for this chunk."
+        },
+        {
+          "time": [
+            13.233,
+            13.933
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "Yellow handheld device with a round metallic-looking head",
+            "At 13.733 seconds, the person holds the device toward the camera and has a finger beside it."
+          ],
+          "text": [
+            "Tap to take the quiz and get a guide"
+          ],
+          "spoken": "No transcript supplied for this chunk."
+        },
+        {
+          "time": [
+            13.933,
+            18.9
+          ],
+          "visual": [],
+          "text": [
+            "Tap to take the quiz",
+            "and get a guide"
+          ],
+          "spoken": "No transcript supplied for this chunk."
+        },
+        {
+          "time": [
+            18.9,
+            20.467
+          ],
+          "visual": [],
+          "text": [
+            "Tap to take the quiz",
+            "and get a guide"
+          ],
+          "spoken": "No transcript supplied."
+        },
+        {
+          "time": [
+            20.467,
+            21.7
+          ],
+          "visual": [
+            "Person in a dark robe",
+            "Clear dropper containing yellow liquid",
+            "At 20.6 seconds, the person holds the dropper above the bottle while holding the bottle near the camera."
+          ],
+          "text": [
+            "Tap to take the quiz",
+            "and get a guide"
+          ],
+          "spoken": "No transcript supplied."
+        },
+        {
+          "time": [
+            21.7,
+            23.233
+          ],
+          "visual": [],
+          "text": [
+            "Tap to take the quiz",
+            "and get a guide"
+          ],
+          "spoken": "No transcript supplied."
+        },
+        {
+          "time": [
+            23.5,
+            24.5
+          ],
+          "visual": [
+            "White screen",
+            "Centered text"
+          ],
+          "text": [
+            "Your Personal",
+            "Plan is Ready!"
+          ],
+          "spoken": "No transcript supplied."
+        },
+        {
+          "time": [
+            24.5,
+            25.467
+          ],
+          "visual": [
+            "White screen",
+            "Centered text"
+          ],
+          "text": [
+            "Your Personal",
+            "Plan is Ready!"
+          ],
+          "spoken": "No transcript supplied."
+        },
+        {
+          "time": [
+            25.467,
+            26.1
+          ],
+          "visual": [
+            "White screen",
+            "Centered text",
+            "At 25.467 seconds, a fingertip rests on or immediately in front of the button.",
+            "At 26.1 seconds, an extended finger is visible below the button."
+          ],
+          "text": [
+            "Your Personal",
+            "Plan is Ready!"
+          ],
+          "spoken": "No transcript supplied."
+        },
+        {
+          "time": [
+            26.1,
+            27.467
+          ],
+          "visual": [
+            "White screen",
+            "Centered text"
+          ],
+          "text": [
+            "Your Personal",
+            "Plan is Ready!"
+          ],
+          "spoken": "No transcript supplied."
+        }
+      ]
+    },
+    {
+      "source_ref": "09",
+      "status": "rejected",
+      "failures": [
+        "Atomic ledger item assigned incompatible primary roles"
+      ],
+      "ledger_support_failures": null,
+      "frame_coverage": {
+        "selected_frame_count": 9,
+        "largest_frame_gap_seconds": 3.567
+      },
+      "formats": [],
+      "hooks": [],
+      "ctas": [],
+      "structure_roles": [],
+      "uncertainty_count": 0,
+      "uncertainties": [],
+      "cta_events": [],
+      "observations": []
+    },
+    {
+      "source_ref": "10",
+      "status": "pass",
+      "failures": [],
+      "ledger_support_failures": 0,
+      "frame_coverage": {
+        "selected_frame_count": 16,
+        "largest_frame_gap_seconds": 6.167
+      },
+      "formats": [
+        "format.product_demo"
+      ],
+      "hooks": [
+        "hook.bold_claim",
+        "hook.result_first"
+      ],
+      "ctas": [
+        "cta.product",
+        "cta.product",
+        "cta.verbal",
+        "cta.visual",
+        "cta.visual"
+      ],
+      "structure_roles": [
+        "hook",
+        "setup",
+        "explanation",
+        "problem",
+        "payoff",
+        "cta",
+        "cta"
+      ],
+      "uncertainty_count": 3,
+      "uncertainties": [
+        "The ledger does not establish motion between sparse still frames, whether a substance was spread, or whether the end-card button was pressed.",
+        "The transcript spells the name \u201cLovie,\u201d while OCR reads \u201cLovi\u201d; the Seoul/soul wording also differs.",
+        "Claims about age and skin results are the speaker's claims, not independently verified before-and-after evidence."
+      ],
+      "cta_events": [
+        {
+          "interval": [
+            24.08,
+            27.0
+          ],
+          "action": "Try Lovi/Lovie and see the difference yourself.",
+          "labels": [
+            "cta.verbal",
+            "cta.visual",
+            "cta.product"
+          ]
+        },
+        {
+          "interval": [
+            28.0,
+            30.867
+          ],
+          "action": "Take the quiz.",
+          "labels": [
+            "cta.visual",
+            "cta.product"
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "time": [
+            0.0,
+            2.267
+          ],
+          "visual": [
+            "Close-up of a person with short dark hair and glasses"
+          ],
+          "text": [
+            "nighttime skincare routine",
+            "I'm 40, but I look 25, and no"
+          ],
+          "spoken": "The speaker says they are 40 but look 25, and begins saying this is not luck."
+        },
+        {
+          "time": [
+            2.267,
+            3.64
+          ],
+          "visual": [
+            "Person with glasses",
+            "Green cylindrical container",
+            "At 3.0 seconds, the person holds the green container in front of the camera."
+          ],
+          "text": [
+            "it's not luck, it's skincare",
+            "cleansing balm"
+          ],
+          "spoken": "The speaker finishes: it is not luck; it is skincare."
+        },
+        {
+          "time": [
+            3.64,
+            4.6
+          ],
+          "visual": [
+            "Person with glasses",
+            "Open green container with pale material on its lid",
+            "At 3.867 seconds, the person holds the open container toward the camera."
+          ],
+          "text": [
+            "cleansing balm",
+            "I just started the 28 day K-Beauty Challenge"
+          ],
+          "spoken": "The speaker begins saying they started a 28-day K-Beauty Challenge with Lovie."
+        },
+        {
+          "time": [
+            4.6,
+            6.167
+          ],
+          "visual": [
+            "Person in a black shirt",
+            "Pale substance on a fingertip near the cheek",
+            "At 4.867 seconds, the person holds a fingertip with pale substance against or immediately beside their cheek."
+          ],
+          "text": [
+            "I just started the 28 day K-Beauty Challenge",
+            "with Lovi, and it changed everything"
+          ],
+          "spoken": "The speaker says the challenge with Lovie changed everything."
+        },
+        {
+          "time": [
+            6.167,
+            7.6
+          ],
+          "visual": [
+            "Person partly visible",
+            "White tube held in both hands",
+            "At 6.167 seconds, the person holds a white tube toward the camera."
+          ],
+          "text": [
+            "cleanser",
+            "I just started the 28 day K-Beauty Challenge"
+          ],
+          "spoken": "The speaker completes the statement that the challenge changed everything."
+        },
+        {
+          "time": [
+            7.6,
+            8.3
+          ],
+          "visual": [],
+          "text": [
+            "This Al cosmetologist scans your face",
+            "cleanser"
+          ],
+          "spoken": "The speaker begins describing an AI cosmetologist that scans your face."
+        },
+        {
+          "time": [
+            8.3,
+            10.467
+          ],
+          "visual": [
+            "Hands",
+            "Small pink-and-white cylindrical container",
+            "At 8.733 seconds, hands hold the small container toward the camera."
+          ],
+          "text": [
+            "This Al cosmetologist scans your face",
+            "clay mask"
+          ],
+          "spoken": "The speaker says the AI cosmetologist scans your face, learns your skin, and builds a tailored routine; the sentence continues beyond this chunk."
+        },
+        {
+          "time": [
+            10.467,
+            11.633
+          ],
+          "visual": [
+            "Person in a black shirt",
+            "Pale material covering much of the face",
+            "At 11.067 seconds, a hand touches the person's forehead."
+          ],
+          "text": [
+            "learns your skin, and builds a routine tailored",
+            "clay mask"
+          ],
+          "spoken": "The speaker continues saying the AI cosmetologist learns your skin and builds a tailored routine."
+        },
+        {
+          "time": [
+            11.633,
+            13.06
+          ],
+          "visual": [
+            "Hands",
+            "Tall transparent bottle with green cap and green label",
+            "At 12.333 seconds, hands hold the bottle toward the camera."
+          ],
+          "text": [
+            "essence",
+            "exactly for you"
+          ],
+          "spoken": "The speaker finishes the sentence: the routine is tailored exactly for you."
+        },
+        {
+          "time": [
+            13.06,
+            14.367
+          ],
+          "visual": [
+            "Hands",
+            "Small light-colored bottle",
+            "At 14.033 seconds, hands hold the small bottle toward the camera."
+          ],
+          "text": [
+            "No more random creams",
+            "serum"
+          ],
+          "spoken": "The speaker begins saying there are no more random creams and no more wasting money on trends."
+        },
+        {
+          "time": [
+            14.367,
+            15.96
+          ],
+          "visual": [
+            "Person in a black shirt",
+            "Hand against cheek",
+            "At 15.433 seconds, the person's hand rests against their cheek."
+          ],
+          "text": [
+            "no more wasting money on trends",
+            "serum"
+          ],
+          "spoken": "The speaker completes the statement about not wasting money on trends."
+        },
+        {
+          "time": [
+            15.96,
+            19.4
+          ],
+          "visual": [
+            "Person in a black shirt",
+            "Pale spots on forehead, cheeks, and chin",
+            "At 18.533 seconds, both hands touch the person's cheeks."
+          ],
+          "text": [
+            "Now I've got a simple routine",
+            "that makes my skin hydrated"
+          ],
+          "spoken": "The speaker says they now have a simple routine that makes their skin hydrated, plump, and glowing."
+        },
+        {
+          "time": [
+            19.4,
+            20.633
+          ],
+          "visual": [],
+          "text": [
+            "Like I just stepped out of Seoul",
+            "moisturizer"
+          ],
+          "spoken": "The speaker begins the comparison, 'Like I just stepped out of soul,' as rendered in the transcript."
+        },
+        {
+          "time": [
+            20.633,
+            20.74
+          ],
+          "visual": [],
+          "text": [
+            "Like I just stepped out of Seoul",
+            "moisturizer"
+          ],
+          "spoken": "The speaker finishes the comparison rendered as \u201csoul\u201d in the transcript."
+        },
+        {
+          "time": [
+            20.74,
+            24.08
+          ],
+          "visual": [],
+          "text": [
+            "Avene",
+            "Cicalfate"
+          ],
+          "spoken": "The speaker says, \u201cIf I can take 15 years off my skin with the right products, so can you.\u201d"
+        },
+        {
+          "time": [
+            24.08,
+            25.76
+          ],
+          "visual": [
+            "Person in a black shirt",
+            "Hands",
+            "At 24.7 seconds, the person holds the tube toward the camera."
+          ],
+          "text": [
+            "Try Lovi and see the difference yourself",
+            "lip care"
+          ],
+          "spoken": "The speaker says, \u201cTry Lovie and see the difference yourself.\u201d"
+        },
+        {
+          "time": [
+            25.76,
+            27.0
+          ],
+          "visual": [
+            "Person in a black shirt wearing glasses",
+            "Hand near chin",
+            "At 26.1 seconds, a finger touches the person's chin."
+          ],
+          "text": [
+            "Try Lovi and see the difference yourself",
+            "all glassy and glowy"
+          ],
+          "spoken": "No supplied transcript speech is timed to this interval."
+        },
+        {
+          "time": [
+            27.0,
+            28.0
+          ],
+          "visual": [],
+          "text": [
+            "Your Personal",
+            "Plan is Ready!"
+          ],
+          "spoken": "No supplied transcript speech is timed to this interval."
+        },
+        {
+          "time": [
+            28.0,
+            30.867
+          ],
+          "visual": [
+            "White background",
+            "Blue rounded button",
+            "At 28.867 seconds, a fingertip is against the blue button."
+          ],
+          "text": [
+            "Your Personal Plan is Ready!",
+            "Take the quiz"
+          ],
+          "spoken": "No supplied transcript speech is timed to this interval."
+        }
+      ]
+    },
+    {
+      "source_ref": "11",
+      "status": "rejected",
+      "failures": [
+        "Interval crosses unsupported ledger gap"
+      ],
+      "ledger_support_failures": null,
+      "frame_coverage": {
+        "selected_frame_count": 21,
+        "largest_frame_gap_seconds": 7.258
+      },
+      "formats": [],
+      "hooks": [],
+      "ctas": [],
+      "structure_roles": [],
+      "uncertainty_count": 0,
+      "uncertainties": [],
+      "cta_events": [],
+      "observations": []
+    },
+    {
+      "source_ref": "12",
+      "status": "pass",
+      "failures": [],
+      "ledger_support_failures": 0,
+      "frame_coverage": {
+        "selected_frame_count": 11,
+        "largest_frame_gap_seconds": 7.167
+      },
+      "formats": [
+        "format.listicle",
+        "format.talking_head"
+      ],
+      "hooks": [
+        "hook.question"
+      ],
+      "ctas": [
+        "cta.product",
+        "cta.verbal"
+      ],
+      "structure_roles": [
+        "hook",
+        "setup",
+        "explanation",
+        "explanation",
+        "cta"
+      ],
+      "uncertainty_count": 4,
+      "uncertainties": [
+        "The transcript's rendering of the speaker's title and one institution name is uncertain.",
+        "Sparse frames do not establish continuous posture or motion, and no frames are supplied for 14.32\u201320.32 seconds.",
+        "Isolated OCR characters do not establish legible captions, a headline, or a visual call to action.",
+        "The final frame at 35.6 seconds has no accompanying transcript; any speech or request after 35.44 seconds is unknown."
+      ],
+      "cta_events": [
+        {
+          "interval": [
+            32.16,
+            35.44
+          ],
+          "action": "Request the course catalog and get started today.",
+          "labels": [
+            "cta.verbal",
+            "cta.product"
+          ]
+        }
+      ],
+      "observations": [
+        {
+          "time": [
+            0.08,
+            3.44
+          ],
+          "visual": [
+            "A man wearing glasses, a dark suit, a light shirt, and a patterned tie",
+            "Water, distant shoreline, and sky behind him",
+            "The man faces the camera in frame:0.",
+            "His hands are raised in front of him in frame:1."
+          ],
+          "text": [],
+          "spoken": "A voice asks, \u201cIs your career really moving forward?\u201d"
+        },
+        {
+          "time": [
+            3.44,
+            8.56
+          ],
+          "visual": [
+            "The same man in a suit and glasses",
+            "Water and distant shoreline",
+            "The man faces the camera with his hands together near his waist in frame:3."
+          ],
+          "text": [],
+          "spoken": "The speaker identifies himself as Professor David Costa and refers to Robert Kennedy College in Switzerland; the transcript renders his title as \u201cthe D&E.\u201d"
+        },
+        {
+          "time": [
+            8.56,
+            14.32
+          ],
+          "visual": [
+            "The man in a suit and glasses",
+            "Water and distant shoreline",
+            "The man faces the camera with his hands together in frame:4."
+          ],
+          "text": [],
+          "spoken": "The speaker says he is introducing online master's programs; the transcript names them \u201cUniversity of Soul Food.\u201d"
+        },
+        {
+          "time": [
+            14.32,
+            17.855
+          ],
+          "visual": [],
+          "text": [],
+          "spoken": "The speaker says a British master's degree can be completed entirely online in one year."
+        },
+        {
+          "time": [
+            17.855,
+            20.32
+          ],
+          "visual": [],
+          "text": [],
+          "spoken": "The speaker finishes saying a British master's degree can be completed entirely online in one year."
+        },
+        {
+          "time": [
+            20.32,
+            26.88
+          ],
+          "visual": [
+            "A man in glasses, a dark suit, a light shirt, and a patterned tie",
+            "Water, distant shoreline, and sky",
+            "The man faces the camera with his hands together near his waist in frame:5."
+          ],
+          "text": [],
+          "spoken": "The speaker lists business administration and project management as specialties."
+        },
+        {
+          "time": [
+            26.88,
+            32.16
+          ],
+          "visual": [
+            "The man in glasses and a suit",
+            "Water, distant shoreline, and sky",
+            "The man faces the camera with his hands together near his waist in frame:6.",
+            "The man faces the camera with his hands together near his waist in frame:7."
+          ],
+          "text": [],
+          "spoken": "The speaker continues the list: HR management, marketing, operations management, and more."
+        },
+        {
+          "time": [
+            32.16,
+            35.44
+          ],
+          "visual": [
+            "The man in glasses and a suit",
+            "Water, distant shoreline, and sky",
+            "The man faces the camera with his hands apart in frame:8.",
+            "The man faces the camera with his hands together near his waist in frame:9."
+          ],
+          "text": [],
+          "spoken": "The speaker asks viewers to request the course catalog and get started today."
+        },
+        {
+          "time": [
+            35.6,
+            35.6
+          ],
+          "visual": [
+            "The man in glasses and a suit",
+            "Water, distant shoreline, and sky",
+            "The man faces the camera with his hands together near his waist in frame:10."
+          ],
+          "text": [],
+          "spoken": "No supplied transcript covers this interval."
+        }
+      ]
+    }
+  ],
+  "distributions": {
+    "formats": {
+      "format.before_after": 1,
+      "format.listicle": 1,
+      "format.product_demo": 4,
+      "format.talking_head": 1
+    },
+    "hooks": {
+      "hook.bold_claim": 4,
+      "hook.curiosity_gap": 1,
+      "hook.question": 2,
+      "hook.result_first": 1,
+      "hook.visual": 4
+    },
+    "ctas": {
+      "cta.product": 13,
+      "cta.verbal": 9,
+      "cta.visual": 12
+    },
+    "structure_roles": {
+      "cta": 11,
+      "demonstration": 11,
+      "explanation": 15,
+      "hook": 8,
+      "payoff": 6,
+      "problem": 2,
+      "proof": 4,
+      "setup": 6
+    }
+  },
+  "accepted_candidate_count": 8,
+  "videos_with_uncertainty": 8,
+  "uncertainty_statements": 31,
+  "ledger_support_failures": 0,
+  "validation_contract_failures": 3
+}

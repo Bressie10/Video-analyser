@@ -1,0 +1,7 @@
+{
+  "source_ref": "09",
+  "validation_commit": "699c4c6d0e2a6421b36c2f0c3c031a04b1487524",
+  "error_type": "ValueError",
+  "error": "Atomic ledger item assigned incompatible primary roles",
+  "checkpoint": "09.checkpoint.json"
+}
