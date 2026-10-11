@@ -1,0 +1,28 @@
+{
+  "review_version": "v9-independent-review-1",
+  "ontology_version": "1.1.0",
+  "source_ref": "12",
+  "duration_seconds": null,
+  "provenance": {
+    "reviewer_id": null,
+    "reviewer_type": null,
+    "full_video_watched": null,
+    "audio_heard": null,
+    "blind": null,
+    "seen_contentmetric_outputs_previously": null,
+    "reviewed_at": null
+  },
+  "category_coverage": {
+    "hook": null,
+    "format": null,
+    "editing": null,
+    "text": null,
+    "audio": null,
+    "cta": null,
+    "visual": null
+  },
+  "structure_coverage": null,
+  "items": [],
+  "cta_events": [],
+  "structure": []
+}
