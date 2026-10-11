@@ -183,8 +183,10 @@ class Stage54Tests(unittest.TestCase):
         item["boundary_reason"] = "transcript_change"
         validate_chunk(ChunkDescription.model_validate(base), self.chunks[0], catalog)
         item["end_seconds"] = 4
-        with self.assertRaisesRegex(ValueError, "extends beyond"):
-            validate_chunk(ChunkDescription.model_validate(base), self.chunks[0], catalog)
+        normalized = validate_chunk(ChunkDescription.model_validate(base), self.chunks[0], catalog)[0]
+        self.assertEqual(normalized["end_seconds"], 2)
+        self.assertEqual(normalized["timing_adjustment"]["reason"],
+                         "clamped_to_substantive_evidence_envelope")
 
     def test_primary_structure_overlap_rejected_but_gap_allowed(self):
         draft = self.draft()

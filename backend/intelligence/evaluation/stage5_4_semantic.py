@@ -184,17 +184,27 @@ def validate_chunk(description: ChunkDescription, chunk: dict, catalog: dict) ->
                    and catalog[ref][2] >= item.start_seconds - .5 for ref in item.evidence_refs):
             raise ValueError("Ledger item lacks overlapping substantive evidence")
         substantive = [catalog[ref] for ref in item.evidence_refs if catalog[ref][0] != "scene"]
-        if substantive and (item.start_seconds < min(row[1] for row in substantive) - .5 or
-                            item.end_seconds > max(row[2] for row in substantive) + .5):
-            raise ValueError("Ledger item extends beyond supplied substantive evidence")
+        evidence_start = min(row[1] for row in substantive)
+        evidence_end = max(row[2] for row in substantive)
+        start = max(item.start_seconds, evidence_start)
+        end = min(item.end_seconds, evidence_end)
+        if start > end:
+            raise ValueError("Ledger item has no substantive timing support")
         words = json.dumps(item.model_dump(), ensure_ascii=False).casefold()
         if any(re.search(r"(?<![\w.])" + re.escape(name.casefold()) + r"(?![\w.])", words)
                for name in ontology_ids):
             raise ValueError("Pass 1 emitted ontology ID")
         if item.visible_actions and not any(ref.startswith("frame:") for ref in item.evidence_refs):
             raise ValueError("Visible action needs a frame reference")
+        normalized = item.model_dump(mode="json")
+        normalized["start_seconds"], normalized["end_seconds"] = start, end
+        if start != item.start_seconds or end != item.end_seconds:
+            normalized["timing_adjustment"] = {
+                "reason": "clamped_to_substantive_evidence_envelope",
+                "model_start_seconds": item.start_seconds,
+                "model_end_seconds": item.end_seconds}
         ledger.append({"ledger_id": f"ledger:{chunk['chunk_id'].split(':')[1]}:{index}",
-                       "chunk_id": chunk["chunk_id"], **item.model_dump(mode="json")})
+                       "chunk_id": chunk["chunk_id"], **normalized})
     return ledger
 
 

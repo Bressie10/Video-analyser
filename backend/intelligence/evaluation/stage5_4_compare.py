@@ -27,7 +27,7 @@ def ledger_failures(candidate: dict, low_level: dict) -> list[str]:
     failures = []
     for chunk in candidate["chunk_plan"]:
         observations = [LedgerObservation.model_validate({
-            key: value for key, value in item.items() if key not in ("ledger_id", "chunk_id")})
+            key: value for key, value in item.items() if key not in ("ledger_id", "chunk_id", "timing_adjustment")})
             for item in by_chunk.get(chunk["chunk_id"], [])]
         described = ChunkDescription(chunk_start_seconds=chunk["start_seconds"],
                                      chunk_end_seconds=chunk["end_seconds"],
