@@ -452,6 +452,13 @@ def run_one(source_ref: str, media_path: Path, result: dict, *, model: str,
             ledger.extend(items)
             previous = described.model_dump(mode="json")
             passes.append(response_meta)
+        ledger_sha256 = hashlib.sha256(json.dumps(ledger, sort_keys=True).encode()).hexdigest()
+        if checkpoint["synthesis_response"] is not None and checkpoint["synthesis_response"].get(
+                "ledger_sha256") != ledger_sha256:
+            checkpoint.setdefault("superseded_synthesis_responses", []).append(
+                checkpoint["synthesis_response"])
+            checkpoint["synthesis_response"] = None
+            save_checkpoint()
         if checkpoint["synthesis_response"] is not None:
             saved = checkpoint["synthesis_response"]
             draft = SynthesisDraft.model_validate(saved["draft"])
@@ -471,7 +478,8 @@ def run_one(source_ref: str, media_path: Path, result: dict, *, model: str,
                               "prompt_sha256": hashlib.sha256(PASS2_PROMPT.encode()).hexdigest(),
                               "analyzer_commit": analyzer_commit}
             checkpoint["synthesis_response"] = {"draft": draft.model_dump(mode="json"),
-                                                "provenance": synthesis_meta}
+                                                "provenance": synthesis_meta,
+                                                "ledger_sha256": ledger_sha256}
             save_checkpoint()
     flat, report = validate_synthesis(draft, ledger, content, public)
     report.source.reference_id = source_ref
