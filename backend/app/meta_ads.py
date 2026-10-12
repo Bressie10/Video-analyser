@@ -19,7 +19,7 @@ class AdMetricsUnavailable(ValueError):
     pass
 
 
-def ad_performance(client: MetaClient, ad_id: str, since: date, until: date) -> VideoPerformance:
+def ad_performance_with_identity(client: MetaClient, ad_id: str, since: date, until: date) -> tuple[VideoPerformance, dict]:
     if not re.fullmatch(r'[0-9]{1,30}', ad_id) or since > until:
         raise ValueError('Provide a numeric Meta ad ID and an ordered date range.')
     ad = client.get(ad_id, {'fields': 'id,account_id'})
@@ -52,8 +52,15 @@ def ad_performance(client: MetaClient, ad_id: str, since: date, until: date) -> 
             raise AdMetricsUnavailable('Meta has no available ad metrics for this reporting period.')
         # The video_view action is Meta's 3-second video view, not impressions or starts.
         view = next((r['value'] for r in details['actions'] or [] if r['action_type'] == 'video_view'), None)
-        return performance_snapshot('meta_ads', {'view_count': integer(view), 'meta_ads': details})
+        snapshot = performance_snapshot('meta_ads', {'view_count': integer(view), 'meta_ads': details})
+        return snapshot, {'ad_id': row['ad_id'], 'account_id': row['account_id'],
+                          'placement_scope': 'meta_all_placements'}
     except AdMetricsUnavailable:
         raise
     except ValueError:
         raise MetaError('Meta returned invalid ad performance values.') from None
+
+
+def ad_performance(client: MetaClient, ad_id: str, since: date, until: date) -> VideoPerformance:
+    """Preserve the existing snapshot-only caller contract."""
+    return ad_performance_with_identity(client, ad_id, since, until)[0]

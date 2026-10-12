@@ -190,14 +190,15 @@ class PerformanceSourceConflict(ValueError):
     """The single stored snapshot belongs to a different provider."""
 
 
-def save_performance(video_id: UUID, performance: dict, *, owner_user_id=None) -> bool:
+def save_performance(video_id: UUID, performance: dict, *, owner_user_id=None, connection=None) -> bool:
     """Attach/refresh one snapshot atomically, preserving other analysis data.
 
     Return False for an unknown video; never replace another provider's snapshot.
     """
     snapshot = performance_snapshot(performance["performance_source"], performance["performance_metrics"])
     counts = snapshot["performance_metrics"]
-    with psycopg.connect(_database_url(), connect_timeout=3) as connection:
+    with (nullcontext(connection) if connection is not None else
+          psycopg.connect(_database_url(), connect_timeout=3)) as connection:
         with connection.cursor() as cursor:
             # Serialize metric updates for this UUID, including the first insert.
             if owner_user_id is None:
@@ -208,7 +209,7 @@ def save_performance(video_id: UUID, performance: dict, *, owner_user_id=None) -
                 return False
             cursor.execute("SELECT source FROM video_performance WHERE video_id = %s", (video_id,))
             existing = cursor.fetchone()
-            if existing is not None and existing[0] != snapshot["performance_source"]:
+            if existing is not None and (existing['source'] if isinstance(existing, dict) else existing[0]) != snapshot["performance_source"]:
                 raise PerformanceSourceConflict("Video already has performance from a different source.")
             cursor.execute(
                 """INSERT INTO video_performance
