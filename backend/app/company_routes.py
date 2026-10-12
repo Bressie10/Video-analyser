@@ -1,6 +1,6 @@
 """Membership-authorized management API preserving company ownership semantics."""
 
-from datetime import datetime
+from datetime import date, datetime
 from typing import Literal
 from uuid import UUID
 
@@ -13,6 +13,7 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from app import company_ownership_repository as repo
 from app import auth_repository as auth, meta_library_repository as library
 from app import entitlements
+from app import company_intelligence
 from app.company_authorization import authenticated_request, authorize
 
 router = APIRouter(prefix='/api', tags=['company management'], dependencies=[Depends(authenticated_request)])
@@ -38,6 +39,36 @@ class Reassignment(BaseModel):
 class AnalysisSelection(BaseModel):
     model_config = ConfigDict(extra='forbid')
     item_id: UUID
+
+
+class IntelligenceRequest(BaseModel):
+    model_config = ConfigDict(extra='forbid')
+    account_id: UUID
+    metric_id: Literal['ctr', 'cpc', 'cpm', 'impressions']
+    date_start: date
+    date_stop: date
+
+    @field_validator('date_stop')
+    @classmethod
+    def valid_stop(cls, value, info):
+        start = info.data.get('date_start')
+        if start is not None and value < start:
+            raise ValueError('date_stop must be on or after date_start.')
+        return value
+
+
+@router.post('/companies/{company_id}/intelligence')
+def company_intelligence_result(request: Request, company_id: UUID, body: IntelligenceRequest):
+    try:
+        result = company_intelligence.generate(request.state.company_user, company_id,
+            body.account_id, body.metric_id, body.date_start, body.date_stop)
+        response = JSONResponse(jsonable_encoder(result))
+    except HTTPException as error:
+        response = JSONResponse({'detail': error.detail}, status_code=error.status_code)
+    except (psycopg.Error, ValueError):
+        response = JSONResponse({'detail': 'Company intelligence is unavailable.'}, status_code=503)
+    response.headers['Cache-Control'] = 'private, no-store'
+    return response
 
 
 def respond(request, operation, *, write=False, status=200, company_id=None,
