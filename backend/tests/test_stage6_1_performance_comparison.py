@@ -22,7 +22,7 @@ def organic(name, value, **changes):
 
 def paid(name, impressions=1000, clicks=20, spend="10", **changes):
     row = {"reference": name, "provider_id": name, "public_url": None,
-           "workspace_id": "workspace-a", "platform": "instagram",
+           "workspace_id": "workspace-a", "platform": "meta_all_placements",
            "performance_source": "meta_ads", "exposure_type": "paid",
            "account_id": "ad-account-a", "fetched_at": "2026-10-08T00:00:00+00:00",
            "performance_metrics": {"meta_ads": {
@@ -55,6 +55,15 @@ class Stage61ComparisonTests(unittest.TestCase):
         self.paid_target = paid("ad-target")
         self.paid_peers = [paid(f"ad-{i}", impressions=value) for i, value in
                            enumerate((500, 750, 1000, 1250, 1500))]
+
+    def test_paid_scope_requires_explicit_combined_delivery(self):
+        for scope in ("facebook", "instagram", None):
+            with self.subTest(scope=scope):
+                report = compare(paid("target", platform=scope), self.paid_peers, ["impressions"])
+                self.assertFalse(result(report, "impressions")["eligibility"])
+        mixed = compare(self.paid_target, [*self.paid_peers[:4], paid("mixed", platform="facebook")], ["impressions"])
+        self.assertIn("platform_mismatch", mixed["excluded_candidate_peers"]["impressions"][0]["reasons"])
+        self.assertIn("insufficient_peer_cohort", result(mixed, "impressions")["abstention_reasons"])
 
     def test_organic_exact_math_and_order_independence(self):
         report = compare(self.organic_target, self.organic_peers, ["view_count"])

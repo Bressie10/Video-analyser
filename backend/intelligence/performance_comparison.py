@@ -14,6 +14,7 @@ MIN_COHORT = 5
 AGE_TOLERANCE_DAYS = 2  # Research hypothesis, not a provider rule.
 ORGANIC = ("instagram", "facebook", "tiktok")
 PAID = "meta_ads"
+PAID_SCOPE = "meta_all_placements"
 COUNTS = ("view_count", "like_count", "comment_count", "share_count")
 AD_COUNTS = ("impressions", "reach", "clicks")
 AD_RATES = ("ctr", "cpc")
@@ -164,7 +165,7 @@ def _context_errors(record: dict, metric_id: str) -> list[str]:
     paid = record.get("performance_source") == PAID
     if not paid and record.get("performance_source") != record.get("platform"):
         errors.append("source_platform_mismatch")
-    if paid and record.get("platform") not in ("instagram", "facebook"):
+    if paid and record.get("platform") != PAID_SCOPE:
         errors.append("unsupported_paid_platform")
     if paid:
         errors += [f"missing_{key}" for key in ("date_start", "date_stop", "action_report_time",
