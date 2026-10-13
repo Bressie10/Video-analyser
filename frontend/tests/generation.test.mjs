@@ -37,7 +37,7 @@ async function switchBeta(p) { const nav = p.getByRole('navigation', { name: 'Co
 for (const count of [1, 7, 20, 25]) test(`default All mode resolves latest ${count} available to explicit max 20 IDs`, async () => {
   const f = await app({ count }); const p = f.page;
   try {
-    await generate(p).waitFor(); await p.waitForFunction(() => !document.querySelector('button[type=submit]').disabled);
+    await generate(p).waitFor(); await p.waitForFunction(() => !document.querySelector('.generation button[type=submit]').disabled);
     assert.equal(await p.getByLabel('Latest analysed content', { exact: true }).isChecked(), true);
     assert.equal(await p.getByLabel('Instagram', { exact: true }).isChecked(), true); assert.equal(await p.getByLabel('Facebook', { exact: true }).isChecked(), true);
     assert.equal(await p.getByRole('checkbox', { name: /Meta Ads/ }).count(), 0);
@@ -116,7 +116,7 @@ test('adapter rejects malformed or non-persisted results and invalid generation 
 });
 test('successful generations get fresh keys and release switch guard', async () => {
   const f = await app({count:2}); const p=f.page;
-  try { await generate(p).click(); await p.getByRole('heading',{name:saved.title}).waitFor(); await generate(p).click(); await p.waitForFunction(()=>!document.querySelector('button[type=submit]').disabled); assert.equal(f.calls.length,2); assert.notEqual(f.calls[0].request_id,f.calls[1].request_id); assert.equal(await p.locator('.idea-result').count(),1); await switchBeta(p); assert.equal(await p.getByRole('dialog').count(),0); } finally { await f.close(); }
+  try { await generate(p).click(); await p.getByRole('heading',{name:saved.title}).waitFor(); await generate(p).click(); await p.waitForFunction(()=>!document.querySelector('.generation button[type=submit]').disabled); assert.equal(f.calls.length,2); assert.notEqual(f.calls[0].request_id,f.calls[1].request_id); assert.equal(await p.locator('.idea-result').count(),1); await switchBeta(p); assert.equal(await p.getByRole('dialog').count(),0); } finally { await f.close(); }
 });
 test('loading disables generation and changed retry payload gets a new key', async () => {
   let release; const gate=new Promise(r=>release=r);
@@ -170,7 +170,7 @@ test('latest workspace and saved document visual states at every required viewpo
   const f=await app(); const p=f.page;
   try {
     await generate(p).waitFor();
-    await p.waitForFunction(()=>!document.querySelector('button[type=submit]').disabled);
+    await p.waitForFunction(()=>!document.querySelector('.generation button[type=submit]').disabled);
     assert.equal(await p.title(),'ContentMetric');
     for(const width of [1440,1280,1024,768,390,320]) {
       await p.setViewportSize({width,height:900});

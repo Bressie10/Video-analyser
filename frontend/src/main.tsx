@@ -12,6 +12,7 @@ import './style.css';
 import { CompanyContent } from './company/CompanyContent';
 import { ProfileRefresh } from './company/ProfileRefresh';
 import { IdeasPage } from './ideas/IdeasPage';
+import { IntelligencePage } from './intelligence/IntelligencePage';
 
 import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
@@ -60,6 +61,7 @@ export function App() {
     {onSetup => <>
       <div hidden={page !== 'overview'}><WorkspaceOverview /></div>
       <div hidden={page !== 'content'}><CompanyContent onAnalysisChange={() => { refreshAnalysisSources(v => v + 1); void onboarding.refresh(); billing.refresh(); }} /></div>
+      <div hidden={page !== 'intelligence'}><IntelligencePage /></div>
       <div hidden={page !== 'generate'}><GenerateIdea onSetup={onSetup} refreshToken={analysisRevision} onSaved={() => { refreshHistory(v => v + 1); void onboarding.refresh(); billing.refresh(); }} /></div>
       <div hidden={page !== 'ideas'}><IdeasPage refreshToken={historyRevision} /></div>
     </>}

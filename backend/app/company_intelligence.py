@@ -33,6 +33,19 @@ def _base(metric_id, definition, start, stop):
             "provenance": {"model_calls": 0}}
 
 
+def _readable_citations(rows, packets):
+    """Attach only text already present in a validated, bounded evidence packet."""
+    catalog = {entry["ref"]: entry for packet in packets
+               for kind in ("transcript", "ocr") for entry in packet[kind]}
+    return [{**row, **({"excerpt": catalog[row["evidence_ref"]]["text"]}
+                     if row["evidence_ref"] in catalog else {})} for row in rows]
+
+
+def _readable_differences(rows, packets):
+    return [{**row, "evidence_refs": _readable_citations(row["evidence_refs"], packets),
+             "counterexamples": _readable_citations(row["counterexamples"], packets)} for row in rows]
+
+
 def _content(db, company_id, connection_id, account_uuid, selected):
     """Only a unique, explicit ad-to-video asset edge may supply raw content."""
     analyses, assets = {}, {}
@@ -183,11 +196,13 @@ def _finish(user, company_id, account, metric_id, start, stop, result, started,
         client = library.connection_client(account)
         with TemporaryDirectory(prefix="company-intelligence-") as directory:
             paths = {}
+            download_started = perf_counter()
             for index, member in enumerate(selected):
                 provider_id = member["provider_id"]
                 destination = Path(directory, f"source-{index}.mp4")
                 download(media_url(client, assets[provider_id]), destination)
                 paths[provider_id] = destination
+            result["provenance"]["media_download_seconds"] = round(perf_counter() - download_started, 3)
             case = prepare_case(report, metric_id, analyses, paths)
             if any(not packet["frames"] for packet in case["packets"]):
                 result["abstentions"].append("insufficient_source_video_coverage")
@@ -207,7 +222,7 @@ def _finish(user, company_id, account, metric_id, start, stop, result, started,
         result["abstentions"].append("content_model_or_validation_failed")
         result["limitations"].append(type(error).__name__)
         return result
-    result["content_differences"] = differences["observed_differences"]
+    result["content_differences"] = _readable_differences(differences["observed_differences"], case["packets"])
     result["limitations"].extend(differences["limitations"])
     result["provenance"]["model_responses"] = [
         {key: value for key, value in item.items() if key in MODEL_META}
@@ -227,7 +242,10 @@ def _finish(user, company_id, account, metric_id, start, stop, result, started,
         result["limitations"].append(type(error).__name__)
         result["provenance"]["model_calls"] = 2
         return result
-    result["hypotheses"] = hypotheses["hypotheses"][:3]
+    result["hypotheses"] = [{**row,
+        "evidence_refs": _readable_citations(row["evidence_refs"], case["packets"]),
+        "counterevidence": _readable_citations(row["counterevidence"], case["packets"])}
+        for row in hypotheses["hypotheses"][:3]]
     result["provenance"]["model_calls"] = 1 + hypotheses["provenance"]["model_calls"]
     result["provenance"]["elapsed_seconds"] = round(perf_counter() - started, 3)
     model_meta = hypotheses["provenance"].get("model_response")

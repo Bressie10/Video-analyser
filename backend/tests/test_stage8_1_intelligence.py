@@ -128,6 +128,9 @@ class IntelligenceDatabaseTests(TestCase):
         self.assertEqual(len(result["content_differences"]), 1)
         self.assertEqual(len(result["hypotheses"]), 1)
         self.assertEqual(result["provenance"]["model_calls"], 2)
+        self.assertEqual(result["content_differences"][0]["evidence_refs"][0]["excerpt"], "Offer")
+        self.assertEqual(result["hypotheses"][0]["evidence_refs"][0]["excerpt"], "Offer")
+        self.assertGreaterEqual(result["provenance"]["media_download_seconds"], 0)
         self.assertNotIn("token_ciphertext", str(result))
 
     def test_cohort_authorization_and_metric_failures(self):
