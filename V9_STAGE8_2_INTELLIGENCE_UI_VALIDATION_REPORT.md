@@ -1,44 +1,41 @@
-# V9 Stage 8.2 — Intelligence UI and real path validation
+# V9 Stage 8.2 — Creative Intelligence implementation and validation
 
-## Scope and flow
+## Scope and design
 
-- Base: `be90e9099b2036cc6fa7939511c7768bc0c454b9` on `codex/v9-stage8-intelligence-ui` in an isolated worktree. The main checkout's unrelated `frontend/vite.config.ts` edit was untouched.
-- An authenticated user selects a company with the existing workspace selector, opens **Creative Intelligence** in the existing navigation, then selects one linked Meta Ads account, CTR/CPC/CPM/Impressions, and an exact start and stop date.
-- One explicit submit sends `account_id`, `metric_id`, `date_start`, and `date_stop` to `POST /api/companies/{company_id}/intelligence` through the existing authenticated fetch helper. The server selects the cohort and owns performance, evidence, and hypotheses. Submission is locked while active; no effect starts the intelligence request.
-- No intelligence history, generated intelligence persistence, extra model call, job queue, cache, or new client API framework was added.
+- Branch: `codex/v9-stage8-intelligence-ui`, based on Stage 8.1 `be90e9099b2036cc6fa7939511c7768bc0c454b9`. Implementation commit: `e2fc45a07c58ec5e9b7c10fa289f4f016ceccad4`.
+- Implemented the latest Creative Intelligence v8 comparison concepts in `V9_UI_DESIGN_DIRECTION.md` and `design/creative-intelligence/v8/`. These exact approved references were copied into this branch without changing their originals in the main checkout. Earlier large-card concepts were not used. The approved Creative Analysis designs in `design/single-creative-review/v2/` remain for Stage 8.3; no single-video route or playback analysis was built.
+- The page now uses a compact account/metric/exact-date toolbar; a dark Stage 7.1 performance strip with six marker positions, reference value, median, ratio, percentile and peer count; a two-cohort A–F creative strip; a dense Creative Signal Map; compact control/variant experiments; and a modal Evidence Trace. The 1440px browser capture shows controls, performance, all six creatives, the map, and the first experiment in the opening viewport. A 390px capture has no document overflow; creatives scroll horizontally and the selected signal expands into six compact lanes.
+- Higher/lower means **numeric selected metric**, not creative quality. Uncited signal/video intersections show `?` for no validated citation. The UI never infers absence from sparse sampled frames and never constructs creative claims or support counts in the browser. Selecting a signal marks support and counterexamples across the creative strip; selecting a creative focuses cited map rows. Experiments link back to the source signal.
 
-## Result presentation
+## API and media boundary
 
-- Performance shows the Stage 7.1 summary, selected metric definition, exact period, ad and peer counts, reference value, median, ratio, percentile, and API-provided standout observations. It does not assign quality labels.
-- What differed shows only validated Stage 7.2 observations, group support counts, evidence coverage confidence, timing when supplied, and counterexamples. The section says **Observed difference — not proven cause** once.
-- What to test next shows at most three Stage 7.3 experiments with the hypothesis, controllable variable, control, variant, metric, constants, source observation, counterevidence, and limitations. It presents them as experiments to try.
-- Citations show a pseudonymous video reference, evidence reference/type, timestamp, and a bounded transcript or OCR excerpt when that text exists in the validated evidence packet. Frame references show the timestamp and reference; raw frames, raw model responses, and prompts are not returned for display.
+- The authenticated browser request remains `POST /api/companies/{company_id}/intelligence` with exactly `account_id`, `metric_id`, `date_start`, and `date_stop`; it uses `cache: 'no-store'`, scoped cancellation and a synchronous duplicate-submit lock. Cohort selection, performance, differences, citations and hypotheses remain server-owned. No new model call, media job, cache, queue, history or persistence was introduced.
+- The only response enhancement is optional `creative_previews`: at most six JPEG stills from frames Stage 8.1 already sampled from its authorized, re-resolved source media. Each is capped at 320px and 64 KiB; no extra provider fetch or permanent storage is added. Each preview entry contains a pseudonymous video reference, sampled frame reference, timestamp and base64 JPEG, never a provider URL, token, temporary path or full video. Failed preview encoding leaves intelligence intact. Missing previews use a neutral frame fallback.
+- Evidence Trace permits keyboard/touch citation switching, exposes counterexamples, exact timestamps and bounded transcript/OCR excerpts, and groups citations at the same video timestamp into one cited moment. A preview is called an **exact source frame** only when its frame reference matches a cited frame. Otherwise it is explicitly labeled a creative preview, not proof of that citation. Prompts, raw model responses and internal provider IDs are not rendered.
 
-## Normal degraded states and errors
+## Degraded results and recovery
 
-- No linked Ads account points to existing Settings/Meta connection. A disconnected connection returned by the API points there too.
-- An insufficient exact-context cohort explains that more comparable ads are needed. Performance-only output remains visible when analyzed video coverage is insufficient or media is unavailable; no empty recommendations are rendered.
-- Model or validation failure keeps the performance section and gives a safe generic explanation. Unauthorized/expired session, invalid date or unsupported metric, unavailable backend, and malformed response use bounded UI text without backend detail or stack traces.
-- Loading says **Comparing performance and creative evidence…** and disables inputs and submission; there is no fabricated progress percentage.
+- No linked Ads account: the form is hidden and Integrations is the direct next action. Disconnected Meta, invalid selection/date, expired session, unavailable backend and malformed response use bounded product copy without provider/internal errors.
+- Insufficient cohort: no invented performance, map or experiment. When performance is valid but media, coverage or Stage 7.2 fails, valid performance remains and the absent reasoning is explained. Stage 7.3 failure retains validated differences and removes empty experiment cards. Limitations and the single observational-association notice are secondary to the analytical result.
 
-## Tests and checks
+## Checks
 
-- Focused mocked Playwright browser tests: **9 passed, 0 failed, 0 skipped**. They cover full output, one and three hypotheses, support with a counterexample, performance-only, insufficient cohort, disconnected/unlinked Meta, media unavailable, loading, safe API errors, malformed success, exact request fields, and no duplicate call on rerender. Desktop and 390 px screenshots were inspected; the checked views had no clipping or overlay. Screenshot artifacts are outside the repo at `/private/tmp/v9-stage82-intelligence-desktop.png`, `/private/tmp/v9-stage82-intelligence-mobile.png`, and `/private/tmp/v9-stage82-intelligence-loading-mobile.png`.
-- The final browser/frontend suite excluding four PostgreSQL integration files: **312 passed, 0 failed, 0 skipped**. The new hidden submit form exposed three broad `button[type=submit]` selectors in existing generation browser tests; these now target the generation form. An isolated company-menu detach timeout did not repeat when rerun alone, and the final 312-test run passed.
-- Backend Stage 6: 11 passed. Stage 7: 20 passed. Stage 8.2 citation enrichment: 2 passed. Stage 8.1 API tests: 4 collected, all skipped without disposable PostgreSQL.
-- Full backend discovery was attempted: 584 tests collected; 8 errored because `TEST_DATABASE_URL` was unavailable and 288 skipped. No non-database assertion failed. The four PostgreSQL browser integration files were likewise not run. Python compilation, frontend typecheck, production build, privacy scan, and `git diff --check` passed. Browser plugin was unavailable; Playwright was used.
+- Focused Stage 8.2 browser tests: **9 passed** after the JPEG fixture was added. They cover exact four-field request, six markers/creatives, selected signal, creative focus, support/counterexample treatment, Evidence Trace with exact frame and same-moment text, one/three experiments, performance-only, media/model failure, insufficient cohort, disconnected/unlinked Meta, loading lock, safe API errors, malformed response, desktop and 390px rendering.
+- Stage 6.1, 6.2, 7.1, 7.2, 7.3, 8.1 and 8.2 focused Python suite: **35 passed, 4 Stage 8.1 database cases skipped**. The new preview tests verify bounding, image downscaling, restricted response fields and unreadable-image fallback.
+- Frontend typecheck and production build passed. Python compilation and `git diff --check` passed. A source scan found no browser-side provider IDs, tokens, temporary paths or raw model data; existing server-side provider IDs remain confined to authorized media resolution.
+- An unrestricted `npm test` run reported **311 passed, 18 failed**: 17 database-dependent tests stopped at their missing `TEST_DATABASE_URL` gate; one new evidence test ran before its fixture file existed. That focused test subsequently passed. The complete frontend suite excluding four database-integration files passed: **312 passed, 0 failed, 0 skipped**.
+- Browser screenshots used for layout inspection: `/private/tmp/v9-stage82-intelligence-desktop.png`, `/private/tmp/v9-stage82-intelligence-mobile.png`, `/private/tmp/v9-stage82-evidence-desktop.png` and `/private/tmp/v9-stage82-evidence-mobile.png`. These are mocked contract views, not live-provider evidence.
 
-## Live Meta and media validation
+## Database, live provider and performance limits
 
-- No real endpoint call was made. The local configuration names a localhost PostgreSQL database, but no server responded on port 5432. Initializing a disposable PostgreSQL 17 cluster failed inside the sandbox with `Operation not permitted` for shared memory and outside it with `No space left on device` for a shared memory segment. Docker was unavailable. Therefore no authorized owned account or qualifying six-ad cohort could be established safely from local data.
-- The exact reporting context, six analyzed ad/video associations, real Stage 7.2 citations, and real Stage 7.3 hypotheses could not be inspected. The critical question of whether Meta can re-resolve and download all six analyzed source videos remains unverified. No media, provider response, token, or customer identifier was committed.
-- Real total wall time, six-media download time, Stage 7.2/7.3 latency, model calls, and token counts are unavailable. The successful endpoint response already carries bounded model call metadata and total elapsed time; Stage 8.2 also records the media-download portion. No cache or queue decision is justified without a real measurement.
-- Evidence accuracy classification (**supported / questionable / unsupported**) and hypothesis usefulness review (controllability, control/variant clarity, fidelity to the observation, causal language, creator clarity) require the blocked real cohort. Mocked checks are contract tests, not an accuracy review.
+- No PostgreSQL server answered on localhost 5432 or 55448. The existing disposable cluster at `/private/tmp/cm-v9-stage8-pg` could not start, including outside the sandbox: PostgreSQL reported `could not create shared memory segment: No space left on device`. Stage 8.1 database/API tests and database-backed browser integration therefore remain unverified, not passing.
+- No owned Meta account with a qualifying exact-context six-ad cohort was available through this environment. Real source-media re-resolution, preview display, validated Stage 7.2 references, counterexamples and Stage 7.3 hypothesis grounding were not inspected against customer source media. Evidence classifications (supported/questionable/unsupported) remain unavailable. The implementation must not be treated as provider-validated.
+- Real endpoint wall time, media download time, Stage 7.2/7.3 model latency, call count and safe token metadata are **unavailable**. The existing response can carry bounded timing/call metadata, but no queue or cache decision is justified without real measurements.
 
-## Remaining blockers before V9 release
+## Remaining validation before release
 
-1. Restore access to a disposable PostgreSQL instance, then pass the Stage 8.1 API and full backend database suite without skips.
-2. Run one owned-account CTR comparison for an exact window with at least six comparable observations and six analyzed video associations. Inspect every cited frame, OCR item, transcript excerpt, timing claim, support count, counterexample, and resulting experiment against the source media.
-3. Record aggregate source-media re-resolution success/failure and measured timing and token counts. Complete the manual evidence and hypothesis sanity reviews before release audit.
+1. Restore disposable PostgreSQL and run the Stage 8.1 API plus database-backed frontend suites.
+2. Run an owned-account comparison with six analyzed video associations in one exact metric/date context. Verify each sampled preview and cited frame/text/time against the source media, including counterexamples.
+3. Record media re-resolution success and request/model timings before judging responsiveness or cost.
 
-D — live validation could not be completed; code is UI-ready but provider behavior remains unverified
+D — implementation is complete but real provider validation remains unavailable
