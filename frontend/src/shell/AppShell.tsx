@@ -48,5 +48,14 @@ export function AppShell({ page, companySelector, children, setup }: { page: App
       </main>
       <LegalFooter />
     </div>
+    <nav className="app-mobile-bottom-nav" aria-label="Mobile primary">
+      {(['overview', 'intelligence', 'content', 'ideas'] as const).map(id => {
+        const item = navigation.find(entry => entry.id === id)!;
+        const Icon = item.icon;
+        return <a key={id} href={`#${id}`} aria-current={page === id ? 'page' : undefined}>
+          <Icon size={19} strokeWidth={1.8} aria-hidden="true" /><span>{id === 'overview' ? 'Home' : item.label}</span>
+        </a>;
+      })}
+    </nav>
   </div>;
 }

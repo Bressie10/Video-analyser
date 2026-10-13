@@ -1,5 +1,6 @@
 """One on-demand, company-authorized path through the frozen V9 stages."""
 
+import base64
 from datetime import date
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -21,6 +22,7 @@ from intelligence.creative_hypotheses import deterministic_baseline, run_one_cal
 METRICS = frozenset({"ctr", "cpc", "cpm", "impressions"})
 WINDOWS = ["7d_click", "1d_view"]
 MODEL_META = ("model", "elapsed_seconds", "input_tokens", "output_tokens")
+MAX_PREVIEW_BYTES = 64 * 1024
 
 
 def _base(metric_id, definition, start, stop):
@@ -29,6 +31,7 @@ def _base(metric_id, definition, start, stop):
             "report_context": {"action_report_time": "impression",
                                "attribution_windows": WINDOWS}, "peer_count": 0},
             "performance": None, "content_differences": [], "hypotheses": [],
+            "creative_previews": [],
             "abstentions": [], "limitations": [],
             "provenance": {"model_calls": 0}}
 
@@ -44,6 +47,45 @@ def _readable_citations(rows, packets):
 def _readable_differences(rows, packets):
     return [{**row, "evidence_refs": _readable_citations(row["evidence_refs"], packets),
              "counterexamples": _readable_citations(row["counterexamples"], packets)} for row in rows]
+
+
+def _creative_previews(case):
+    """Return six bounded JPEG stills from already-authorized sampled frames.
+
+    No provider URL, source path, full video, or extra media request reaches the
+    browser. A failed preview is optional and must not alter intelligence.
+    """
+    import cv2
+    import numpy as np
+
+    images = dict(case["images"])
+    result = []
+    for packet in case["packets"]:
+        frame = next((row for row in packet["frames"] if row["ref"] in images), None)
+        if frame is None:
+            continue
+        decoded = cv2.imdecode(np.frombuffer(images[frame["ref"]], dtype=np.uint8), cv2.IMREAD_COLOR)
+        if decoded is None:
+            continue
+        height, width = decoded.shape[:2]
+        if width <= 0 or height <= 0:
+            continue
+        preview_added = False
+        for max_side in (320, 240, 180):
+            scale = min(1.0, max_side / max(width, height))
+            candidate = (cv2.resize(decoded, (max(1, round(width * scale)), max(1, round(height * scale))))
+                         if scale < 1 else decoded)
+            for quality in (65, 48):
+                encoded, jpeg = cv2.imencode(".jpg", candidate, [cv2.IMWRITE_JPEG_QUALITY, quality])
+                if encoded and len(jpeg) <= MAX_PREVIEW_BYTES:
+                    result.append({"video_ref": packet["video_ref"], "frame_ref": frame["ref"],
+                                   "timestamp_seconds": frame["timestamp_seconds"],
+                                   "jpeg_base64": base64.b64encode(jpeg).decode("ascii")})
+                    preview_added = True
+                    break
+            if preview_added:
+                break
+    return result[:6]
 
 
 def _content(db, company_id, connection_id, account_uuid, selected):
@@ -207,6 +249,12 @@ def _finish(user, company_id, account, metric_id, start, stop, result, started,
             if any(not packet["frames"] for packet in case["packets"]):
                 result["abstentions"].append("insufficient_source_video_coverage")
                 return result
+            try:
+                result["creative_previews"] = _creative_previews(case)
+            except Exception:
+                # Preview encoding is presentation only; validated reasoning
+                # must continue when an individual sampled image is unusable.
+                pass
     except (MediaUnavailable, meta.MetaError, OSError) as error:
         result["abstentions"].append("source_media_unavailable")
         result["limitations"].append(type(error).__name__)

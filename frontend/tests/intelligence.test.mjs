@@ -2,41 +2,40 @@ import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
 import { createServer } from 'vite';
 import { chromium } from 'playwright';
+import { readFileSync } from 'node:fs';
 import { authAlias } from './authenticated.vite.mjs';
 
 let server, browser, origin;
 const company = '00000000-0000-4000-8000-000000000001';
 const account = '00000000-0000-4000-8000-000000000002';
-const citation = { video_ref: 'video_demo', evidence_ref: 'video_demo:transcript:0', evidence_type: 'transcript', timestamp_seconds: 1.5, excerpt: 'Offer spoken here' };
-const difference = { description: 'The offer is spoken in more higher-group videos.', higher_group_support: 3, lower_group_support: 1,
-  higher_group_size: 3, lower_group_size: 3, confidence: 'low', evidence_refs: [citation], counterexamples: [{ ...citation, evidence_ref: 'video_demo:ocr:1', evidence_type: 'ocr', excerpt: 'Offer card' }] };
-const hypothesis = { hypothesis: 'Test whether spoken offer presence may be associated with a different CTR.', variable_to_test: 'spoken offer presence',
-  control_condition: 'Offer is shown without speech.', variant_condition: 'Offer is spoken.', primary_metric: 'ctr',
-  what_to_hold_constant: ['audience', 'budget'], limitations: ['Observational association only.'],
-  source_difference: difference.description, counterevidence: difference.counterexamples };
-const base = { metric: { description: 'click-through rate', unit: 'percent' }, cohort: { date_start: '2026-01-01', date_stop: '2026-01-07', distinct_ads: 6, peer_count: 5 },
-  performance: { summary: 'Among 5 comparable peer ads, CTR was above the cohort median.', notable_metrics: [{ observation: 'Click-through rate was above this comparison cohort\'s median.' }],
-    metric_facts: { target_value: '2', median: '1', ratio: '2', percentile: 80, description: 'click-through rate' }, limitations: [] },
-  content_differences: [difference], hypotheses: [hypothesis], abstentions: [] };
+const refs = 'ABCDEF'.split('').map(letter => `video_${letter}`);
+const groups = { higher: [2.1, 1.9, 1.8].map((value, index) => ({ video_ref: refs[index], metric_value: String(value), percentile: index === 2 ? 80 : null })),
+  lower: [1.0, 0.8, 0.6].map((value, index) => ({ video_ref: refs[index + 3], metric_value: String(value), percentile: null })), middle_excluded_count: 0 };
+const cited = (letter, type, time, text) => ({ video_ref: `video_${letter}`, evidence_ref: `video_${letter}:${type}:${time}`, evidence_type: type, timestamp_seconds: time, ...(text ? { excerpt: text } : {}) });
+const difference = { description: 'Spoken offer in opening', evidence_type: 'transcript', higher_group_support: 3, lower_group_support: 1,
+  higher_group_size: 3, lower_group_size: 3, supporting_video_refs: refs.slice(0, 3), confidence: 'bounded',
+  evidence_refs: [cited('A', 'transcript', .8, 'Offer spoken here'), cited('B', 'transcript', 1.1, 'Today only'), cited('C', 'transcript', .7, 'Save now')],
+  counterexamples: [cited('D', 'transcript', 1.2, 'Same offer')] };
+const hypothesis = { hypothesis: 'Test a spoken opening offer', variable_to_test: 'spoken offer timing', control_condition: 'Offer after setup',
+  variant_condition: 'Same offer in opening', primary_metric: 'ctr', what_to_hold_constant: ['visual format', 'duration'],
+  limitations: ['Association within this cohort.'], source_difference: difference.description, counterevidence: difference.counterexamples };
+const base = { metric: { description: 'Click-through rate', unit: 'percent' },
+  cohort: { date_start: '2026-01-01', date_stop: '2026-01-07', distinct_ads: 6, peer_count: 5, content_groups: groups },
+  performance: { summary: 'CTR was above the peer median.', metric_facts: { target_value: '1.8', median: '1', ratio: '1.8', percentile: 80, description: 'click-through rate' }, limitations: [] },
+  content_differences: [difference], hypotheses: [hypothesis], creative_previews: [], abstentions: [] };
 
-before(async () => {
-  server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' });
-  await server.listen(); origin = server.resolvedUrls.local[0]; browser = await chromium.launch();
-});
+before(async () => { server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' });
+  await server.listen(); origin = server.resolvedUrls.local[0]; browser = await chromium.launch(); });
 after(async () => { await browser?.close(); await server?.close(); });
 
-async function app(response = base, { linked = true, hold = false, status = 200 } = {}) {
-  const context = await browser.newContext(); const calls = [], errors = [];
+async function app(response = base, { linked = true, hold = false, status = 200, width = 1440 } = {}) {
+  const context = await browser.newContext({ viewport: { width, height: 900 } }); const calls = [], errors = [];
   await context.addInitScript(id => localStorage.setItem('video-analyzer.active-company-id', id), company);
-  let release;
-  const gate = new Promise(resolve => { release = resolve; });
+  let release; const gate = new Promise(resolve => { release = resolve; });
   await context.route('**/api/**', async route => {
     const path = new URL(route.request().url()).pathname;
-    if (path.endsWith('/intelligence')) {
-      calls.push(route.request().postDataJSON());
-      if (hold) await gate;
-      return route.fulfill({ status, json: status === 200 ? response : { detail: 'SECRET INTERNAL PROVIDER TEXT' } }).catch(() => {});
-    }
+    if (path.endsWith('/intelligence')) { calls.push({ body: route.request().postDataJSON(), cache: route.request().headers()['cache-control'] });
+      if (hold) await gate; return route.fulfill({ status, json: status === 200 ? response : { detail: 'SECRET INTERNAL PROVIDER TEXT' } }).catch(() => {}); }
     if (path === '/api/companies') return route.fulfill({ json: { companies: [{ company_id: company, name: 'Alpha', role: 'owner', archived: false,
       accounts: linked ? [{ account_id: account, display_name: 'Owned Ads', platform: 'meta_ads' }] : [] }] } });
     if (path === '/api/meta/test') return route.fulfill({ json: { connected: false } });
@@ -48,92 +47,115 @@ async function app(response = base, { linked = true, hold = false, status = 200 
   await page.goto(`${origin}#intelligence`);
   return { page, calls, errors, release, close: () => context.close() };
 }
-async function submit(page) {
-  await page.getByLabel('Start date').fill('2026-01-01');
-  await page.getByLabel('End date').fill('2026-01-07');
-  await page.getByRole('button', { name: 'Run Creative Intelligence' }).click();
-}
+async function submit(page) { await page.getByLabel('Start date').fill('2026-01-01'); await page.getByLabel('End date').fill('2026-01-07');
+  await page.getByRole('button', { name: 'Run analysis' }).click(); }
 
-test('full result uses exact request fields and renders performance, evidence, and one experiment', async () => {
-  const f = await app(); try {
-    await submit(f.page); await f.page.getByRole('heading', { name: 'What to test next' }).waitFor();
-    assert.deepEqual(f.calls, [{ account_id: account, metric_id: 'ctr', date_start: '2026-01-01', date_stop: '2026-01-07' }]);
-    assert.equal(await f.page.getByText('Higher group 3/3 · Lower group 1/3').count(), 1);
-    assert.equal(await f.page.getByText('Offer spoken here').count(), 1);
-    assert.equal(await f.page.getByText('Offer card').count(), 2);
-    assert.equal(await f.page.getByText('Control').count(), 1);
-    assert.equal(await f.page.title(), 'ContentMetric');
+ test('full desktop and mobile result connects six creatives, signal, evidence and one experiment', async () => {
+  const f = await app(); try { await submit(f.page); await f.page.getByRole('heading', { name: 'Creative Signal Map' }).waitFor();
+    assert.deepEqual(f.calls.map(item => item.body), [{ account_id: account, metric_id: 'ctr', date_start: '2026-01-01', date_stop: '2026-01-07' }]);
+    assert.equal(await f.page.locator('.ci-creative').count(), 6);
+    assert.equal(await f.page.locator('.ci-distribution-dot').count(), 6);
+    assert.equal(await f.page.locator('.ci-map-row').count(), 1);
+    assert.equal(await f.page.locator('.ci-experiment').count(), 1);
+    assert.equal(await f.page.getByText('1.8×').count(), 1);
+    await f.page.locator('.ci-signal-name').click();
+    assert.equal(await f.page.locator('.ci-creative.support').count(), 3);
+    assert.equal(await f.page.locator('.ci-creative.counterexample').count(), 1);
+    assert.equal(await f.page.locator('.ci-creative.dim').count(), 2);
+    await f.page.locator('.ci-inspect').click();
+    await f.page.getByRole('dialog').getByText('Offer spoken here').waitFor();
+    await f.page.getByRole('dialog').getByRole('button', { name: /Creative D/ }).click();
+    assert.equal(await f.page.getByRole('dialog').getByText('◆ Counterexample', { exact: false }).count(), 1);
+    await f.page.screenshot({ path: '/private/tmp/v9-stage82-evidence-desktop.png' });
+    await f.page.getByRole('button', { name: 'Close evidence' }).click();
+    await f.page.locator('.ci-signal-name').focus(); await f.page.keyboard.press('Enter');
+    await f.page.getByRole('button', { name: /Creative B, higher numeric CTR/ }).click();
+    assert.equal(await f.page.locator('.ci-map-row.is-creative-match').count(), 1);
+    await f.page.evaluate(() => window.scrollTo(0, 0));
     await f.page.screenshot({ path: '/private/tmp/v9-stage82-intelligence-desktop.png', fullPage: true });
     await f.page.setViewportSize({ width: 390, height: 844 });
+    await f.page.evaluate(() => window.scrollTo(0, 0));
     await f.page.screenshot({ path: '/private/tmp/v9-stage82-intelligence-mobile.png', fullPage: true });
-    assert.equal(await f.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    await f.page.locator('.ci-inspect').click();
+    await f.page.getByRole('dialog').getByText('Offer spoken here').waitFor();
+    assert.equal(await f.page.getByRole('dialog').evaluate(element => element.scrollWidth <= element.clientWidth), true);
+    await f.page.screenshot({ path: '/private/tmp/v9-stage82-evidence-mobile.png' });
+    assert.equal(await f.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true,
+      JSON.stringify(await f.page.evaluate(() => [...document.querySelectorAll('body *')].filter(element => element.getBoundingClientRect().right > innerWidth + 1).slice(0, 12).map(element => [element.className?.baseVal ?? element.className, Math.round(element.getBoundingClientRect().right)]))));
     assert.deepEqual(f.errors, []);
   } finally { await f.close(); }
 });
 
-test('three hypotheses render as three experiments', async () => {
-  const f = await app({ ...base, hypotheses: [0, 1, 2].map(i => ({ ...hypothesis, hypothesis: `${hypothesis.hypothesis} ${i}` })) });
-  try { await submit(f.page); await f.page.getByRole('heading', { name: 'What to test next' }).waitFor();
-    assert.equal(await f.page.getByText('Experiment to try').count(), 3);
+test('three experiments stay compact and source link reselects signal', async () => {
+  const f = await app({ ...base, hypotheses: [0, 1, 2].map(i => ({ ...hypothesis, hypothesis: `Test opening offer ${i}` })) });
+  try { await submit(f.page); await f.page.getByRole('heading', { name: 'Experiments to try' }).waitFor();
+    assert.equal(await f.page.locator('.ci-experiment').count(), 3);
+    await f.page.locator('.ci-experiment-head button').first().click();
+    assert.equal(await f.page.locator('.ci-map-row.is-selected').count(), 1);
   } finally { await f.close(); }
 });
 
-test('performance-only result gives analyzed evidence state without experiments', async () => {
-  const f = await app({ ...base, content_differences: [], hypotheses: [], abstentions: ['insufficient_source_video_coverage'] });
-  try { await submit(f.page); await f.page.getByText('There isn’t enough analyzed video evidence yet to compare creative differences.').waitFor();
-    assert.equal(await f.page.getByRole('heading', { name: 'What to test next' }).count(), 0);
+test('exact sampled frame and text at the same moment form one evidence trace', async () => {
+  const frame = cited('A', 'frame', .8);
+  const preview = { video_ref: 'video_A', frame_ref: frame.evidence_ref, timestamp_seconds: .8,
+    jpeg_base64: readFileSync(new URL('./fixtures/intelligence-preview.jpg', import.meta.url)).toString('base64') };
+  const f = await app({ ...base, creative_previews: [preview], content_differences: [{ ...difference,
+    evidence_refs: [frame, ...difference.evidence_refs] }] });
+  try { await submit(f.page); await f.page.locator('.ci-inspect').click();
+    assert.equal(await f.page.getByRole('dialog').getByAltText('Bounded sampled frame for this exact citation').count(), 1);
+    assert.equal(await f.page.getByRole('dialog').getByText('Offer spoken here').count(), 1);
+    assert.equal(await f.page.getByRole('dialog').getByText('CITED MOMENT · 2 SOURCES').count(), 1);
   } finally { await f.close(); }
 });
 
-test('insufficient cohort and disconnected Meta render normal states', async () => {
-  for (const abstention of ['insufficient_historical_cohort', 'meta_disconnected']) {
-    const f = await app({ ...base, performance: null, content_differences: [], hypotheses: [], abstentions: [abstention] });
-    try { await submit(f.page); await f.page.getByRole('heading', { name: 'Performance' }).waitFor();
-      await f.page.getByText(abstention === 'meta_disconnected' ? 'Meta is disconnected.' : 'ContentMetric needs more comparable ads', { exact: false }).waitFor();
-      assert.equal(await f.page.getByRole('heading', { name: 'What differed' }).count(), 0);
+test('performance-only and media failure preserve performance without signal map', async () => {
+  for (const abstention of ['insufficient_source_video_coverage', 'source_media_unavailable', 'content_model_or_validation_failed']) {
+    const f = await app({ ...base, content_differences: [], hypotheses: [], abstentions: [abstention] });
+    try { await submit(f.page); await f.page.getByRole('heading', { name: 'Creative comparison unavailable' }).waitFor();
+      assert.equal(await f.page.locator('.ci-performance').count(), 1);
+      assert.equal(await f.page.locator('.ci-map').count(), 0);
+      assert.equal(await f.page.locator('.ci-experiment').count(), 0);
     } finally { await f.close(); }
   }
 });
 
-test('unlinked Meta points to Settings without an intelligence call', async () => {
-  const f = await app(base, { linked: false }); try {
-    await f.page.getByText('No linked Meta Ads account is available.', { exact: false }).waitFor();
-    assert.equal(f.calls.length, 0);
+test('validated findings survive hypothesis failure', async () => {
+  const f = await app({ ...base, hypotheses: [], abstentions: ['hypothesis_model_or_validation_failed'] });
+  try { await submit(f.page); await f.page.getByRole('heading', { name: 'Creative Signal Map' }).waitFor();
+    assert.equal(await f.page.locator('.ci-map-row').count(), 1);
+    assert.equal(await f.page.locator('.ci-experiment').count(), 0);
   } finally { await f.close(); }
 });
 
-test('media unavailable keeps performance and hides experiments', async () => {
-  const f = await app({ ...base, content_differences: [], hypotheses: [], abstentions: ['source_media_unavailable'] });
-  try { await submit(f.page); await f.page.getByText('Source media could not be accessed.', { exact: false }).waitFor();
-    assert.equal(await f.page.getByText(base.performance.summary).count(), 1);
+test('insufficient cohort and disconnected Meta give one recovery route', async () => {
+  for (const abstention of ['insufficient_historical_cohort', 'meta_disconnected']) {
+    const f = await app({ ...base, performance: null, content_differences: [], hypotheses: [], abstentions: [abstention] });
+    try { await submit(f.page); await f.page.getByRole('heading', { name: 'No comparison available yet' }).waitFor();
+      assert.equal(await f.page.locator('.ci-performance').count(), 0);
+      assert.equal(await f.page.locator('.ci-partial a').count(), 1);
+    } finally { await f.close(); }
+  }
+});
+
+test('no linked Ads account hides unusable controls', async () => {
+  const f = await app(base, { linked: false }); try { await f.page.getByRole('heading', { name: 'Link a Meta Ads account' }).waitFor();
+    assert.equal(await f.page.locator('.ci-toolbar').count(), 0); assert.equal(f.calls.length, 0);
   } finally { await f.close(); }
 });
 
-test('loading locks duplicate submits and rerender does not repeat request', async () => {
-  const f = await app(base, { hold: true }); try {
-    await submit(f.page); await f.page.getByText('Comparing performance and creative evidence…').waitFor();
-    await f.page.locator('.intelligence-form').evaluate(form => { form.requestSubmit(); form.requestSubmit(); });
-    await f.page.evaluate(() => window.dispatchEvent(new Event('hashchange')));
-    await f.page.setViewportSize({ width: 390, height: 844 });
-    await f.page.screenshot({ path: '/private/tmp/v9-stage82-intelligence-loading-mobile.png' });
-    assert.equal(await f.page.getByRole('button', { name: 'Run Creative Intelligence' }).isDisabled(), true);
-    assert.equal(f.calls.length, 1); f.release();
-    await f.page.getByRole('heading', { name: 'What differed' }).waitFor(); assert.equal(f.calls.length, 1);
+test('loading disables controls and prevents duplicate requests', async () => {
+  const f = await app(base, { hold: true }); try { await submit(f.page); await f.page.getByText('Comparing performance and creative evidence…').waitFor();
+    await f.page.locator('.ci-toolbar').evaluate(form => { form.requestSubmit(); form.requestSubmit(); });
+    assert.equal(await f.page.getByRole('button', { name: 'Run analysis' }).isDisabled(), true);
+    assert.equal(f.calls.length, 1); f.release(); await f.page.locator('.ci-performance').waitFor(); assert.equal(f.calls.length, 1);
   } finally { f.release(); await f.close(); }
 });
 
-test('API errors never show internal detail', async () => {
-  for (const status of [401, 422, 503]) {
-    const f = await app(base, { status }); try {
-      await submit(f.page); await f.page.getByRole('alert').waitFor();
+test('API errors and malformed responses hide internal data', async () => {
+  for (const setting of [{ status: 401 }, { status: 422 }, { status: 503 }, { response: { detail: 'SECRET INTERNAL PROVIDER TEXT' } }]) {
+    const f = await app(setting.response ?? base, { status: setting.status ?? 200 });
+    try { await submit(f.page); await f.page.getByRole('alert').waitFor();
       assert.equal((await f.page.locator('body').innerText()).includes('SECRET INTERNAL PROVIDER TEXT'), false);
     } finally { await f.close(); }
   }
-});
-
-test('malformed successful response shows a safe error', async () => {
-  const f = await app({ secret: 'SECRET INTERNAL PROVIDER TEXT' });
-  try { await submit(f.page); await f.page.getByRole('alert').waitFor();
-    assert.equal((await f.page.locator('body').innerText()).includes('SECRET INTERNAL PROVIDER TEXT'), false);
-  } finally { await f.close(); }
 });
