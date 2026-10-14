@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, ChevronDown, Film } from 'lucide-react';
 import { EvidenceTrace } from './EvidenceTrace';
 import { openCreative } from '../creativeAnalysis/handoff';
-import { type Cited, type Difference, type Hypothesis, type IntelligenceResult, type Member, type Metric, type Preview,
+import { type Cited, type Citation, type Difference, type Hypothesis, type IntelligenceResult, type Member, type Metric, type Preview,
   citations, formatMetric, formatPercentile, formatRatio, metricLabel, timeLabel } from './intelligenceModel';
 
 function reasonText(result: IntelligenceResult) {
@@ -151,6 +151,17 @@ export function IntelligenceResultView({ result, metric, accountName }: { result
   const entries = activeDifference ? citations(activeDifference) : [];
   const groups = result.cohort.content_groups;
   const labels = new Map(groups ? [...groups.higher, ...groups.lower].map((member, index) => [member.video_ref, 'ABCDEF'[index]]) : []);
+  const openMember = (member: Member, label: string, group: 'higher' | 'lower', chosen?: Citation, signal?: string) => {
+    if (!member.creative_ref) return;
+    const related = differences.flatMap(diff => citations(diff)
+      .filter(item => item.citation.video_ref === member.video_ref).map(item => ({ signal: diff.description, citation: item.citation })));
+    const selectedSignal = signal ?? (selectedIndex === null ? undefined : differences[selectedIndex]?.description);
+    const citation = chosen ?? (selectedSignal ? related.find(item => item.signal === selectedSignal)?.citation : undefined);
+    dialog.current?.close(); setInspector(null);
+    openCreative({ creativeRef: member.creative_ref, videoRef: member.video_ref, label, group, metric,
+      metricValue: member.metric_value, currency: result.cohort.currency, start: result.cohort.date_start,
+      stop: result.cohort.date_stop, accountName, selectedSignal, citation, citations: related, scrollY: window.scrollY });
+  };
   useEffect(() => {
     if (inspector && !dialog.current?.open) dialog.current?.showModal();
     if (!inspector && dialog.current?.open) { dialog.current.close(); returnFocus.current?.focus(); }
@@ -166,13 +177,7 @@ export function IntelligenceResultView({ result, metric, accountName }: { result
     {result.performance ? <><PerformanceStrip result={result} metric={metric} />
       {groups && <CreativeCohort result={result} metric={metric} selected={selectedIndex !== null ? differences[selectedIndex] ?? null : null}
         selectedCreative={selectedCreative} onCreative={ref => setSelectedCreative(current => current === ref ? null : ref)}
-        onOpen={(member, label, group) => { if (!member.creative_ref) return; const related = differences.flatMap(diff => citations(diff)
-          .filter(item => item.citation.video_ref === member.video_ref).map(item => ({ signal: diff.description, citation: item.citation })));
-          const selectedSignal = selectedIndex === null ? undefined : differences[selectedIndex]?.description;
-          const citation = selectedSignal ? related.find(item => item.signal === selectedSignal)?.citation : undefined;
-          openCreative({ creativeRef: member.creative_ref, videoRef: member.video_ref, label, group, metric,
-            metricValue: member.metric_value, currency: result.cohort.currency, start: result.cohort.date_start,
-            stop: result.cohort.date_stop, accountName, selectedSignal, citation, citations: related, scrollY: window.scrollY }); }} />}
+        onOpen={openMember} />}
       {differences.length > 0 ? <><SignalMap result={result} metric={metric} selectedIndex={selectedIndex} selectedCreative={selectedCreative}
         onSelect={index => setSelectedIndex(current => current === index ? null : index)} onInspect={inspect} />
         {result.hypotheses.length > 0 ? <section className="ci-experiments" aria-labelledby="ci-experiments-title"><header className="ci-section-heading"><h2 id="ci-experiments-title">Experiments to try</h2><span>Controlled tests from validated observations</span></header>
@@ -192,6 +197,8 @@ export function IntelligenceResultView({ result, metric, accountName }: { result
       {!result.abstentions.includes('meta_disconnected') && <a href="#intelligence-start">Change reporting dates</a>}
     </section>}
     <EvidenceTrace difference={activeDifference} entries={entries} activeRef={inspector?.ref ?? null} previews={result.creative_previews}
-      onChoose={ref => setInspector(current => current ? { ...current, ref } : null)} onClose={() => setInspector(null)} dialogRef={dialog} labels={labels} />
+      onChoose={ref => setInspector(current => current ? { ...current, ref } : null)} onClose={() => setInspector(null)} dialogRef={dialog} labels={labels}
+      onOpenCreative={citation => { const members = groups ? [...groups.higher, ...groups.lower] : []; const index = members.findIndex(member => member.video_ref === citation.video_ref);
+        if (index >= 0) openMember(members[index], 'ABCDEF'[index], index < 3 ? 'higher' : 'lower', citation, activeDifference?.description); }} />
   </div>;
 }

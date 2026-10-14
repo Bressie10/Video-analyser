@@ -35,13 +35,13 @@ before(async () => {
 });
 after(async () => { await browser?.close(); await server?.close(); });
 
-async function app({ width = 1440, data = detail, fromComparison = false, grantStatus = 200 } = {}) {
+async function app({ width = 1440, data = detail, fromComparison = false, grantStatus = 200, comparisonResult = comparison } = {}) {
   const context = await browser.newContext({ viewport: { width, height: 900 } });
   const calls = { intelligence: 0, media: 0 }; const errors = [];
   await context.addInitScript(id => localStorage.setItem('video-analyzer.active-company-id', id), company);
   await context.route('**/api/**', async route => {
     const path = new URL(route.request().url()).pathname;
-    if (path.endsWith('/intelligence')) { calls.intelligence++; return route.fulfill({ json: comparison }); }
+    if (path.endsWith('/intelligence')) { calls.intelligence++; return route.fulfill({ json: comparisonResult }); }
     if (path.endsWith('/analysis')) return route.fulfill({ json: data });
     if (path.endsWith('/media-access')) return route.fulfill({ status: grantStatus, json: grantStatus === 200 ? { ready: true } : { detail: 'SECRET PROVIDER FAILURE' } });
     if (path.endsWith('/media')) { calls.media++;
@@ -95,6 +95,21 @@ test('comparison citation opens exact moment and return preserves result without
     await f.page.getByRole('heading', { name: 'Creative Signal Map' }).waitFor();
     assert.equal(f.calls.intelligence, 1);
     assert.equal(await f.page.locator('.ci-map-row.is-selected').count(), 1);
+  } finally { await f.close(); }
+});
+
+test('evidence inspector opens the specifically selected citation when a creative has two', async () => {
+  const later = { ...citation, evidence_ref: 'video_A:transcript:1', timestamp_seconds: 1.5, excerpt: 'Later phrase' };
+  const result = { ...comparison, content_differences: [{ ...comparison.content_differences[0], evidence_refs: [citation, later] }] };
+  const f = await app({ fromComparison: true, comparisonResult: result }); try {
+    await f.page.getByLabel('Start date').fill('2026-01-01'); await f.page.getByLabel('End date').fill('2026-01-07');
+    await f.page.getByRole('button', { name: 'Run analysis' }).click();
+    await f.page.locator('.ci-inspect').click();
+    await f.page.getByRole('dialog').getByRole('button', { name: /Creative A · 1.5s/ }).click();
+    await f.page.getByRole('dialog').getByRole('button', { name: /Open Creative A Analysis/ }).click();
+    await f.page.getByText(/From comparison · Spoken offer · CTR · higher numeric group · 00:01.5/).waitFor();
+    assert.equal(await f.page.locator('.ca-signal.is-active').count(), 1);
+    assert.equal(await f.page.locator('.ca-signal.is-active').getAttribute('title'), 'Spoken offer · 00:01.5');
   } finally { await f.close(); }
 });
 

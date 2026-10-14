@@ -1,11 +1,11 @@
 import { type RefObject } from 'react';
-import { Film, X } from 'lucide-react';
-import { type Cited, type Difference, type Preview, timeLabel } from './intelligenceModel';
+import { ArrowRight, Film, X } from 'lucide-react';
+import { type Cited, type Citation, type Difference, type Preview, timeLabel } from './intelligenceModel';
 
-export function EvidenceTrace({ difference, entries, activeRef, previews, onChoose, onClose, dialogRef, labels }: {
+export function EvidenceTrace({ difference, entries, activeRef, previews, onChoose, onClose, dialogRef, labels, onOpenCreative }: {
   difference: Difference | null; entries: Cited[]; activeRef: string | null; previews: Preview[];
   onChoose(ref: string): void; onClose(): void; dialogRef: RefObject<HTMLDialogElement | null>;
-  labels: Map<string, string>;
+  labels: Map<string, string>; onOpenCreative?(citation: Citation): void;
 }) {
   const current = entries.find(item => item.citation.evidence_ref === activeRef) ?? entries[0];
   const preview = previews.find(item => item.video_ref === current?.citation.video_ref);
@@ -24,6 +24,7 @@ export function EvidenceTrace({ difference, entries, activeRef, previews, onChoo
           className={item.role} aria-pressed={item.citation.evidence_ref === current.citation.evidence_ref} onClick={() => onChoose(item.citation.evidence_ref)}>
           {item.role === 'counterexample' ? '◆' : '●'} Creative {labels.get(item.citation.video_ref) ?? item.citation.video_ref} · {timeLabel(item.citation.timestamp_seconds)}</button>)}</div>
         <div className="ci-evidence-current"><strong>{timeLabel(current.citation.timestamp_seconds)}</strong><span>{current.role === 'counterexample' ? '◆ Counterexample' : '● Supporting citation'} · {currentGroup} · {current.citation.evidence_type}</span></div>
+        {onOpenCreative && <button className="ci-evidence-open" type="button" onClick={() => onOpenCreative(current.citation)}>Open Creative {currentLabel ?? ''} Analysis <ArrowRight size={14} aria-hidden="true" /></button>}
         {exactFrame && preview ? <figure className="ci-evidence-frame"><img src={`data:image/jpeg;base64,${preview.jpeg_base64}`} alt="Bounded sampled frame for this exact citation" /><figcaption>Source frame · {timeLabel(preview.timestamp_seconds)}</figcaption></figure>
           : preview ? <figure className="ci-evidence-frame is-preview"><img src={`data:image/jpeg;base64,${preview.jpeg_base64}`} alt="Creative preview; not the cited evidence frame" /><figcaption>Creative preview · cited frame unavailable</figcaption></figure>
             : <div className="ci-evidence-no-frame"><Film aria-hidden="true" />Frame preview unavailable for this citation</div>}
