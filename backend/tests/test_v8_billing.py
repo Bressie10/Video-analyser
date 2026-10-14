@@ -92,6 +92,17 @@ class BillingTests(unittest.TestCase):
         row = self.db.execute('SELECT * FROM company_billing WHERE company_id=%s', (self.owner,)).fetchone()
         self.assertGreater(row['current_period_end'], row['current_period_start'])
 
+    def test_archived_owned_free_workspace_keeps_billing_upgrade_path(self):
+        self.db.execute('UPDATE companies SET archived_at=now() WHERE id=%s', (self.owner,))
+        self.assertEqual(self.call('GET', self.path()).json()['effective_plan'], 'free')
+        self.assertEqual(self.call('GET', f'/api/companies/{self.foreign}/billing').status_code, 403)
+        self.assertEqual(self.call('POST', self.path('/checkout'), user=OTHER_USER_ID).status_code, 403)
+        with patch.object(billing_routes.stripe, 'create_customer', return_value={'id': 'cus_test'}), \
+             patch.object(billing_routes.stripe, 'open_checkout_sessions', return_value=[]), \
+             patch.object(billing_routes.stripe, 'current_subscriptions', return_value=[]), \
+             patch.object(billing_routes.stripe, 'create_checkout', return_value={'url': 'https://checkout.stripe.com/pay/test'}):
+            self.assertEqual(self.call('POST', self.path('/checkout')).status_code, 200)
+
     def test_checkout_and_portal_authorization_and_server_values(self):
         self.assertEqual(self.call('POST', self.path('/checkout'), user=OTHER_USER_ID).status_code, 403)
         self.assertEqual(self.call('POST', self.path('/portal'), user=OTHER_USER_ID).status_code, 403)

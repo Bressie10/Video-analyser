@@ -114,7 +114,7 @@ test('new user browser activation reaches 100% through real FastAPI and PostgreS
     assert.equal(usedBilling.status(), 200, await usedBilling.text());
     assert.deepEqual((await usedBilling.json()).usage, { analyses: 1, idea_generations: 1 });
     assert.equal((await context.request.get(origin + billingPath, { headers: { Authorization: `Bearer ${session.user_b}` } })).status(), 403);
-    await nav('Overview');
+    await nav('Home');
     await page.getByRole('heading', { name: "You're ready to go" }).waitFor();
     await page.getByRole('button', { name: 'Go to Overview' }).click();
     assert.equal(await page.getByRole('heading', { name: 'Finish setting up ContentMetric' }).count(), 0);
@@ -149,16 +149,16 @@ test('new user browser activation reaches 100% through real FastAPI and PostgreS
     assert.equal(ideaLimit.status(), 402);
     assert.equal((await ideaLimit.json()).detail.code, 'idea_generation_limit_reached');
     await page.getByText("You've used this period's idea allowance.").first().waitFor();
-    await nav('Overview');
+    await nav('Home');
 
     await page.evaluate(jwt => window.__changeAuth({ access_token: jwt,
       user: { id: '22222222-2222-4222-8222-222222222222', email: 'b@example.com' } }), session.user_b);
-    await page.getByText('b@example.com').waitFor();
+    await page.locator('.app-profile-info strong').getByText('b', { exact: true }).waitFor();
     assert.equal((await state(session.user_b)).progress, 0);
     assert.doesNotMatch(await page.locator('body').innerText(), /V7 workspace|One idea|100% complete/);
     await page.evaluate(jwt => window.__changeAuth({ access_token: jwt,
       user: { id: '11111111-1111-4111-8111-111111111111', email: 'a@example.com' } }), session.user_a);
-    await page.getByText('a@example.com').waitFor();
+    await page.locator('.app-profile-info strong').getByText('a', { exact: true }).waitFor();
     assert.equal((await state()).progress, 100);
     await fixture('disconnect');
     await page.reload();

@@ -1,0 +1,104 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900"><rect width="1440" height="900" fill="#F8FAFA"/>
+<rect x="0" y="0" width="292" height="900" rx="0" fill="#FFFFFF"/>
+<line x1="292" y1="0" x2="292" y2="900" stroke="#D8E1E4" stroke-width="1"/>
+<text x="28" y="50" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#202A35" text-anchor="start">Content</text>
+<text x="126" y="50" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#126A70" text-anchor="start">Metric</text>
+<rect x="28" y="82" width="244" height="52" rx="5" fill="#FFFFFF" stroke="#D8E1E4"/>
+<text x="46" y="115" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#202A35" text-anchor="start">Northstar Studio</text>
+<text x="249" y="115" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#202A35" text-anchor="middle">⌄</text>
+<text x="46" y="188" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#657185" text-anchor="start">⌂</text>
+<text x="79" y="188" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" fill="#202A35" text-anchor="start">Home</text>
+<rect x="20" y="222" width="252" height="52" rx="5" fill="#E7F2F2"/>
+<rect x="20" y="222" width="3" height="52" rx="0" fill="#126A70"/>
+<text x="46" y="249" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#126A70" text-anchor="start">▥</text>
+<text x="79" y="249" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" fill="#126A70" text-anchor="start">Creative Intelligence</text>
+<text x="46" y="310" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#657185" text-anchor="start">▣</text>
+<text x="79" y="310" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" fill="#202A35" text-anchor="start">Content</text>
+<text x="46" y="371" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#657185" text-anchor="start">♧</text>
+<text x="79" y="371" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" fill="#202A35" text-anchor="start">Ideas</text>
+<line x1="28" y1="811" x2="272" y2="811" stroke="#D8E1E4" stroke-width="1"/>
+<rect x="28" y="832" width="42" height="42" rx="21" fill="#E1EAF0"/>
+<text x="49" y="859" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#202A35" text-anchor="middle">UB</text>
+<text x="86" y="859" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#202A35" text-anchor="start">Ultan</text>
+<text x="326" y="83" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#202A35" text-anchor="start">Creative Intelligence</text>
+<text x="1412" y="82" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#657185" text-anchor="end">Illustrative comparison</text>
+<rect x="326" y="108" width="1086" height="54" rx="4" fill="#FFFFFF" stroke="#D8E1E4"/>
+<text x="340" y="125" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" fill="#657185" text-anchor="start">ACCOUNT</text>
+<text x="340" y="148" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="600" fill="#202A35" text-anchor="start">Northstar Ads  ⌄</text>
+<text x="580" y="125" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" fill="#657185" text-anchor="start">METRIC</text>
+<text x="580" y="148" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="600" fill="#202A35" text-anchor="start">CTR  ⌄</text>
+<text x="713" y="125" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" fill="#657185" text-anchor="start">EXACT DATES</text>
+<text x="713" y="148" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="600" fill="#202A35" text-anchor="start">01–07 Jan 2026  ▦</text>
+<line x1="565" y1="116" x2="565" y2="154" stroke="#D8E1E4" stroke-width="1"/>
+<line x1="699" y1="116" x2="699" y2="154" stroke="#D8E1E4" stroke-width="1"/>
+<line x1="1100" y1="116" x2="1100" y2="154" stroke="#D8E1E4" stroke-width="1"/>
+<rect x="1116" y="115" width="279" height="40" rx="4" fill="#126A70"/>
+<text x="1255" y="141" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Run analysis</text>
+<rect x="326" y="178" width="1086" height="86" rx="4" fill="#FFFFFF" stroke="#D8E1E4"/>
+<text x="341" y="201" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#657185" text-anchor="start">CTR · REFERENCE</text>
+<text x="341" y="239" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#202A35" text-anchor="start">1.8%</text>
+<text x="542" y="201" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#657185" text-anchor="start">PEER MEDIAN</text>
+<text x="542" y="239" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#202A35" text-anchor="start">1.0%</text>
+<text x="739" y="201" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#657185" text-anchor="start">VS MEDIAN</text>
+<text x="739" y="239" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#126A70" text-anchor="start">1.8×</text>
+<text x="911" y="201" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#657185" text-anchor="start">PERCENTILE</text>
+<text x="911" y="239" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#202A35" text-anchor="start">80th</text>
+<text x="1102" y="201" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#657185" text-anchor="start">PEERS</text>
+<text x="1102" y="239" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#202A35" text-anchor="start">n=5</text>
+<line x1="526" y1="189" x2="526" y2="253" stroke="#D8E1E4" stroke-width="1"/>
+<line x1="723" y1="189" x2="723" y2="253" stroke="#D8E1E4" stroke-width="1"/>
+<line x1="895" y1="189" x2="895" y2="253" stroke="#D8E1E4" stroke-width="1"/>
+<line x1="1086" y1="189" x2="1086" y2="253" stroke="#D8E1E4" stroke-width="1"/>
+<line x1="1235" y1="189" x2="1235" y2="253" stroke="#D8E1E4" stroke-width="1"/>
+<text x="1394" y="225" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" fill="#126A70" text-anchor="end">How this works</text>
+<text x="326" y="294" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#202A35" text-anchor="start">Compared creatives</text>
+<text x="1412" y="294" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#657185" text-anchor="end">Three highest and three lowest metric values in this cohort</text>
+<text x="326" y="318" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#126A70" text-anchor="start">HIGHER CTR</text>
+<text x="880" y="318" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#657185" text-anchor="start">LOWER CTR</text>
+<rect x="326" y="327" width="169" height="119" rx="3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="334" y="335" width="153" height="69" rx="2" fill="#E6ECEE"/>
+<text x="410" y="365" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#657185" text-anchor="middle">▣</text>
+<text x="410" y="385" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" fill="#657185" text-anchor="middle">Video</text>
+<text x="335" y="425" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="600" fill="#202A35" text-anchor="start">Video A</text>
+<text x="485" y="425" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#202A35" text-anchor="end">2.1%</text>
+<rect x="508" y="327" width="169" height="119" rx="3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="516" y="335" width="153" height="69" rx="2" fill="#E6ECEE"/>
+<text x="592" y="365" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#657185" text-anchor="middle">▣</text>
+<text x="592" y="385" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" fill="#657185" text-anchor="middle">Video</text>
+<text x="517" y="425" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="600" fill="#202A35" text-anchor="start">Video B</text>
+<text x="667" y="425" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#202A35" text-anchor="end">1.8%</text>
+<text x="517" y="439" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="600" fill="#126A70" text-anchor="start">Reference ad</text>
+<rect x="690" y="327" width="169" height="119" rx="3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="698" y="335" width="153" height="69" rx="2" fill="#E6ECEE"/>
+<text x="774" y="365" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#657185" text-anchor="middle">▣</text>
+<text x="774" y="385" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" fill="#657185" text-anchor="middle">Video</text>
+<text x="699" y="425" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="600" fill="#202A35" text-anchor="start">Video C</text>
+<text x="849" y="425" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#202A35" text-anchor="end">1.6%</text>
+<rect x="880" y="327" width="169" height="119" rx="3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="888" y="335" width="153" height="69" rx="2" fill="#E6ECEE"/>
+<text x="964" y="365" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#657185" text-anchor="middle">▣</text>
+<text x="964" y="385" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" fill="#657185" text-anchor="middle">Video</text>
+<text x="889" y="425" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="600" fill="#202A35" text-anchor="start">Video D</text>
+<text x="1039" y="425" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#202A35" text-anchor="end">1.0%</text>
+<rect x="1062" y="327" width="169" height="119" rx="3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="1070" y="335" width="153" height="69" rx="2" fill="#E6ECEE"/>
+<text x="1146" y="365" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#657185" text-anchor="middle">▣</text>
+<text x="1146" y="385" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" fill="#657185" text-anchor="middle">Video</text>
+<text x="1071" y="425" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="600" fill="#202A35" text-anchor="start">Video E</text>
+<text x="1221" y="425" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#202A35" text-anchor="end">0.8%</text>
+<rect x="1244" y="327" width="169" height="119" rx="3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="1252" y="335" width="153" height="69" rx="2" fill="#E6ECEE"/>
+<text x="1328" y="365" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="400" fill="#657185" text-anchor="middle">▣</text>
+<text x="1328" y="385" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" fill="#657185" text-anchor="middle">Video</text>
+<text x="1253" y="425" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="600" fill="#202A35" text-anchor="start">Video F</text>
+<text x="1403" y="425" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#202A35" text-anchor="end">0.6%</text>
+<line x1="864" y1="323" x2="864" y2="449" stroke="#D8E1E4" stroke-width="1"/>
+<text x="326" y="464" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#657185" text-anchor="start">Video previews unavailable for this comparison.</text>
+<text x="326" y="509" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" fill="#202A35" text-anchor="start">Patterns detected</text>
+<rect x="326" y="526" width="1086" height="98" rx="3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="326" y="526" width="3" height="98" rx="0" fill="#126A70"/>
+<text x="346" y="558" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="700" fill="#202A35" text-anchor="start">Creative analysis could not be completed for this comparison.</text>
+<text x="346" y="582" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" fill="#657185" text-anchor="start">Source video was unavailable. The performance and six selected ad values above remain valid.</text>
+<text x="1394" y="602" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" fill="#126A70" text-anchor="end">Review source access  →</text>
+<text x="326" y="674" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" fill="#126A70" text-anchor="start">Limitations and methodology  ⌄</text>
+</svg>

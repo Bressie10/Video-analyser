@@ -7,14 +7,14 @@ import { Button } from "./ui/controls";
 import { Badge } from "./ui/layout";
 import "./settings.css";
 
-type Status = "checking" | "disconnected" | "connecting" | "connected" | "error";
+export type MetaConnectionStatus = "checking" | "disconnected" | "connecting" | "connected" | "error";
 
-export function MetaConnection({ onConnectionChange, disconnected = false, disabled = false, onSyncStarted, connectAction, beginAuthorization = beginMetaAuthorization }: { beginAuthorization?: (signal: AbortSignal) => Promise<string>; connectAction?: RefObject<() => void>; onSyncStarted: (id: string | null) => void; onConnectionChange: (connected: boolean) => void; disconnected?: boolean; disabled?: boolean }) {
-  const [status, setStatus] = useState<Status>("checking");
+export function MetaConnection({ onConnectionChange, onStatusChange, disconnected = false, disabled = false, onSyncStarted, connectAction, beginAuthorization = beginMetaAuthorization }: { beginAuthorization?: (signal: AbortSignal) => Promise<string>; connectAction?: RefObject<() => void>; onSyncStarted: (id: string | null) => void; onConnectionChange: (connected: boolean) => void; onStatusChange?: (status: MetaConnectionStatus) => void; disconnected?: boolean; disabled?: boolean }) {
+  const [status, setStatus] = useState<MetaConnectionStatus>("checking");
   const [error, setError] = useState("");
   const stopWatching = useRef<(() => void) | null>(null);
 
-  useEffect(() => { onConnectionChange(status === "connected"); }, [status, onConnectionChange]);
+  useEffect(() => { onConnectionChange(status === "connected"); onStatusChange?.(status); }, [status, onConnectionChange, onStatusChange]);
   useEffect(() => { if (disconnected) { setStatus("disconnected"); setError(""); } }, [disconnected]);
 
   async function checkConnection(signal: AbortSignal, afterLogin = false) {

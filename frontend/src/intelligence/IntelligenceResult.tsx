@@ -27,7 +27,7 @@ function PerformanceStrip({ result, metric }: { result: IntelligenceResult; metr
       <div><span id="ci-performance-title">{metricLabel(metric)} · reference</span><strong title={facts.target_value}>{formatMetric(facts.target_value, metric, result.cohort.currency)}</strong></div>
       <div><span>Peer median</span><strong title={facts.median}>{formatMetric(facts.median, metric, result.cohort.currency)}</strong></div>
       {facts.ratio !== null && <div><span>Vs median</span><strong>{formatRatio(facts.ratio)}</strong></div>}
-      <div><span>Percentile</span><strong>{formatPercentile(facts.percentile)}</strong></div>
+      <div><span>Percentile</span><strong title={formatPercentile(facts.percentile)}>{formatPercentile(facts.percentile).replace(' percentile', '')}</strong></div>
       <div><span>Peers</span><strong>n={result.cohort.peer_count}</strong></div>
     </div>
     {all.length === 6 && <div className="ci-distribution" aria-label="Six selected creatives on the metric scale">

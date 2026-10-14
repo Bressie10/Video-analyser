@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="900" viewBox="0 0 1440 900"><rect width="1440" height="900" fill="#F8FAFA"/>
+<rect x="0" y="0" width="292" height="900" rx="0" fill="#FFFFFF"/>
+<line x1="292" y1="0" x2="292" y2="900" stroke="#D8E1E4" stroke-width="1"/>
+<text x="28" y="50" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#202A35" text-anchor="start">Content</text>
+<text x="126" y="50" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" fill="#126A70" text-anchor="start">Metric</text>
+<rect x="28" y="82" width="244" height="52" rx="5" fill="#FFFFFF" stroke="#D8E1E4"/>
+<text x="46" y="115" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="400" fill="#202A35" text-anchor="start">Northstar Studio</text>
+<text x="249" y="115" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#202A35" text-anchor="middle">⌄</text>
+<text x="46" y="188" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#657185" text-anchor="start">⌂</text>
+<text x="79" y="188" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" fill="#202A35" text-anchor="start">Home</text>
+<rect x="20" y="222" width="252" height="52" rx="5" fill="#E7F2F2"/>
+<rect x="20" y="222" width="3" height="52" rx="0" fill="#126A70"/>
+<text x="46" y="249" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#126A70" text-anchor="start">▥</text>
+<text x="79" y="249" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="600" fill="#126A70" text-anchor="start">Creative Intelligence</text>
+<text x="46" y="310" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#657185" text-anchor="start">▣</text>
+<text x="79" y="310" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" fill="#202A35" text-anchor="start">Content</text>
+<text x="46" y="371" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="400" fill="#657185" text-anchor="start">♧</text>
+<text x="79" y="371" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" fill="#202A35" text-anchor="start">Ideas</text>
+<line x1="28" y1="811" x2="272" y2="811" stroke="#D8E1E4" stroke-width="1"/>
+<rect x="28" y="832" width="42" height="42" rx="21" fill="#E1EAF0"/>
+<text x="49" y="859" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#202A35" text-anchor="middle">UB</text>
+<text x="86" y="859" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#202A35" text-anchor="start">Ultan</text>
+<text x="326" y="83" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" fill="#202A35" text-anchor="start">Creative Intelligence</text>
+<text x="1412" y="82" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#657185" text-anchor="end">Illustrative comparison</text>
+<line x1="326" y1="165" x2="1412" y2="165" stroke="#D8E1E4" stroke-width="1"/>
+<text x="326" y="212" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#202A35" text-anchor="start">Ads account required</text>
+<text x="326" y="247" font-family="Arial, Helvetica, sans-serif" font-size="15" font-weight="400" fill="#657185" text-anchor="start">Link a Meta Ads account to this workspace before running Creative Intelligence.</text>
+<rect x="326" y="280" width="220" height="43" rx="4" fill="#126A70"/>
+<text x="436" y="307" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">Open Integrations</text>
+<text x="326" y="363" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" fill="#657185" text-anchor="start">A linked account enables a comparison attempt; eligible ads and source video are checked when it runs.</text>
+</svg>

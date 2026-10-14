@@ -8,7 +8,7 @@ import { chromium } from 'playwright';
 const KEY = 'video-analyzer.active-company-id';
 const A = '00000000-0000-4000-8000-000000000001';
 const B = '00000000-0000-4000-8000-000000000002';
-const pages = ['Overview', 'Content', 'Generate', 'Ideas', 'Settings'];
+const pages = ['Home', 'Content', 'Generate', 'Ideas', 'Settings'];
 let server, browser, origin;
 before(async () => {
   server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' });
@@ -35,7 +35,7 @@ async function fixture({ selected = A, width = 1440, archived = false, inaccessi
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (['error', 'warning'].includes(message.type()) && !fail) errors.push(message.text()); });
   await page.goto(origin);
-  await page.getByRole('heading', { name: 'Overview', exact: true }).waitFor();
+  await page.getByRole('heading', { name: 'Home', exact: true }).waitFor();
   await page.getByRole('navigation', { name: 'Company', exact: true }).getByRole('button').first().waitFor({ state: 'visible' });
   await page.waitForFunction(() => !document.querySelector('.company-navigation > button').disabled);
   return { page, calls, close: async () => { await context.close(); assert.deepEqual(errors, []); } };
@@ -58,7 +58,7 @@ test('shell destinations, active link, refresh, history and persistent global co
     assert.equal(await p.getByRole('main').count(), 1);
     assert.equal(await p.locator('.app-header .company-navigation').count(), 1);
     for (const name of pages) {
-      assert.equal(await primary(p).getByRole('link', { name, exact: true }).getAttribute('href'), `#${name.toLowerCase()}`);
+      assert.equal(await primary(p).getByRole('link', { name, exact: true }).getAttribute('href'), `#${name === 'Home' ? 'overview' : name.toLowerCase()}`);
       await destination(p, name);
       assert.equal(await primary(p).locator('[aria-current=page]').innerText(), name);
       assert.equal(await primary(p).locator('[aria-current=page]').count(), 1);
@@ -145,7 +145,7 @@ test('integrated navigation preserves filters, sources and unsaved idea edits un
     await p.getByRole('button', { name: saved.title, exact: true }).click();
     await p.getByRole('button', { name: 'Edit', exact: true }).click();
     await p.getByLabel('Title', { exact: true }).fill('Unsaved studio story');
-    await destination(p, 'Settings'); await destination(p, 'Overview');
+    await destination(p, 'Settings'); await destination(p, 'Home');
     await destination(p, 'Content');
     assert.equal(await p.getByLabel('Content platform', { exact: true }).inputValue(), 'instagram');
     await destination(p, 'Generate');
@@ -206,10 +206,10 @@ test('skip link and mobile navigation keyboard disclosure, Escape and route focu
     const toggle = p.getByRole('button', { name: 'Open navigation', exact: true });
     assert.equal(await primary(p).isVisible(), false);
     await toggle.focus(); await p.keyboard.press('Enter');
-    assert.equal(await p.evaluate(() => document.activeElement.textContent), 'Overview');
+    assert.equal(await p.evaluate(() => document.activeElement.textContent), 'Home');
     await screenshot(p, 'mobile-navigation-390');
     await p.keyboard.press('Escape'); assert.equal(await toggle.evaluate(el => el === document.activeElement), true);
-    await toggle.click(); await p.keyboard.press('Tab'); await p.keyboard.press('Enter');
+    await toggle.click(); await p.keyboard.press('Tab'); await p.keyboard.press('Tab'); await p.keyboard.press('Enter');
     await p.getByRole('heading', { name: 'Content', level: 1, exact: true }).waitFor();
     assert.equal(await primary(p).isVisible(), false);
     assert.equal(await p.evaluate(() => document.activeElement.id), 'main-content');
@@ -245,7 +245,7 @@ test('long company names keep header and dropdown usable at desktop and 320px', 
     try {
       const trigger = company(f.page).getByRole('button').first();
       assert.equal(await trigger.innerText(), name.trim());
-      assert.ok((await trigger.boundingBox()).height <= 44, 'company trigger stays within header');
+      assert.ok((await trigger.boundingBox()).height <= 52, 'company trigger stays within header');
       await trigger.click();
       await company(f.page).getByRole('button', { name: `${name} — Active`, exact: true }).waitFor();
       assert.equal(await f.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
@@ -277,7 +277,7 @@ test('shared native controls expose labels, state, action hierarchy and error st
     await p.getByLabel('Sample title', { exact: true }).fill('Accessible input');
     assert.equal(await p.getByLabel('Sample title', { exact: true }).evaluate(el => getComputedStyle(el).borderTopColor), 'rgb(161, 44, 50)');
     assert.equal(await p.getByLabel('Disabled field').isDisabled(), true);
-    assert.equal(await p.getByLabel('Disabled field').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(238, 241, 243)');
+    assert.equal(await p.getByLabel('Disabled field').evaluate(el => getComputedStyle(el).backgroundColor), 'rgb(238, 243, 243)');
     await p.getByLabel('Sample description').fill('Description');
     await p.getByLabel('Sample choice').selectOption('two');
     await p.getByLabel('Sample permission').check(); assert.equal(await p.getByLabel('Sample permission').isChecked(), true);

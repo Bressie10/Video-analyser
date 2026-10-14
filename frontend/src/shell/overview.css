@@ -1,23 +1,8 @@
-.cm-overview-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-5); margin-bottom: var(--space-8); }
-.cm-overview-summary h3 { margin: 0 0 var(--space-4); }
-.cm-overview-summary p { margin: var(--space-2) 0; color: var(--color-text-secondary); }
-.cm-overview-summary a { display: inline-flex; align-items: center; gap: var(--space-2); min-height: 44px; font-size: var(--text-secondary); }
-.cm-overview-platforms { display: flex; flex-wrap: wrap; gap: var(--space-2); }
-.cm-overview-count strong { font-size: var(--text-section); color: var(--color-text); margin-right: var(--space-1); font-weight: 650; }
-.cm-overview-section { margin-block: var(--space-8); }
-.cm-overview .ui-empty-state { min-height: 220px; padding: var(--space-6) var(--space-2); }
-.cm-overview .ui-empty-state h2 { font-size: var(--text-section); }
-.cm-overview .ui-empty-icon { width: 48px; height: 48px; margin: 0; }
-.cm-overview-ideas { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--color-border); }
-.cm-overview-ideas li { display: flex; gap: var(--space-4); align-items: center; padding: var(--space-5) 0; border-bottom: 1px solid var(--color-border); }
-.cm-overview-ideas li > svg { flex-shrink: 0; color: var(--color-text-muted); }
-.cm-overview-ideas li > div { flex: 1; min-width: 0; }
-.cm-overview-ideas h3 { margin: 0; }
-.cm-overview-ideas p { margin: var(--space-1) 0 0; font-size: var(--text-secondary); color: var(--color-text-secondary); }
-.cm-overview-next { display: flex; align-items: center; gap: var(--space-4); }
-.cm-overview-next > svg { flex-shrink: 0; color: var(--color-text-secondary); }
-.cm-overview-next > div { flex: 1; min-width: 0; }
-.cm-overview-next h3, .cm-overview-next p { margin: 0; }
-.cm-overview-next p { color: var(--color-text-secondary); margin-top: var(--space-1); }
-.cm-overview .ui-alert .ui-button { margin-top: var(--space-3); }
-@media (max-width: 700px) { .cm-overview-summary { grid-template-columns: minmax(0, 1fr); } .cm-overview-next { align-items: flex-start; flex-wrap: wrap; } .cm-overview-ideas li { flex-wrap: wrap; } .cm-overview-ideas li > div { flex-basis: 70%; } .cm-overview-ideas .ui-badge { margin-left: 36px; } }
+.cm-home{color:#202a35}.cm-home a{text-decoration:none}.cm-home a:hover{text-decoration:underline}
+.cm-home-heading{display:flex;align-items:center;gap:36px;min-width:0;margin:60px 0 46px}.cm-home-heading>div{min-width:0}.cm-home-heading h1{margin:0;font-size:42px;font-weight:700}.cm-home-heading p{margin:8px 0 0;color:#78849a;font-size:19px}.cm-home-heading .cm-feature-link{min-height:44px;padding:9px 18px;font-size:15px;background:#126a70;border-color:#126a70;color:#fff}.cm-home-heading .cm-feature-link:hover{background:#0d5960;text-decoration:none}
+.cm-home-readiness{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:80px;padding:14px 4px 14px 28px;border-top:1px solid #d8e1e4;border-bottom:1px solid #d8e1e4;position:relative;background:#fff}.cm-home-readiness::before{content:'';position:absolute;left:0;top:20px;bottom:20px;width:3px;background:#126a70;border-radius:2px}.cm-home-readiness strong{display:block;color:#126a70;font-size:11px;letter-spacing:.08em}.cm-home-readiness p{margin:2px 0 0;font-size:17px;line-height:1.35}.cm-home-readiness>a{display:inline-flex;align-items:center;gap:12px;white-space:nowrap;color:#126a70;font-weight:600}
+.cm-home-columns{display:grid;grid-template-columns:minmax(0,1.55fr) minmax(290px,1fr);gap:36px;margin-top:42px}.cm-home-columns>section{min-width:0;margin:0;padding:0;border:0;border-radius:0;background:transparent}.cm-home-columns header{display:flex;align-items:baseline;justify-content:space-between;gap:15px;min-height:56px}.cm-home-columns h2{font-size:25px}.cm-home-columns header>a,.cm-home-setup-action>a,.cm-home-empty>a{display:inline-flex;align-items:center;gap:8px;color:#126a70;font-weight:600;white-space:nowrap}.cm-home-columns header p{margin:1px 0;color:#78849a}.cm-home-columns ul{list-style:none;margin:0;padding:0}.cm-home-columns li{border-top:1px solid #d8e1e4}.cm-home-columns li>a{display:flex;align-items:center;gap:12px;min-height:100px;padding:15px 2px;color:#202a35}.cm-home-columns li>a:hover{background:#eef5f4;text-decoration:none}.cm-home-columns li>a>span{display:grid;gap:4px;min-width:0;flex:1}.cm-home-columns li strong{font-size:16px;font-weight:600;overflow-wrap:anywhere}.cm-home-columns li small{color:#78849a;font-size:13px;line-height:1.3}.cm-home-columns li svg{flex:none;color:#78849a}
+.cm-home-setup{padding-left:34px!important;border-left:1px solid #d8e1e4!important}.cm-home-setup li>a{min-height:98px}.cm-home-setup li i{width:8px;height:8px;border-radius:50%;background:#16ab5f;flex:none}.cm-home-setup li i.is-needed{background:#e9a21b}.cm-home-setup-action{display:grid;gap:4px;margin:0;padding:18px 0;border-top:1px solid #d8e1e4}.cm-home-setup-action small{color:#78849a;font-size:12px}.cm-home-empty{padding:26px 0;border-top:1px solid #d8e1e4;color:#657185}.cm-home-empty p{margin:0 0 8px}
+@media(max-width:1050px){.cm-home-heading{margin:36px 0}.cm-home-columns{gap:22px;grid-template-columns:minmax(0,1.35fr) minmax(230px,1fr)}.cm-home-setup{padding-left:22px!important}}
+@media(max-width:700px){.cm-home-heading{justify-content:space-between;gap:12px;margin:24px 0 30px}.cm-home-heading h1{font-size:30px}.cm-home-heading p{font-size:14px}.cm-home-heading .cm-feature-link{font-size:12px;padding:8px 11px}.cm-home-readiness{min-height:80px;padding:12px 8px 12px 20px}.cm-home-readiness p{font-size:14px}.cm-home-readiness>a{display:none}.cm-home-columns{display:grid;grid-template-columns:minmax(0,1fr);gap:32px;margin-top:30px}.cm-home-columns h2{font-size:21px}.cm-home-columns header{min-height:50px}.cm-home-columns li>a{min-height:74px;padding-block:10px}.cm-home-columns li strong{font-size:15px}.cm-home-setup{padding-left:0!important;border-left:0!important}.cm-home-setup li>a{min-height:64px}.cm-home-setup li>a>span{display:flex;align-items:center;justify-content:space-between;gap:8px}.cm-home-setup li small{white-space:nowrap}.cm-home-setup li i{order:1}.cm-home-setup li svg{order:2}}
+@media(max-width:360px){.cm-home-heading{align-items:flex-start;flex-direction:column}.cm-home-setup li>a>span{display:grid}.cm-home-setup li small{white-space:normal}}

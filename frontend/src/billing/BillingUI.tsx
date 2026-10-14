@@ -21,9 +21,11 @@ export function LimitNotice({ code, billing, onUpgrade }: { code: LimitCode; bil
     {usage && <p>{usage}</p>}
     {code === 'free_workspace_limit_reached' && <p>Upgrade an existing workspace to Pro before creating another Free workspace.</p>}
     {code === 'organic_account_limit_reached' && <p>Existing accounts stay linked. Your plan limits new Instagram and Facebook links; Ads accounts are separate.</p>}
-    {!free && billing && <p>Resets {billingDate(billing.period.ends_at)}.</p>}
-    {billing && checkoutAvailable(billing) && billing.can_manage_billing && onUpgrade && <Button onClick={onUpgrade}>Upgrade to Pro</Button>}
-    {(!billing || !checkoutAvailable(billing) || !billing.can_manage_billing) && <a href="#settings">View Billing in Settings</a>}
+    {code !== 'free_workspace_limit_reached' && !free && billing && <p>Resets {billingDate(billing.period.ends_at)}.</p>}
+    {code === 'free_workspace_limit_reached' && onUpgrade ? <Button onClick={onUpgrade}>View Billing in Settings</Button> : <>
+      {billing && checkoutAvailable(billing) && billing.can_manage_billing && onUpgrade && <Button onClick={onUpgrade}>Upgrade to Pro</Button>}
+      {(!billing || !checkoutAvailable(billing) || !billing.can_manage_billing) && <a href="#settings">View Billing in Settings</a>}
+    </>}
   </Alert>;
 }
 export function BillingSection({ companyId, activeCompanyId }: { companyId: string; activeCompanyId: string | null }) {

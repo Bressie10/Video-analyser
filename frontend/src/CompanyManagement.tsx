@@ -7,7 +7,7 @@ import './settings.css';
 import { BillingSection } from './billing/BillingUI';
 import { useBilling } from './billing/BillingProvider';
 
-type Props = CompanyUIProps & { busy: boolean; run(action: () => Promise<void> | void): void; onCreateAndEnter(name: string, ownGuard: string): void; onBack(): void; onAccountLinked?: () => void };
+type Props = CompanyUIProps & { busy: boolean; run(action: () => Promise<void> | void): void; onCreateAndEnter(name: string, ownGuard: string): void; onBack(): void; onAccountLinked?: () => void; billingTargetId?: string | null };
 function Rename({ company, busy, onSave }: { company: Company; busy: boolean; onSave(name: string): void }) {
   const [name, setName] = useState(company.name);
   useCompanySwitchGuard({ unsavedEdits: name !== company.name });
@@ -26,6 +26,8 @@ export function CompanyManagement(props: Props) {
   const company = props.companies.find(c => c.id === inspectedId);
   const createGuard = useCompanySwitchGuard({ unsavedEdits: !!name.trim() });
   useEffect(() => { if (props.activeCompanyId || !company?.archived) setInspectedId(props.activeCompanyId); }, [props.activeCompanyId]);
+  useEffect(() => { if (props.billingTargetId) setInspectedId(props.billingTargetId); }, [props.billingTargetId]);
+  useEffect(() => { if (props.billingTargetId && inspectedId === props.billingTargetId) document.getElementById('settings-billing')?.scrollIntoView(); }, [props.billingTargetId, inspectedId]);
   useEffect(() => { setSearch(''); setFilter('all'); props.onInspect(inspectedId); return () => props.onInspect(null); }, [inspectedId, props.onInspect]);
   const discoveryStatus = props.discoveryCompanyId === company?.id ? props.discoveryStatus : 'loading';
   const disabled = props.busy || props.status !== 'ready';
@@ -42,7 +44,7 @@ export function CompanyManagement(props: Props) {
         {company.archived && <p className="settings-note">Archived — unavailable for normal work. Restore this company to use it again.</p>}
         {company.role === 'owner' ? <Rename key={`${company.id}:${company.name}`} company={company} busy={disabled} onSave={value => props.run(() => props.onRename(company.id, value))} /> : <p>You are a member. A company owner manages configuration and content ownership.</p>}
       </section>
-      {!company.archived && <BillingSection key={company.id} companyId={company.id} activeCompanyId={props.activeCompanyId} />}
+      <BillingSection key={company.id} companyId={company.id} activeCompanyId={props.activeCompanyId} />
       {company.role === 'owner' && <section className="settings-section" aria-labelledby="settings-ownership">
         <div className="settings-heading"><div><h2 id="settings-ownership" tabIndex={-1}>Content ownership</h2><p>Choose the accounts and ads that belong in {company.name}.</p></div><Button disabled={disabled || !props.metaConnected || discoveryStatus === 'loading'} onClick={props.onRetryDiscovery}>Refresh available accounts</Button></div>
         {!props.metaConnected && <p className="settings-note">Connect Meta in Integrations to discover accounts for your companies.</p>}

@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="1180" viewBox="0 0 390 1180"><rect width="390" height="1180" fill="#F8FAFA"/>
+<rect x="0" y="0" width="390" height="95" rx="0" fill="#FFFFFF"/>
+<text x="20" y="55" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#202A35" text-anchor="start">Content</text>
+<text x="110" y="55" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" fill="#126A70" text-anchor="start">Metric</text>
+<rect x="332" y="23" width="39" height="39" rx="20" fill="#126A70"/>
+<text x="351" y="49" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" fill="#FFFFFF" text-anchor="middle">UB</text>
+<line x1="0" y1="95" x2="390" y2="95" stroke="#D8E1E4" stroke-width="1"/>
+<rect x="0" y="96" width="390" height="52" rx="0" fill="#FFFFFF"/>
+<text x="20" y="128" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" fill="#657185" text-anchor="start">WORKSPACE</text>
+<text x="121" y="129" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" fill="#202A35" text-anchor="start">Northstar Studio  ⌄</text>
+<line x1="0" y1="148" x2="390" y2="148" stroke="#D8E1E4" stroke-width="1"/>
+<rect x="0" y="1102" width="390" height="78" rx="0" fill="#FFFFFF"/>
+<line x1="0" y1="1102" x2="390" y2="1102" stroke="#D8E1E4" stroke-width="1"/>
+<text x="48" y="1132" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" fill="#657185" text-anchor="middle">⌂</text>
+<text x="48" y="1159" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" fill="#657185" text-anchor="middle">Home</text>
+<text x="145" y="1132" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" fill="#126A70" text-anchor="middle">▥</text>
+<text x="145" y="1159" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" fill="#126A70" text-anchor="middle">Intelligence</text>
+<text x="244" y="1132" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" fill="#657185" text-anchor="middle">▣</text>
+<text x="244" y="1159" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" fill="#657185" text-anchor="middle">Content</text>
+<text x="342" y="1132" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" fill="#657185" text-anchor="middle">♧</text>
+<text x="342" y="1159" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" fill="#657185" text-anchor="middle">Ideas</text>
+<text x="20" y="188" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" fill="#202A35" text-anchor="start">Creative Intelligence</text>
+<text x="20" y="225" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#657185" text-anchor="start">Northstar Ads · CTR · 01–07 Jan</text>
+<text x="20" y="263" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" fill="#202A35" text-anchor="start">Patterns detected</text>
+<text x="20" y="294" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="600" fill="#202A35" text-anchor="start">CTA in first half</text>
+<text x="370" y="294" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="600" fill="#126A70" text-anchor="end">Evidence →</text>
+<rect x="0" y="148" width="390" height="954" fill="#202A35" opacity="0.14"/>
+<rect x="0" y="423" width="390" height="679" rx="0" fill="#FFFFFF"/>
+<line x1="0" y1="423" x2="390" y2="423" stroke="#D8E1E4" stroke-width="1"/>
+<text x="20" y="453" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#126A70" text-anchor="start">EVIDENCE  /  CTA IN FIRST HALF</text>
+<text x="370" y="453" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" fill="#126A70" text-anchor="end">Close ×</text>
+<text x="20" y="488" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="600" fill="#202A35" text-anchor="start">2/3 higher CTR  ·  1/3 lower CTR</text>
+<line x1="20" y1="508" x2="370" y2="508" stroke="#D8E1E4" stroke-width="1"/>
+<text x="20" y="539" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#657185" text-anchor="start">CITED SUPPORT</text>
+<text x="20" y="567" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#202A35" text-anchor="start">Video A</text>
+<text x="370" y="567" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#202A35" text-anchor="end">OCR · 00:02.1</text>
+<line x1="20" y1="582" x2="370" y2="582" stroke="#D8E1E4" stroke-width="1"/>
+<text x="20" y="617" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#202A35" text-anchor="start">Video B</text>
+<text x="370" y="617" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#202A35" text-anchor="end">Transcript · 00:01.7</text>
+<line x1="20" y1="632" x2="370" y2="632" stroke="#D8E1E4" stroke-width="1"/>
+<text x="20" y="691" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" fill="#657185" text-anchor="start">LOWER-GROUP CITATION</text>
+<text x="20" y="720" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" fill="#202A35" text-anchor="start">Video E</text>
+<text x="370" y="720" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#202A35" text-anchor="end">OCR · 00:03.0</text>
+<line x1="20" y1="737" x2="370" y2="737" stroke="#D8E1E4" stroke-width="1"/>
+<text x="20" y="773" font-family="Arial, Helvetica, sans-serif" font-size="13" font-weight="700" fill="#202A35" text-anchor="start">Counterexample</text>
+<text x="20" y="800" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#657185" text-anchor="start">Video E also contains this feature.</text>
+<text x="20" y="858" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#657185" text-anchor="start">No excerpt text or frame image was returned</text>
+<text x="20" y="876" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#657185" text-anchor="start">with these citations.</text>
+<text x="20" y="947" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="400" fill="#657185" text-anchor="start">Full references available in detail.</text>
+</svg>

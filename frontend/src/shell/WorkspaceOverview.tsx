@@ -1,23 +1,22 @@
 import { useCallback, useState } from 'react';
-import { ArrowRight, BookOpen, Library, Sparkles } from 'lucide-react';
+import { ArrowRight, ChevronRight } from 'lucide-react';
 import { CompanyScopeBoundary, useCompany, useCompanyQuery } from '../company/CompanyProvider';
 import { useAppPage } from './navigation';
 import { Button } from '../ui/controls';
-import { Alert, Badge, EmptyState, LoadingState, PageLayout, Panel, SectionHeader } from '../ui/layout';
-import { defaultFilters, loadContent, platformLabel, publicationDate } from '../content/contentApi';
-import { ContentList } from '../content/ContentList';
+import { Alert, LoadingState, PageLayout } from '../ui/layout';
+import { analysisStatus, defaultFilters, loadContent, publicationDate, typeLabel } from '../content/contentApi';
 import { emptyFilters, ideaApi } from '../ideas/ideaApi';
-import '../content/content.css';
+import type { MetaConnectionStatus } from '../MetaConnection';
 import './overview.css';
 
-export function WorkspaceOverview() {
+export function WorkspaceOverview({ metaStatus = 'checking' }: { metaStatus?: MetaConnectionStatus }) {
   const page = useAppPage();
   const { activeCompany } = useCompany();
-  // The shell owns no-company and account-linking onboarding. Fetch only on this destination.
-  if (page !== 'overview' || !activeCompany?.accounts.length) return null;
-  return <CompanyScopeBoundary><Overview /></CompanyScopeBoundary>;
+  if (page !== 'overview' || !activeCompany) return null;
+  return <CompanyScopeBoundary><Overview metaStatus={metaStatus} /></CompanyScopeBoundary>;
 }
-function Overview() {
+
+function Overview({ metaStatus }: { metaStatus: MetaConnectionStatus }) {
   const { activeCompany } = useCompany();
   const [revision, revise] = useState(0);
   const recentLoad = useCallback((company: string, signal: AbortSignal) => loadContent(company, signal, defaultFilters, 0, 4), []);
@@ -26,39 +25,48 @@ function Overview() {
   const recent = useCompanyQuery(`overview-recent:${revision}`, recentLoad);
   const analysed = useCompanyQuery(`overview-analysed:${revision}`, analysedLoad);
   const ideas = useCompanyQuery(`overview-ideas:${revision}`, ideasLoad);
-  const platforms = [...new Set(activeCompany!.accounts.map(account => account.platform))];
-  const hasSources = Boolean(analysed.data?.items.length);
-  const retry = <Button onClick={() => revise(value => value + 1)}>Refresh overview</Button>;
-  return <PageLayout className="cm-overview">
-    <SectionHeader title="Your workspace at a glance" description={`Content and creative activity for ${activeCompany!.name}.`}
-      actions={<a className="cm-feature-link cm-feature-link--primary" href="#generate"><Sparkles size={18} aria-hidden="true" />Generate idea</a>} />
-    <div className="cm-overview-summary">
-      <Panel><h3>Linked platforms</h3><div className="cm-overview-platforms">{platforms.map(platform => <Badge key={platform} tone="neutral">{platformLabel(platform)}</Badge>)}</div>
-        <p>{activeCompany!.accounts.length} linked {activeCompany!.accounts.length === 1 ? 'account' : 'accounts'}</p>{activeCompany!.role === 'owner' && <a href="#settings">Manage connections <ArrowRight size={14} aria-hidden="true" /></a>}</Panel>
-      <Panel><h3>Ready for new ideas</h3>
-        {analysed.status === 'loading' && <LoadingState label="Checking analysed content…" />}
-        {analysed.status === 'error' && <Alert tone="danger"><p>Analysed content is unavailable.</p>{retry}</Alert>}
-        {analysed.data && <><p className="cm-overview-count"><strong>{analysed.data.items.length}{analysed.data.next_offset !== null ? '+' : ''}</strong> analysed {analysed.data.items.length === 1 ? 'video' : 'videos'}</p>
-          <p>{analysed.data.next_offset !== null ? 'At least 20 videos are ready to use as sources.' : hasSources ? 'Ready to inform your next idea and script.' : 'Analysed videos will become sources for new ideas.'}</p><a href="#content">Explore content <ArrowRight size={14} aria-hidden="true" /></a></>}
-      </Panel>
-    </div>
-    <div className="cm-overview-section" role="region" aria-label="Recent content">
-      <SectionHeader title="Recent content" description="The latest published items in your library." actions={<a className="cm-feature-link" href="#content">View library <ArrowRight size={16} aria-hidden="true" /></a>} />
-      {recent.status === 'loading' && <LoadingState label="Loading recent content…" />}
-      {recent.status === 'error' && <Alert tone="danger"><p>Recent content could not be loaded.</p>{retry}</Alert>}
-      {recent.data && (recent.data.items.length ? <ContentList items={recent.data.items} compact /> : <Panel><EmptyState title="Waiting for your first content" icon={<Library size={28} />} action={<a className="cm-feature-link" href="#settings">Review linked accounts <ArrowRight size={16} aria-hidden="true" /></a>}><p>Your accounts are linked. Content will appear here when it is available in your library.</p></EmptyState></Panel>)}
-    </div>
-    {analysed.data && !hasSources && Boolean(recent.data?.items.length) && <Panel className="cm-overview-next"><Library size={22} aria-hidden="true" /><div><h3>Your content is here. Analysis is next.</h3><p>Browse the library to see which videos are processing or still awaiting analysis.</p></div><a className="cm-feature-link" href="#content">View analysis status <ArrowRight size={16} aria-hidden="true" /></a></Panel>}
-    <div className="cm-overview-section" role="region" aria-label="Recent ideas">
-      <SectionHeader title="Recent ideas" description="Pick up a saved idea and continue shaping it." actions={<a className="cm-feature-link" href="#ideas">View ideas <ArrowRight size={16} aria-hidden="true" /></a>} />
-      {ideas.status === 'loading' && <LoadingState label="Loading recent ideas…" />}
-      {ideas.status === 'error' && <Alert tone="danger"><p>Recent ideas could not be loaded.</p>{retry}</Alert>}
-      {ideas.data && (ideas.data.items.length ? <ul className="cm-overview-ideas" aria-label="Saved ideas">{ideas.data.items.slice(0, 3).map(idea => <li key={idea.id}>
-        <BookOpen size={20} aria-hidden="true" /><div><h3>{idea.title.trim() || 'Untitled idea'}</h3><p>Created {publicationDate(idea.createdAt)}</p></div><Badge tone={idea.status === 'published' ? 'success' : 'neutral'}>{({ draft: 'Draft', used: 'Used', published: 'Published', discarded: 'Discarded' })[idea.status]}</Badge>
-      </li>)}</ul> : <Panel><EmptyState title={hasSources ? 'Turn your content into a new idea' : 'Your ideas will live here'} icon={<Sparkles size={28} />}
-        action={hasSources ? <a className="cm-feature-link cm-feature-link--primary" href="#generate">Generate your first idea <ArrowRight size={16} aria-hidden="true" /></a> : <a className="cm-feature-link" href="#content">Explore your content <ArrowRight size={16} aria-hidden="true" /></a>}>
-        <p>{hasSources ? 'Your analysed videos are ready. Use what you’ve learned to create your next concept and script.' : 'Once you generate an idea, it will be saved here for you to revisit.'}</p>
-      </EmptyState></Panel>)}
-    </div>
+  const accounts = activeCompany!.accounts;
+  const metaConnected = metaStatus === 'connected';
+  const canManage = activeCompany!.role === 'owner';
+  const publishing = accounts.some(account => account.platform === 'facebook' || account.platform === 'instagram');
+  const ads = accounts.some(account => account.platform === 'meta_ads');
+  const content = recent.data?.items ?? [];
+  const savedIdeas = ideas.data?.items ?? [];
+  const hasAnalysis = Boolean(analysed.data?.items.length);
+  const hasWork = content.length + savedIdeas.length > 0;
+  const processing = content.some(item => ['queued', 'pending', 'processing', 'running', 'downloading', 'analyzing'].includes(item.analysis_state));
+  const failed = content.some(item => item.analysis_state === 'failed');
+  const readiness = hasAnalysis ? { label: 'READY TO CREATE', message: 'Analysed videos are available as idea sources', href: '#content', action: 'Review content' }
+    : metaStatus === 'error' ? { label: 'CONNECTION ISSUE', message: 'Meta connection status is unavailable. Review the connection in Settings.', href: '#settings', action: 'Review connection' }
+    : metaStatus === 'checking' || metaStatus === 'connecting' ? { label: 'CHECKING CONNECTION', message: 'Checking whether Meta is connected', href: '#settings', action: 'Review connection' }
+    : !metaConnected ? { label: 'CONNECT META', message: canManage ? 'Connect Meta to bring your content into this workspace' : 'A workspace owner needs to connect Meta', href: '#settings', action: 'Review connection' }
+    : !publishing ? { label: 'LINK CONTENT', message: canManage ? 'Link a publishing account to see your content' : 'A workspace owner needs to link a publishing account', href: '#settings', action: 'Review accounts' }
+    : processing ? { label: 'ANALYSIS RUNNING', message: 'Some videos are still being analysed', href: '#content', action: 'Review content' }
+    : failed ? { label: 'NEEDS ATTENTION', message: 'Some videos need an analysis retry', href: '#content', action: 'Review content' }
+    : { label: 'BUILD YOUR LIBRARY', message: content.length ? 'Analyse a video to make it an idea source' : 'Your connected content will appear here', href: '#content', action: 'Review content' };
+  const work = [
+    ...savedIdeas.slice(0, 3).map(idea => ({ id: idea.id, title: idea.title.trim() || 'Untitled idea', meta: `Idea · ${idea.status} · ${publicationDate(idea.createdAt)}`, date: idea.createdAt, href: '#ideas' })),
+    ...content.map(item => ({ id: item.library_item_id, title: item.display_title.trim() || `${typeLabel(item.content_type)} video`, meta: `${typeLabel(item.content_type)} · ${analysisStatus(item).label} · ${publicationDate(item.published_at)}`, date: item.published_at, href: '#content' })),
+  ].sort((a, b) => Date.parse(b.date || '') - Date.parse(a.date || '')).slice(0, 4);
+  const primaryLabel = hasAnalysis ? 'Create an idea' : metaStatus === 'error' ? 'Review connection'
+    : metaStatus === 'checking' || metaStatus === 'connecting' ? 'Review setup'
+      : !metaConnected || !publishing ? canManage ? 'Connect content' : 'Review setup' : 'Review content';
+  const primaryHref = hasAnalysis ? '#generate' : metaStatus === 'error' || !metaConnected || !publishing ? '#settings' : '#content';
+  const retry = <Button onClick={() => revise(value => value + 1)}>Refresh Home</Button>;
+  return <PageLayout className="cm-home">
+    <div className="cm-home-heading"><div><h1>Home</h1><p>Today in {activeCompany!.name}</p></div><a className="cm-feature-link cm-feature-link--primary" href={primaryHref}>{primaryLabel}</a></div>
+    <div className="cm-home-readiness"><div><strong>{readiness.label}</strong><p>{readiness.message}</p></div><a href={readiness.href}>{readiness.action} <ArrowRight size={18} aria-hidden="true" /></a></div>
+    <div className="cm-home-columns"><section className="cm-home-work" aria-labelledby="home-work-title"><header><h2 id="home-work-title">Recent work</h2><a href={savedIdeas.length ? '#ideas' : '#content'}>View all <ArrowRight size={18} aria-hidden="true" /></a></header>
+      {(recent.status === 'loading' || ideas.status === 'loading') && <LoadingState label="Loading recent work…" />}
+      {(recent.status === 'error' || ideas.status === 'error') && <Alert tone="danger"><p>Recent work could not be loaded.</p>{retry}</Alert>}
+      {recent.status !== 'loading' && ideas.status !== 'loading' && work.length > 0 && <ul>{work.map(item => <li key={`${item.href}:${item.id}`}><a href={item.href}><span><strong>{item.title}</strong><small>{item.meta}</small></span><ChevronRight size={20} aria-hidden="true" /></a></li>)}</ul>}
+      {recent.status !== 'loading' && ideas.status !== 'loading' && !hasWork && recent.status !== 'error' && ideas.status !== 'error' && <div className="cm-home-empty"><p>Your first content and ideas will appear here.</p><a href={publishing ? '#content' : '#settings'}>{publishing ? 'Open content' : 'Review connections'} <ArrowRight size={16} aria-hidden="true" /></a></div>}
+    </section><section className="cm-home-setup" aria-labelledby="home-setup-title"><header><div><h2 id="home-setup-title">Workspace setup</h2><p>{activeCompany!.name}</p></div></header>
+      <ul><li><a href="#settings"><span><strong>Meta authorization</strong><small>{metaConnected ? 'Connected' : metaStatus === 'error' ? 'Connection issue' : metaStatus === 'checking' || metaStatus === 'connecting' ? 'Checking' : 'Needs connection'}</small></span><i className={metaConnected ? 'is-ready' : 'is-needed'} aria-hidden="true" /><ChevronRight size={17} aria-hidden="true" /></a></li>
+        <li><a href="#settings"><span><strong>Publishing account</strong><small>{publishing ? 'Linked' : 'Needs linking'}</small></span><i className={publishing ? 'is-ready' : 'is-needed'} aria-hidden="true" /><ChevronRight size={17} aria-hidden="true" /></a></li>
+        <li><a href="#settings"><span><strong>Ads account</strong><small>{ads ? 'Linked' : 'Needs linking'}</small></span><i className={ads ? 'is-ready' : 'is-needed'} aria-hidden="true" /><ChevronRight size={17} aria-hidden="true" /></a></li></ul>
+      {(!metaConnected || !publishing || !ads) && <p className="cm-home-setup-action"><a href="#settings">{canManage ? !metaConnected ? 'Connect Meta' : !publishing ? 'Link publishing account' : 'Link Ads account' : 'Review setup'} <ArrowRight size={18} aria-hidden="true" /></a><small>{!canManage ? 'A workspace owner manages connections.' : !ads && metaConnected && publishing ? 'Required before ad comparisons can run.' : 'Continue setup in Settings.'}</small></p>}
+      {analysed.status === 'error' && <Alert tone="danger"><p>Analysis readiness is unavailable.</p>{retry}</Alert>}
+    </section></div>
   </PageLayout>;
 }

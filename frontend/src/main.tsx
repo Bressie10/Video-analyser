@@ -3,7 +3,7 @@ import { AuthProvider } from './auth/AuthProvider';
 import { AuthGate } from './auth/AuthGate';
 import { StrictMode, useCallback, useEffect, useRef, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import { MetaConnection } from './MetaConnection';
+import { MetaConnection, type MetaConnectionStatus } from './MetaConnection';
 import { CompanyProvider, useCompanyStore } from './company/CompanyProvider';
 import { useCompanyUI } from './company/useCompanyUI';
 import { CompanyShell } from './CompanyShell';
@@ -37,6 +37,7 @@ export function App() {
   const previousWorkflow = useRef<Exclude<typeof page, 'settings'>>('overview');
   if (page !== 'settings') previousWorkflow.current = page;
   const [connected, setConnected] = useState(false);
+  const [metaStatus, setMetaStatus] = useState<MetaConnectionStatus>('checking');
   const [historyRevision, refreshHistory] = useState(0);
   const [analysisRevision, refreshAnalysisSources] = useState(0);
   const store = useCompanyStore();
@@ -59,9 +60,9 @@ export function App() {
       <OnboardingScreen page={page} onManage={manage} onSwitchCompany={switchCompany} onConnect={() => connect.current()} />
       <div hidden={page === 'overview' && (onboarding.mode === 'welcome' || onboarding.mode === 'guided' || onboarding.mode === 'complete')}>{content}</div>
     </AppShell>}
-    settings={<><MetaConnection beginAuthorization={beginMetaAuthorization} onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} connectAction={connect} /><ProfileRefresh /></>}>
+    settings={<><MetaConnection beginAuthorization={beginMetaAuthorization} onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} onStatusChange={setMetaStatus} connectAction={connect} /><ProfileRefresh /></>}>
     {onSetup => <>
-      <div hidden={page !== 'overview'}><WorkspaceOverview /></div>
+      <div hidden={page !== 'overview'}>{onboarding.mode === 'normal' && <WorkspaceOverview metaStatus={metaStatus} />}</div>
       <div hidden={page !== 'content'}><CompanyContent onAnalysisChange={() => { refreshAnalysisSources(v => v + 1); void onboarding.refresh(); billing.refresh(); }} /></div>
       <div hidden={page !== 'intelligence'}><IntelligencePage /></div>
       {page === 'creative' && creativeRef && <CreativeAnalysisPage creativeRef={creativeRef} />}

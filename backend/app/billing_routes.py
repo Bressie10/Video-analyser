@@ -37,7 +37,7 @@ def destination(value, host):
 @router.get('/api/companies/{company_id}/billing')
 def read_billing(company_id: UUID, user: AuthenticatedUser = Depends(require_authenticated_user)):
     with application_database() as db:
-        company = auth.require_company_access(db, user.user_id, company_id)
+        company = auth.require_company_access(db, user.user_id, company_id, include_archived=True)
         row = billing.initialize(db, company_id)
         return JSONResponse(jsonable_encoder(billing.snapshot(
             db, row, can_manage_billing=company['role'] == 'owner')),
@@ -48,7 +48,7 @@ def read_billing(company_id: UUID, user: AuthenticatedUser = Depends(require_aut
 def checkout(company_id: UUID, user: AuthenticatedUser = Depends(require_authenticated_user)):
     try:
         with application_database() as db:
-            auth.require_company_role(db, user.user_id, company_id)
+            auth.require_company_role(db, user.user_id, company_id, include_archived=True)
             price = stripe.configured('STRIPE_PRO_MONTHLY_PRICE_ID')
             if not price.startswith('price_'):
                 raise stripe.StripeError('Invalid Pro price.')
@@ -88,7 +88,7 @@ def checkout(company_id: UUID, user: AuthenticatedUser = Depends(require_authent
 def portal(company_id: UUID, user: AuthenticatedUser = Depends(require_authenticated_user)):
     try:
         with application_database() as db:
-            auth.require_company_role(db, user.user_id, company_id)
+            auth.require_company_role(db, user.user_id, company_id, include_archived=True)
             return_origin = origin()
             row = billing.initialize(db, company_id)
             if not row['stripe_customer_id']:

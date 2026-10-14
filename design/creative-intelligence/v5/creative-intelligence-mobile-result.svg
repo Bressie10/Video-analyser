@@ -1,0 +1,160 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="390" height="1210" viewBox="0 0 390 1210"><rect width="390" height="1210" fill="#F8FAFA"/>
+<rect x="0" y="0" width="390" height="95" rx="0" fill="#FFFFFF"/>
+<text x="20" y="55" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Content</text>
+<text x="110" y="55" font-family="Arial, Helvetica, sans-serif" font-size="24" font-weight="700" font-feature-settings="tnum" fill="#126A70" text-anchor="start">Metric</text>
+<rect x="332" y="23" width="39" height="39" rx="20" fill="#126A70"/>
+<text x="351" y="49" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="700" font-feature-settings="tnum" fill="#FFFFFF" text-anchor="middle">UB</text>
+<line x1="0" y1="95" x2="390" y2="95" stroke="#D8E1E4" stroke-width="1"/>
+<rect x="0" y="96" width="390" height="52" rx="0" fill="#FFFFFF"/>
+<text x="20" y="128" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" font-feature-settings="tnum" fill="#657185" text-anchor="start">WORKSPACE</text>
+<text x="121" y="129" font-family="Arial, Helvetica, sans-serif" font-size="16" font-weight="400" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Northstar Studio  ⌄</text>
+<line x1="0" y1="148" x2="390" y2="148" stroke="#D8E1E4" stroke-width="1"/>
+<rect x="0" y="1132" width="390" height="78" rx="0" fill="#FFFFFF"/>
+<line x1="0" y1="1132" x2="390" y2="1132" stroke="#D8E1E4" stroke-width="1"/>
+<text x="48" y="1162" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" font-feature-settings="tnum" fill="#657185" text-anchor="middle">⌂</text>
+<text x="48" y="1189" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" font-feature-settings="tnum" fill="#657185" text-anchor="middle">Home</text>
+<text x="145" y="1162" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" font-feature-settings="tnum" fill="#126A70" text-anchor="middle">▥</text>
+<text x="145" y="1189" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" font-feature-settings="tnum" fill="#126A70" text-anchor="middle">Intelligence</text>
+<text x="244" y="1162" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" font-feature-settings="tnum" fill="#657185" text-anchor="middle">▣</text>
+<text x="244" y="1189" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" font-feature-settings="tnum" fill="#657185" text-anchor="middle">Content</text>
+<text x="342" y="1162" font-family="Arial, Helvetica, sans-serif" font-size="22" font-weight="400" font-feature-settings="tnum" fill="#657185" text-anchor="middle">♧</text>
+<text x="342" y="1189" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="400" font-feature-settings="tnum" fill="#657185" text-anchor="middle">Ideas</text>
+<text x="20" y="192" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Creative Intelligence</text>
+<rect x="20" y="211" width="350" height="43" rx="3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<text x="30" y="237" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Northstar Ads · CTR · 01–07 Jan</text>
+<text x="359" y="237" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" font-feature-settings="tnum" fill="#126A70" text-anchor="end">Edit</text>
+<rect x="20" y="268" width="350" height="99" rx="3" fill="#17323D"/>
+<text x="31" y="288" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" font-feature-settings="tnum" fill="#9FC1C5" text-anchor="start">CTR</text>
+<text x="31" y="315" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" font-feature-settings="tnum" fill="#FFFFFF" text-anchor="start">1.8%</text>
+<text x="120" y="288" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" font-feature-settings="tnum" fill="#9FC1C5" text-anchor="start">MEDIAN</text>
+<text x="120" y="315" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" font-feature-settings="tnum" fill="#FFFFFF" text-anchor="start">1.0%</text>
+<text x="220" y="288" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" font-feature-settings="tnum" fill="#9FC1C5" text-anchor="start">VS MEDIAN</text>
+<text x="220" y="315" font-family="Arial, Helvetica, sans-serif" font-size="20" font-weight="700" font-feature-settings="tnum" fill="#5BC3C2" text-anchor="start">1.8×</text>
+<text x="359" y="289" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" font-feature-settings="tnum" fill="#D6E4E5" text-anchor="end">80th · n=5</text>
+<line x1="32" y1="344" x2="356" y2="344" stroke="#5B7D85" stroke-width="1"/>
+<line x1="32.0" y1="341" x2="32.0" y2="347" stroke="#5B7D85" stroke-width="1"/>
+<line x1="113.0" y1="341" x2="113.0" y2="347" stroke="#5B7D85" stroke-width="1"/>
+<line x1="194.0" y1="341" x2="194.0" y2="347" stroke="#5B7D85" stroke-width="1"/>
+<line x1="275.0" y1="341" x2="275.0" y2="347" stroke="#5B7D85" stroke-width="1"/>
+<line x1="356.0" y1="341" x2="356.0" y2="347" stroke="#5B7D85" stroke-width="1"/>
+<circle cx="32" cy="344" r="3.4" fill="#A7BCC3"/>
+<circle cx="75" cy="344" r="3.4" fill="#A7BCC3"/>
+<circle cx="118" cy="344" r="3.4" fill="#A7BCC3"/>
+<circle cx="247" cy="344" r="3.4" fill="#A7BCC3"/>
+<circle cx="356" cy="344" r="3.4" fill="#A7BCC3"/>
+<circle cx="291" cy="336" r="5" fill="#5BC3C2"/>
+<text x="31" y="360" font-family="Arial, Helvetica, sans-serif" font-size="8" font-weight="400" font-feature-settings="tnum" fill="#B7CDD0" text-anchor="start">peer values</text>
+<text x="359" y="360" font-family="Arial, Helvetica, sans-serif" font-size="8" font-weight="600" font-feature-settings="tnum" fill="#5BC3C2" text-anchor="end">reference ●</text>
+<text x="20" y="394" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Compared creatives</text>
+<rect x="20" y="405" width="350" height="15" rx="0" fill="#E5F2F1"/>
+<text x="25" y="416" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" font-feature-settings="tnum" fill="#126A70" text-anchor="start">HIGHER CTR</text>
+<text x="365" y="416" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="600" font-feature-settings="tnum" fill="#126A70" text-anchor="end">3 selected</text>
+<rect x="20" y="424" width="108" height="86" rx="2" fill="#FFFFFF" stroke="#126A70"/>
+<rect x="20" y="424" width="108" height="3" rx="0" fill="#126A70"/>
+<rect x="25" y="431" width="98" height="44" rx="0" fill="#17323D"/>
+<text x="74" y="463" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" font-feature-settings="tnum" fill="#C5DEE0" text-anchor="middle">A</text>
+<line x1="31" y1="473" x2="117" y2="473" stroke="#78969B" stroke-width="1"/>
+<text x="27" y="494" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Video A</text>
+<text x="122" y="494" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="end">2.1%</text>
+<circle cx="29" cy="504" r="2.5" fill="#126A70"/>
+<rect x="141" y="424" width="108" height="86" rx="2" fill="#FFFFFF" stroke="#126A70"/>
+<rect x="141" y="424" width="108" height="3" rx="0" fill="#126A70"/>
+<rect x="146" y="431" width="98" height="44" rx="0" fill="#17323D"/>
+<text x="195" y="463" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" font-feature-settings="tnum" fill="#C5DEE0" text-anchor="middle">B</text>
+<line x1="152" y1="473" x2="238" y2="473" stroke="#78969B" stroke-width="1"/>
+<text x="148" y="494" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Video B</text>
+<text x="243" y="494" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="end">1.8%</text>
+<circle cx="150" cy="504" r="2.5" fill="#126A70"/>
+<rect x="262" y="424" width="108" height="86" rx="2" fill="#FFFFFF" stroke="#126A70"/>
+<rect x="262" y="424" width="108" height="3" rx="0" fill="#126A70"/>
+<rect x="267" y="431" width="98" height="44" rx="0" fill="#17323D"/>
+<text x="316" y="463" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" font-feature-settings="tnum" fill="#C5DEE0" text-anchor="middle">C</text>
+<line x1="273" y1="473" x2="359" y2="473" stroke="#78969B" stroke-width="1"/>
+<text x="269" y="494" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Video C</text>
+<text x="364" y="494" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="end">1.6%</text>
+<circle cx="271" cy="504" r="2.5" fill="#126A70"/>
+<rect x="20" y="516" width="350" height="15" rx="0" fill="#EEF0F5"/>
+<text x="25" y="527" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="700" font-feature-settings="tnum" fill="#52657A" text-anchor="start">LOWER CTR</text>
+<text x="365" y="527" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="600" font-feature-settings="tnum" fill="#52657A" text-anchor="end">3 selected</text>
+<rect x="20" y="535" width="108" height="86" rx="2" fill="#FFFFFF" stroke="#8192AF"/>
+<rect x="20" y="535" width="108" height="3" rx="0" fill="#8192AF"/>
+<rect x="25" y="542" width="98" height="44" rx="0" fill="#17323D"/>
+<text x="74" y="574" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" font-feature-settings="tnum" fill="#C6CDDD" text-anchor="middle">D</text>
+<line x1="31" y1="584" x2="117" y2="584" stroke="#78969B" stroke-width="1"/>
+<text x="27" y="605" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Video D</text>
+<text x="122" y="605" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="end">1.0%</text>
+<rect x="26" y="612" width="5" height="5" rx="0" fill="#8192AF"/>
+<rect x="141" y="535" width="108" height="86" rx="2" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="141" y="535" width="108" height="3" rx="0" fill="#8192AF"/>
+<rect x="146" y="542" width="98" height="44" rx="0" fill="#52666F"/>
+<text x="195" y="574" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" font-feature-settings="tnum" fill="#C6CDDD" text-anchor="middle">E</text>
+<line x1="152" y1="584" x2="238" y2="584" stroke="#78969B" stroke-width="1"/>
+<text x="148" y="605" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Video E</text>
+<text x="243" y="605" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="end">0.8%</text>
+<rect x="262" y="535" width="108" height="86" rx="2" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="262" y="535" width="108" height="3" rx="0" fill="#8192AF"/>
+<rect x="267" y="542" width="98" height="44" rx="0" fill="#52666F"/>
+<text x="316" y="574" font-family="Arial, Helvetica, sans-serif" font-size="19" font-weight="700" font-feature-settings="tnum" fill="#C6CDDD" text-anchor="middle">F</text>
+<line x1="273" y1="584" x2="359" y2="584" stroke="#78969B" stroke-width="1"/>
+<text x="269" y="605" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Video F</text>
+<text x="364" y="605" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="end">0.6%</text>
+<text x="20" y="634" font-family="Arial, Helvetica, sans-serif" font-size="9" font-weight="400" font-feature-settings="tnum" fill="#657185" text-anchor="start">No previews · ● cited support   ◆ counterexample</text>
+<text x="20" y="662" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Patterns detected</text>
+<rect x="20" y="676" width="350" height="228" rx="3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="21" y="677" width="348" height="56" rx="0" fill="#FFFFFF"/>
+<text x="30" y="697" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Spoken offer</text>
+<text x="359" y="697" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="end">3/3 vs 0/3</text>
+<circle cx="31" cy="716" r="3.3" fill="#126A70"/>
+<circle cx="42" cy="716" r="3.3" fill="#126A70"/>
+<circle cx="53" cy="716" r="3.3" fill="#126A70"/>
+<circle cx="76" cy="716" r="3.3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<circle cx="87" cy="716" r="3.3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<circle cx="98" cy="716" r="3.3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<text x="359" y="719" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" font-feature-settings="tnum" fill="#126A70" text-anchor="end">Transcript · Inspect →</text>
+<line x1="20" y1="733" x2="370" y2="733" stroke="#D8E1E4" stroke-width="1"/>
+<rect x="21" y="733" width="348" height="56" rx="0" fill="#E5F2F1"/>
+<rect x="21" y="733" width="3" height="56" rx="0" fill="#126A70"/>
+<text x="30" y="753" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Product visible early</text>
+<text x="359" y="753" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="end">3/3 vs 1/3</text>
+<circle cx="31" cy="772" r="3.3" fill="#126A70"/>
+<circle cx="42" cy="772" r="3.3" fill="#126A70"/>
+<circle cx="53" cy="772" r="3.3" fill="#126A70"/>
+<circle cx="76" cy="772" r="3.3" fill="#8192AF"/>
+<circle cx="87" cy="772" r="3.3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<circle cx="98" cy="772" r="3.3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<text x="359" y="775" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" font-feature-settings="tnum" fill="#126A70" text-anchor="end">Frame · Inspect →</text>
+<line x1="20" y1="789" x2="370" y2="789" stroke="#D8E1E4" stroke-width="1"/>
+<rect x="21" y="789" width="348" height="56" rx="0" fill="#FFFFFF"/>
+<text x="30" y="809" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" font-feature-settings="tnum" fill="#202A35" text-anchor="start">First headline</text>
+<text x="359" y="809" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="end">0.8s vs 3.1s</text>
+<line x1="30" y1="827" x2="80" y2="827" stroke="#D8E1E4" stroke-width="2"/>
+<circle cx="43" cy="827" r="3" fill="#126A70"/>
+<circle cx="80" cy="827" r="3" fill="#8192AF"/>
+<text x="359" y="831" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" font-feature-settings="tnum" fill="#126A70" text-anchor="end">OCR · Inspect →</text>
+<line x1="20" y1="845" x2="370" y2="845" stroke="#D8E1E4" stroke-width="1"/>
+<rect x="21" y="845" width="348" height="56" rx="0" fill="#FFFFFF"/>
+<text x="30" y="865" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="600" font-feature-settings="tnum" fill="#202A35" text-anchor="start">CTA in first half</text>
+<text x="359" y="865" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="end">2/3 vs 1/3</text>
+<circle cx="31" cy="884" r="3.3" fill="#126A70"/>
+<circle cx="42" cy="884" r="3.3" fill="#126A70"/>
+<circle cx="53" cy="884" r="3.3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<circle cx="76" cy="884" r="3.3" fill="#8192AF"/>
+<circle cx="87" cy="884" r="3.3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<circle cx="98" cy="884" r="3.3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<text x="359" y="887" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" font-feature-settings="tnum" fill="#126A70" text-anchor="end">Mixed · Inspect →</text>
+<text x="20" y="921" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="400" font-feature-settings="tnum" fill="#657185" text-anchor="start">Associations in this cohort, not proven causes.</text>
+<text x="20" y="950" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Experiments to try</text>
+<rect x="20" y="961" width="350" height="118" rx="3" fill="#FFFFFF" stroke="#D8E1E4"/>
+<rect x="20" y="961" width="3" height="118" rx="0" fill="#126A70"/>
+<text x="31" y="983" font-family="Arial, Helvetica, sans-serif" font-size="12" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">01  Test spoken offer in opening</text>
+<rect x="31" y="991" width="145" height="48" rx="0" fill="#F4F7F8"/>
+<text x="38" y="1007" font-family="Arial, Helvetica, sans-serif" font-size="8" font-weight="700" font-feature-settings="tnum" fill="#657185" text-anchor="start">CONTROL</text>
+<text x="38" y="1026" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="600" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Not spoken</text>
+<text x="194" y="1023" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" font-feature-settings="tnum" fill="#126A70" text-anchor="middle">→</text>
+<rect x="211" y="991" width="148" height="48" rx="0" fill="#E5F2F1"/>
+<text x="219" y="1007" font-family="Arial, Helvetica, sans-serif" font-size="8" font-weight="700" font-feature-settings="tnum" fill="#126A70" text-anchor="start">VARIANT</text>
+<text x="219" y="1026" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" font-feature-settings="tnum" fill="#202A35" text-anchor="start">Spoken</text>
+<text x="31" y="1063" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="400" font-feature-settings="tnum" fill="#657185" text-anchor="start">Measure CTR · Source 3/3 vs 0/3</text>
+<text x="359" y="1063" font-family="Arial, Helvetica, sans-serif" font-size="10" font-weight="700" font-feature-settings="tnum" fill="#126A70" text-anchor="end">Details →</text>
+<text x="20" y="1103" font-family="Arial, Helvetica, sans-serif" font-size="11" font-weight="600" font-feature-settings="tnum" fill="#126A70" text-anchor="start">Limitations and methodology  ⌄</text>
+</svg>

@@ -10,6 +10,7 @@ import type { CompanyUIProps } from './companyUI';
 import { PlanLimitError, type LimitCode } from './billing/billingApi';
 import { useBilling } from './billing/BillingProvider';
 import { LimitNotice } from './billing/BillingUI';
+import { billingApi } from './billing/billingApi';
 
 export function CompanyEmptyState({ name, onManage, onSkip, skipped, canManage = true }: { canManage?: boolean; name: string; onManage(): void; onSkip(): void; skipped: boolean }) {
   return <section className="welcome" aria-labelledby="company-empty-title">
@@ -43,6 +44,8 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
   const created = useRef<{ name: string; id: string } | null>(null);
   const [error, setError] = useState('');
   const [limit, setLimit] = useState<LimitCode | null>(null);
+  const [billingTargetId, setBillingTargetId] = useState<string | null>(null);
+  const billingLookup = useRef<AbortController | null>(null);
   const billing = useBilling();
   const [pending, setPending] = useState<(() => Promise<void>) | null>(null);
   const [skipped, setSkipped] = useState<string[]>([]);
@@ -50,6 +53,9 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
   const focusReturn = useRef<HTMLElement | null>(null);
   const reasons = useCompanySwitchReasons();
   const active = model.companies.find(c => c.id === model.activeCompanyId);
+  useEffect(() => {
+    if (!management) { billingLookup.current?.abort(); setBillingTargetId(null); }
+  }, [management]);
   useEffect(() => {
     if (pending) { focusReturn.current = document.activeElement as HTMLElement; dialog.current?.showModal(); }
     else if (dialog.current?.open) { dialog.current.close(); focusReturn.current?.focus(); }
@@ -66,14 +72,25 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
     else void run(action);
   };
   const manage = () => setManagement(true);
+  const openWorkspaceBilling = async () => {
+    setManagement(true);
+    const owned = model.companies.filter(company => company.role === 'owner');
+    billingLookup.current?.abort();
+    const controller = new AbortController();
+    billingLookup.current = controller;
+    const results = await Promise.allSettled(owned.map(company => billingApi.read(company.id, controller.signal)));
+    if (controller.signal.aborted) return;
+    const index = results.findIndex(result => result.status === 'fulfilled' && result.value.effective_plan === 'free' && result.value.can_manage_billing);
+    if (index >= 0) setBillingTargetId(owned[index].id);
+  };
   const selector = <CompanySelector companies={model.companies} activeCompanyId={model.activeCompanyId} status={model.status} onRetry={model.onRetry} busy={busy}
       onManage={manage} onSelect={id => { if (id === model.activeCompanyId) return; guarded(async () => { await model.onSwitch(id); if (management) setManagement(false); }); }} />;
   const content = <>
     {model.error && <p className="notice error" role="alert">{model.error}</p>}
     {error && <p className="notice error" role="alert">{error}</p>}
-    {limit && <LimitNotice code={limit} billing={billing.state.data} onUpgrade={() => { setManagement(true); requestAnimationFrame(() => document.getElementById('settings-billing')?.scrollIntoView()); }} />}
+    {limit && <LimitNotice code={limit} billing={billing.state.data} onUpgrade={() => { if (limit === 'free_workspace_limit_reached') void openWorkspaceBilling(); else { setManagement(true); requestAnimationFrame(() => document.getElementById('settings-billing')?.scrollIntoView()); } }} />}
     {busy && <p role="status">Saving company changes…</p>}
-    {management ? <CompanyManagement {...model} busy={busy} run={run} onBack={() => setManagement(false)} onAccountLinked={onAccountLinked} onCreateAndEnter={(name, ownGuard) => {
+    {management ? <CompanyManagement {...model} busy={busy} run={run} billingTargetId={billingTargetId} onBack={() => setManagement(false)} onAccountLinked={onAccountLinked} onCreateAndEnter={(name, ownGuard) => {
       // Submitting this create form consumes its own edits; other pending work still requires confirmation.
       const create = async () => {
         if (!created.current || created.current.name !== name) { const company = await model.onCreate(name); created.current = { name, id: company.id }; }

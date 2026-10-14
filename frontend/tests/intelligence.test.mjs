@@ -159,3 +159,14 @@ test('API errors and malformed responses hide internal data', async () => {
     } finally { await f.close(); }
   }
 });
+test('long observations and recommendations fit a narrow mobile result without inventing media', async () => {
+  const longDescription = 'Spoken opening offer with a detailed product explanation and an unusually long campaign message';
+  const f = await app({ ...base, content_differences: [{ ...difference, description: longDescription }],
+    hypotheses: [{ ...hypothesis, source_difference: longDescription, hypothesis: 'Test whether a concise spoken offer helps viewers understand the product before a much longer explanation begins in this creative.' }] }, { width: 320 });
+  try { await submit(f.page); await f.page.locator('.ci-signal-name strong').getByText(longDescription, { exact: true }).waitFor();
+    assert.equal(await f.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    await f.page.locator('.ci-inspect').click(); await f.page.getByRole('dialog').getByText('Frame preview unavailable for this citation').waitFor();
+    assert.equal(await f.page.getByRole('dialog').evaluate(element => element.scrollWidth <= element.clientWidth), true);
+    assert.deepEqual(f.errors, []);
+  } finally { await f.close(); }
+});

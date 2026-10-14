@@ -1,12 +1,12 @@
 import { useSyncExternalStore } from 'react';
-import { House, Library, Lightbulb, PencilLine, Settings2, ChartNoAxesCombined } from 'lucide-react';
+import { House, SquarePlay, Lightbulb, PencilLine, Settings2, ChartNoAxesCombined } from 'lucide-react';
 
 export const navigation = [
-  { id: 'overview', label: 'Overview', icon: House, description: 'Your company workspace.' },
-  { id: 'content', label: 'Content', icon: Library, description: 'Browse the content in your company library.' },
+  { id: 'overview', label: 'Home', icon: House, description: 'Your company workspace.' },
   { id: 'intelligence', label: 'Creative Intelligence', icon: ChartNoAxesCombined, description: 'Compare ad performance and observed creative differences.' },
-  { id: 'generate', label: 'Generate', icon: PencilLine, description: 'Build your next idea from analysed content.' },
+  { id: 'content', label: 'Content', icon: SquarePlay, description: 'Browse the content in your company library.' },
   { id: 'ideas', label: 'Ideas', icon: Lightbulb, description: 'Review, refine and use your saved ideas.' },
+  { id: 'generate', label: 'Generate', icon: PencilLine, description: 'Build your next idea from analysed content.' },
   { id: 'settings', label: 'Settings', icon: Settings2, description: 'Manage your companies and integrations.' },
 ] as const;
 export type AppPage = typeof navigation[number]['id'] | 'creative';

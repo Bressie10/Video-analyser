@@ -61,3 +61,16 @@
   .generate-workspace .generate-document h2 { font-size: 26px; }
   .generate-workspace .generate-document footer { padding: var(--space-4) var(--space-5); }
 }
+.generate-workspace{max-width:1120px}
+.generate-workspace .generation{padding:0;border:0;border-radius:0;background:transparent}
+.generate-workspace .generate-intro{padding:0 0 18px;margin:0 0 28px;border-bottom:1px solid #d8e1e4}
+.generate-workspace .generate-intro h2{font-size:22px}
+.generate-workspace .generation form{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(270px,.8fr);gap:0 36px}
+.generate-workspace .generate-step{padding:20px 0;border-bottom:1px solid #d8e1e4}
+.generate-workspace .generate-step:first-child{grid-row:span 3;padding-top:0;padding-right:32px;border-right:1px solid #d8e1e4;border-bottom:0}
+.generate-workspace .generate-step legend,.generate-workspace .generate-brief>label{color:#202a35;font-size:18px}
+.generate-workspace .generate-source-summary{border:1px solid #d8e1e4;border-left:3px solid #126a70;border-radius:0;background:#fff}
+.generate-workspace .generate-modes label,.generate-workspace .generate-targets label{border-color:#d8e1e4;border-radius:4px;background:#fff}
+.generate-workspace .generate-action{grid-column:2;padding:20px 0;border-top:0}.generate-workspace .generate-action .ui-button{width:100%}
+.generate-workspace .generate-document{border-radius:5px;border-top:3px solid #126a70}
+@media(max-width:900px){.generate-workspace .generation form{grid-template-columns:minmax(0,1fr)}.generate-workspace .generate-step:first-child{grid-row:auto;padding-right:0;border-right:0;border-bottom:1px solid #d8e1e4}.generate-workspace .generate-action{grid-column:1}}

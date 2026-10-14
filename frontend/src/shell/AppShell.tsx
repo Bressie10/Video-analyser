@@ -1,14 +1,17 @@
 import { AccountControl } from '../auth/AuthGate';
+import { useAuth } from '../auth/AuthProvider';
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { Menu, X } from 'lucide-react';
+import { X, ChevronRight, UserRound } from 'lucide-react';
 import { IconButton } from '../ui/controls';
 import { PageHeader } from '../ui/layout';
 import { LegalFooter } from '../pages/LegalLayout';
 import { navigation, type AppPage } from './navigation';
 import { comparisonScroll } from '../creativeAnalysis/handoff';
 import './shell.css';
+import './v9.css';
 
 export function AppShell({ page, companySelector, children, setup }: { page: AppPage; companySelector: ReactNode; children: ReactNode; setup?: { progress: number; onResume(): void } }) {
+  const { session } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
   const menuButton = useRef<HTMLButtonElement>(null);
   const navigationRef = useRef<HTMLElement>(null);
@@ -30,9 +33,9 @@ export function AppShell({ page, companySelector, children, setup }: { page: App
   return <div className="app-shell">
     <a className="skip-link" href="#main-content" onClick={event => { event.preventDefault(); main.current?.focus(); }}>Skip to content</a>
     <header className="app-header">
-      <a className="app-brand" href="#overview" aria-label="ContentMetric overview"><span className="app-brand-mark" aria-hidden="true">C</span><span>ContentMetric</span></a>
+      <a className="app-brand" href="#overview" aria-label="ContentMetric home"><span>Content</span><span>Metric</span></a>
       <div className="app-company">{companySelector}</div>
-      <IconButton ref={menuButton} label={mobileOpen ? 'Close navigation' : 'Open navigation'} variant="ghost" className="app-menu-toggle" aria-expanded={mobileOpen} aria-controls="app-navigation" onClick={() => setMobileOpen(value => !value)}>{mobileOpen ? <X /> : <Menu />}</IconButton>
+      <IconButton ref={menuButton} label={mobileOpen ? 'Close navigation' : 'Open navigation'} variant="ghost" className="app-menu-toggle" aria-expanded={mobileOpen} aria-controls="app-navigation" onClick={() => setMobileOpen(value => !value)}>{mobileOpen ? <X /> : <UserRound />}</IconButton>
     </header>
     <aside className={`app-sidebar ${mobileOpen ? 'is-open' : ''}`} onKeyDown={event => {
       if (event.key === 'Escape' && mobileOpen) { event.preventDefault(); setMobileOpen(false); menuButton.current?.focus(); }
@@ -41,7 +44,7 @@ export function AppShell({ page, companySelector, children, setup }: { page: App
         {navigation.map(({ id, label, icon: Icon }) => <a key={id} className={`app-nav-link ${id === 'settings' ? 'app-nav-settings' : ''}`} href={`#${id}`} aria-current={page === id ? 'page' : undefined} onClick={() => { setMobileOpen(false); if (page === id) main.current?.focus(); }}><Icon aria-hidden="true" size={20} strokeWidth={1.75} /><span>{label}</span></a>)}
       </nav>
       {setup && <button className="app-setup-link" type="button" onClick={() => { setMobileOpen(false); setup.onResume(); }}><span>Finish setup</span><strong>{setup.progress}%</strong></button>}
-      <AccountControl />
+      <details className="app-profile" open={mobileOpen || undefined}><summary aria-label="Account menu"><span className="app-profile-avatar" aria-hidden="true">{session?.user.email?.slice(0, 2).toUpperCase() || 'CM'}</span><span className="app-profile-info"><strong>{session?.user.email?.split('@')[0] || 'Account'}</strong><small>Account</small></span><ChevronRight size={17} aria-hidden="true" /></summary><div className="app-profile-actions"><a href="#settings">Account settings</a><AccountControl /></div></details>
     </aside>
     <div className="app-body">
       <main id="main-content" className="app-main" ref={main} tabIndex={-1}>

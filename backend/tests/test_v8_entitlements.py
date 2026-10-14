@@ -60,8 +60,13 @@ class EntitlementTests(unittest.TestCase):
         self.assertEqual(self.call('GET', f'/api/companies/{first.json()["company_id"]}',
                                    user=OTHER_USER_ID).status_code, 200)
         self.make_pro(first.json()['company_id'])
-        self.assertEqual(self.call('POST', '/api/companies', user=OTHER_USER_ID,
-                                   json={'name': 'Second'}).status_code, 201)
+        second = self.call('POST', '/api/companies', user=OTHER_USER_ID,
+                           json={'name': 'Second'})
+        self.assertEqual(second.status_code, 201)
+        self.assertEqual(self.call('GET', f'/api/companies/{first.json()["company_id"]}/billing',
+                                   user=OTHER_USER_ID).json()['effective_plan'], 'pro')
+        self.assertEqual(self.call('GET', f'/api/companies/{second.json()["company_id"]}/billing',
+                                   user=OTHER_USER_ID).json()['effective_plan'], 'free')
         self.assertEqual(self.call('POST', '/api/companies', user=OTHER_USER_ID,
                                    json={'name': 'Third'}).status_code, 402)
 

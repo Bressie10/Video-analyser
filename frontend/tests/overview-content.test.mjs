@@ -30,7 +30,7 @@ async function fixture({ page = 'content', width = 1440, selected = A, linked = 
     if (url.pathname === '/api/companies') return route.fulfill({ json: { companies: [A, B].map((company_id, i) => ({ company_id, name: i ? 'Beta' : 'Northline Studio', role: "owner", archived: false, accounts: linked ? [{ account_id: id(i + 3), platform: 'instagram', display_name: 'Studio Instagram' }] : [] })) } });
     if (url.pathname.endsWith('/content')) return route.fulfill({ json: { items: (url.searchParams.get('analyzed_only') === 'true' ? content.filter(c => c.analyzed) : content).slice(0, Number(url.searchParams.get('limit') || 20)), next_offset: null } });
     if (url.pathname.endsWith('/ideas')) return route.fulfill({ json: { items: ideas, next_cursor: null } });
-    return route.fulfill({ json: { connected: false, accounts: [] } });
+    return route.fulfill({ json: { connected: url.pathname === '/api/meta/test', accounts: [] } });
   });
   const p = await context.newPage(); p.setDefaultTimeout(7000);
   p.on('pageerror', e => errors.push(e.message));
@@ -39,37 +39,50 @@ async function fixture({ page = 'content', width = 1440, selected = A, linked = 
   return { p, calls, errors, close: () => context.close() };
 }
 const library = p => p.getByRole('region', { name: 'Company content library', exact: true });
-const overview = p => p.locator('.cm-overview');
+const overview = p => p.locator('.cm-home');
 async function switchCompany(p) {
   const nav = p.getByRole('navigation', { name: 'Company', exact: true });
   await nav.getByRole('button').first().click(); await nav.getByRole('button', { name: 'Beta', exact: true }).click();
 }
 async function screenshot(p, name) { if (process.env.V5_SCREENSHOT_DIR) await p.screenshot({ path: `${process.env.V5_SCREENSHOT_DIR}/${name}.png`, fullPage: true }); }
 
-test('Overview shows linked platforms, qualified source count, recent content and saved ideas', async () => {
+test('Home shows real recent work, readiness and distinct connection states', async () => {
   const f = await fixture({ page: 'overview' });
   try {
     await overview(f.p).getByText(idea.title, { exact: true }).waitFor();
-    assert.match(await overview(f.p).innerText(), /1 analysed video/);
-    assert.match(await overview(f.p).innerText(), /1 linked account/);
+    assert.match(await overview(f.p).innerText(), /READY TO CREATE/);
+    assert.match(await overview(f.p).innerText(), /Publishing account/);
+    assert.match(await overview(f.p).innerText(), /Ads account/);
     assert.equal(await f.p.getByRole('heading', { level: 1 }).count(), 1);
-    assert.equal(await overview(f.p).getByRole('link', { name: 'Generate idea', exact: true }).getAttribute('href'), '#generate');
+    assert.equal(await overview(f.p).getByRole('link', { name: 'Create an idea', exact: true }).getAttribute('href'), '#generate');
     assert.deepEqual(f.errors, []);
   } finally { await f.close(); }
 });
-test('Overview does not present a paginated count as an exact total', async () => {
+test('Home does not present a paginated analysis count as an exact total', async () => {
   const f = await fixture({ page: 'overview', intercept: async (r, u) => {
     if (!u.pathname.endsWith('/content') || u.searchParams.get('analyzed_only') !== 'true') return false;
     await r.fulfill({ json: { items: Array.from({ length: 20 }, (_, n) => item(n + 100)), next_offset: 20 } }); return true;
   } });
-  try { await overview(f.p).getByText('20+', { exact: true }).waitFor(); await overview(f.p).getByText('At least 20 videos are ready to use as sources.').waitFor(); }
+  try { await overview(f.p).getByText('READY TO CREATE', { exact: true }).waitFor(); assert.equal((await overview(f.p).innerText()).includes('20 analysed'), false); }
   finally { await f.close(); }
+});
+test('Home distinguishes a Meta status error from a disconnected account', async () => {
+  const f = await fixture({ page: 'overview', content: [], ideas: [], intercept: async (route, url) => {
+    if (url.pathname !== '/api/meta/test') return false;
+    await route.fulfill({ status: 503, json: { detail: 'PRIVATE PROVIDER ERROR' } }); return true;
+  } });
+  try { await overview(f.p).getByText('CONNECTION ISSUE', { exact: true }).waitFor();
+    assert.match(await overview(f.p).innerText(), /Connection issue/);
+    assert.equal((await overview(f.p).innerText()).includes('PRIVATE PROVIDER ERROR'), false);
+  } finally { await f.close(); }
 });
 for (const state of ['no company', 'no accounts', 'no content', 'no analysis', 'no ideas']) test(`Overview empty state: ${state}`, async () => {
   const f = await fixture({ page: 'overview', selected: state === 'no company' ? null : A, linked: state !== 'no accounts', content: state === 'no content' ? [] : state === 'no analysis' ? [item(10, { analyzed: false, analysis_state: 'queued' })] : populated, ideas: [] });
   try {
-    const title = ({ 'no company': 'No company selected', 'no accounts': 'Northline Studio is ready', 'no content': 'Waiting for your first content', 'no analysis': 'Your content is here. Analysis is next.', 'no ideas': 'Turn your content into a new idea' })[state];
+    const title = ({ 'no company': 'No company selected', 'no accounts': 'Northline Studio is ready', 'no content': 'Home', 'no analysis': 'Home', 'no ideas': 'Home' })[state];
     await f.p.getByRole('heading', { name: title, exact: true }).waitFor();
+    if (state === 'no content') await overview(f.p).getByText('Your first content and ideas will appear here.').waitFor();
+    if (state === 'no analysis') await overview(f.p).getByText('ANALYSIS RUNNING').waitFor();
     if (state === 'no company') assert.equal(f.calls.some(u => u.pathname.endsWith('/content')), false);
     if (state === 'no accounts') await f.p.getByRole('button', { name: 'Connect/link Meta accounts' }).waitFor();
     await screenshot(f.p, `overview-${state.replaceAll(' ', '-')}`);
@@ -143,7 +156,7 @@ test('Overview loading and partial errors retain successful panels and recover s
     if (!u.pathname.endsWith('/content') || u.searchParams.get('limit') !== '4') return false;
     await gate; await r.fulfill(fail ? { status: 503, json: { detail: 'SECRET' } } : { json: { items: populated, next_offset: null } }); return true;
   } });
-  try { await overview(f.p).getByText('Loading recent content…').waitFor(); release(); await overview(f.p).getByRole('alert').waitFor(); await overview(f.p).getByText(idea.title, { exact: true }).waitFor(); assert.equal((await overview(f.p).innerText()).includes('SECRET'), false); fail = false; await overview(f.p).getByRole('button', { name: 'Refresh overview' }).click(); await overview(f.p).getByText('Facebook video', { exact: true }).waitFor(); }
+  try { await overview(f.p).getByText('Loading recent work…').waitFor(); release(); await overview(f.p).getByRole('alert').waitFor(); await overview(f.p).getByText(idea.title, { exact: true }).waitFor(); assert.equal((await overview(f.p).innerText()).includes('SECRET'), false); fail = false; await overview(f.p).getByRole('button', { name: 'Refresh Home' }).click(); await overview(f.p).getByText('Facebook video', { exact: true }).waitFor(); }
   finally { release(); await f.close(); }
 });
 for (const destination of ['overview', 'content']) test(`${destination}: stale results cannot populate a newly selected company, even without fetch abort`, async () => {
@@ -169,7 +182,7 @@ for (const width of [1440, 1280, 1024, 768, 390, 320]) test(`Overview and Conten
     await overview(f.p).getByText(idea.title, { exact: true }).waitFor();
     await screenshot(f.p, `overview-${width}`);
     for (const destination of ['overview', 'content']) {
-      if (destination === 'content') { await overview(f.p).getByRole('link', { name: 'View library', exact: true }).click(); await library(f.p).getByText('Showing 1–4 items').waitFor(); }
+      if (destination === 'content') { await (width <= 700 ? f.p.getByRole('navigation', { name: 'Mobile primary' }).getByRole('link', { name: 'Content' }) : overview(f.p).getByRole('link', { name: 'Review content', exact: true })).click(); await library(f.p).getByText('Showing 1–4 items').waitFor(); }
       assert.equal(await f.p.title(), 'ContentMetric'); assert.equal(await f.p.locator('vite-error-overlay').count(), 0);
       assert.ok(await f.p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), `${destination} overflow at ${width}`);
       assert.equal(await f.p.getByRole('heading', { level: 1 }).count(), 1);

@@ -1,8 +1,8 @@
 # V9 UI design direction
 
-**Status:** Authenticated shell + Home V3, public entry, auth, first-workspace onboarding, first-run flow, and the shared visual system are **approved and locked**. Creative Intelligence comparison design is locked and implemented in Stage 8.2. Creative Analysis V2 below remains design only for Stage 8.3.
-**Structural source:** `V9_UX_PRODUCT_AUDIT.md` (corrected Stage 8.2 audit).
-**Design baseline:** `codex/v9-stage8-intelligence-ui` at `b7e085b89d412e189bcedf4c6c5d0e533f31651d`.
+**Status:** Authenticated shell + Home V3, public entry, auth, first-workspace onboarding, first-run flow, and the shared visual system are **approved and locked**. Creative Intelligence comparison is locked for this task; Creative Analysis V2 below is the current design for review. No application implementation.  
+**Structural source:** `V9_UX_PRODUCT_AUDIT.md` (corrected Stage 8.2 audit).  
+**Release candidate referenced:** `codex/v9-stage8-intelligence-ui` at `b7e085b89d412e189bcedf4c6c5d0e533f31651d`.
 
 ## Creative Analysis V2 — Single Creative Review final polish
 
