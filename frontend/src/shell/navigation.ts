@@ -9,9 +9,10 @@ export const navigation = [
   { id: 'ideas', label: 'Ideas', icon: Lightbulb, description: 'Review, refine and use your saved ideas.' },
   { id: 'settings', label: 'Settings', icon: Settings2, description: 'Manage your companies and integrations.' },
 ] as const;
-export type AppPage = typeof navigation[number]['id'];
+export type AppPage = typeof navigation[number]['id'] | 'creative';
 function currentPage(): AppPage {
   const hash = window.location.hash.slice(1);
+  if (/^creative\/[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(hash)) return 'creative';
   return navigation.find(item => item.id === hash)?.id ?? 'overview';
 }
 function subscribe(listener: () => void) {
@@ -20,3 +21,4 @@ function subscribe(listener: () => void) {
 }
 export function navigate(page: AppPage) { window.location.hash = page; }
 export function useAppPage() { return useSyncExternalStore(subscribe, currentPage, () => 'overview' as const); }
+export function useCreativeRef() { return useAppPage() === 'creative' ? window.location.hash.slice('#creative/'.length) : null; }

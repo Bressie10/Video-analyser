@@ -5,6 +5,7 @@ import { IconButton } from '../ui/controls';
 import { PageHeader } from '../ui/layout';
 import { LegalFooter } from '../pages/LegalLayout';
 import { navigation, type AppPage } from './navigation';
+import { comparisonScroll } from '../creativeAnalysis/handoff';
 import './shell.css';
 
 export function AppShell({ page, companySelector, children, setup }: { page: AppPage; companySelector: ReactNode; children: ReactNode; setup?: { progress: number; onResume(): void } }) {
@@ -13,13 +14,14 @@ export function AppShell({ page, companySelector, children, setup }: { page: App
   const navigationRef = useRef<HTMLElement>(null);
   const main = useRef<HTMLElement>(null);
   const previousPage = useRef(page);
-  const current = navigation.find(item => item.id === page)!;
+  const current = navigation.find(item => item.id === page) ?? { label: 'Creative Analysis', description: '' };
   useEffect(() => {
     if (previousPage.current !== page) {
+      const fromCreative = previousPage.current === 'creative';
       previousPage.current = page;
       setMobileOpen(false);
       main.current?.focus();
-      window.scrollTo(0, 0);
+      window.scrollTo(0, page === 'intelligence' && fromCreative ? comparisonScroll() : 0);
     }
   }, [page]);
   useEffect(() => {
@@ -43,7 +45,7 @@ export function AppShell({ page, companySelector, children, setup }: { page: App
     </aside>
     <div className="app-body">
       <main id="main-content" className="app-main" ref={main} tabIndex={-1}>
-        <PageHeader title={current.label} description={current.description} />
+        {page !== 'creative' && <PageHeader title={current.label} description={current.description} />}
         {children}
       </main>
       <LegalFooter />

@@ -225,15 +225,22 @@ def _finish(user, company_id, account, metric_id, start, stop, result, started,
             result["limitations"].append(str(error))
             return result
         selected = groups["higher_metric_group"] + groups["lower_metric_group"]
+        def public_member(member):
+            return {"video_ref": member["video_ref"], "metric_value": member["metric_value"],
+                    "percentile": member.get("percentile")}
         result["cohort"]["content_groups"] = {
-            "higher": groups["higher_metric_group"],
-            "lower": groups["lower_metric_group"],
+            "higher": [public_member(member) for member in groups["higher_metric_group"]],
+            "lower": [public_member(member) for member in groups["lower_metric_group"]],
             "middle_excluded_count": groups["middle_excluded_count"]}
         analyses, assets, gap = _content(db, company_id, account["connection_id"], account["id"], selected)
     if gap:
         result["abstentions"].append("insufficient_source_video_coverage")
         result["limitations"].append(gap)
         return result
+    for side, members in (("higher", groups["higher_metric_group"]),
+                          ("lower", groups["lower_metric_group"])):
+        for public, member in zip(result["cohort"]["content_groups"][side], members):
+            public["creative_ref"] = str(assets[member["provider_id"]]["id"])
     try:
         client = library.connection_client(account)
         with TemporaryDirectory(prefix="company-intelligence-") as directory:

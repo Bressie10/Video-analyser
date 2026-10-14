@@ -69,7 +69,7 @@ async function submit(page) { await page.getByLabel('Start date').fill('2026-01-
     await f.page.screenshot({ path: '/private/tmp/v9-stage82-evidence-desktop.png' });
     await f.page.getByRole('button', { name: 'Close evidence' }).click();
     await f.page.locator('.ci-signal-name').focus(); await f.page.keyboard.press('Enter');
-    await f.page.getByRole('button', { name: /Creative B, higher numeric CTR/ }).click();
+    await f.page.locator('.ci-creative').nth(1).getByRole('button', { name: 'Focus in Signal Map' }).click();
     assert.equal(await f.page.locator('.ci-map-row.is-creative-match').count(), 1);
     await f.page.evaluate(() => window.scrollTo(0, 0));
     await f.page.screenshot({ path: '/private/tmp/v9-stage82-intelligence-desktop.png', fullPage: true });

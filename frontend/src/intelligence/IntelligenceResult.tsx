@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, ChevronDown, Film } from 'lucide-react';
 import { EvidenceTrace } from './EvidenceTrace';
+import { openCreative } from '../creativeAnalysis/handoff';
 import { type Cited, type Difference, type Hypothesis, type IntelligenceResult, type Member, type Metric, type Preview,
   citations, formatMetric, formatPercentile, formatRatio, metricLabel, timeLabel } from './intelligenceModel';
 
@@ -40,24 +41,25 @@ function PerformanceStrip({ result, metric }: { result: IntelligenceResult; metr
   </section>;
 }
 
-function CreativeTile({ member, label, group, metric, currency, preview, relation, active, onSelect }: {
+function CreativeTile({ member, label, group, metric, currency, preview, relation, active, onSelect, onOpen }: {
   member: Member; label: string; group: 'higher' | 'lower'; metric: Metric; currency?: string; preview?: Preview;
-  relation: 'support' | 'counterexample' | 'dim' | null; active: boolean; onSelect(): void;
+  relation: 'support' | 'counterexample' | 'dim' | null; active: boolean; onSelect(): void; onOpen(): void;
 }) {
-  return <button type="button" className={`ci-creative ${group} ${relation ?? ''} ${active ? 'is-active' : ''}`} onClick={onSelect}
-    aria-pressed={active} aria-label={`Creative ${label}, ${group} numeric ${metricLabel(metric)}, ${formatMetric(member.metric_value, metric, currency)}${relation === 'counterexample' ? ', counterexample' : relation === 'support' ? ', cited support' : ''}`}>
-    <span className="ci-creative-media">{preview ? <img src={`data:image/jpeg;base64,${preview.jpeg_base64}`} alt={`Sampled frame from Creative ${label}`} />
+  return <div className={`ci-creative ${group} ${relation ?? ''} ${active ? 'is-active' : ''}`}>
+    <button type="button" className="ci-creative-open" onClick={onOpen} disabled={!member.creative_ref}
+      aria-label={`Open Creative ${label} analysis`}><span className="ci-creative-media">{preview ? <img src={`data:image/jpeg;base64,${preview.jpeg_base64}`} alt={`Sampled frame from Creative ${label}`} />
       : <span className="ci-creative-fallback"><Film size={22} aria-hidden="true" /><span>Frame unavailable</span></span>}
       <span className="ci-frame-corners" aria-hidden="true" />
       {relation === 'support' && <span className="ci-creative-marker">● Cited</span>}
       {relation === 'counterexample' && <span className="ci-creative-marker">◆ Counterexample</span>}
-    </span><span className="ci-creative-footer"><b>{label}</b><span title={member.metric_value}>{formatMetric(member.metric_value, metric, currency)}</span></span>
+    </span></button><span className="ci-creative-footer"><b>{label}</b><span title={member.metric_value}>{formatMetric(member.metric_value, metric, currency)}</span></span>
+    <button type="button" className="ci-creative-focus" onClick={onSelect} aria-pressed={active}>Focus in Signal Map</button>
     {member.percentile !== null && <span className="ci-reference">Reference ad</span>}
-  </button>;
+  </div>;
 }
 
-function CreativeCohort({ result, metric, selected, selectedCreative, onCreative }: {
-  result: IntelligenceResult; metric: Metric; selected: Difference | null; selectedCreative: string | null; onCreative(ref: string): void;
+function CreativeCohort({ result, metric, selected, selectedCreative, onCreative, onOpen }: {
+  result: IntelligenceResult; metric: Metric; selected: Difference | null; selectedCreative: string | null; onCreative(ref: string): void; onOpen(member: Member, label: string, group: 'higher' | 'lower'): void;
 }) {
   const groups = result.cohort.content_groups;
   if (!groups) return null;
@@ -70,7 +72,7 @@ function CreativeCohort({ result, metric, selected, selectedCreative, onCreative
         const relation = counter?.has(member.video_ref) ? 'counterexample' : support?.has(member.video_ref) ? 'support' : selected ? 'dim' : null;
         return <CreativeTile key={member.video_ref} member={member} label={'ABCDEF'[offset + index]} group={group} metric={metric}
           currency={result.cohort.currency} preview={preview.get(member.video_ref)} relation={relation}
-          active={selectedCreative === member.video_ref} onSelect={() => onCreative(member.video_ref)} />;
+          active={selectedCreative === member.video_ref} onSelect={() => onCreative(member.video_ref)} onOpen={() => onOpen(member, 'ABCDEF'[offset + index], group)} />;
       })}</div></div>;
   return <section className="ci-creatives" aria-labelledby="ci-creatives-title"><header className="ci-section-heading"><h2 id="ci-creatives-title">Compared creatives</h2><span>A–F connect performance, signals and evidence</span></header>
     <div className="ci-creative-groups">{render(groups.higher, 'higher', 0)}{render(groups.lower, 'lower', 3)}</div></section>;
@@ -163,7 +165,14 @@ export function IntelligenceResultView({ result, metric, accountName }: { result
       {groups && <span>6 selected creatives</span>}</div>
     {result.performance ? <><PerformanceStrip result={result} metric={metric} />
       {groups && <CreativeCohort result={result} metric={metric} selected={selectedIndex !== null ? differences[selectedIndex] ?? null : null}
-        selectedCreative={selectedCreative} onCreative={ref => setSelectedCreative(current => current === ref ? null : ref)} />}
+        selectedCreative={selectedCreative} onCreative={ref => setSelectedCreative(current => current === ref ? null : ref)}
+        onOpen={(member, label, group) => { if (!member.creative_ref) return; const related = differences.flatMap(diff => citations(diff)
+          .filter(item => item.citation.video_ref === member.video_ref).map(item => ({ signal: diff.description, citation: item.citation })));
+          const selectedSignal = selectedIndex === null ? undefined : differences[selectedIndex]?.description;
+          const citation = selectedSignal ? related.find(item => item.signal === selectedSignal)?.citation : undefined;
+          openCreative({ creativeRef: member.creative_ref, videoRef: member.video_ref, label, group, metric,
+            metricValue: member.metric_value, currency: result.cohort.currency, start: result.cohort.date_start,
+            stop: result.cohort.date_stop, accountName, selectedSignal, citation, citations: related, scrollY: window.scrollY }); }} />}
       {differences.length > 0 ? <><SignalMap result={result} metric={metric} selectedIndex={selectedIndex} selectedCreative={selectedCreative}
         onSelect={index => setSelectedIndex(current => current === index ? null : index)} onInspect={inspect} />
         {result.hypotheses.length > 0 ? <section className="ci-experiments" aria-labelledby="ci-experiments-title"><header className="ci-section-heading"><h2 id="ci-experiments-title">Experiments to try</h2><span>Controlled tests from validated observations</span></header>

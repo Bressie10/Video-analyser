@@ -13,12 +13,13 @@ import { CompanyContent } from './company/CompanyContent';
 import { ProfileRefresh } from './company/ProfileRefresh';
 import { IdeasPage } from './ideas/IdeasPage';
 import { IntelligencePage } from './intelligence/IntelligencePage';
+import { CreativeAnalysisPage } from './creativeAnalysis/CreativeAnalysisPage';
 
 import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 import { DataDeletionPage } from './pages/DataDeletionPage';
 import { AppShell } from './shell/AppShell';
-import { navigate, useAppPage } from './shell/navigation';
+import { navigate, useAppPage, useCreativeRef } from './shell/navigation';
 import { WorkspaceOverview } from './shell/WorkspaceOverview';
 import { OnboardingProvider, useOnboarding } from './onboarding/OnboardingProvider';
 import { OnboardingScreen } from './onboarding/OnboardingScreen';
@@ -32,6 +33,7 @@ function OnboardingMount() {
 
 export function App() {
   const page = useAppPage();
+  const creativeRef = useCreativeRef();
   const previousWorkflow = useRef<Exclude<typeof page, 'settings'>>('overview');
   if (page !== 'settings') previousWorkflow.current = page;
   const [connected, setConnected] = useState(false);
@@ -62,6 +64,7 @@ export function App() {
       <div hidden={page !== 'overview'}><WorkspaceOverview /></div>
       <div hidden={page !== 'content'}><CompanyContent onAnalysisChange={() => { refreshAnalysisSources(v => v + 1); void onboarding.refresh(); billing.refresh(); }} /></div>
       <div hidden={page !== 'intelligence'}><IntelligencePage /></div>
+      {page === 'creative' && creativeRef && <CreativeAnalysisPage creativeRef={creativeRef} />}
       <div hidden={page !== 'generate'}><GenerateIdea onSetup={onSetup} refreshToken={analysisRevision} onSaved={() => { refreshHistory(v => v + 1); void onboarding.refresh(); billing.refresh(); }} /></div>
       <div hidden={page !== 'ideas'}><IdeasPage refreshToken={historyRevision} /></div>
     </>}

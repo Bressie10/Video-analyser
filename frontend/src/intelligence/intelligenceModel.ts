@@ -16,7 +16,7 @@ export type Hypothesis = {
   primary_metric: Metric; what_to_hold_constant: string[]; limitations: string[];
   counterevidence: Citation[]; source_difference: string;
 };
-export type Member = { video_ref: string; metric_value: string; percentile: number | null };
+export type Member = { video_ref: string; creative_ref?: string; metric_value: string; percentile: number | null };
 export type Preview = { video_ref: string; frame_ref: string; timestamp_seconds: number; jpeg_base64: string };
 export type IntelligenceResult = {
   metric: { description: string; unit?: string };
@@ -51,6 +51,7 @@ function citation(value: unknown): value is Citation {
 }
 function member(value: unknown): value is Member {
   return record(value) && string(value.video_ref) && value.video_ref.length <= 120 &&
+    (value.creative_ref === undefined || string(value.creative_ref) && /^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(value.creative_ref)) &&
     numberString(value.metric_value) &&
     (value.percentile === null || finite(value.percentile) && value.percentile >= 0 && value.percentile <= 100);
 }
