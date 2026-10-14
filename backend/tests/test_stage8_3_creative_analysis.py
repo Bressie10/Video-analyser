@@ -173,3 +173,14 @@ class MediaTests(TestCase):
         with self.assertRaises(MediaUnavailable):
             _open_media('https://video.xx.fbcdn.net/start', None)
         self.assertEqual(validate.call_count, 5)
+
+    @patch('app.creative_analysis_routes.validate_url')
+    @patch('app.creative_analysis_routes.httpx.Client')
+    def test_range_end_must_be_inside_declared_total(self, client_factory, validate):
+        response = Response(206, {'content-type': 'video/mp4',
+            'content-length': '10', 'content-range': 'bytes 100-109/100'})
+        client = Client([response]); client_factory.return_value = client
+        with self.assertRaises(MediaUnavailable):
+            _open_media('https://video.xx.fbcdn.net/start', 'bytes=100-109')
+        self.assertTrue(response.closed)
+        self.assertTrue(client.closed)

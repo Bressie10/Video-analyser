@@ -92,7 +92,8 @@ def _open_media(url, range_header):
             if response.status_code == 206:
                 matched = re.fullmatch(r'bytes (\d+)-(\d+)/(\d+)', response.headers.get('content-range', ''))
                 requested = re.fullmatch(r'bytes=(\d+)-(\d*)', range_header or '')
-                if (not matched or int(matched[3]) > MAX_BYTES or int(matched[2]) < int(matched[1])
+                if (not matched or int(matched[3]) < 1 or int(matched[3]) > MAX_BYTES
+                        or int(matched[2]) < int(matched[1]) or int(matched[2]) >= int(matched[3])
                         or int(length) != int(matched[2]) - int(matched[1]) + 1
                         or requested and (int(matched[1]) != int(requested[1])
                                           or requested[2] and int(matched[2]) > int(requested[2]))):

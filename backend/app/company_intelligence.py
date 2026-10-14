@@ -91,6 +91,7 @@ def _creative_previews(case):
 def _content(db, company_id, connection_id, account_uuid, selected):
     """Only a unique, explicit ad-to-video asset edge may supply raw content."""
     analyses, assets = {}, {}
+    seen_assets, seen_videos = set(), set()
     for member in selected:
         provider_id = member["provider_id"]
         rows = db.execute("""SELECT asset.id,asset.external_id,asset.video_id,
@@ -114,6 +115,10 @@ def _content(db, company_id, connection_id, account_uuid, selected):
         if (asset["analysis_state"] != "completed" or asset["video_id"] is None
                 or asset["analysis_version"] != library.ANALYSIS_VERSION):
             return None, None, "video_analysis_unavailable"
+        if asset["id"] in seen_assets or asset["video_id"] in seen_videos:
+            return None, None, "duplicate_video_asset"
+        seen_assets.add(asset["id"])
+        seen_videos.add(asset["video_id"])
         analysis = read_analysis(db, asset["video_id"], connection_id=connection_id)
         if not analysis or not analysis.get("scenes") or not analysis.get("metadata", {}).get("duration_seconds"):
             return None, None, "malformed_or_missing_video_evidence"

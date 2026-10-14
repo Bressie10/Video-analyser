@@ -209,3 +209,15 @@ class IntelligenceDatabaseTests(TestCase):
             self.assertEqual(rejected["hypotheses"], [])
             self.assertIn("hypothesis_model_or_validation_failed", rejected["abstentions"])
             self.assertEqual(rejected["provenance"]["model_calls"], 2)
+
+    def test_duplicate_video_asset_abstains_before_media_resolution(self):
+        self.seed(content=True)
+        ad_a = self.db.execute("SELECT id FROM meta_library_items WHERE external_id='100' AND content_type='ad'").fetchone()["id"]
+        ad_b = self.db.execute("SELECT id FROM meta_library_items WHERE external_id='101' AND content_type='ad'").fetchone()["id"]
+        asset_a = self.db.execute("SELECT video_item_id FROM meta_ad_assets WHERE ad_item_id=%s", (ad_a,)).fetchone()["video_item_id"]
+        self.db.execute("UPDATE meta_ad_assets SET video_item_id=%s WHERE ad_item_id=%s", (asset_a, ad_b))
+        with patch("app.company_intelligence.library.connection_client") as provider:
+            result = self.call().json()
+        self.assertIn("insufficient_source_video_coverage", result["abstentions"])
+        self.assertIn("duplicate_video_asset", result["limitations"])
+        provider.assert_not_called()
