@@ -105,7 +105,7 @@ export function MetaConnection({ onConnectionChange, onStatusChange, disconnecte
   useEffect(() => { if (connectAction) connectAction.current = connect; });
 
   return <section className="settings-connection" aria-labelledby="settings-meta">
-    <h2 id="settings-meta" tabIndex={-1}>Integrations</h2>
+    <h2 id="settings-meta" tabIndex={-1}>Meta connection</h2>
     <h3>Meta <Badge tone={status === "connected" ? "success" : status === "error" ? "warning" : "neutral"}>{status === "connected" ? "Connected" : status === "error" ? "Connection issue" : status === "disconnected" ? "Not connected" : status === "checking" ? "Checking" : "Connecting"}</Badge></h3>
     <p>Connect once, then choose Facebook Pages, Instagram accounts and Ads accounts for each company in Content ownership.</p>
     <p role="status">{{

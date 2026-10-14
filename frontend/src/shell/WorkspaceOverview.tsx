@@ -37,10 +37,10 @@ function Overview({ metaStatus }: { metaStatus: MetaConnectionStatus }) {
   const processing = content.some(item => ['queued', 'pending', 'processing', 'running', 'downloading', 'analyzing'].includes(item.analysis_state));
   const failed = content.some(item => item.analysis_state === 'failed');
   const readiness = hasAnalysis ? { label: 'READY TO CREATE', message: 'Analysed videos are available as idea sources', href: '#content', action: 'Review content' }
-    : metaStatus === 'error' ? { label: 'CONNECTION ISSUE', message: 'Meta connection status is unavailable. Review the connection in Settings.', href: '#settings', action: 'Review connection' }
-    : metaStatus === 'checking' || metaStatus === 'connecting' ? { label: 'CHECKING CONNECTION', message: 'Checking whether Meta is connected', href: '#settings', action: 'Review connection' }
-    : !metaConnected ? { label: 'CONNECT META', message: canManage ? 'Connect Meta to bring your content into this workspace' : 'A workspace owner needs to connect Meta', href: '#settings', action: 'Review connection' }
-    : !publishing ? { label: 'LINK CONTENT', message: canManage ? 'Link a publishing account to see your content' : 'A workspace owner needs to link a publishing account', href: '#settings', action: 'Review accounts' }
+    : metaStatus === 'error' ? { label: 'CONNECTION ISSUE', message: 'Meta connection status is unavailable. Review the connection in Settings.', href: '/settings/connections', action: 'Review connection' }
+    : metaStatus === 'checking' || metaStatus === 'connecting' ? { label: 'CHECKING CONNECTION', message: 'Checking whether Meta is connected', href: '/settings/connections', action: 'Review connection' }
+    : !metaConnected ? { label: 'CONNECT META', message: canManage ? 'Connect Meta to bring your content into this workspace' : 'A workspace owner needs to connect Meta', href: '/settings/connections', action: 'Review connection' }
+    : !publishing ? { label: 'LINK CONTENT', message: canManage ? 'Link a publishing account to see your content' : 'A workspace owner needs to link a publishing account', href: '/settings/connections', action: 'Review accounts' }
     : processing ? { label: 'ANALYSIS RUNNING', message: 'Some videos are still being analysed', href: '#content', action: 'Review content' }
     : failed ? { label: 'NEEDS ATTENTION', message: 'Some videos need an analysis retry', href: '#content', action: 'Review content' }
     : { label: 'BUILD YOUR LIBRARY', message: content.length ? 'Analyse a video to make it an idea source' : 'Your connected content will appear here', href: '#content', action: 'Review content' };
@@ -51,7 +51,7 @@ function Overview({ metaStatus }: { metaStatus: MetaConnectionStatus }) {
   const primaryLabel = hasAnalysis ? 'Create an idea' : metaStatus === 'error' ? 'Review connection'
     : metaStatus === 'checking' || metaStatus === 'connecting' ? 'Review setup'
       : !metaConnected || !publishing ? canManage ? 'Connect content' : 'Review setup' : 'Review content';
-  const primaryHref = hasAnalysis ? '#generate' : metaStatus === 'error' || !metaConnected || !publishing ? '#settings' : '#content';
+  const primaryHref = hasAnalysis ? '#generate' : metaStatus === 'error' || !metaConnected || !publishing ? '/settings/connections' : '#content';
   const retry = <Button onClick={() => revise(value => value + 1)}>Refresh Home</Button>;
   return <PageLayout className="cm-home">
     <div className="cm-home-heading"><div><h1>Home</h1><p>Today in {activeCompany!.name}</p></div><a className="cm-feature-link cm-feature-link--primary" href={primaryHref}>{primaryLabel}</a></div>
@@ -60,12 +60,12 @@ function Overview({ metaStatus }: { metaStatus: MetaConnectionStatus }) {
       {(recent.status === 'loading' || ideas.status === 'loading') && <LoadingState label="Loading recent work…" />}
       {(recent.status === 'error' || ideas.status === 'error') && <Alert tone="danger"><p>Recent work could not be loaded.</p>{retry}</Alert>}
       {recent.status !== 'loading' && ideas.status !== 'loading' && work.length > 0 && <ul>{work.map(item => <li key={`${item.href}:${item.id}`}><a href={item.href}><span><strong>{item.title}</strong><small>{item.meta}</small></span><ChevronRight size={20} aria-hidden="true" /></a></li>)}</ul>}
-      {recent.status !== 'loading' && ideas.status !== 'loading' && !hasWork && recent.status !== 'error' && ideas.status !== 'error' && <div className="cm-home-empty"><p>Your first content and ideas will appear here.</p><a href={publishing ? '#content' : '#settings'}>{publishing ? 'Open content' : 'Review connections'} <ArrowRight size={16} aria-hidden="true" /></a></div>}
+      {recent.status !== 'loading' && ideas.status !== 'loading' && !hasWork && recent.status !== 'error' && ideas.status !== 'error' && <div className="cm-home-empty"><p>Your first content and ideas will appear here.</p><a href={publishing ? '#content' : '/settings/connections'}>{publishing ? 'Open content' : 'Review connections'} <ArrowRight size={16} aria-hidden="true" /></a></div>}
     </section><section className="cm-home-setup" aria-labelledby="home-setup-title"><header><div><h2 id="home-setup-title">Workspace setup</h2><p>{activeCompany!.name}</p></div></header>
-      <ul><li><a href="#settings"><span><strong>Meta authorization</strong><small>{metaConnected ? 'Connected' : metaStatus === 'error' ? 'Connection issue' : metaStatus === 'checking' || metaStatus === 'connecting' ? 'Checking' : 'Needs connection'}</small></span><i className={metaConnected ? 'is-ready' : 'is-needed'} aria-hidden="true" /><ChevronRight size={17} aria-hidden="true" /></a></li>
-        <li><a href="#settings"><span><strong>Publishing account</strong><small>{publishing ? 'Linked' : 'Needs linking'}</small></span><i className={publishing ? 'is-ready' : 'is-needed'} aria-hidden="true" /><ChevronRight size={17} aria-hidden="true" /></a></li>
-        <li><a href="#settings"><span><strong>Ads account</strong><small>{ads ? 'Linked' : 'Needs linking'}</small></span><i className={ads ? 'is-ready' : 'is-needed'} aria-hidden="true" /><ChevronRight size={17} aria-hidden="true" /></a></li></ul>
-      {(!metaConnected || !publishing || !ads) && <p className="cm-home-setup-action"><a href="#settings">{canManage ? !metaConnected ? 'Connect Meta' : !publishing ? 'Link publishing account' : 'Link Ads account' : 'Review setup'} <ArrowRight size={18} aria-hidden="true" /></a><small>{!canManage ? 'A workspace owner manages connections.' : !ads && metaConnected && publishing ? 'Required before ad comparisons can run.' : 'Continue setup in Settings.'}</small></p>}
+      <ul><li><a href="/settings/connections"><span><strong>Meta authorization</strong><small>{metaConnected ? 'Connected' : metaStatus === 'error' ? 'Connection issue' : metaStatus === 'checking' || metaStatus === 'connecting' ? 'Checking' : 'Needs connection'}</small></span><i className={metaConnected ? 'is-ready' : 'is-needed'} aria-hidden="true" /><ChevronRight size={17} aria-hidden="true" /></a></li>
+        <li><a href="/settings/connections"><span><strong>Publishing account</strong><small>{publishing ? 'Linked' : 'Needs linking'}</small></span><i className={publishing ? 'is-ready' : 'is-needed'} aria-hidden="true" /><ChevronRight size={17} aria-hidden="true" /></a></li>
+        <li><a href="/settings/connections"><span><strong>Ads account</strong><small>{ads ? 'Linked' : 'Needs linking'}</small></span><i className={ads ? 'is-ready' : 'is-needed'} aria-hidden="true" /><ChevronRight size={17} aria-hidden="true" /></a></li></ul>
+      {(!metaConnected || !publishing || !ads) && <p className="cm-home-setup-action"><a href="/settings/connections">{canManage ? !metaConnected ? 'Connect Meta' : !publishing ? 'Link publishing account' : 'Link Ads account' : 'Review setup'} <ArrowRight size={18} aria-hidden="true" /></a><small>{!canManage ? 'A workspace owner manages connections.' : !ads && metaConnected && publishing ? 'Required before ad comparisons can run.' : 'Continue setup in Settings.'}</small></p>}
       {analysed.status === 'error' && <Alert tone="danger"><p>Analysis readiness is unavailable.</p>{retry}</Alert>}
     </section></div>
   </PageLayout>;

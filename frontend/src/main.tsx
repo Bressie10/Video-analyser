@@ -19,7 +19,7 @@ import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 import { DataDeletionPage } from './pages/DataDeletionPage';
 import { AppShell } from './shell/AppShell';
-import { navigate, useAppPage, useCreativeRef } from './shell/navigation';
+import { navigate, navigateSettings, settingsSections, useAppPage, useCreativeRef } from './shell/navigation';
 import { WorkspaceOverview } from './shell/WorkspaceOverview';
 import { OnboardingProvider, useOnboarding } from './onboarding/OnboardingProvider';
 import { OnboardingScreen } from './onboarding/OnboardingScreen';
@@ -34,6 +34,21 @@ function OnboardingMount() {
 export function App() {
   const page = useAppPage();
   const creativeRef = useCreativeRef();
+  useEffect(() => {
+    const followSettingsLink = (event: MouseEvent) => {
+      if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+      const target = event.target;
+      const anchor = target instanceof Element ? target.closest<HTMLAnchorElement>('a[href^="/settings/"]') : null;
+      if (!anchor || anchor.target || anchor.hasAttribute('download')) return;
+      const section = anchor.getAttribute('href')?.slice('/settings/'.length);
+      const match = settingsSections.find(candidate => candidate === section);
+      if (!match) return;
+      event.preventDefault();
+      navigateSettings(match);
+    };
+    document.addEventListener('click', followSettingsLink);
+    return () => document.removeEventListener('click', followSettingsLink);
+  }, []);
   const previousWorkflow = useRef<Exclude<typeof page, 'settings'>>('overview');
   if (page !== 'settings') previousWorkflow.current = page;
   const [connected, setConnected] = useState(false);
@@ -55,12 +70,12 @@ export function App() {
   const model = useCompanyUI(connected, () => connect.current());
   return <CompanyShell companyUI={model} allowUnlinkedWorkspace showOnboarding={page === 'overview' && onboarding.mode === 'normal'}
     onCompanyCreated={id => { if (onboarding.mode === 'guided') void onboarding.selectCompany(id); else void onboarding.refresh(); billing.refresh(); }} onAccountLinked={() => { void onboarding.refresh(); billing.refresh(); }}
-    managementPage={page === 'settings'} onManagementChange={open => navigate(open ? 'settings' : previousWorkflow.current)}
+    managementPage={page === 'settings'} onManagementChange={open => open ? navigateSettings('workspace') : navigate(previousWorkflow.current)}
     layout={(selector, content, switchCompany, manage) => <AppShell page={page} companySelector={selector} setup={onboarding.data && !onboarding.data.complete && onboarding.data.welcome_seen ? { progress: onboarding.data.progress, onResume: () => { navigate('overview'); onboarding.resume(); } } : undefined}>
       <OnboardingScreen page={page} onManage={manage} onSwitchCompany={switchCompany} onConnect={() => connect.current()} />
       <div hidden={page === 'overview' && (onboarding.mode === 'welcome' || onboarding.mode === 'guided' || onboarding.mode === 'complete')}>{content}</div>
     </AppShell>}
-    settings={<><MetaConnection beginAuthorization={beginMetaAuthorization} onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} onStatusChange={setMetaStatus} connectAction={connect} /><ProfileRefresh /></>}>
+    settings={{ connections: <MetaConnection beginAuthorization={beginMetaAuthorization} onSyncStarted={() => {}} disconnected={false} disabled={false} onConnectionChange={connectionChanged} onStatusChange={setMetaStatus} connectAction={connect} />, analysis: <ProfileRefresh /> }}>
     {onSetup => <>
       <div hidden={page !== 'overview'}>{onboarding.mode === 'normal' && <WorkspaceOverview metaStatus={metaStatus} />}</div>
       <div hidden={page !== 'content'}><CompanyContent onAnalysisChange={() => { refreshAnalysisSources(v => v + 1); void onboarding.refresh(); billing.refresh(); }} /></div>

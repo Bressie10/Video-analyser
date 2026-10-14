@@ -9,6 +9,7 @@ import '../content/content.css';
 import { PlanLimitError } from '../billing/billingApi';
 import { useBilling } from '../billing/BillingProvider';
 import { LimitNotice } from '../billing/BillingUI';
+import { navigateSettings } from '../shell/navigation';
 
 export function CompanyContent({ onAnalysisChange }: { onAnalysisChange?: () => void }) { return <CompanyScopeBoundary><Content onAnalysisChange={onAnalysisChange} /></CompanyScopeBoundary>; }
 function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
@@ -85,7 +86,7 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
     </Panel>
     {!invalidDates && <div aria-busy={result.status === 'loading'}>
       {actionError && <Alert tone="danger" role="alert">{actionError}</Alert>}
-      {(limit || quotaReached) && <LimitNotice code="analysis_limit_reached" billing={billing.state.data} onUpgrade={() => { window.location.hash = 'settings'; }} />}
+      {(limit || quotaReached) && <LimitNotice code="analysis_limit_reached" billing={billing.state.data} onUpgrade={() => navigateSettings('billing')} />}
       {result.status === 'loading' && <LoadingState label="Loading company content…" />}
       {result.status === 'error' && <Alert tone="danger"><p>{contentError(result.error)}</p><Button onClick={() => revise(v => v + 1)}>Retry content</Button></Alert>}
       {result.data && (result.data.items.length ? <>
@@ -98,7 +99,7 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
         <ContentList items={result.data.items} onAnalyze={activeCompany?.role === 'owner' ? id => { void startAnalysis(id); } : undefined} analyzing={analyzing} />
         <nav className="cm-content-pagination" aria-label="Content pagination"><Button disabled={!offset} onClick={() => setOffset(Math.max(0, offset - 20))}>Previous content</Button><span>Page {Math.floor(offset / 20) + 1}</span><Button disabled={result.data.next_offset === null} onClick={() => setOffset(result.data!.next_offset!)}>Next content</Button></nav>
       </> : <EmptyState title={filtered ? 'No matching content' : !publishingLinked ? 'Connect your content source' : 'No content here yet'} icon={filtered ? <Search size={28} /> : <Library size={28} />}
-        action={filtered ? <Button onClick={reset}>Clear filters</Button> : <a className="cm-feature-link cm-feature-link--primary" href="#settings">{publishingLinked ? 'Review linked accounts' : 'Go to Settings'} <ArrowRight size={16} aria-hidden="true" /></a>}>
+        action={filtered ? <Button onClick={reset}>Clear filters</Button> : <a className="cm-feature-link cm-feature-link--primary" href="/settings/connections">{publishingLinked ? 'Review linked accounts' : 'Go to Settings'} <ArrowRight size={16} aria-hidden="true" /></a>}>
         <p>{filtered ? 'Try a different search or clear your filters to see more content.' : !publishingLinked ? 'Link an Instagram or Facebook account in Settings so ContentMetric can load its published content.' : 'Published content from your linked accounts will appear here after discovery. Check your account setup in Settings if you expected to see posts.'}</p>
       </EmptyState>)}
     </div>}

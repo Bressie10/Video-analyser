@@ -80,7 +80,9 @@ test('Content separates no publishing source from linked but empty, with keyboar
       await f.p.getByRole('heading', { name: title }).waitFor();
       const link = f.p.getByRole('link', { name: action });
       await link.focus(); assert.equal(await link.evaluate(node => document.activeElement === node), true);
-      await f.p.keyboard.press('Enter'); assert.equal(new URL(f.p.url()).hash, '#settings');
+      await f.p.evaluate(() => { (window).__routeMarker = 'kept'; });
+      await f.p.keyboard.press('Enter'); await f.p.waitForURL('**/settings/connections');
+      assert.equal(await f.p.evaluate(() => (window).__routeMarker), 'kept');
       assert.deepEqual(f.errors, []);
     } finally { await f.close(); }
   }

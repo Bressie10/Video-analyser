@@ -18,6 +18,7 @@ async function fixture(mode = '', size) {
 async function manage(page) {
   await page.getByRole('navigation', { name: 'Company', exact: true }).getByRole('button', { name: /Alpha|Select company|Beta/ }).click();
   await page.getByRole('button', { name: 'Manage companies', exact: true }).first().click();
+  if (new URL(page.url()).pathname.startsWith('/settings/')) await page.getByRole('navigation', { name: 'Settings sections' }).getByRole('link', { name: 'Workspace' }).click();
   await page.getByRole('heading', { name: 'Manage companies', exact: true }).waitFor();
 }
 async function switchBeta(page) {
@@ -69,9 +70,10 @@ test('rename archive restore; archived workspace cannot be used', async () => {
     await manage(p); await p.getByLabel('Company name', { exact: true }).fill('Renamed'); await p.getByRole('button', { name: 'Save name' }).click();
     await p.getByRole('heading', { name: 'Renamed', exact: true }).waitFor();
     await p.getByRole('button', { name: 'Archive company', exact: true }).click(); await p.getByRole('button', { name: 'Restore company' }).waitFor();
+    await p.getByRole('navigation', { name: 'Settings sections' }).getByRole('link', { name: 'Connections' }).click();
     assert.equal(await p.getByLabel('Facebook Page').isDisabled(), true);
     await p.getByRole('button', { name: 'Back to workspace' }).click(); await p.getByRole('heading', { name: 'Renamed is archived' }).waitFor();
-    await p.getByRole('button', { name: 'Manage companies', exact: true }).click(); await p.getByText('Manage existing and archived companies', { exact: true }).click(); await p.getByLabel('Show archived companies').check();
+    await p.getByRole('button', { name: 'Manage companies', exact: true }).click(); await p.getByRole('navigation', { name: 'Settings sections' }).getByRole('link', { name: 'Workspace' }).click(); await p.getByText('Manage existing and archived companies', { exact: true }).click(); await p.getByLabel('Show archived companies').check();
     await p.getByRole('button', { name: 'Renamed — Archived' }).waitFor(); await p.getByRole('button', { name: 'Restore company' }).click();
     await p.getByRole('button', { name: 'Archive company', exact: true }).waitFor();
   } finally { await p.close(); }
@@ -79,7 +81,7 @@ test('rename archive restore; archived workspace cannot be used', async () => {
 test('Facebook Instagram Ads link/unlink and specific Ads assign/unassign', async () => {
   const p = await fixture();
   try {
-    await manage(p);
+    await manage(p); await p.getByRole('navigation', { name: 'Settings sections' }).getByRole('link', { name: 'Connections' }).click();
     for (const name of ['Facebook Page', 'Instagram Business', 'Ads Business']) { await p.getByLabel(name).check(); assert.equal(await p.getByLabel(name).isChecked(), true); }
     await p.getByRole('checkbox', { name: 'Summer video ad', exact: true }).check(); assert.equal(await p.getByRole('checkbox', { name: 'Summer video ad', exact: true }).isChecked(), true);
     await p.getByRole('checkbox', { name: 'Summer video ad', exact: true }).uncheck(); assert.equal(await p.getByRole('checkbox', { name: 'Summer video ad', exact: true }).isChecked(), false);

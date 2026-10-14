@@ -15,8 +15,7 @@
 .app-nav-link[aria-current=page]{background:#e7f2f2;color:#126a70;font-weight:600}
 .app-nav-link[aria-current=page]::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:#126a70}
 .app-nav-link[aria-current=page] svg{color:#126a70}
-.app-nav-link:nth-child(5){margin-top:18px;border-top:1px solid #d8e1e4;border-radius:0;padding-top:18px}
-.app-nav-settings{margin-top:0}
+.app-nav-settings{margin-top:18px;border-top:1px solid #d8e1e4;border-radius:0;padding-top:18px}
 .app-nav-settings::before{display:none}
 .app-profile{position:relative;padding:20px 8px 3px;border-top:1px solid #d8e1e4;color:#202a35}
 .app-profile summary{display:flex;align-items:center;gap:12px;min-height:44px;cursor:pointer;list-style:none}.app-profile summary::-webkit-details-marker{display:none}
@@ -51,7 +50,7 @@
  .app-main{padding:22px 16px 50px}
  .app-main .ui-page-header h1{font-size:24px}
  .app-body>.legal-footer{padding-inline:16px}
- .app-mobile-bottom-nav{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));min-height:62px;border-color:#d8e1e4;box-shadow:none}
+ .app-mobile-bottom-nav{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));min-height:62px;border-color:#d8e1e4;box-shadow:none}
  .app-mobile-bottom-nav a{min-height:62px;color:#526078;font-size:11px;font-weight:500}
  .app-mobile-bottom-nav a[aria-current=page]{background:transparent;color:#126a70;font-weight:700}
 }

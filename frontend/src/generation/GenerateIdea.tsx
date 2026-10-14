@@ -9,6 +9,7 @@ import { generationApi, generationError, latestSources, type GenerationApi, type
 import { PlanLimitError } from '../billing/billingApi';
 import { useBilling } from '../billing/BillingProvider';
 import { LimitNotice } from '../billing/BillingUI';
+import { navigateSettings } from '../shell/navigation';
 
 export function GenerateIdea({ onSetup, onSaved, api = generationApi, refreshToken = 0 }: { onSetup(): void; onSaved?(): void; api?: GenerationApi; refreshToken?: number }) {
   return <CompanyScopeBoundary fallback={<EmptyState title="Select a company to generate an idea" action={<Button onClick={onSetup}>Company setup</Button>}><p>Select or create a company to use its analysed content.</p></EmptyState>}>
@@ -101,11 +102,11 @@ function Workflow({ api, onSetup, onSaved, refreshToken }: { api: GenerationApi;
         <fieldset className="generate-step" disabled={busy} aria-describedby="target-help target-validation">
           <legend>Target platforms</legend><p id="target-help">Where do you want to publish this idea?</p>
           <div className="generate-targets">{(['instagram', 'facebook'] as const).map(p => <Checkbox key={p} label={p === 'instagram' ? 'Instagram' : 'Facebook'} disabled={!available.includes(p)} checked={chosenTargets.includes(p)} aria-describedby="target-validation" onChange={e => setTargets(current => e.target.checked ? [...current, p] : current.filter(t => t !== p))} />)}</div>
-          <div id="target-validation" role="status">{!available.length ? <p>{activeCompany?.role === 'owner' ? <>No linked publishing platforms. Link Instagram or Facebook in company setup. <Button onClick={onSetup}>Company setup</Button></> : 'Ask a company owner to link Instagram or Facebook before generating ideas.'}</p> : !chosenTargets.length ? <p className="generate-validation">Select at least one target platform.</p> : available.length < 2 && activeCompany?.role === 'owner' ? <p className="generate-help">Link another publishing platform in <a href="#settings">Settings</a> to use it here.</p> : null}</div>
+          <div id="target-validation" role="status">{!available.length ? <p>{activeCompany?.role === 'owner' ? <>No linked publishing platforms. Link Instagram or Facebook in company setup. <Button onClick={onSetup}>Company setup</Button></> : 'Ask a company owner to link Instagram or Facebook before generating ideas.'}</p> : !chosenTargets.length ? <p className="generate-validation">Select at least one target platform.</p> : available.length < 2 && activeCompany?.role === 'owner' ? <p className="generate-help">Link another publishing platform in <a href="/settings/connections">Connections</a> to use it here.</p> : null}</div>
         </fieldset>
         <div className="generate-step generate-brief"><label htmlFor="generate-brief">Brief (optional)</label><p id="brief-help">What do you want this idea to focus on? Share a goal, audience or message.</p><Textarea id="generate-brief" disabled={busy} aria-describedby="brief-help" rows={3} maxLength={10000} placeholder="For example, help homeowners prepare for winter." value={brief} onChange={e => setBrief(e.target.value)} /></div>
         {error && <Alert tone="danger"><p>{error}</p><Button disabled={busy} onClick={() => { setError(''); revise(v => v + 1); }}>Reload sources</Button></Alert>}
-        {(limit || quotaReached) && <LimitNotice code="idea_generation_limit_reached" billing={billing.state.data} onUpgrade={() => { window.location.hash = 'settings'; }} />}
+        {(limit || quotaReached) && <LimitNotice code="idea_generation_limit_reached" billing={billing.state.data} onUpgrade={() => navigateSettings('billing')} />}
         <div className="generate-action"><Button variant="primary" type="submit" disabled={busy || sources.status !== 'success' || !sourceIds.length || sourceIds.length > 20 || missingSelection.length > 0 || !chosenTargets.length}><Sparkles size={18} aria-hidden="true" />{busy ? 'Generating…' : 'Generate idea'}</Button><p>One idea, saved to your company’s Ideas.</p></div>
       </form>}
         {busy && <Alert><strong>Generating and saving your idea. This may take a moment.</strong><p>We’re using your selected content and brief. You can stay here while your idea is prepared.</p></Alert>}

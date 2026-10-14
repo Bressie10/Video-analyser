@@ -22,7 +22,7 @@ async function fixture(intercept){
   const p=await c.newPage();p.setDefaultTimeout(5000);await p.goto(`${origin}#content`);return {p,close:()=>c.close()};
 }
 const button=(p,name)=>p.getByRole('button',{name,exact:true});
-async function manage(p){const nav=p.getByRole('navigation',{name:'Company',exact:true});await nav.getByRole('button').first().click();await button(nav,'Manage companies').click();await p.getByText('Company intelligence · Alpha',{exact:true}).click();}
+async function manage(p){const nav=p.getByRole('navigation',{name:'Company',exact:true});await nav.getByRole('button').first().click();await button(nav,'Manage companies').click();await p.getByRole('navigation',{name:'Settings sections'}).getByRole('link',{name:'Analysis'}).click();await p.getByText('Company intelligence · Alpha',{exact:true}).click();}
 async function switchB(p){const nav=p.getByRole('navigation',{name:'Company',exact:true});await nav.getByRole('button').first().click();await button(nav,'Beta').click();}
 const card=(company,n)=>({library_item_id:id(n),video_id:null,display_title:`${company} post ${n}`,platform:'facebook',content_type:'video',published_at:null,analysis_state:'discovered',analyzed:false,summary:{duration_seconds:null,width:null,height:null}});
 test('company content browsing filters before pagination and resets on switch; no global requests',async()=>{

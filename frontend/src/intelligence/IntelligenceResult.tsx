@@ -191,7 +191,7 @@ export function IntelligenceResultView({ result, metric, accountName }: { result
         {result.abstentions.includes('insufficient_source_video_coverage') && <p>Some video analysis or sampled media was unavailable.</p>}
         {result.abstentions.includes('hypothesis_model_or_validation_failed') && <p>Validated differences remain visible, but experiments could not be completed.</p>}
       </details></> : <section className="ci-partial" aria-labelledby="ci-partial-title"><h2 id="ci-partial-title">No comparison available yet</h2>
-      {result.abstentions.includes('meta_disconnected') ? <p>Meta is disconnected. Reconnect it in <a href="#settings">Integrations</a>, then run the comparison again.</p>
+      {result.abstentions.includes('meta_disconnected') ? <p>Meta is disconnected. Reconnect it in <a href="/settings/connections">Connections</a>, then run the comparison again.</p>
         : noCohort ? <p>More comparable ads are needed for this exact metric, reporting context and date window.</p>
           : <p>Comparable performance observations are unavailable for this exact reporting context.</p>}
       {!result.abstentions.includes('meta_disconnected') && <a href="#intelligence-start">Change reporting dates</a>}

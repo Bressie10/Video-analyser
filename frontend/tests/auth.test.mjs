@@ -87,12 +87,12 @@ for (const transition of ['identity change', 'logout and login']) test(`${transi
   await destination('Content');await p.getByText('Alice content',{exact:true}).waitFor();
   await destination('Generate');await p.getByLabel('Brief (optional)').fill('Alice unsaved brief');await p.getByRole('button',{name:'Generate idea',exact:true}).click();await heading(p,'Alice generated idea').waitFor();
   await destination('Ideas');await p.getByRole('button',{name:saved.title,exact:true}).click();await p.getByRole('button',{name:'Edit',exact:true}).click();await p.getByLabel('Title',{exact:true}).fill('Alice unsaved title');
-  await destination('Settings');await p.getByLabel('New company name').fill('Alice unsaved company');
+  await destination('Settings');await p.getByRole('navigation',{name:'Settings sections'}).getByRole('link',{name:'Workspace'}).click();await p.getByLabel('New company name').fill('Alice unsaved company');
   // Supabase SIGNED_IN can change user without reloading this document (another tab).
   if (transition === 'logout and login') {
    await signOutFromApp(p);await heading(p,'Welcome back').waitFor();await login(p,'bob@example.com');
   } else await p.evaluate(async()=>{const {authClient}=await import('/src/auth/authClient.ts');await authClient.signIn('bob@example.com','Strong-password-123');});
-  await p.locator('.app-profile-info strong').getByText('bob',{exact:true}).waitFor();await destination('Settings');
+  await destination('Settings');await p.getByRole('navigation',{name:'Settings sections'}).getByRole('link',{name:'Account'}).click();await p.getByText('bob@example.com',{exact:true}).waitFor();await p.getByRole('navigation',{name:'Settings sections'}).getByRole('link',{name:'Workspace'}).click();
   assert.equal(await p.evaluate(key=>localStorage.getItem(key),KEY),null);
   assert.equal(await p.getByLabel('New company name').inputValue(),'');
   for(const name of ['Home','Content','Generate','Ideas','Settings']){
@@ -139,11 +139,12 @@ test('member sees product navigation and profile refresh without administrative 
   await f.page.route('**/api/companies?*',r=>r.fulfill({json:{companies:[{company_id:A,name:'Member workspace',role:'member',archived:false,accounts:[]}]}}));
   await f.page.reload();await heading(f.page,'Home').waitFor();
   await f.page.getByRole('navigation',{name:'Primary',exact:true}).getByRole('link',{name:'Settings',exact:true}).click();
+  await f.page.getByRole('navigation',{name:'Settings sections'}).getByRole('link',{name:'Workspace'}).click();
   await f.page.getByText('You are a member.',{exact:false}).waitFor();
   for(const name of ['Save name','Archive company','Refresh available accounts'])assert.equal(await f.page.getByRole('button',{name,exact:true}).count(),0);
   assert.equal(await f.page.getByRole('heading',{name:'Content ownership',exact:true}).count(),0);
   assert.equal(f.calls.some(c=>c.path==='/api/meta/accounts'),false);
-  await f.page.getByText('Company intelligence · Member workspace',{exact:true}).click();
+  await f.page.getByRole('navigation',{name:'Settings sections'}).getByRole('link',{name:'Analysis'}).click();await f.page.getByText('Company intelligence · Member workspace',{exact:true}).click();
   assert.equal(await f.page.getByRole('button',{name:'Refresh company intelligence'}).isEnabled(),true);
   for(const name of ['Content','Generate','Ideas'])assert.equal(await f.page.getByRole('navigation',{name:'Primary',exact:true}).getByRole('link',{name,exact:true}).count(),1);
  }finally{await f.close();}

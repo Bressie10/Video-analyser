@@ -11,6 +11,7 @@ import { PlanLimitError, type LimitCode } from './billing/billingApi';
 import { useBilling } from './billing/BillingProvider';
 import { LimitNotice } from './billing/BillingUI';
 import { billingApi } from './billing/billingApi';
+import { navigateSettings } from './shell/navigation';
 
 export function CompanyEmptyState({ name, onManage, onSkip, skipped, canManage = true }: { canManage?: boolean; name: string; onManage(): void; onSkip(): void; skipped: boolean }) {
   return <section className="welcome" aria-labelledby="company-empty-title">
@@ -24,7 +25,7 @@ type ShellProps = {
   companyUI: CompanyUIProps;
   children: ReactNode | ((onManage: () => void) => ReactNode);
   allowUnlinkedWorkspace?: boolean;
-  settings?: ReactNode;
+  settings?: { connections: ReactNode; analysis: ReactNode };
   managementPage?: boolean;
   onManagementChange?: (open: boolean) => void;
   layout?: (selector: ReactNode, content: ReactNode, switchCompany: (id: string) => void, manage: () => void) => ReactNode;
@@ -74,6 +75,7 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
   const manage = () => setManagement(true);
   const openWorkspaceBilling = async () => {
     setManagement(true);
+    navigateSettings('billing');
     const owned = model.companies.filter(company => company.role === 'owner');
     billingLookup.current?.abort();
     const controller = new AbortController();
@@ -88,9 +90,9 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
   const content = <>
     {model.error && <p className="notice error" role="alert">{model.error}</p>}
     {error && <p className="notice error" role="alert">{error}</p>}
-    {limit && <LimitNotice code={limit} billing={billing.state.data} onUpgrade={() => { if (limit === 'free_workspace_limit_reached') void openWorkspaceBilling(); else { setManagement(true); requestAnimationFrame(() => document.getElementById('settings-billing')?.scrollIntoView()); } }} />}
+    {limit && <LimitNotice code={limit} billing={billing.state.data} onUpgrade={() => { if (limit === 'free_workspace_limit_reached') void openWorkspaceBilling(); else { setManagement(true); navigateSettings('billing'); } }} />}
     {busy && <p role="status">Saving company changes…</p>}
-    {management ? <CompanyManagement {...model} busy={busy} run={run} billingTargetId={billingTargetId} onBack={() => setManagement(false)} onAccountLinked={onAccountLinked} onCreateAndEnter={(name, ownGuard) => {
+    {management ? <CompanyManagement {...model} connections={settings?.connections} analysis={settings?.analysis} busy={busy} run={run} billingTargetId={billingTargetId} onBack={() => setManagement(false)} onAccountLinked={onAccountLinked} onCreateAndEnter={(name, ownGuard) => {
       // Submitting this create form consumes its own edits; other pending work still requires confirmation.
       const create = async () => {
         if (!created.current || created.current.name !== name) { const company = await model.onCreate(name); created.current = { name, id: company.id }; }
@@ -103,7 +105,7 @@ function Shell({ companyUI: model, children, settings, allowUnlinkedWorkspace = 
       : !active ? <EmptyState title="No company selected" icon={<Building2 size={32} />} action={<Button variant="primary" onClick={manage}>Manage companies</Button>}><p>Create or select a company to start your workspace.</p></EmptyState>
       : active.archived ? <section className="welcome"><h2>{active.name} is archived</h2><p>Restore it in Manage companies or select another company.</p><button onClick={manage}>Manage companies</button></section>
       : !active.hasLinkedAccounts && showOnboarding ? <CompanyEmptyState canManage={active.role === 'owner'} name={active.name} onManage={manage} skipped={skipped.includes(active.id)} onSkip={() => setSkipped(current => [...current, active.id])} /> : null}
-    <div hidden={!management}>{settings}</div>
+    {!management && settings && <div hidden>{settings.connections}</div>}
     {(model.status === 'ready' && active && !active.archived && (active.hasLinkedAccounts || allowUnlinkedWorkspace)) && <div hidden={management}>{typeof children === 'function' ? children(manage) : children}</div>}
     <dialog className="company-confirm" ref={dialog} aria-labelledby="company-confirm-title" onCancel={event => { event.preventDefault(); setPending(null); }}>
       <h2 id="company-confirm-title">Switch company?</h2>

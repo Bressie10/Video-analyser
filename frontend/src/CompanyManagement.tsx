@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import type { Company, CompanyUIProps } from './companyUI';
 import { useCompanySwitchGuard } from './CompanySwitchGuard';
 import { Button, Input, Select } from './ui/controls';
@@ -6,8 +6,10 @@ import { Badge, EmptyState } from './ui/layout';
 import './settings.css';
 import { BillingSection } from './billing/BillingUI';
 import { useBilling } from './billing/BillingProvider';
+import { AccountControl } from './auth/AuthGate';
+import { navigateSettings, useSettingsSection, type SettingsSection } from './shell/navigation';
 
-type Props = CompanyUIProps & { busy: boolean; run(action: () => Promise<void> | void): void; onCreateAndEnter(name: string, ownGuard: string): void; onBack(): void; onAccountLinked?: () => void; billingTargetId?: string | null };
+type Props = CompanyUIProps & { busy: boolean; run(action: () => Promise<void> | void): void; onCreateAndEnter(name: string, ownGuard: string): void; onBack(): void; onAccountLinked?: () => void; billingTargetId?: string | null; connections?: ReactNode; analysis?: ReactNode };
 function Rename({ company, busy, onSave }: { company: Company; busy: boolean; onSave(name: string): void }) {
   const [name, setName] = useState(company.name);
   useCompanySwitchGuard({ unsavedEdits: name !== company.name });
@@ -18,6 +20,7 @@ function Rename({ company, busy, onSave }: { company: Company; busy: boolean; on
 }
 export function CompanyManagement(props: Props) {
   const billing = useBilling();
+  const section = useSettingsSection() ?? 'workspace';
   const [name, setName] = useState('');
   const [showArchived, setShowArchived] = useState(false);
   const [inspectedId, setInspectedId] = useState(props.activeCompanyId);
@@ -27,27 +30,38 @@ export function CompanyManagement(props: Props) {
   const createGuard = useCompanySwitchGuard({ unsavedEdits: !!name.trim() });
   useEffect(() => { if (props.activeCompanyId || !company?.archived) setInspectedId(props.activeCompanyId); }, [props.activeCompanyId]);
   useEffect(() => { if (props.billingTargetId) setInspectedId(props.billingTargetId); }, [props.billingTargetId]);
-  useEffect(() => { if (props.billingTargetId && inspectedId === props.billingTargetId) document.getElementById('settings-billing')?.scrollIntoView(); }, [props.billingTargetId, inspectedId]);
   useEffect(() => { setSearch(''); setFilter('all'); props.onInspect(inspectedId); return () => props.onInspect(null); }, [inspectedId, props.onInspect]);
   const discoveryStatus = props.discoveryCompanyId === company?.id ? props.discoveryStatus : 'loading';
   const disabled = props.busy || props.status !== 'ready';
   const ads = company ? props.adsContent.filter(ad => ad.assignedCompanyIds.includes(company.id) || props.accounts.some(a => a.id === ad.accountId && a.kind === 'ads' && a.linkedCompanyIds.includes(company.id))) : [];
   const visibleAds = ads.filter(ad => ad.name.toLowerCase().includes(search.toLowerCase()) && (filter === 'all' || (filter === 'assigned') === ad.assignedCompanyIds.includes(company!.id)));
-  const jump = (id: string) => { const target = document.getElementById(id); target?.scrollIntoView({ block: 'start' }); target?.focus(); };
+  const sections: { id: SettingsSection; label: string }[] = [
+    { id: 'general', label: 'General' }, { id: 'workspace', label: 'Workspace' },
+    { id: 'connections', label: 'Connections' }, { id: 'billing', label: 'Billing' },
+    { id: 'analysis', label: 'Analysis' }, { id: 'account', label: 'Account' },
+  ];
   return <div className="settings-page">
-    <header className="settings-heading"><div><h2 id="companies-title" tabIndex={-1}>Manage companies</h2><p>Configure your workspace, connected accounts and content ownership.</p></div><Button variant="ghost" disabled={props.busy} onClick={props.onBack}>Back to workspace</Button></header>
-    <nav className="settings-nav" aria-label="Settings sections">{[['settings-general', 'General'], ['settings-billing', 'Billing'], ['settings-meta', 'Integrations'], ['settings-ownership', 'Content ownership'], ['settings-analysis', 'AI & Analysis'], ['settings-companies', 'Company management']].filter(([id]) => !(id === 'settings-ownership' && company?.role !== 'owner') && !(['settings-general', 'settings-ownership', 'settings-billing'].includes(id) && !company) && !(id === 'settings-analysis' && !props.activeCompanyId)).map(([id, label]) => <Button key={id} variant="ghost" onClick={() => jump(id)}>{label}</Button>)}</nav>
+    <header className="settings-heading"><div><h2 id="companies-title" tabIndex={-1}>{section === 'workspace' ? 'Manage companies' : `${sections.find(item => item.id === section)?.label} settings`}</h2><p>{company ? `Settings for ${company.name}${company.id !== props.activeCompanyId ? ' · Inspected company' : ' · Active workspace'}` : 'Workspace and account settings'}</p></div><Button variant="ghost" disabled={props.busy} onClick={props.onBack}>Back to workspace</Button></header>
+    {section !== 'general' && <a className="settings-mobile-back" href="/settings" onClick={event => { event.preventDefault(); navigateSettings('general'); }}>← All settings</a>}
+    <nav className={`settings-nav ${section === 'general' ? 'settings-nav-index' : ''}`} aria-label="Settings sections">{sections.map(({ id, label }) => <a key={id} href={`/settings/${id}`} aria-current={section === id ? 'page' : undefined} onClick={event => { event.preventDefault(); navigateSettings(id); }}>{label}</a>)}</nav>
+    {section === 'general' && <section className="settings-section" aria-labelledby="settings-general"><h2 id="settings-general">General</h2><p>Workspace configuration, connected services, billing and account details each have their own section. Choose a section above to manage it.</p></section>}
+    {section === 'account' && <section className="settings-section" aria-labelledby="settings-account"><h2 id="settings-account">Account</h2><p>Your signed-in identity and session.</p><AccountControl /></section>}
+    {section === 'connections' && <p className="settings-note">Meta authorization is shared across your account. Linked publishing and Ads accounts below belong to the inspected workspace.</p>}
+    {section === 'connections' && props.connections}
+    {section === 'analysis' && props.analysis}
     {props.status === 'ready' && company ? <>
-      <section className="settings-section" aria-labelledby="settings-general">
-        <h2 id="settings-general" tabIndex={-1}>General</h2><h3>{company.name}</h3>
+      {section === 'workspace' && <>
+      <section className="settings-section" aria-labelledby="settings-workspace">
+        <h2 id="settings-workspace" tabIndex={-1}>Workspace details</h2><h3>{company.name}</h3>
         {company.id !== props.activeCompanyId && <p>Managing this company does not change your active workspace.</p>}
         {company.archived && <p className="settings-note">Archived — unavailable for normal work. Restore this company to use it again.</p>}
         {company.role === 'owner' ? <Rename key={`${company.id}:${company.name}`} company={company} busy={disabled} onSave={value => props.run(() => props.onRename(company.id, value))} /> : <p>You are a member. A company owner manages configuration and content ownership.</p>}
       </section>
-      <BillingSection key={company.id} companyId={company.id} activeCompanyId={props.activeCompanyId} />
-      {company.role === 'owner' && <section className="settings-section" aria-labelledby="settings-ownership">
+      </>}
+      {section === 'billing' && <BillingSection key={company.id} companyId={company.id} activeCompanyId={props.activeCompanyId} />}
+      {section === 'connections' && company.role === 'owner' && <section className="settings-section" aria-labelledby="settings-ownership">
         <div className="settings-heading"><div><h2 id="settings-ownership" tabIndex={-1}>Content ownership</h2><p>Choose the accounts and ads that belong in {company.name}.</p></div><Button disabled={disabled || !props.metaConnected || discoveryStatus === 'loading'} onClick={props.onRetryDiscovery}>Refresh available accounts</Button></div>
-        {!props.metaConnected && <p className="settings-note">Connect Meta in Integrations to discover accounts for your companies.</p>}
+        {!props.metaConnected && <p className="settings-note">Connect Meta above to discover accounts for your companies.</p>}
         {props.metaConnected && discoveryStatus === 'loading' && <p role="status">Loading available accounts and ads…</p>}
         {props.metaConnected && discoveryStatus === 'error' && <p role="alert">{props.discoveryError ?? 'Could not load accounts and ads.'} <Button onClick={props.onRetryDiscovery}>Retry accounts</Button></p>}
         {props.metaConnected && discoveryStatus === 'ready' && <>
@@ -74,13 +88,13 @@ export function CompanyManagement(props: Props) {
           <p className="settings-caption">If ownership has changed, refresh available accounts and check the assignment again. Ads owned by another company must be released or moved from that company first.</p>
         </>}
       </section>}
-    </> : props.status === 'ready' ? <EmptyState title="Create your company workspace"><p>Start with a name. Your new workspace is ready to use immediately; connect accounts whenever you are ready.</p></EmptyState> : <p role="status">Company settings will appear when your companies are loaded.</p>}
-    <section className="settings-section" aria-labelledby="settings-companies">
+    </> : section === 'workspace' && props.status === 'ready' ? <EmptyState title="Create your company workspace"><p>Start with a name. Your new workspace is ready to use immediately; connect accounts whenever you are ready.</p></EmptyState> : section === 'workspace' && <p role="status">Company settings will appear when your companies are loaded.</p>}
+    {section === 'workspace' && <section className="settings-section" aria-labelledby="settings-companies">
       <h2 id="settings-companies" tabIndex={-1}>Company management</h2><p>Create a separate space for another business. Only a name is needed.</p>
       <form className="settings-form" onSubmit={event => { event.preventDefault(); if (name.trim()) props.onCreateAndEnter(name.trim(), createGuard); }}><label>New company name<Input required maxLength={200} value={name} disabled={disabled} onChange={event => setName(event.target.value)} /></label><Button type="submit" variant="primary" disabled={disabled || !name.trim()}>Create company</Button></form>
       <details className="settings-disclosure"><summary>Manage existing and archived companies</summary><p>Inspect a company's settings here. Use the company selector to change your active workspace.</p><label className="settings-check"><input type="checkbox" checked={showArchived} onChange={event => setShowArchived(event.target.checked)} />Show archived companies</label><ul className="settings-company-list">{props.companies.filter(c => showArchived || !c.archived).map(c => <li key={c.id}><Button aria-pressed={company?.id === c.id} disabled={props.busy} onClick={() => setInspectedId(c.id)}>{c.name}{c.archived ? ' — Archived' : c.id === props.activeCompanyId ? ' — Active' : ''}</Button></li>)}</ul></details>
-    </section>
-    {company?.role === 'owner' && <section className="settings-section settings-danger" aria-labelledby="settings-danger"><h2 id="settings-danger">{company.archived ? 'Restore company' : 'Danger zone'}</h2><p>{company.archived ? 'Restore this company explicitly to make its workspace available again. Restoring does not switch your active company.' : 'Archiving disables this company’s workspace. It does not release account or ad ownership. You can restore it later from Company management.'}</p><Button variant={company.archived ? 'secondary' : 'danger'} disabled={disabled} onClick={() => props.run(() => company.archived ? props.onRestore(company.id) : props.onArchive(company.id))}>{company.archived ? 'Restore company' : 'Archive company'}</Button></section>}
+    </section>}
+    {section === 'workspace' && company?.role === 'owner' && <section className="settings-section settings-danger" aria-labelledby="settings-danger"><h2 id="settings-danger">{company.archived ? 'Restore company' : 'Danger zone'}</h2><p>{company.archived ? 'Restore this company explicitly to make its workspace available again. Restoring does not switch your active company.' : 'Archiving disables this company’s workspace. It does not release account or ad ownership. You can restore it later from Company management.'}</p><Button variant={company.archived ? 'secondary' : 'danger'} disabled={disabled} onClick={() => props.run(() => company.archived ? props.onRestore(company.id) : props.onArchive(company.id))}>{company.archived ? 'Restore company' : 'Archive company'}</Button></section>}
   </div>;
 }
 function Reassign({ name, destinations, busy, onReassign }: { name: string; destinations: readonly Company[]; busy: boolean; onReassign(target: string): void }) {

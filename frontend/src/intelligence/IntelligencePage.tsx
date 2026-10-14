@@ -76,7 +76,7 @@ function IntelligenceWorkspace() {
   }
   return <PageLayout className="intelligence-page">
     {!accounts.length ? <section className="ci-no-account"><Film size={26} aria-hidden="true" /><h2>Link a Meta Ads account</h2>
-      <p>Creative Intelligence compares ads from one linked account in an exact reporting window.</p><a href="#settings">Open Integrations <ArrowRight size={16} aria-hidden="true" /></a></section>
+      <p>Creative Intelligence compares ads from one linked account in an exact reporting window.</p><a href="/settings/connections">Open Connections <ArrowRight size={16} aria-hidden="true" /></a></section>
       : <><form className="ci-toolbar" onSubmit={event => void submit(event)} aria-label="Intelligence controls">
         <label>Ads account<Select value={accountId} onChange={event => setAccountId(event.target.value)} disabled={busy}>{accounts.map(account => <option value={account.id} key={account.id}>{account.name}</option>)}</Select></label>
         <label>Metric<Select value={metric} onChange={event => setMetric(event.target.value as Metric)} disabled={busy}>{metrics.map(item => <option value={item.id} key={item.id}>{item.label}</option>)}</Select></label>

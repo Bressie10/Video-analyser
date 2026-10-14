@@ -58,7 +58,7 @@ test('shell destinations, active link, refresh, history and persistent global co
     assert.equal(await p.getByRole('main').count(), 1);
     assert.equal(await p.locator('.app-header .company-navigation').count(), 1);
     for (const name of pages) {
-      assert.equal(await primary(p).getByRole('link', { name, exact: true }).getAttribute('href'), `#${name === 'Home' ? 'overview' : name.toLowerCase()}`);
+      assert.equal(await primary(p).getByRole('link', { name, exact: true }).getAttribute('href'), name === 'Settings' ? '/settings' : `/#${name === 'Home' ? 'overview' : name.toLowerCase()}`);
       await destination(p, name);
       assert.equal(await primary(p).locator('[aria-current=page]').innerText(), name);
       assert.equal(await primary(p).locator('[aria-current=page]').count(), 1);
@@ -113,6 +113,7 @@ test('company load failure leaves Settings and retry accessible', async () => {
   try {
     await f.page.getByRole('button', { name: 'Retry companies', exact: true }).waitFor();
     await destination(f.page, 'Settings');
+    await f.page.getByRole('navigation', { name: 'Settings sections' }).getByRole('link', { name: 'Connections' }).click();
     await f.page.getByRole('button', { name: 'Connect Meta', exact: true }).waitFor();
   } finally { await f.close(); }
 });
@@ -209,7 +210,7 @@ test('skip link and mobile navigation keyboard disclosure, Escape and route focu
     assert.equal(await p.evaluate(() => document.activeElement.textContent), 'Home');
     await screenshot(p, 'mobile-navigation-390');
     await p.keyboard.press('Escape'); assert.equal(await toggle.evaluate(el => el === document.activeElement), true);
-    await toggle.click(); await p.keyboard.press('Tab'); await p.keyboard.press('Tab'); await p.keyboard.press('Enter');
+    await toggle.click(); await p.keyboard.press('Tab'); await p.keyboard.press('Enter');
     await p.getByRole('heading', { name: 'Content', level: 1, exact: true }).waitFor();
     assert.equal(await primary(p).isVisible(), false);
     assert.equal(await p.evaluate(() => document.activeElement.id), 'main-content');
@@ -232,10 +233,10 @@ for (const width of [1440, 1280, 1024, 768, 390, 320]) test(`all shell destinati
   } finally { await f.close(); }
 });
 
-test('hash destinations need no Vercel rewrite and API proxy stays first and unchanged', async () => {
+test('Settings deep links have Vercel rewrites and API proxy stays first and unchanged', async () => {
   const { rewrites } = JSON.parse(await readFile('vercel.json', 'utf8'));
   assert.deepEqual(rewrites[0], { source: '/api/:path*', destination: 'https://video-analyser-1ek5.onrender.com/api/:path*' });
-  for (const source of ['/privacy', '/terms', '/data-deletion']) assert.deepEqual(rewrites.find(rule => rule.source === source), { source, destination: '/index.html' });
+  for (const source of ['/settings', '/settings/:path*', '/privacy', '/terms', '/data-deletion']) assert.deepEqual(rewrites.find(rule => rule.source === source), { source, destination: '/index.html' });
 });
 
 test('long company names keep header and dropdown usable at desktop and 320px', async () => {

@@ -35,7 +35,7 @@ async function fixture({ width = 1440, connected = true, empty = false, conflict
   const page = await context.newPage(); page.setDefaultTimeout(5000);
   page.on('pageerror', error => errors.push(error.message));
   page.on('console', message => { if (['error', 'warning'].includes(message.type()) && !conflict) errors.push(message.text()); });
-  await page.goto(`${origin}#settings`);
+  await page.goto(`${origin}settings/connections`);
   await page.getByRole('heading', { name: 'Settings', exact: true }).waitFor();
   await page.getByText(connected ? 'Meta connected successfully.' : 'Meta is not connected.', { exact: true }).waitFor();
   return { page, mutations, close: async () => { await context.close(); assert.deepEqual(errors, []); } };
@@ -45,19 +45,18 @@ for (const width of [1440, 1280, 1024, 768, 390, 320]) test(`Settings navigation
   try {
     assert.equal(await p.title(), 'ContentMetric'); await p.getByText('Linked to Other studio', { exact: true }).waitFor(); await p.getByRole('checkbox', { name: 'Summer launch video' }).waitFor();
     assert.equal(await p.locator('vite-error-overlay').count(), 0); assert.equal(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
-    const nav = p.getByRole('navigation', { name: 'Settings sections' }); await nav.getByRole('button', { name: 'Integrations', exact: true }).focus(); await p.keyboard.press('Enter');
-    assert.equal(await p.locator('#settings-meta').evaluate(el => el === document.activeElement), true);
-    await nav.getByRole('button', { name: 'Content ownership', exact: true }).click(); await p.getByLabel('Search ads').fill('missing'); await p.getByText('No ads match your filters.').waitFor(); await p.getByLabel('Search ads').fill('');
+    const nav = p.getByRole('navigation', { name: 'Settings sections' }); if (width > 700) assert.equal(await nav.getByRole('link', { name: 'Connections', exact: true }).getAttribute('aria-current'), 'page'); else await p.getByRole('link', { name: 'All settings' }).waitFor();
+    await p.getByLabel('Search ads').fill('missing'); await p.getByText('No ads match your filters.').waitFor(); await p.getByLabel('Search ads').fill('');
     if (process.env.V5_SCREENSHOT_DIR) { await p.evaluate(() => window.scrollTo(0, 0)); await p.screenshot({ path: `${process.env.V5_SCREENSHOT_DIR}/settings-${width}.png`, fullPage: true }); }
     assert.equal((await p.locator('main').innerText()).includes(ADS), false);
   } finally { await f.close(); }
 });
 test('no company offers name-only onboarding and no ownership controls', async () => {
   const f = await fixture({ empty: true, connected: false });
-  try { await f.page.getByRole('heading', { name: 'Create your company workspace' }).waitFor(); await f.page.getByLabel('New company name').fill('New studio'); assert.equal(await f.page.getByRole('button', { name: 'Create company', exact: true }).isEnabled(), true); assert.equal(await f.page.getByRole('checkbox', { name: 'Northline Facebook' }).count(), 0); } finally { await f.close(); }
+  try { await f.page.getByRole('navigation', { name: 'Settings sections' }).getByRole('link', { name: 'Workspace' }).click(); await f.page.getByRole('heading', { name: 'Create your company workspace' }).waitFor(); await f.page.getByLabel('New company name').fill('New studio'); assert.equal(await f.page.getByRole('button', { name: 'Create company', exact: true }).isEnabled(), true); assert.equal(await f.page.getByRole('checkbox', { name: 'Northline Facebook' }).count(), 0); } finally { await f.close(); }
 });
 test('disconnected and no eligible account states remain readable', async () => {
-  for (const connected of [false, true]) { const f = await fixture({ connected, accounts: false }); try { if (connected) await f.page.getByText('No eligible accounts available.').first().waitFor(); else await f.page.getByText('Connect Meta in Integrations to discover accounts for your companies.').waitFor(); } finally { await f.close(); } }
+  for (const connected of [false, true]) { const f = await fixture({ connected, accounts: false }); try { if (connected) await f.page.getByText('No eligible accounts available.').first().waitFor(); else await f.page.getByText('Connect Meta above to discover accounts for your companies.').waitFor(); } finally { await f.close(); } }
 });
 test('ad assignment filters, unassignment and explicit move preserve endpoints', async () => {
   const f = await fixture(); const p = f.page;
@@ -73,4 +72,52 @@ test('ad assignment filters, unassignment and explicit move preserve endpoints',
 test('409 keeps server ownership and safe actionable copy', async () => {
   const f = await fixture({ conflict: true }); const p = f.page;
   try { await p.getByRole('checkbox', { name: 'Summer launch video' }).click(); await p.getByRole('alert').filter({ hasText: 'ownership conflict' }).waitFor(); assert.equal(await p.getByRole('checkbox', { name: 'Summer launch video' }).isChecked(), false); assert.equal((await p.locator('body').innerText()).includes('PRIVATE_PROVIDER_SECRET'), false); } finally { await f.close(); }
+});
+test('Settings subpages are deep links with active state, history and one visible panel', async () => {
+  const f = await fixture(); const p = f.page;
+  try {
+    const nav = p.getByRole('navigation', { name: 'Settings sections' });
+    assert.equal(new URL(p.url()).pathname, '/settings/connections');
+    await nav.getByRole('link', { name: 'Billing' }).click();
+    assert.equal(new URL(p.url()).pathname, '/settings/billing');
+    await p.getByRole('heading', { name: 'Billing', exact: true }).waitFor();
+    if (process.env.V5_SCREENSHOT_DIR) await p.screenshot({ path: `${process.env.V5_SCREENSHOT_DIR}/billing-1440.png` });
+    assert.equal(await nav.getByRole('link', { name: 'Billing' }).getAttribute('aria-current'), 'page');
+    assert.equal(await p.locator('#settings-ownership:visible').count(), 0);
+    assert.equal(await p.locator('#settings-meta:visible').count(), 0);
+    assert.equal(await p.evaluate(() => scrollY), 0);
+    await p.goBack(); await p.getByRole('heading', { name: 'Settings', exact: true }).waitFor();
+    assert.equal(new URL(p.url()).pathname, '/settings/connections');
+    await p.goForward(); await p.getByRole('heading', { name: 'Settings', exact: true }).waitFor();
+    await p.reload(); await p.getByRole('heading', { name: 'Billing', exact: true }).waitFor();
+  } finally { await f.close(); }
+});
+test('account control has one identity home and workspace switching leaves Settings', async () => {
+  const f = await fixture(); const p = f.page;
+  try {
+    await p.locator('summary[aria-label="Account menu"]').click();
+    await p.getByRole('link', { name: 'Account settings' }).click();
+    assert.equal(new URL(p.url()).pathname, '/settings/account');
+    assert.equal(await p.locator('.auth-account:visible').count(), 1);
+    await p.getByRole('button', { name: 'Sign out' }).last().waitFor();
+    await p.getByRole('navigation', { name: 'Company' }).getByRole('button').first().click();
+    await p.getByRole('navigation', { name: 'Company' }).getByRole('button', { name: 'Other studio' }).click();
+    await p.getByRole('navigation', { name: 'Company' }).getByRole('button', { name: 'Other studio' }).waitFor();
+    assert.equal(new URL(p.url()).hash, '#overview');
+  } finally { await f.close(); }
+});
+test('mobile Settings drills into a subsection and returns to the index', async () => {
+  const f = await fixture({ width: 390 }); const p = f.page;
+  try {
+    await p.getByRole('link', { name: 'All settings' }).click();
+    assert.equal(new URL(p.url()).pathname, '/settings/general');
+    if (process.env.V5_SCREENSHOT_DIR) await p.screenshot({ path: `${process.env.V5_SCREENSHOT_DIR}/settings-index-390.png` });
+    await p.getByRole('navigation', { name: 'Settings sections' }).getByRole('link', { name: 'Workspace' }).click();
+    assert.equal(new URL(p.url()).pathname, '/settings/workspace');
+    await p.getByRole('heading', { name: 'Manage companies' }).waitFor();
+    await p.getByRole('link', { name: 'All settings' }).click();
+    await p.getByRole('navigation', { name: 'Settings sections' }).getByRole('link', { name: 'Account' }).click();
+    assert.equal(new URL(p.url()).pathname, '/settings/account');
+    assert.equal(await p.locator('.settings-nav:visible').count(), 0);
+  } finally { await f.close(); }
 });

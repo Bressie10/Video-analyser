@@ -5,6 +5,14 @@
       "destination": "https://video-analyser-1ek5.onrender.com/api/:path*"
     },
     {
+      "source": "/settings",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/settings/:path*",
+      "destination": "/index.html"
+    },
+    {
       "source": "/privacy",
       "destination": "/index.html"
     },

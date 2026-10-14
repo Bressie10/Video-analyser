@@ -24,7 +24,7 @@ export function LimitNotice({ code, billing, onUpgrade }: { code: LimitCode; bil
     {code !== 'free_workspace_limit_reached' && !free && billing && <p>Resets {billingDate(billing.period.ends_at)}.</p>}
     {code === 'free_workspace_limit_reached' && onUpgrade ? <Button onClick={onUpgrade}>View Billing in Settings</Button> : <>
       {billing && checkoutAvailable(billing) && billing.can_manage_billing && onUpgrade && <Button onClick={onUpgrade}>Upgrade to Pro</Button>}
-      {(!billing || !checkoutAvailable(billing) || !billing.can_manage_billing) && <a href="#settings">View Billing in Settings</a>}
+      {(!billing || !checkoutAvailable(billing) || !billing.can_manage_billing) && <a href="/settings/billing">View Billing in Settings</a>}
     </>}
   </Alert>;
 }
