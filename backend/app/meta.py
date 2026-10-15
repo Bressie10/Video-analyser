@@ -18,8 +18,14 @@ import httpx
 # Configure these required business permissions in the Meta login configuration.
 # pages_read_user_content is a documented dependency of instagram_basic.
 PERMISSIONS = frozenset({
-    "pages_show_list", "pages_read_engagement", "pages_read_user_content",
-    "read_insights", "instagram_basic", "instagram_manage_insights", "ads_read",
+    "pages_show_list",
+    "pages_read_engagement",
+    "pages_read_user_content",
+    "read_insights",
+    "instagram_basic",
+    "instagram_manage_insights",
+    "ads_read",
+    "business_management",
 })
 # The video_insights reference lists this permission, unlike the video guide.
 # Allow it when configured without requiring existing Instagram sessions to add it.
