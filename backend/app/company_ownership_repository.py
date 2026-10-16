@@ -141,8 +141,12 @@ def _link(db, connection_id, company_id, account):
 @_transaction
 def link_account(db, connection_id, company_id, account_id):
     _company(db, connection_id, company_id, write=True)
-    if _link(db, connection_id, company_id, _account(db, connection_id, account_id)):
+    account = _account(db, connection_id, account_id)
+    if _link(db, connection_id, company_id, account):
         _invalidate_profiles(db, company_id, 'account_assignment')
+    if account['platform'] in ('facebook', 'instagram'):
+        from app.meta_library_repository import ensure_initial_analysis_batch
+        ensure_initial_analysis_batch(db, company_id, connection_id, account_id)
 
 
 @_transaction

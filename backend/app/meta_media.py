@@ -10,10 +10,67 @@ import httpx
 from app import meta
 
 MAX_BYTES = 500 * 1024 * 1024
+MAX_PREVIEW_BYTES = 5 * 1024 * 1024
 
 
 class MediaUnavailable(ValueError):
     pass
+
+
+def preview_url(client, item):
+    if item['platform'] == 'instagram':
+        provider = client
+        fields = 'id,media_type,thumbnail_url'
+        field = 'thumbnail_url'
+    elif item['platform'] == 'facebook':
+        provider = client.for_page(item['account_external_id'])
+        fields = 'id,from,picture'
+        field = 'picture'
+    else:
+        raise MediaUnavailable('Preview unavailable.')
+    row = provider.get(item['external_id'], {'fields': fields})
+    if row.get('id') != item['external_id'] or (
+        item['platform'] == 'instagram' and row.get('media_type') != 'VIDEO'
+    ) or (
+        item['platform'] == 'facebook' and
+        (not isinstance(row.get('from'), dict) or
+         row['from'].get('id') != item['account_external_id'])
+    ):
+        raise MediaUnavailable('Preview unavailable.')
+    url = row.get(field)
+    if not isinstance(url, str) or not url:
+        raise MediaUnavailable('Preview unavailable.')
+    return url
+
+
+def preview_bytes(url):
+    started = time.monotonic()
+    try:
+        with httpx.Client(timeout=httpx.Timeout(10, connect=5),
+                          follow_redirects=False, trust_env=False) as client:
+            for _ in range(3):
+                validate_url(url)
+                with client.stream('GET', url) as response:
+                    if response.status_code in (301, 302, 303, 307, 308):
+                        url = urljoin(url, response.headers.get('location', ''))
+                        continue
+                    response.raise_for_status()
+                    content_type = response.headers.get('content-type', '').split(';')[0].lower()
+                    if content_type not in ('image/jpeg', 'image/png', 'image/webp', 'image/gif'):
+                        raise MediaUnavailable('Preview unavailable.')
+                    length = response.headers.get('content-length')
+                    if length and int(length) > MAX_PREVIEW_BYTES:
+                        raise MediaUnavailable('Preview unavailable.')
+                    chunks, size = [], 0
+                    for chunk in response.iter_bytes(65536):
+                        size += len(chunk)
+                        if size > MAX_PREVIEW_BYTES or time.monotonic() - started > 15:
+                            raise MediaUnavailable('Preview unavailable.')
+                        chunks.append(chunk)
+                    return b''.join(chunks), content_type
+    except (httpx.HTTPError, ValueError, OverflowError):
+        raise MediaUnavailable('Preview unavailable.') from None
+    raise MediaUnavailable('Preview unavailable.')
 
 
 def media_url(client, item):

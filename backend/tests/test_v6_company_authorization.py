@@ -111,7 +111,8 @@ class CompanyAuthorizationTests(unittest.TestCase):
         row = self.f.db.execute('''SELECT c.connection_id,m.user_id,m.role FROM companies c
             JOIN company_memberships m ON m.company_id=c.id WHERE c.id=%s''', (identity,)).fetchone()
         self.assertEqual(row, {'connection_id': None, 'user_id': USER_ID, 'role': 'owner'})
-        self.assertEqual(self.client.get(f'/api/companies/{identity}/content').json(), {'items': [], 'next_offset': None})
+        self.assertEqual(self.client.get(f'/api/companies/{identity}/content').json(),
+                         {'items': [], 'next_offset': None, 'analysis_progress': None})
         self.assertEqual(self.client.get(f'/api/companies/{identity}/profiles/shared').status_code, 200)
         self.assertEqual(self.client.post(f'/api/companies/{identity}/profiles/shared/refresh', headers={'Idempotency-Key': 'new'}).status_code, 202)
         self.paid(UUID(identity))

@@ -9,13 +9,13 @@ import httpx
 import psycopg
 from fastapi import APIRouter, Depends, HTTPException, Request
 from fastapi.encoders import jsonable_encoder
-from fastapi.responses import JSONResponse, StreamingResponse
+from fastapi.responses import JSONResponse, StreamingResponse, Response
 
 from app import company_ownership_repository as ownership, meta, meta_library_repository as library
 from app.auth import bearer_token, get_token_verifier, require_authenticated_user
 from app.company_authorization import authorize
 from app.creative_analysis_routes import PRIVATE, _open_media
-from app.meta_media import MAX_BYTES, MediaUnavailable, media_url
+from app.meta_media import MAX_BYTES, MediaUnavailable, media_url, preview_url, preview_bytes
 
 router = APIRouter(prefix='/api/companies/{company_id}/content/{item_id}', tags=['content analysis'])
 METRICS = ('view_count', 'like_count', 'comment_count', 'share_count', 'reach', 'impressions')
@@ -105,6 +105,41 @@ def _asset(user, company_id, item_id):
                 WHERE i.id=%s AND i.connection_id=%s''', (item['id'], connection)).fetchone()
     except (psycopg.Error, ValueError):
         raise HTTPException(503, 'Video currently unavailable.') from None
+
+
+@router.get('/preview')
+def preview(request: Request, company_id: UUID, item_id: UUID,
+            verifier=Depends(get_token_verifier)):
+    token = request.cookies.get('cm_content_preview')
+    if not token:
+        raise HTTPException(401, 'Preview access expired.')
+    user = verifier.verify(token)
+    try:
+        with library.database() as db, db.transaction():
+            company = authorize(db, user, company_id)
+            connection = company['connection_id']
+            try:
+                item = ownership._selected(db, connection, company_id, item_id)
+            except ownership.OwnershipNotFound:
+                raise HTTPException(404, 'Content was not found.') from None
+            if item['content_type'] == 'ad' or item['platform'] not in ('instagram','facebook'):
+                raise HTTPException(404, 'Content was not found.')
+            asset = db.execute('''SELECT i.external_id,i.platform,a.external_id AS account_external_id,
+                c.status,c.expires_at,c.token_ciphertext,c.id AS connection_id
+                FROM meta_library_items i JOIN meta_accounts a ON a.id=i.account_id
+                JOIN meta_connections c ON c.id=i.connection_id
+                WHERE i.id=%s AND i.connection_id=%s
+                  AND a.platform IN ('facebook','instagram')''', (item_id, connection)).fetchone()
+    except (psycopg.Error, ValueError):
+        raise HTTPException(503, 'Preview unavailable.') from None
+    if not asset or asset['status'] != 'connected' or asset['expires_at'] <= library.now():
+        raise HTTPException(404, 'Preview unavailable.')
+    try:
+        data, content_type = preview_bytes(preview_url(library.connection_client(asset), asset))
+    except (MediaUnavailable, meta.MetaError, httpx.HTTPError, ValueError):
+        raise HTTPException(404, 'Preview unavailable.') from None
+    return Response(data, media_type=content_type,
+                    headers={'Cache-Control': 'private, no-store', 'X-Content-Type-Options': 'nosniff'})
 
 
 @router.get('/analysis')

@@ -272,7 +272,13 @@ def content(request: Request, company_id: UUID, analyzed_only: bool = False,
                             search=search.strip() if search else None,
                             published_from=published_from, published_to=published_to,
                             limit=limit, offset=offset, order=order)
-    return respond(request, operation, company_id=company_id)
+    response = respond(request, operation, company_id=company_id)
+    if response.status_code == 200:
+        from app.auth import bearer_token
+        response.set_cookie('cm_content_preview', bearer_token(request), max_age=900,
+            path=f'/api/companies/{company_id}/content/', httponly=True,
+            secure=request.url.hostname not in ('localhost', '127.0.0.1'), samesite='strict')
+    return response
 
 
 @router.post('/companies/{company_id}/content/analyze', status_code=202)

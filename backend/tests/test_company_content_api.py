@@ -132,7 +132,8 @@ class CompanyContentAPITests(unittest.TestCase):
             self.assertNotIn(forbidden, encoded)
         for row in payload['items']:
             self.assertEqual(set(row), {'library_item_id', 'video_id', 'platform', 'content_type',
-                                       'published_at', 'analysis_state', 'analyzed', 'display_title', 'summary'})
+                                       'published_at', 'analysis_state', 'analysis_stage',
+                                       'analyzed', 'display_title', 'summary'})
         self.assertEqual(self.ids(search='Own campaign'), {str(self.f.ad_a)})
         self.assertEqual(self.ids(self.f.b, search='Own campaign'), set())
         for search in ('Sibling', 'a-secret', '%'):
@@ -140,6 +141,125 @@ class CompanyContentAPITests(unittest.TestCase):
         self.f.link(self.f.a, self.f.fb)
         self.f.db.execute("UPDATE meta_library_items SET label='Sibling campaign private' WHERE id=%s", (self.f.organic,))
         self.assertNotIn('Sibling', json.dumps(self.browse()))
+
+    def test_initial_bootstrap_is_newest_twenty_and_quota_exempt(self):
+        self.f.db.execute('''UPDATE company_billing SET plan_code='free',
+            stripe_customer_id=NULL,stripe_subscription_id=NULL,subscription_status=NULL
+            WHERE company_id=%s''', (self.f.a,))
+        self.f.db.execute('UPDATE meta_accounts SET initialized_at=now() WHERE id=%s', (self.f.fb,))
+        for number in range(25):
+            self.f.db.execute('''INSERT INTO meta_library_items
+                (connection_id,account_id,platform,external_id,content_type,label,published_at)
+                VALUES (%s,%s,'facebook',%s,'video','Video',now()-(%s * interval '1 minute'))''',
+                (self.f.connection, self.f.fb, str(1000 + number), number))
+        self.f.db.execute('''INSERT INTO meta_library_items
+            (connection_id,account_id,platform,external_id,content_type,label,published_at)
+            VALUES (%s,%s,'facebook','ad-only','ad','Ad',now())''',
+            (self.f.connection, self.f.fb))
+        self.f.link(self.f.a, self.f.fb)
+        batch = self.f.db.execute('''SELECT run_id FROM meta_initial_analysis_batches
+            WHERE company_id=%s AND account_id=%s''', (self.f.a, self.f.fb)).fetchone()['run_id']
+        self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM meta_initial_analysis_targets WHERE run_id=%s',
+                                           (batch,)).fetchone()['n'], 20)
+        self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM meta_jobs WHERE run_id=%s',
+                                           (batch,)).fetchone()['n'], 20)
+        selected = [row['external_id'] for row in self.f.db.execute('''
+            SELECT i.external_id FROM meta_initial_analysis_targets t
+            JOIN meta_library_items i ON i.id=t.item_id WHERE t.run_id=%s
+            ORDER BY i.published_at DESC''', (batch,)).fetchall()]
+        self.assertEqual(selected, [str(1000 + number) for number in range(20)])
+        self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM company_usage_ledger WHERE company_id=%s AND usage_kind=%s',
+                                           (self.f.a, 'analysis')).fetchone()['n'], 0)
+        library.ensure_initial_analysis_batch(self.f.db, self.f.a, self.f.connection, self.f.fb)
+        self.assertEqual(self.f.db.execute('SELECT count(*) AS n FROM meta_initial_analysis_batches WHERE company_id=%s',
+                                           (self.f.a,)).fetchone()['n'], 1)
+        page = self.browse()
+        self.assertEqual(page['analysis_progress']['total'], 20)
+        self.assertEqual(page['analysis_progress']['queued'], 20)
+
+    def test_link_before_discovery_bootstraps_after_finalization(self):
+        self.f.link(self.f.a, self.f.fb)
+        self.assertIsNone(self.f.db.execute('''SELECT run_id FROM meta_initial_analysis_batches
+            WHERE company_id=%s AND account_id=%s''', (self.f.a, self.f.fb)).fetchone())
+        self.f.db.execute('UPDATE meta_accounts SET initial_run_id=%s WHERE id=%s',
+                          (self.f.run, self.f.fb))
+        library.finalize_runs(self.f.db)
+        batch = self.f.db.execute('''SELECT run_id FROM meta_initial_analysis_batches
+            WHERE company_id=%s AND account_id=%s''', (self.f.a, self.f.fb)).fetchone()
+        self.assertIsNotNone(batch)
+        library.finalize_runs(self.f.db)
+        self.assertEqual(self.f.db.execute('''SELECT count(*) AS n FROM meta_initial_analysis_batches
+            WHERE company_id=%s AND account_id=%s''', (self.f.a, self.f.fb)).fetchone()['n'], 1)
+
+    def test_manual_active_batch_reports_progress_and_reserves_usage(self):
+        self.f.link(self.f.a, self.f.fb)
+        item = library.item_with_account(self.f.db, self.f.organic)
+        library.new_batch(self.f.db, self.f.connection, 'analysis', [item], company_id=self.f.a)
+        progress = self.browse()['analysis_progress']
+        self.assertEqual((progress['total'], progress['queued'], progress['completed']), (1, 1, 0))
+        self.assertEqual(self.f.db.execute('''SELECT count(*) AS n FROM company_usage_ledger
+            WHERE company_id=%s AND usage_kind='analysis' AND delta=1''',
+            (self.f.a,)).fetchone()['n'], 1)
+
+    def test_claim_and_stage_are_fenced(self):
+        from app import meta_library_worker as worker
+        self.f.db.execute('UPDATE meta_accounts SET initialized_at=now() WHERE id=%s', (self.f.fb,))
+        self.f.link(self.f.a, self.f.fb)
+        other = self.f.item(self.f.fb, 'next-video', 'video', 'facebook')
+        # The one-time batch was created at link time. A second item queued
+        # manually remains waiting while the first claim is processing.
+        library.new_batch(self.f.db, self.f.connection, 'analysis',
+                          [library.item_with_account(self.f.db, other)], company_id=self.f.a)
+        self.assertEqual(self.f.db.execute('''SELECT count(*) AS n FROM company_usage_ledger
+            WHERE company_id=%s AND usage_kind='analysis' AND delta=1''',
+            (self.f.a,)).fetchone()['n'], 1)
+        first = worker.claim_job(analysis=True)
+        self.assertIsNotNone(first)
+        self.assertEqual(self.f.db.execute('SELECT analysis_state FROM meta_library_items WHERE id=%s',
+                                           (first['item_id'],)).fetchone()['analysis_state'], 'processing')
+        self.assertEqual(self.f.db.execute('SELECT analysis_state FROM meta_library_items WHERE id=%s',
+                                           (other,)).fetchone()['analysis_state'], 'queued')
+        for stage in ('downloading', 'inspecting', 'normalizing', 'detecting_scenes',
+                      'reading_text', 'detecting_motion', 'extracting_audio',
+                      'transcribing', 'saving'):
+            worker.analysis_stage(first, stage)
+            self.assertEqual(self.f.db.execute('SELECT analysis_stage FROM meta_library_items WHERE id=%s',
+                                               (first['item_id'],)).fetchone()['analysis_stage'], stage)
+        replacement = {**first, 'claim': uuid4()}
+        self.f.db.execute("UPDATE meta_jobs SET claim=%s WHERE id=%s",
+                          (replacement['claim'], first['id']))
+        worker.analysis_stage(first, 'downloading')
+        self.assertEqual(self.f.db.execute('SELECT analysis_stage FROM meta_library_items WHERE id=%s',
+                                           (first['item_id'],)).fetchone()['analysis_stage'], 'saving')
+        worker.analysis_stage(replacement, 'transcribing')
+        self.assertEqual(self.f.db.execute('SELECT analysis_stage FROM meta_library_items WHERE id=%s',
+                                           (first['item_id'],)).fetchone()['analysis_stage'], 'transcribing')
+        worker.item_status(first['item_id'], 'analysis', 'failed', job=replacement)
+        worker.finish(replacement, 'failed')
+        self.assertEqual(self.f.db.execute('SELECT analysis_state,analysis_stage FROM meta_library_items WHERE id=%s',
+                                           (first['item_id'],)).fetchone(),
+                         {'analysis_state': 'failed', 'analysis_stage': None})
+
+    def test_preview_is_authorized_proxied_and_falls_back(self):
+        self.f.link(self.f.a, self.f.fb)
+        self.browse()
+        path = f'/api/companies/{self.f.a}/content/{self.f.organic}/preview'
+        with patch('app.content_analysis_routes.library.connection_client', return_value=object()), \
+             patch('app.content_analysis_routes.preview_url', return_value='https://x.fbcdn.net/secret') as url, \
+             patch('app.content_analysis_routes.preview_bytes', return_value=(b'photo', 'image/jpeg')):
+            response = self.client.get(path)
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.content, b'photo')
+        self.assertEqual(response.headers['content-type'], 'image/jpeg')
+        self.assertNotIn('location', response.headers)
+        self.assertNotIn('secret', str(response.headers))
+        url.assert_called_once()
+        self.client.cookies.set('cm_content_preview', self.auth.token(),
+                                path=f'/api/companies/{self.f.foreign_company}/content/')
+        self.assertEqual(self.client.get(f'/api/companies/{self.f.foreign_company}/content/{self.f.organic}/preview').status_code, 403)
+        with patch('app.content_analysis_routes.library.connection_client', return_value=object()), \
+             patch('app.content_analysis_routes.preview_url', side_effect=library.meta.MetaError('private')):
+            self.assertEqual(self.client.get(path).status_code, 404)
 
     def test_readiness_matches_current_analysis_without_side_effects(self):
         self.f.link(self.f.a, self.f.fb)

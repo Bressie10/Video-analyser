@@ -16,7 +16,7 @@ from app import meta
 from app.video_repository import _database_url
 
 ANALYSIS_VERSION = 1
-INITIAL_LIMIT = 25
+INITIAL_LIMIT = 20
 RECENT_DAYS = 90
 
 
@@ -275,10 +275,52 @@ def queue_analysis(db, run_id, item, explicit=False, company_id=None):
             db.execute('DELETE FROM meta_jobs WHERE id=%s', (added['id'],))
             return 'deferred'
         db.execute(
-            "UPDATE meta_library_items SET analysis_state='queued',analysis_error=NULL WHERE id=%s",
+            "UPDATE meta_library_items SET analysis_state='queued',analysis_stage=NULL,analysis_error=NULL WHERE id=%s",
             (item["id"],),
         )
     return "queued"
+
+
+def ensure_initial_analysis_batch(db, company_id, connection_id, account_id):
+    """Create the one-time, quota-exempt initial corpus for an owned organic account."""
+    account = db.execute('''SELECT a.id FROM meta_accounts a
+        JOIN company_accounts ca ON ca.account_id=a.id AND ca.connection_id=a.connection_id
+        JOIN companies c ON c.id=ca.company_id AND c.archived_at IS NULL
+        WHERE a.id=%s AND a.connection_id=%s AND ca.company_id=%s
+          AND a.platform IN ('facebook','instagram') AND a.initialized_at IS NOT NULL
+        FOR UPDATE OF a''', (account_id, connection_id, company_id)).fetchone()
+    if not account:
+        return None
+    existing = db.execute('''SELECT run_id FROM meta_initial_analysis_batches
+        WHERE company_id=%s AND account_id=%s''', (company_id, account_id)).fetchone()
+    if existing:
+        return existing['run_id']
+    items = db.execute('''SELECT i.* FROM meta_library_items i
+        WHERE i.account_id=%s AND i.connection_id=%s AND i.platform IN ('facebook','instagram')
+          AND i.content_type IN ('video','reel')
+        ORDER BY i.published_at DESC NULLS LAST,i.id DESC LIMIT %s''',
+        (account_id, connection_id, INITIAL_LIMIT)).fetchall()
+    if not items:
+        return None
+    run = db.execute('''INSERT INTO meta_sync_runs(connection_id,kind,discovery_finalized,company_id)
+        VALUES (%s,'bootstrap',true,%s) RETURNING id''', (connection_id, company_id)).fetchone()['id']
+    db.execute('''INSERT INTO meta_initial_analysis_batches(company_id,account_id,run_id)
+        VALUES (%s,%s,%s)''', (company_id, account_id, run))
+    for item in items:
+        # Targets are durable even when analysed or already queued manually.
+        db.execute('''INSERT INTO meta_initial_analysis_targets(run_id,item_id)
+            VALUES (%s,%s)''', (run, item['id']))
+        if item['video_id'] and item['analysis_version'] == ANALYSIS_VERSION:
+            continue
+        active = db.execute('''SELECT 1 FROM meta_jobs WHERE item_id=%s AND kind='analysis'
+            AND state IN ('queued','running','blocked')''', (item['id'],)).fetchone()
+        if active:
+            continue
+        added = add_job(db, run, connection_id, 'analysis', item['id'], item_id=item['id'])
+        if added:
+            db.execute('''UPDATE meta_library_items SET analysis_state='queued',
+                analysis_stage=NULL,analysis_error=NULL WHERE id=%s''', (item['id'],))
+    return run
 
 
 def item_with_account(db, item_id):
@@ -306,31 +348,34 @@ def finalize_runs(db):
         ).fetchall()
         ids = [a["id"] for a in accounts]
         if ids:
-            candidates = db.execute(
-                """SELECT DISTINCT i.* FROM meta_library_items i
-                LEFT JOIN meta_ad_assets aa ON aa.video_item_id=i.id
-                LEFT JOIN meta_library_items ad ON ad.id=aa.ad_item_id
-                WHERE (i.account_id=ANY(%s) OR ad.account_id=ANY(%s)) AND i.content_type!='ad'
-                AND i.published_at>%s AND i.published_at<=%s
-                ORDER BY i.published_at DESC,i.id LIMIT %s""",
-                (
-                    ids,
-                    ids,
-                    run["created_at"] - timedelta(days=RECENT_DAYS),
-                    run["created_at"],
-                    INITIAL_LIMIT,
-                ),
-            ).fetchall()
-            for item in candidates:
-                db.execute(
-                    "UPDATE meta_library_items SET auto_analyze=true WHERE id=%s",
-                    (item["id"],),
-                )
-                queue_analysis(db, run["id"], item, explicit=True)
             db.execute(
                 "UPDATE meta_accounts SET initialized_at=%s WHERE id=ANY(%s)",
                 (run["created_at"], ids),
             )
+            for account in accounts:
+                if account['platform'] in ('facebook', 'instagram'):
+                    owner = db.execute('''SELECT company_id FROM company_accounts
+                        WHERE account_id=%s AND account_platform IN ('facebook','instagram')''',
+                        (account['id'],)).fetchone()
+                    if owner:
+                        ensure_initial_analysis_batch(db, owner['company_id'],
+                                                      run['connection_id'], account['id'])
+                elif account['platform'] == 'meta_ads':
+                    # Preserve existing ad-asset import. These are outside the
+                    # organic bootstrap and retain normal usage reservation.
+                    assets = db.execute('''SELECT DISTINCT i.* FROM meta_library_items i
+                        JOIN meta_ad_assets ma ON ma.video_item_id=i.id
+                        JOIN meta_library_items ad ON ad.id=ma.ad_item_id
+                        WHERE ad.account_id=%s AND i.content_type='video'
+                          AND i.analysis_state!='unavailable'
+                          AND ad.published_at>%s AND ad.published_at<=%s
+                        ORDER BY i.published_at DESC NULLS LAST,i.id LIMIT %s''',
+                        (account['id'], run['created_at'] - timedelta(days=RECENT_DAYS),
+                         run['created_at'], INITIAL_LIMIT)).fetchall()
+                    for item in assets:
+                        db.execute('UPDATE meta_library_items SET auto_analyze=true WHERE id=%s',
+                                   (item['id'],))
+                        queue_analysis(db, run['id'], item, explicit=True)
             db.execute(
                 "UPDATE meta_library_items SET analysis_state='deferred' WHERE account_id=ANY(%s) AND analysis_state='discovered' AND content_type!='ad'",
                 (ids,),
@@ -351,6 +396,7 @@ PUBLIC_FIELDS = (
     "label",
     "published_at",
     "analysis_state",
+    "analysis_stage",
     "analysis_error",
     "analysis_version",
     "video_id",
@@ -384,8 +430,8 @@ def public_performance(db, item_id):
 
 def new_batch(db, connection_id, kind, items, *, company_id=None):
     run = db.execute(
-        "INSERT INTO meta_sync_runs(connection_id,kind,discovery_finalized) VALUES (%s,%s,true) RETURNING id",
-        (connection_id, kind),
+        "INSERT INTO meta_sync_runs(connection_id,kind,discovery_finalized,company_id) VALUES (%s,%s,true,%s) RETURNING id",
+        (connection_id, kind, company_id),
     ).fetchone()["id"]
     for item in items:
         if kind == "analysis":

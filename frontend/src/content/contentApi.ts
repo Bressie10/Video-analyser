@@ -5,9 +5,14 @@ import { billingError } from '../billing/billingApi';
 export type ContentItem = {
   library_item_id: string; display_title: string; platform: string; content_type: string;
   published_at: string | null; analysis_state: string; analyzed: boolean;
+  analysis_stage?: string | null;
   summary?: { duration_seconds: number | null; width: number | null; height: number | null } | null;
 };
-export type ContentPage = { items: ContentItem[]; next_offset: number | null };
+export type AnalysisProgress = { batch_id: string; total: number; completed: number; processing: number;
+  queued: number; failed: number; unavailable: number; current_item_id: string | null;
+  current_stage: string | null; current_platform: string | null; current_type: string | null;
+  current_published_at: string | null };
+export type ContentPage = { items: ContentItem[]; next_offset: number | null; analysis_progress?: AnalysisProgress | null };
 export type ContentFilters = { search: string; platform: string; type: string; analyzed: boolean; from: string; to: string; order: string };
 export const defaultFilters: ContentFilters = { search: '', platform: '', type: '', analyzed: false, from: '', to: '', order: 'desc' };
 export async function loadContent(company: string, signal: AbortSignal, filters = defaultFilters, offset = 0, limit = 20): Promise<ContentPage> {
@@ -39,10 +44,17 @@ export function publicationDate(value: string | null) {
 }
 export function analysisStatus(item: ContentItem): { label: string; tone: 'success' | 'info' | 'danger' | 'neutral' } {
   if (item.analyzed) return { label: 'Analysed', tone: 'success' };
-  if (['queued', 'pending', 'processing', 'running', 'downloading', 'analyzing'].includes(item.analysis_state)) return { label: 'Processing', tone: 'info' };
+  if (item.analysis_state === 'queued') return { label: 'Queued', tone: 'neutral' };
+  if (item.analysis_state === 'processing') return { label: stageLabel(item.analysis_stage), tone: 'info' };
   if (['unavailable', 'unsupported'].includes(item.analysis_state)) return { label: 'Analysis unavailable', tone: 'neutral' };
   if (item.analysis_state === 'failed') return { label: 'Analysis failed', tone: 'danger' };
   return { label: 'Not yet analysed', tone: 'neutral' };
+}
+export function stageLabel(stage?: string | null) {
+  return ({ downloading: 'Downloading video', inspecting: 'Inspecting video', normalizing: 'Preparing video',
+    detecting_scenes: 'Detecting scenes', reading_text: 'Reading on-screen text',
+    detecting_motion: 'Analysing motion', extracting_audio: 'Extracting audio',
+    transcribing: 'Transcribing speech', saving: 'Saving analysis', complete: 'Analysed' } as Record<string, string>)[stage || ''] ?? 'Processing';
 }
 export function contentError(error: unknown) {
   if (error instanceof ServiceError && error.status === 401) return 'Your session has expired. Reconnect Meta in Settings, then try again.';

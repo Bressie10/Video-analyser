@@ -326,6 +326,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         for external_id in ("100", "102", "200", "400"):
             item = self.item(external_id)
             self.assertEqual(item["analysis_state"], "completed", item)
+            self.assertEqual(item['analysis_stage'], 'complete')
             self.assertEqual(item["analysis_version"], 1)
             self.assertEqual(
                 get_analysis(item["video_id"], connection_id=self.connection_id)[
@@ -333,8 +334,8 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
                 ],
                 ANALYSIS["audio"],
             )
-        self.assertEqual(self.item("101")["analysis_state"], "deferred")
-        self.assertEqual(self.analysis.call_count, 4)
+        self.assertEqual(self.item("101")["analysis_state"], "completed")
+        self.assertEqual(self.analysis.call_count, 5)
         self.assertEqual(self.fb.call_count, 2)
         self.assertEqual(self.ig.call_count, 1)
         self.assertEqual(self.ad.call_count, 1)
@@ -395,7 +396,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
                 6,
             )
             self.assertEqual(
-                db.execute("SELECT count(*) AS n FROM videos").fetchone()["n"], 4
+                db.execute("SELECT count(*) AS n FROM videos").fetchone()["n"], 5
             )
 
     def test_new_source_is_automatically_analyzed(self):
@@ -418,7 +419,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             self.sync_again()
         self.assertEqual(self.item("100")["video_id"], before)
         self.assertEqual(self.item("100")["analysis_version"], 2)
-        self.assertEqual(self.analysis.call_count, 4)
+        self.assertEqual(self.analysis.call_count, 5)
         with repo.database() as db:
             self.assertEqual(
                 db.execute(
@@ -427,9 +428,9 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
                 2,
             )
             self.assertEqual(
-                db.execute("SELECT count(*) AS n FROM videos").fetchone()["n"], 4
+                db.execute("SELECT count(*) AS n FROM videos").fetchone()["n"], 5
             )
-        self.assertIsNone(self.item("101")["video_id"])
+        self.assertIsNotNone(self.item("101")["video_id"])
 
     def test_old_metrics_retained_and_manual_refresh(self):
         self.drain()
@@ -468,9 +469,9 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             {"id": str(1000 + i), "created_time": self.graph.recent} for i in range(40)
         ]
         self.drain()
-        self.assertEqual(self.analysis.call_count, 25)
+        self.assertEqual(self.analysis.call_count, 22)
         self.sync_again()
-        self.assertEqual(self.analysis.call_count, 25)
+        self.assertEqual(self.analysis.call_count, 22)
         with repo.database() as db:
             item = db.execute(
                 "SELECT id FROM meta_library_items WHERE analysis_state='deferred' LIMIT 1"
@@ -480,7 +481,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         )
         self.assertEqual(result.status_code, 202, result.text)
         self.drain()
-        self.assertEqual(self.analysis.call_count, 26)
+        self.assertEqual(self.analysis.call_count, 23)
 
     def test_batch_partial_failure_and_unavailable_media(self):
         self.graph.unavailable.add("100")
@@ -489,7 +490,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         self.assertEqual(self.item("200")["analysis_state"], "completed")
         self.assertEqual(
             self.api.get("/api/meta/jobs/" + self.run_id).json()["state"],
-            "partial_failure",
+            "completed",
         )
         self.graph.unavailable.clear()
         result = self.api.post(
@@ -524,8 +525,8 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         ]
         self.drain()
         self.assertEqual(
-            self.analysis.call_count, 3
-        )  # FB video, Reel, Instagram; no duplicate ad asset.
+            self.analysis.call_count, 4
+        )  # Two FB videos, Reel, Instagram; no duplicate ad asset.
         response = self.api.get("/api/meta/library/" + str(self.item("100")["id"]))
         self.assertEqual(len(response.json()["performance"]), 3, response.text)
 
@@ -567,6 +568,9 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
 
     def test_invalid_incomplete_and_foreign_selection(self):
         self.drain()
+        with repo.database() as db:
+            db.execute("UPDATE meta_library_items SET analysis_state='deferred',video_id=NULL WHERE id=%s",
+                       (self.item('101')['id'],))
         response = self.api.post(
             "/api/meta/recommendations",
             json={"video_ids": [str(self.item("101")["id"])]},
@@ -630,7 +634,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
                 ]
             )
             self.assertEqual(
-                db.execute("SELECT count(*) AS n FROM videos").fetchone()["n"], 4
+                db.execute("SELECT count(*) AS n FROM videos").fetchone()["n"], 5
             )
 
     def test_sync_idempotency_and_interrupted_claim(self):
@@ -653,7 +657,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             )
         worker.process_job(replacement)
         self.drain()
-        self.assertEqual(self.analysis.call_count, 4)
+        self.assertEqual(self.analysis.call_count, 5)
 
     def test_failed_refresh_preserves_snapshot(self):
         self.drain()
@@ -725,6 +729,9 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
 
     def test_overlap_batches_follow_existing_task(self):
         self.drain()
+        with repo.database() as db:
+            db.execute("UPDATE meta_library_items SET analysis_state='deferred',video_id=NULL WHERE id=%s",
+                       (self.item('101')['id'],))
         selected = str(self.item("101")["id"])
         first = self.api.post(
             "/api/meta/library/analyze", json={"item_ids": [selected]}
@@ -745,7 +752,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         worker.schedule()
         with repo.database() as db:
             self.assertEqual(
-                db.execute("SELECT count(*) AS n FROM meta_sync_runs").fetchone()["n"],
+                db.execute("SELECT count(*) AS n FROM meta_sync_runs WHERE kind='sync'").fetchone()["n"],
                 1,
             )
             db.execute(
@@ -754,7 +761,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         worker.schedule()
         with repo.database() as db:
             self.assertEqual(
-                db.execute("SELECT count(*) AS n FROM meta_sync_runs").fetchone()["n"],
+                db.execute("SELECT count(*) AS n FROM meta_sync_runs WHERE kind='sync'").fetchone()["n"],
                 2,
             )
 
@@ -944,9 +951,9 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
         self.analysis.reset_mock()
         with patch.object(self.graph, "get", side_effect=get):
             self.sync_again()
-            self.assertEqual(self.analysis.call_count, 25)
+            self.assertEqual(self.analysis.call_count, 20)
             self.sync_again()
-        self.assertEqual(self.analysis.call_count, 25)
+        self.assertEqual(self.analysis.call_count, 20)
 
     def test_discovery_pagination_resumes_cursor(self):
         original = self.graph.get
@@ -971,7 +978,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
             self.drain()
         self.assertEqual(cursors, [None, "page2"])
         self.assertEqual(self.item("100")["analysis_state"], "completed")
-        self.assertEqual(self.item("101")["analysis_state"], "deferred")
+        self.assertEqual(self.item("101")["analysis_state"], "completed")
 
     def test_lifespan_workers_complete_sync_with_global_slots(self):
         with patch.dict(os.environ, {"META_WORKER_ENABLED": "true"}):
@@ -987,7 +994,7 @@ class MetaLibraryDatabaseTests(unittest.TestCase):
                         break
                     time.sleep(0.05)
                 self.assertIsNotNone(done, "Lifespan workers did not complete the sync")
-        self.assertEqual(self.analysis.call_count, 4)
+        self.assertEqual(self.analysis.call_count, 5)
         self.assertEqual(self.item("100")["analysis_state"], "completed")
 
     def test_one_inaccessible_ad_asset_does_not_block_other_assets(self):

@@ -194,6 +194,9 @@ class AuthDatabaseTests(unittest.TestCase):
             after = self.db.execute(sql.SQL('SELECT * FROM {} ORDER BY 1').format(sql.Identifier(table))).fetchall()
             if table in ('meta_connections', 'videos'):
                 self.assertIsNone(after[0].pop('owner_user_id'))
+            if table == 'meta_library_items':
+                for record in after:
+                    self.assertIsNone(record.pop('analysis_stage'))
             self.assertEqual(after, before[table])
         self.assertEqual(self.get('/api/me/companies').json(), {'companies': []})
         self.assertEqual(self.get(f'/companies/{company}/access').status_code, 403)

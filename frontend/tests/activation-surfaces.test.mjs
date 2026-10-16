@@ -11,12 +11,15 @@ let server, browser, origin;
 before(async () => { server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0]; browser = await chromium.launch(); });
 after(async () => { await browser?.close(); await server?.close(); });
 
-async function app({ accounts = [], items = [], ideas = [], sources = [], contentError = false, role = 'owner', paginate = false } = {}, page = 'content') {
+async function app({ accounts = [], items = [], ideas = [], sources = [], contentError = false, role = 'owner', paginate = false, progress = null, preview = false } = {}, page = 'content') {
   const context = await browser.newContext();
   const errors = []; let contentReads = 0; let sourceReads = 0; const analysisCalls = []; const contentUrls = [];
   await context.addInitScript(companyId => localStorage.setItem('video-analyzer.active-company-id', companyId), companyId);
   await context.route('**/api/**', route => {
     const url = new URL(route.request().url()); const path = url.pathname;
+    if (path.endsWith('/preview')) return route.fulfill({ status: preview ? 200 : 404,
+      contentType: preview ? 'image/svg+xml' : 'application/json',
+      body: preview ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16"/>' : '{}' });
     if (path === '/api/me/companies') return route.fulfill({ json: { companies: [{ id: companyId, archived_at: null }] } });
     if (path === '/api/companies') return route.fulfill({ json: { companies: [{ company_id: companyId, name: 'Alpha', role, archived: false, accounts: accounts.map((platform, i) => ({ account_id: id(10 + i), display_name: platform, platform })) }] } });
     if (path.endsWith('/content/analyze')) { analysisCalls.push(route.request().postDataJSON()); items = items.map(item => ({ ...item, analysis_state: 'queued' })); return route.fulfill({ status: 202, json: { job_id: id(40) } }); }
@@ -27,7 +30,8 @@ async function app({ accounts = [], items = [], ideas = [], sources = [], conten
       const offset = Number(url.searchParams.get('offset'));
       return contentError ? route.fulfill({ status: 503, json: { detail: 'PRIVATE PROVIDER ERROR' } }) : route.fulfill({ json: {
         items: paginate ? items.slice(offset, offset + 20) : items,
-        next_offset: paginate && offset + 20 < items.length ? offset + 20 : null } });
+        next_offset: paginate && offset + 20 < items.length ? offset + 20 : null,
+        analysis_progress: progress } });
     }
     if (path.endsWith('/ideas')) return route.fulfill({ json: { items: ideas, next_cursor: null } });
     if (path === '/api/meta/test') return route.fulfill({ json: { connected: false } });
@@ -38,7 +42,8 @@ async function app({ accounts = [], items = [], ideas = [], sources = [], conten
   p.on('pageerror', error => errors.push(error.message));
   await p.goto(`${origin}#${page}`);
   return { p, errors, analysisCalls, contentUrls, contentReads: () => contentReads, sourceReads: () => sourceReads,
-    completeAnalysis() { items = items.map(item => ({ ...item, analysis_state: 'completed', analyzed: true })); sources = [...items]; },
+    setItems(next) { items = next; }, setProgress(next) { progress = next; },
+    completeAnalysis() { items = items.map(item => ({ ...item, analysis_state: 'completed', analyzed: true })); sources = [...items]; progress = null; },
     close: () => context.close() };
 }
 
@@ -52,7 +57,7 @@ test('Content starts existing analysis batch and keeps member controls hidden', 
     await owner.p.getByRole('button', { name: 'Analyze', exact: true }).focus();
     assert.equal(await owner.p.evaluate(() => getComputedStyle(document.activeElement).outlineStyle), 'solid');
     await owner.p.getByRole('button', { name: 'Analyze', exact: true }).click();
-    await owner.p.getByText('Processing', { exact: true }).waitFor();
+    await owner.p.getByText('Queued', { exact: true }).waitFor();
     assert.deepEqual(owner.analysisCalls, [{ item_id: id(2) }]);
     assert.deepEqual(owner.errors, []);
   } finally { await owner.close(); }
@@ -75,7 +80,7 @@ test('polling keeps the visible filtered page and stops when it unmounts', async
     await f.p.waitForTimeout(2700);
     assert.ok(f.contentReads() > initial);
     assert.equal(await f.p.getByText('Page 2').count(), 1);
-    assert.equal(await f.p.getByText('Processing', { exact: true }).count(), 1);
+    assert.equal(await f.p.getByText('Queued', { exact: true }).count(), 1);
     assert.equal(f.contentUrls.at(-1).searchParams.get('offset'), '20');
     assert.equal(f.contentUrls.at(-1).searchParams.get('search'), 'Published');
     const beforeClose = f.contentReads();
@@ -89,13 +94,13 @@ test('active Content analysis polls to completion without manual refresh and the
   const f = await app({ accounts: ['instagram'], items: [content('discovered')] });
   try {
     await f.p.getByRole('button', { name: 'Analyze', exact: true }).click();
-    await f.p.getByText('Processing', { exact: true }).waitFor();
+    await f.p.getByText('Queued', { exact: true }).waitFor();
     const initialReads = f.contentReads();
     const initialSourceReads = f.sourceReads();
     await f.p.waitForTimeout(2700);
     assert.ok(f.contentReads() > initialReads);
     assert.equal(f.sourceReads(), initialSourceReads);
-    assert.equal(await f.p.getByText('Processing', { exact: true }).count(), 1);
+    assert.equal(await f.p.getByText('Queued', { exact: true }).count(), 1);
     f.completeAnalysis();
     await f.p.getByText('Analysed', { exact: true }).waitFor({ timeout: 7000 });
     assert.ok(f.contentReads() > initialReads);
@@ -106,6 +111,35 @@ test('active Content analysis polls to completion without manual refresh and the
     await f.p.getByRole('button', { name: 'Generate idea', exact: true }).waitFor();
     assert.deepEqual(f.errors, []);
   } finally { await f.close(); }
+});
+
+test('Content previews, live stages and real batch counts update through polling', async () => {
+  const running = { ...content('processing'), analysis_stage: 'reading_text' };
+  const queued = { ...content('queued'), library_item_id: id(3) };
+  const progress = { batch_id: id(50), total: 20, completed: 7, processing: 1, queued: 12,
+    failed: 0, unavailable: 0, current_item_id: id(2), current_stage: 'reading_text',
+    current_platform: 'instagram', current_type: 'reel', current_published_at: '2026-06-07T00:00:00Z' };
+  const f = await app({ accounts: ['instagram'], items: [running, queued], progress, preview: true });
+  try {
+    await f.p.getByText('7 of 20 analysed').waitFor();
+    assert.equal(await f.p.getByRole('progressbar').getAttribute('value'), '7');
+    assert.equal(await f.p.getByText('Reading on-screen text', { exact: true }).count(), 1);
+    assert.equal(await f.p.getByText('Queued', { exact: true }).count(), 1);
+    await f.p.locator('.cm-content-format img').first().waitFor();
+    assert.equal(await f.p.locator('.cm-content-format img').first().getAttribute('loading'), 'lazy');
+    assert.equal(await f.p.locator('.cm-content-format img').first().evaluate(image => getComputedStyle(image).objectFit), 'cover');
+    f.setItems([{ ...running, analysis_stage: 'transcribing' }, queued]);
+    f.setProgress({ ...progress, completed: 8, queued: 11, current_stage: 'transcribing' });
+    await f.p.getByText('8 of 20 analysed').waitFor({ timeout: 7000 });
+    await f.p.getByText('Transcribing speech', { exact: true }).first().waitFor();
+    f.completeAnalysis();
+    await f.p.getByText('Analysed', { exact: true }).first().waitFor({ timeout: 7000 });
+    await f.p.getByRole('heading', { name: 'Analysing your content' }).waitFor({ state: 'detached', timeout: 7000 });
+    assert.equal(await f.p.locator('.cm-content-row-link').count(), 2);
+  } finally { await f.close(); }
+  const broken = await app({ accounts: ['instagram'], items: [content('queued')] });
+  try { await broken.p.getByText('Preview unavailable').waitFor(); }
+  finally { await broken.close(); }
 });
 
 test('Content separates no publishing source from linked but empty, with keyboard navigation', async () => {
@@ -128,7 +162,7 @@ test('Content explains not analyzed, processing and failure without raw errors',
     const f = await app({ accounts: ['instagram'], items: [content(state)] });
     try {
       await f.p.getByRole('heading', { name: title }).waitFor();
-      await f.p.getByText(state === 'failed' ? 'Analysis failed' : state === 'queued' ? 'Processing' : 'Not yet analysed', { exact: true }).waitFor();
+      await f.p.getByText(state === 'failed' ? 'Analysis failed' : state === 'queued' ? 'Queued' : 'Not yet analysed', { exact: true }).waitFor();
       if (state !== 'discovered') {
         const refresh = f.p.getByRole('button', { name: 'Refresh analysis status' });
         await refresh.focus(); await f.p.keyboard.press('Enter');

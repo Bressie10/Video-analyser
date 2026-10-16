@@ -57,6 +57,9 @@ def claim_job(analysis=False):
             "UPDATE meta_jobs SET state='running',attempts=attempts+1,claim=%s,lease_until=now()+interval '2 minutes' WHERE id=%s",
             (claim, job["id"]),
         )
+        if analysis and not job['payload'].get('follow_item'):
+            db.execute('''UPDATE meta_library_items SET analysis_state='processing',
+                analysis_stage=NULL,analysis_error=NULL WHERE id=%s''', (job['item_id'],))
         return {**job, "claim": claim, "attempts": job["attempts"] + 1}
 
 
@@ -102,30 +105,48 @@ def heartbeat(job, done):
             logger.warning("Meta worker heartbeat unavailable.")
 
 
-def item_status(item_id, field, state, error=None):
+def item_status(item_id, field, state, error=None, *, job=None, stage=None):
     # field is selected only by this module, never by a request.
     from psycopg import sql
 
     status_column = "analysis_state" if field == "analysis" else "metrics_state"
     error_column = "analysis_error" if field == "analysis" else "metrics_error"
     with repo.database() as db:
-        db.execute(
-            sql.SQL("UPDATE meta_library_items SET {}=%s,{}=%s WHERE id=%s").format(
-                sql.Identifier(status_column), sql.Identifier(error_column)
-            ),
-            (state, error, item_id),
-        )
+        if field == 'analysis':
+            if job is None:
+                raise ValueError('Analysis progress requires an active claim.')
+            current = db.execute('''SELECT j.id FROM meta_jobs j
+                JOIN meta_connections c ON c.id=j.connection_id
+                WHERE j.id=%s AND j.item_id=%s AND j.claim=%s
+                  AND j.state='running' AND c.status='connected'
+                FOR UPDATE OF j,c''', (job['id'], item_id, job['claim'])).fetchone()
+            if current:
+                db.execute('''UPDATE meta_library_items SET analysis_state=%s,
+                    analysis_stage=%s,analysis_error=%s WHERE id=%s''',
+                    (state, stage, error, item_id))
+        else:
+            db.execute(
+                sql.SQL("UPDATE meta_library_items SET {}=%s,{}=%s WHERE id=%s").format(
+                    sql.Identifier(status_column), sql.Identifier(error_column)
+                ), (state, error, item_id))
+
+
+def analysis_stage(job, stage):
+    item_status(job['item_id'], 'analysis', 'processing', job=job, stage=stage)
 
 
 def analyze(job, client, item):
     if item["video_id"] and item["analysis_version"] == repo.ANALYSIS_VERSION:
+        item_status(item['id'], 'analysis', 'completed', job=job, stage='complete')
         finish(job, "reused")
         return
-    item_status(item["id"], "analysis", "processing")
+    analysis_stage(job, 'downloading')
     with TemporaryDirectory(prefix="meta-video-") as directory:
         source = Path(directory, "source.mp4")
         download(media_url(client, item), source)
-        analysis = analyze_file(source, directory, allow_silent=True)
+        analysis = analyze_file(source, directory, allow_silent=True,
+                                on_stage=lambda stage: analysis_stage(job, stage))
+    analysis_stage(job, 'saving')
     with repo.database() as db:
         # Fence a stale worker and prevent writes following disconnection.
         current = db.execute(
@@ -145,7 +166,7 @@ def analyze(job, client, item):
         )
         db.execute(
             """UPDATE meta_library_items SET video_id=id,analysis_version=%s,
-            analysis_state='completed',analysis_error=NULL WHERE id=%s""",
+            analysis_state='completed',analysis_stage='complete',analysis_error=NULL WHERE id=%s""",
             (repo.ANALYSIS_VERSION, item["id"]),
         )
         db.execute(
@@ -238,6 +259,8 @@ def process_job(job):
         else:
             refresh(job, client, item)
     except meta.MetaNotConnected:
+        if job['kind'] == 'analysis' and job['item_id']:
+            item_status(job['item_id'], 'analysis', 'queued', job=job)
         with repo.database() as db:
             db.execute(
                 "UPDATE meta_connections SET status='reconnect_required' WHERE id=%s AND status='connected'",
@@ -253,7 +276,8 @@ def process_job(job):
         if isinstance(error, MediaUnavailable):
             message = str(error)
         if job["item_id"]:
-            item_status(job["item_id"], job["kind"], "unavailable", message)
+            item_status(job["item_id"], job["kind"], "unavailable", message,
+                        job=job if job['kind'] == 'analysis' else None)
         finish(job, "unavailable", message)
     except (
         VideoProcessingError,
@@ -270,7 +294,8 @@ def process_job(job):
             else "Metrics are unavailable for this item."
         )
         if job["item_id"]:
-            item_status(job["item_id"], job["kind"], state, message)
+            item_status(job["item_id"], job["kind"], state, message,
+                        job=job if job['kind'] == 'analysis' else None)
         finish(job, state, message)
     except Exception:
         # Never log provider response bodies, URLs, tokens, or media text.
@@ -282,7 +307,8 @@ def process_job(job):
         )
         if job["item_id"]:
             item_status(
-                job["item_id"], job["kind"], "queued" if retry else "failed", message
+                job["item_id"], job["kind"], "queued" if retry else "failed", message,
+                job=job if job['kind'] == 'analysis' else None
             )
         finish(
             job,

@@ -370,6 +370,10 @@ class CompanyOwnershipTests(unittest.TestCase):
             record['row']['owner_user_id'] = None
         for record in before['meta_connections']:
             record['row']['owner_user_id'] = None
+        for record in before['meta_sync_runs']:
+            record['row']['company_id'] = None
+        for record in before['meta_library_items']:
+            record['row']['analysis_stage'] = None
         self.assertEqual(self.snapshot(), before)
         for table in ('companies', 'company_accounts', 'company_ad_assignments'):
             self.assertEqual(self.db.execute(sql.SQL('SELECT count(*) AS n FROM {}').format(sql.Identifier(table))).fetchone()['n'], 0)
@@ -394,6 +398,10 @@ class CompanyOwnershipTests(unittest.TestCase):
             record['row']['owner_user_id'] = None
         for record in before['meta_connections']:
             record['row']['owner_user_id'] = None
+        for record in before['meta_sync_runs']:
+            record['row']['company_id'] = None
+        for record in before['meta_library_items']:
+            record['row']['analysis_stage'] = None
         self.assertEqual(self.snapshot(), before)
         self.a = repo.create_company(self.db, self.connection, 'Manual')['id']
         self.link(self.a, self.fb)

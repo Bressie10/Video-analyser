@@ -4,7 +4,7 @@ import { CompanyScopeBoundary, useCompany, useCompanyQuery } from './CompanyProv
 import { Button, Checkbox, Input, Select } from '../ui/controls';
 import { Alert, EmptyState, LoadingState, PageLayout, Panel, SectionHeader } from '../ui/layout';
 import { ContentList } from '../content/ContentList';
-import { analyzeContent, contentError, defaultFilters, loadContent, type ContentFilters, type ContentPage } from '../content/contentApi';
+import { analyzeContent, contentError, defaultFilters, loadContent, platformLabel, publicationDate, stageLabel, type ContentFilters, type ContentPage } from '../content/contentApi';
 import '../content/content.css';
 import { PlanLimitError } from '../billing/billingApi';
 import { useBilling } from '../billing/BillingProvider';
@@ -12,8 +12,8 @@ import { LimitNotice } from '../billing/BillingUI';
 import { navigateSettings } from '../shell/navigation';
 
 export function CompanyContent({ onAnalysisChange }: { onAnalysisChange?: () => void }) { return <CompanyScopeBoundary><Content onAnalysisChange={onAnalysisChange} /></CompanyScopeBoundary>; }
-const activeStates = new Set(['queued', 'pending', 'processing', 'running', 'downloading', 'analyzing']);
-const hasActiveAnalysis = (page: ContentPage) => page.items.some(item => activeStates.has(item.analysis_state));
+const activeStates = new Set(['queued', 'processing']);
+const hasActiveAnalysis = (page: ContentPage) => Boolean(page.analysis_progress) || page.items.some(item => activeStates.has(item.analysis_state));
 function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   const { activeCompany } = useCompany();
   const billing = useBilling();
@@ -22,11 +22,13 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   const [offset, setOffset] = useState(0);
   const [revision, revise] = useState(0);
   const [analyzing, setAnalyzing] = useState<string | null>(null);
+  const [queuedIds, setQueuedIds] = useState<Set<string>>(() => new Set());
   const [actionError, setActionError] = useState('');
   const [limit, setLimit] = useState(false);
   const actionController = useRef<AbortController | null>(null);
   const lastStatuses = useRef(new Map<string, string>());
   useEffect(() => () => actionController.current?.abort(), []);
+  useEffect(() => { setQueuedIds(new Set()); }, [activeCompany?.id]);
   // Coalesce typing; other filters apply immediately and always reset pagination.
   useEffect(() => {
     if (search.trim() === filters.search) return;
@@ -35,13 +37,21 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   }, [search, filters.search]);
   const update = <K extends keyof ContentFilters>(key: K, value: ContentFilters[K]) => { setFilters(current => ({ ...current, [key]: value })); setOffset(0); };
   const invalidDates = Boolean(filters.from && filters.to && filters.from > filters.to);
-  const load = useCallback((company: string, signal: AbortSignal) => invalidDates ? Promise.resolve({ items: [], next_offset: null }) : loadContent(company, signal, filters, offset), [filters, offset, invalidDates]);
+  const load = useCallback((company: string, signal: AbortSignal) => invalidDates ? Promise.resolve({ items: [], next_offset: null, analysis_progress: null }) : loadContent(company, signal, filters, offset), [filters, offset, invalidDates]);
   const result = useCompanyQuery(`content:${revision}`, load, hasActiveAnalysis);
   const filtered = Boolean(filters.search || filters.platform || filters.type || filters.analyzed || filters.from || filters.to);
   const publishingLinked = activeCompany?.accounts.some(account => account.platform === 'instagram' || account.platform === 'facebook') ?? false;
-  const allItems = result.data?.items ?? [];
+  const allItems = result.data?.items.map(item => queuedIds.has(item.library_item_id)
+    ? { ...item, analysis_state: 'queued', analysis_stage: null } : item) ?? [];
   useEffect(() => {
     if (!result.data) return;
+    setQueuedIds(current => {
+      const next = new Set(current);
+      for (const item of result.data!.items) {
+        if (!['discovered', 'deferred', 'failed'].includes(item.analysis_state)) next.delete(item.library_item_id);
+      }
+      return next.size === current.size ? current : next;
+    });
     const previous = lastStatuses.current;
     const next = new Map(result.data.items.map(item => [item.library_item_id, `${item.analysis_state}:${item.analyzed}`]));
     const changed = [...next].some(([id, state]) => previous.has(id) && previous.get(id) !== state);
@@ -55,7 +65,10 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
     setAnalyzing(id); setActionError(''); setLimit(false);
     try {
       await analyzeContent(activeCompany.id, id, controller.signal);
-      if (!controller.signal.aborted) revise(v => v + 1);
+      if (!controller.signal.aborted) {
+        setQueuedIds(current => new Set(current).add(id));
+        revise(v => v + 1);
+      }
     } catch (error) {
       if (!controller.signal.aborted) { if (error instanceof PlanLimitError && error.code === 'analysis_limit_reached') { setLimit(true); billing.refresh(); } else setActionError('Analysis could not be started. Try again or check your access in Settings.'); }
     } finally {
@@ -71,6 +84,15 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   return <PageLayout className="cm-library" role="region" aria-label="Company content library">
     <SectionHeader title="Content library" description="Browse the content linked to this company. Analysed videos can inform your next idea."
       actions={<a className="cm-feature-link" href="#generate">Generate idea <ArrowRight size={16} aria-hidden="true" /></a>} />
+    {result.data?.analysis_progress && <section className="cm-analysis-progress" aria-label="Initial analysis progress" aria-live="polite">
+      <h2>Analysing your content</h2>
+      <p>{result.data.analysis_progress.completed} of {result.data.analysis_progress.total} analysed</p>
+      <progress max={result.data.analysis_progress.total} value={result.data.analysis_progress.completed} />
+      <p>Analysed {result.data.analysis_progress.completed} · Processing {result.data.analysis_progress.processing} · Queued {result.data.analysis_progress.queued}
+        {result.data.analysis_progress.unavailable > 0 && <> · Unavailable {result.data.analysis_progress.unavailable}</>}
+        {result.data.analysis_progress.failed > 0 && <> · Failed {result.data.analysis_progress.failed}</>}</p>
+      {result.data.analysis_progress.current_item_id && <p>Current: {stageLabel(result.data.analysis_progress.current_stage)} — {platformLabel(result.data.analysis_progress.current_platform || '')} {result.data.analysis_progress.current_type || 'video'} · {publicationDate(result.data.analysis_progress.current_published_at)}</p>}
+    </section>}
     <Panel className="cm-content-filters">
       <div className="cm-content-filter-main">
         <label className="cm-content-search">Search content<Input type="search" maxLength={200} value={search} placeholder="Search by title" onChange={e => setSearch(e.target.value)} /></label>
@@ -100,7 +122,7 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
           {(processing || failed) && <Button onClick={() => revise(v => v + 1)}>Refresh analysis status</Button>}
         </div>}
         <div className="cm-content-results"><p role="status">Showing {offset + 1}–{offset + result.data.items.length}{filtered ? ' matching items' : ' items'}</p><span>Published date · Analysis status</span></div>
-        <ContentList items={result.data.items} onAnalyze={activeCompany?.role === 'owner' ? id => { void startAnalysis(id); } : undefined} analyzing={analyzing} />
+        <ContentList items={allItems} companyId={activeCompany?.id} onAnalyze={activeCompany?.role === 'owner' ? id => { void startAnalysis(id); } : undefined} analyzing={analyzing} />
         <nav className="cm-content-pagination" aria-label="Content pagination"><Button disabled={!offset} onClick={() => setOffset(Math.max(0, offset - 20))}>Previous content</Button><span>Page {Math.floor(offset / 20) + 1}</span><Button disabled={result.data.next_offset === null} onClick={() => setOffset(result.data!.next_offset!)}>Next content</Button></nav>
       </> : <EmptyState title={filtered ? 'No matching content' : !publishingLinked ? 'Connect your content source' : 'No content here yet'} icon={filtered ? <Search size={28} /> : <Library size={28} />}
         action={filtered ? <Button onClick={reset}>Clear filters</Button> : <a className="cm-feature-link cm-feature-link--primary" href="/settings/connections">{publishingLinked ? 'Review linked accounts' : 'Go to Settings'} <ArrowRight size={16} aria-hidden="true" /></a>}>
