@@ -79,10 +79,18 @@ def detail(db, user, company_id, creative_ref):
             # OCR coordinates belong to the normalized processing copy; the
             # provider source may have different dimensions. Never overlay.
             ocr.append({'appearance_seconds': start, 'disappearance_seconds': end, 'text': row['text']})
+    motion = []
+    for row in analysis.get('motion_events') or []:
+        start, end = _seconds(row.get('start_seconds')), _seconds(row.get('end_seconds'))
+        confidence = _seconds(row.get('confidence'))
+        if (start is not None and end is not None and end >= start
+                and isinstance(row.get('type'), str)):
+            motion.append({'start_seconds': start, 'end_seconds': end,
+                           'type': row['type'], 'confidence': confidence if confidence is not None and confidence <= 1 else None})
     connected = asset['status'] == 'connected' and asset['expires_at'] > library.now()
     return {'creative_ref': str(creative_ref), 'label': label or 'Analyzed creative',
             'duration_seconds': duration,
             'resolution': {'width': video.get('resolution', {}).get('width'),
                            'height': video.get('resolution', {}).get('height')},
-            'scenes': scenes, 'transcript': transcript, 'ocr': ocr,
+            'scenes': scenes, 'transcript': transcript, 'ocr': ocr, 'motion': motion,
             'media': {'state': 'resolution_required' if connected else 'unavailable'}}

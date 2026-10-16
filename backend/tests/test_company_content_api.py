@@ -2,6 +2,7 @@
 import json
 import os
 import unittest
+from unittest.mock import patch
 from uuid import uuid4
 
 from app import company_ownership_repository as ownership
@@ -36,6 +37,63 @@ class CompanyContentAPITests(unittest.TestCase):
         self.f.link(self.f.b, self.f.ig)
         self.assertEqual(self.ids(), {str(self.f.organic)})
         self.assertEqual(self.ids(self.f.b), {str(self.f.instagram)})
+
+    def test_organic_deep_dive_projection_and_scope(self):
+        self.f.link(self.f.a, self.f.fb)
+        video = self.analyzed(self.f.organic)
+        self.f.db.execute("INSERT INTO scenes(video_id,scene_number,start_seconds,end_seconds,duration_seconds) VALUES (%s,1,0,5,5)", (video,))
+        self.f.db.execute("INSERT INTO transcript_segments(video_id,segment_index,start_seconds,end_seconds,text) VALUES (%s,0,0.2,1.2,'Hello')", (video,))
+        self.f.db.execute("INSERT INTO on_screen_text(video_id,detection_index,text,bounding_box,confidence,appearance_timestamp_seconds,disappearance_timestamp_seconds) VALUES (%s,0,'Offer','{}',0.9,0.4,1.4)", (video,))
+        self.f.db.execute("INSERT INTO motion_events(video_id,event_index,start_seconds,end_seconds,type,confidence) VALUES (%s,0,0.5,2,'camera_pan',0.8)", (video,))
+        self.f.db.execute('INSERT INTO meta_library_performance(item_id,snapshot) VALUES (%s,%s) ON CONFLICT (item_id) DO UPDATE SET snapshot=EXCLUDED.snapshot',
+                          (self.f.organic, json.dumps({'performance_source': 'facebook', 'performance_metrics':
+                            {'view_count': 12, 'like_count': None, 'reach': 20, 'provider_url': 'SECRET'}})))
+        path = f'/api/companies/{self.f.a}/content/{self.f.organic}/analysis'
+        payload = self.request('GET', path, 200)
+        self.assertEqual(payload['item']['id'], str(self.f.organic))
+        self.assertEqual(payload['scenes'][0]['scene_number'], 1)
+        self.assertEqual(payload['transcript'][0]['text'], 'Hello')
+        self.assertEqual(payload['ocr'][0]['text'], 'Offer')
+        self.assertEqual(payload['motion'][0]['type'], 'camera_pan')
+        self.assertEqual(payload['performance'], {'view_count': 12, 'reach': 20})
+        self.assertNotIn('SECRET', json.dumps(payload))
+        self.request('GET', f'/api/companies/{self.f.a}/content/{self.f.instagram}/analysis', 404)
+        self.request('GET', f'/api/companies/{self.f.foreign_company}/content/{self.f.organic}/analysis', 403)
+        self.f.db.execute("UPDATE meta_library_items SET analysis_state='processing' WHERE id=%s", (self.f.organic,))
+        self.request('GET', path, 404)
+
+    def test_content_media_authorization_and_ranges(self):
+        self.f.link(self.f.a, self.f.fb)
+        self.analyzed(self.f.organic)
+        base = f'/api/companies/{self.f.a}/content/{self.f.organic}'
+        self.f.db.execute("UPDATE meta_connections SET status='disconnected' WHERE id=%s", (self.f.connection,))
+        self.request('POST', base + '/media-access', 503)
+        self.request('POST', f'/api/companies/{self.f.foreign_company}/content/{self.f.organic}/media-access', 403)
+        self.request('POST', f'/api/companies/{self.f.a}/content/{self.f.instagram}/media-access', 404)
+        self.f.db.execute("UPDATE meta_connections SET status='connected',expires_at=now()+interval '1 day' WHERE id=%s", (self.f.connection,))
+        response = self.client.post(base + '/media-access')
+        self.assertEqual(response.status_code, 200)
+        self.assertIn('HttpOnly', response.headers['set-cookie'])
+        self.assertIn(base + '/media', response.headers['set-cookie'])
+        with patch('app.content_analysis_routes.get_token_verifier', return_value=self.auth.verifier):
+            invalid_range = self.client.get(base + '/media', headers={'Range': 'bytes=bad'})
+        self.assertEqual(invalid_range.status_code, 416, invalid_range.text)
+        with patch('app.content_analysis_routes.get_token_verifier', return_value=self.auth.verifier), \
+             patch('app.content_analysis_routes.media_url', return_value='https://video.xx.fbcdn.net/movie'), \
+             patch('app.content_analysis_routes._open_media') as opened, \
+             patch('app.content_analysis_routes.library.connection_client'):
+            class Upstream:
+                status_code = 206
+                def iter_raw(self, _): yield b'0123456789'
+                def close(self): pass
+            opened.return_value = (unittest.mock.Mock(), Upstream(), {'Content-Type': 'video/mp4', 'Content-Range': 'bytes 0-9/100'})
+            streamed = self.client.get(base + '/media', headers={'Range': 'bytes=0-9'})
+            self.assertEqual(streamed.status_code, 206)
+            self.assertEqual(streamed.content, b'0123456789')
+            opened.assert_called_once_with('https://video.xx.fbcdn.net/movie', 'bytes=0-9')
+        self.f.db.execute('DELETE FROM company_accounts WHERE company_id=%s AND account_id=%s', (self.f.a, self.f.fb))
+        with patch('app.content_analysis_routes.get_token_verifier', return_value=self.auth.verifier):
+            self.assertEqual(self.client.get(base + '/media', headers={'Range': 'bytes=10-19'}).status_code, 404)
 
     def test_analysis_batch_uses_company_scope_and_owner_permissions(self):
         self.f.link(self.f.a, self.f.fb)

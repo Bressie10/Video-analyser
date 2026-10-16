@@ -8,3 +8,6 @@
 @media(max-width:700px){.ca-main-grid{width:100%;max-width:100%;min-width:0}.ca-timeline{max-width:100%;overflow:hidden}.ca-lanes{overflow-x:auto;overscroll-behavior-inline:contain}}
 @media(max-width:700px){.ca-lane-track{min-height:54px}.ca-event{top:5px;height:44px;min-width:44px}}
 .ca-lane-track.is-unscaled{display:flex;align-items:center;gap:5px;overflow-x:auto;padding:5px}.ca-lane-track.is-unscaled .ca-event{position:static;width:auto;flex:none}
+.ca-motion{background:#dcead6;color:#365f35}
+.ca-performance-metrics{display:flex;justify-content:flex-start;flex-wrap:wrap;gap:12px 28px}
+.ca-performance-metrics>div{display:grid;gap:3px;min-width:75px}

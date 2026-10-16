@@ -74,14 +74,18 @@ class CreativeBoundaryTests(TestCase):
                              'scenes': [{'scene_number': 1, 'start_seconds': 0, 'end_seconds': 12, 'raw': 'SECRET'}],
                              'on_screen_text': [{'text': 'Offer', 'appearance_timestamp_seconds': .4,
                              'disappearance_timestamp_seconds': 1.2, 'bounding_box': [[0, 0], [100, 100]],
-                             'provider_url': 'SECRET'}], 'motion_events': [{'type': 'SECRET'}]}
+                             'provider_url': 'SECRET'}], 'motion_events': [{'type': 'SECRET'},
+                             {'type': 'camera_pan', 'start_seconds': .5, 'end_seconds': 1.5, 'confidence': .8,
+                              'private': 'SECRET'}]}
         result = subject.detail(object(), object(), self.company, self.creative)
         self.assertEqual(result['media'], {'state': 'unavailable'})
         self.assertEqual(result['transcript'][0]['text'], 'Hello')
         self.assertEqual(result['ocr'][0]['text'], 'Offer')
+        self.assertEqual(result['motion'], [{'start_seconds': .5, 'end_seconds': 1.5,
+                                           'type': 'camera_pan', 'confidence': .8}])
         self.assertNotIn('SECRET', str(result))
         self.assertNotIn('bounding_box', str(result))
-        self.assertEqual(set(result), {'creative_ref', 'label', 'duration_seconds', 'resolution', 'scenes', 'transcript', 'ocr', 'media'})
+        self.assertEqual(set(result), {'creative_ref', 'label', 'duration_seconds', 'resolution', 'scenes', 'transcript', 'ocr', 'motion', 'media'})
 
     @patch.object(subject, 'read_analysis', return_value=None)
     @patch.object(subject, 'authorized_asset')

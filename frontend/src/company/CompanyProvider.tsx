@@ -41,7 +41,7 @@ export function CompanyScopeBoundary({ children, fallback = null }: { children: 
 }
 export type CompanyQuery<T> = { status: "idle" | "loading" | "success" | "error"; data: T | undefined; error: unknown };
 /** Memoize load with useCallback. Changing it refetches; include filters in queryKey. */
-export function useCompanyQuery<T>(queryKey: string, load: (companyId: string, signal: AbortSignal) => Promise<T>): CompanyQuery<T> {
+export function useCompanyQuery<T>(queryKey: string, load: (companyId: string, signal: AbortSignal) => Promise<T>, pollWhile?: (data: T) => boolean): CompanyQuery<T> {
   const store = useCompanyStore();
   const { status, activeCompanyId, scopeVersion } = useCompany();
   const [result, setResult] = useState<{ version: number; key: string; load: typeof load; value: CompanyQuery<T> }>();
@@ -51,20 +51,31 @@ export function useCompanyQuery<T>(queryKey: string, load: (companyId: string, s
     const request = ++sequence.current;
     if (!scope) return;
     const controller = new AbortController();
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    let previous: T | undefined;
     const signal = AbortSignal.any([scope.signal, controller.signal]);
     const current = () => !signal.aborted && scope.isCurrent() && sequence.current === request;
     const commit = (value: CompanyQuery<T>) => { if (current()) setResult({ version: scope.version, key: queryKey, load, value }); };
     commit({ status: "loading", data: undefined, error: null });
-    void Promise.resolve().then(() => {
+    const refresh = () => {
       if (!current()) return;
-      return load(scope.companyId, signal).then((data) => commit({ status: "success", data, error: null }));
-    }).catch((error: unknown) => {
-      if (!current()) return;
-      commit({ status: "error", data: undefined, error });
-      void store.handleScopeError(scope, error);
-    });
-    return () => controller.abort();
-  }, [store, status, activeCompanyId, scopeVersion, queryKey, load]);
+      void load(scope.companyId, signal).then((data) => {
+        if (!current()) return;
+        previous = data;
+        commit({ status: "success", data, error: null });
+        if (pollWhile?.(data)) timer = setTimeout(refresh, 2500);
+      }).catch((error: unknown) => {
+        if (!current()) return;
+        if (previous !== undefined) {
+          // A failed background refresh must not hide the last visible page.
+          if (pollWhile?.(previous)) timer = setTimeout(refresh, 2500);
+        } else commit({ status: "error", data: undefined, error });
+        void store.handleScopeError(scope, error);
+      });
+    };
+    queueMicrotask(refresh);
+    return () => { if (timer) clearTimeout(timer); controller.abort(); };
+  }, [store, status, activeCompanyId, scopeVersion, queryKey, load, pollWhile]);
   // Render-time guard closes the interval before effect cleanup on a switch.
   if (status !== "ready" || !activeCompanyId) return { status: "idle", data: undefined, error: null };
   return result?.version === scopeVersion && result.key === queryKey && result.load === load

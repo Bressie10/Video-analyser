@@ -16,7 +16,8 @@ const detail = { creative_ref: ref, label: 'Offer video', duration_seconds: 4,
   resolution: { width: 320, height: 180 }, media: { state: 'resolution_required' },
   scenes: [{ scene_number: 1, start_seconds: 0, end_seconds: 2 }, { scene_number: 2, start_seconds: 2, end_seconds: 4 }],
   ocr: [{ appearance_seconds: .4, disappearance_seconds: 1.2, text: 'Limited offer' }],
-  transcript: [{ start_seconds: .2, end_seconds: 1.1, text: 'Today only' }] };
+  transcript: [{ start_seconds: .2, end_seconds: 1.1, text: 'Today only' }],
+  motion: [{ start_seconds: .6, end_seconds: 1.4, type: 'camera_pan', confidence: .8 }] };
 const citation = { video_ref: 'video_A', evidence_ref: 'video_A:transcript:0', evidence_type: 'transcript', timestamp_seconds: .8, excerpt: 'Today only' };
 const groups = { higher: [2.1, 1.9, 1.8].map((value, i) => ({ video_ref: `video_${'ABC'[i]}`, creative_ref: i === 0 ? ref : `00000000-0000-4000-8000-00000000000${i + 3}`, metric_value: String(value), percentile: null })),
   lower: [1, .8, .6].map((value, i) => ({ video_ref: `video_${'DEF'[i]}`, creative_ref: `00000000-0000-4000-8000-00000000000${i + 6}`, metric_value: String(value), percentile: null })), middle_excluded_count: 0 };
@@ -35,7 +36,7 @@ before(async () => {
 });
 after(async () => { await browser?.close(); await server?.close(); });
 
-async function app({ width = 1440, data = detail, fromComparison = false, grantStatus = 200, comparisonResult = comparison } = {}) {
+async function app({ width = 1440, data = detail, fromComparison = false, fromContent = false, grantStatus = 200, comparisonResult = comparison } = {}) {
   const context = await browser.newContext({ viewport: { width, height: 900 } });
   const calls = { intelligence: 0, media: 0 }; const errors = [];
   await context.addInitScript(id => localStorage.setItem('video-analyzer.active-company-id', id), company);
@@ -54,17 +55,18 @@ async function app({ width = 1440, data = detail, fromComparison = false, grantS
       accounts: [{ account_id: account, display_name: 'Owned Ads', platform: 'meta_ads' }] }] } });
     if (path === '/api/meta/test') return route.fulfill({ json: { connected: false } });
     if (path === '/api/me/companies') return route.fulfill({ json: { companies: [{ id: company, archived_at: null }] } });
+    if (path.endsWith('/content')) return route.fulfill({ json: { items: [{ library_item_id: ref, display_title: 'Instagram reel', platform: 'instagram', content_type: 'reel', published_at: '2026-01-01T00:00:00Z', analysis_state: 'completed', analyzed: true, summary: { duration_seconds: 4, width: 320, height: 180 } }, { library_item_id: account, display_title: 'Unanalysed reel', platform: 'instagram', content_type: 'reel', published_at: null, analysis_state: 'discovered', analyzed: false, summary: null }], next_offset: null } });
     return route.fulfill({ json: { items: [], next_offset: null, accounts: [] } });
   });
   const page = await context.newPage(); page.on('pageerror', error => errors.push(error.message));
-  await page.goto(`${origin}#${fromComparison ? 'intelligence' : `creative/${ref}`}`);
+  await page.goto(`${origin}#${fromComparison ? 'intelligence' : fromContent ? 'content' : `creative/${ref}`}`);
   return { page, calls, errors, close: () => context.close() };
 }
 
 test('stored evidence, keyboard seeking, synchronization and no-signal lane', async () => {
   const f = await app(); try {
     await f.page.getByRole('heading', { name: 'Offer video' }).waitFor();
-    assert.equal(await f.page.locator('.ca-lane').count(), 4);
+    assert.equal(await f.page.locator('.ca-lane').count(), 5);
     assert.equal(await f.page.getByText('No validated signals for this view').count(), 1);
     await f.page.waitForFunction(() => document.querySelector('video')?.readyState >= 1);
     const text = f.page.getByRole('button', { name: /TEXT Limited offer at/ });
@@ -75,9 +77,52 @@ test('stored evidence, keyboard seeking, synchronization and no-signal lane', as
     await f.page.locator('video').evaluate(video => { video.currentTime = 2.3; video.dispatchEvent(new Event('timeupdate')); });
     await f.page.getByRole('button', { name: /SCENES Scene 2 at/ }).focus(); await f.page.keyboard.press('Space');
     await f.page.getByRole('button', { name: 'Pin this moment' }).waitFor();
-    assert.equal(await f.page.locator('.ca-lane .ca-event').count(), 4);
+    assert.equal(await f.page.locator('.ca-lane .ca-event').count(), 5);
+    assert.equal(await f.page.getByRole('button', { name: /MOTION Camera pan at/ }).count(), 1);
     assert.equal(await f.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true,
       JSON.stringify(await f.page.evaluate(() => ['.app-main', '.ca-page', '.ca-main-grid', '.ca-timeline'].map(sel => { const r = document.querySelector(sel)?.getBoundingClientRect(); return [sel, r?.left, r?.width, r?.right]; }))));
+    assert.deepEqual(f.errors, []);
+  } finally { await f.close(); }
+});
+
+test('first timeline selection captures a decoded frame, clears it on the next selection, and captures motion', async () => {
+  const f = await app({ data: { ...detail, resolution: { width: 999, height: 999 } } }); try {
+    await f.page.waitForFunction(() => document.querySelector('video')?.readyState >= 2);
+    await f.page.getByRole('button', { name: /TEXT Limited offer at/ }).click();
+    await f.page.locator('.ca-rail figure img').waitFor();
+    assert.equal(await f.page.locator('.ca-timestamp').innerText(), '00:00.4');
+    assert.equal(await f.page.locator('.ca-rail figure img').evaluate(img => [img.naturalWidth, img.naturalHeight].join('x')), '320x180');
+    const cleared = await f.page.evaluate(async () => {
+      document.querySelector('.ca-motion').click();
+      await Promise.resolve();
+      return { time: document.querySelector('.ca-timestamp')?.textContent, frame: Boolean(document.querySelector('.ca-rail figure img')) };
+    });
+    assert.deepEqual(cleared, { time: '00:00.6', frame: false });
+    await f.page.locator('.ca-rail figure img').waitFor();
+    assert.equal(await f.page.locator('video').evaluate(video => Math.abs(video.currentTime - .6) < .075), true);
+    assert.deepEqual(f.errors, []);
+  } finally { await f.close(); }
+});
+
+test('an event at the duration seeks to a decodable final frame', async () => {
+  const f = await app({ data: { ...detail, scenes: [...detail.scenes, { scene_number: 3, start_seconds: 4, end_seconds: 4 }] } }); try {
+    await f.page.waitForFunction(() => document.querySelector('video')?.readyState >= 2);
+    await f.page.getByRole('button', { name: /SCENES Scene 3 at/ }).click();
+    await f.page.locator('.ca-rail figure img').waitFor();
+    assert.equal(await f.page.locator('.ca-timestamp').innerText(), '00:04.0');
+    assert.equal(await f.page.locator('video').evaluate(video => video.currentTime < video.duration), true);
+    assert.deepEqual(f.errors, []);
+  } finally { await f.close(); }
+});
+
+test('canvas capture failure leaves timeline and evidence usable', async () => {
+  const f = await app(); try {
+    await f.page.waitForFunction(() => document.querySelector('video')?.readyState >= 2);
+    await f.page.evaluate(() => { HTMLCanvasElement.prototype.toDataURL = () => { throw Error('canvas unavailable'); }; });
+    await f.page.getByRole('button', { name: /MOTION Camera pan at/ }).click();
+    await f.page.getByRole('button', { name: 'Pin this moment' }).waitFor();
+    assert.equal(await f.page.locator('.ca-rail figure img').count(), 0);
+    assert.equal(await f.page.locator('.ca-timestamp').innerText(), '00:00.6');
     assert.deepEqual(f.errors, []);
   } finally { await f.close(); }
 });
@@ -116,7 +161,7 @@ test('evidence inspector opens the specifically selected citation when a creativ
 test('mobile evidence sheet and unavailable media retain timeline', async () => {
   const f = await app({ width: 390, data: { ...detail, media: { state: 'unavailable' }, transcript: [], ocr: [] } }); try {
     await f.page.getByText('Video currently unavailable').waitFor();
-    assert.equal(await f.page.locator('.ca-lane').count(), 4);
+    assert.equal(await f.page.locator('.ca-lane').count(), 5);
     await f.page.getByRole('button', { name: /SCENES Scene 2 at/ }).click();
     await f.page.getByRole('dialog', { name: 'Focused evidence' }).waitFor();
     await f.page.getByRole('button', { name: 'Close focused evidence' }).click();
@@ -142,9 +187,48 @@ test('media access failure leaves stored evidence visible without leaking provid
 test('unknown stored duration shows timed events without a fabricated full clip scale', async () => {
   const f = await app({ data: { ...detail, duration_seconds: null, media: { state: 'unavailable' } } }); try {
     await f.page.getByText('Duration unavailable · timed event list').waitFor();
-    assert.equal(await f.page.locator('.ca-lane-track.is-unscaled').count(), 4);
+    assert.equal(await f.page.locator('.ca-lane-track.is-unscaled').count(), 5);
     assert.equal(await f.page.locator('.ca-playhead').count(), 0);
     await f.page.getByRole('button', { name: /SPEECH Today only at/ }).click();
     await f.page.getByRole('button', { name: 'Pin this moment' }).waitFor();
+  } finally { await f.close(); }
+});
+
+test('analysed organic row opens content analysis with stored lanes, metrics, seeking and return', async () => {
+  const organic = { ...detail, item: { id: ref, platform: 'instagram', content_type: 'reel', published_at: '2026-01-01T00:00:00Z', display_title: 'Instagram reel', analysis_state: 'completed' },
+    motion: [{ start_seconds: 0.6, end_seconds: 1.5, type: 'camera_pan', confidence: .8 }],
+    performance: { view_count: 27, reach: 19 } };
+  const f = await app({ fromContent: true, data: organic }); try {
+    const row = f.page.locator('.cm-content-row.is-inspectable');
+    await row.waitFor();
+    assert.equal(await f.page.getByRole('link', { name: /Open analysis for Unanalysed reel/ }).count(), 0);
+    await f.page.getByRole('button', { name: 'Analyze', exact: true }).click();
+    assert.equal(new URL(f.page.url()).hash, '#content');
+    await f.page.getByRole('link', { name: /Open analysis for Instagram reel/ }).focus();
+    await f.page.keyboard.press('Enter');
+    await f.page.getByRole('heading', { name: 'Instagram reel' }).waitFor();
+    await f.page.waitForFunction(() => document.querySelector('video')?.readyState >= 1);
+    await f.page.screenshot({ path: join(tmpdir(), 'cm-content-analysis-desktop.png') });
+    assert.equal(new URL(f.page.url()).hash, `#content/${ref}`);
+    assert.equal(await f.page.locator('.ca-lane').count(), 4);
+    assert.equal(await f.page.getByRole('button', { name: /SCENES Scene 2 at/ }).count(), 1);
+    assert.equal(await f.page.getByRole('button', { name: /TEXT Limited offer at/ }).count(), 1);
+    assert.equal(await f.page.getByRole('button', { name: /SPEECH Today only at/ }).count(), 1);
+    assert.equal(await f.page.getByText('Likes / reactions').count(), 0);
+    await f.page.getByText('Views').waitFor();
+    await f.page.getByRole('button', { name: /MOTION Camera pan at/ }).click();
+    await f.page.getByText('00:00.6', { exact: true }).first().waitFor();
+    await f.page.getByText(/Full transcript/).click();
+    await f.page.getByText(/OCR text/).click();
+    await f.page.getByText(/Motion events/).click();
+    assert.equal(await f.page.locator('.ca-disclosures details').count(), 4);
+    await f.page.setViewportSize({ width: 390, height: 844 });
+    assert.equal(await f.page.evaluate(() => document.documentElement.scrollWidth <= innerWidth), true);
+    await f.page.evaluate(() => window.scrollTo(0, 0));
+    await f.page.screenshot({ path: join(tmpdir(), 'cm-content-analysis-mobile.png') });
+    await f.page.getByRole('link', { name: /Back to Content/ }).click();
+    await f.page.getByRole('heading', { name: 'Content library' }).waitFor();
+    assert.equal(new URL(f.page.url()).hash, '#content');
+    assert.deepEqual(f.errors, []);
   } finally { await f.close(); }
 });

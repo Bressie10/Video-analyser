@@ -4,7 +4,7 @@ import { CompanyScopeBoundary, useCompany, useCompanyQuery } from './CompanyProv
 import { Button, Checkbox, Input, Select } from '../ui/controls';
 import { Alert, EmptyState, LoadingState, PageLayout, Panel, SectionHeader } from '../ui/layout';
 import { ContentList } from '../content/ContentList';
-import { analyzeContent, contentError, defaultFilters, loadContent, type ContentFilters } from '../content/contentApi';
+import { analyzeContent, contentError, defaultFilters, loadContent, type ContentFilters, type ContentPage } from '../content/contentApi';
 import '../content/content.css';
 import { PlanLimitError } from '../billing/billingApi';
 import { useBilling } from '../billing/BillingProvider';
@@ -12,6 +12,8 @@ import { LimitNotice } from '../billing/BillingUI';
 import { navigateSettings } from '../shell/navigation';
 
 export function CompanyContent({ onAnalysisChange }: { onAnalysisChange?: () => void }) { return <CompanyScopeBoundary><Content onAnalysisChange={onAnalysisChange} /></CompanyScopeBoundary>; }
+const activeStates = new Set(['queued', 'pending', 'processing', 'running', 'downloading', 'analyzing']);
+const hasActiveAnalysis = (page: ContentPage) => page.items.some(item => activeStates.has(item.analysis_state));
 function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   const { activeCompany } = useCompany();
   const billing = useBilling();
@@ -23,7 +25,7 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   const [actionError, setActionError] = useState('');
   const [limit, setLimit] = useState(false);
   const actionController = useRef<AbortController | null>(null);
-  const lastStatuses = useRef('');
+  const lastStatuses = useRef(new Map<string, string>());
   useEffect(() => () => actionController.current?.abort(), []);
   // Coalesce typing; other filters apply immediately and always reset pagination.
   useEffect(() => {
@@ -34,16 +36,18 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   const update = <K extends keyof ContentFilters>(key: K, value: ContentFilters[K]) => { setFilters(current => ({ ...current, [key]: value })); setOffset(0); };
   const invalidDates = Boolean(filters.from && filters.to && filters.from > filters.to);
   const load = useCallback((company: string, signal: AbortSignal) => invalidDates ? Promise.resolve({ items: [], next_offset: null }) : loadContent(company, signal, filters, offset), [filters, offset, invalidDates]);
-  const result = useCompanyQuery(`content:${revision}`, load);
+  const result = useCompanyQuery(`content:${revision}`, load, hasActiveAnalysis);
   const filtered = Boolean(filters.search || filters.platform || filters.type || filters.analyzed || filters.from || filters.to);
   const publishingLinked = activeCompany?.accounts.some(account => account.platform === 'instagram' || account.platform === 'facebook') ?? false;
   const allItems = result.data?.items ?? [];
-  const statuses = result.data?.items.map(item => `${item.library_item_id}:${item.analysis_state}:${item.analyzed}`).join('|') ?? '';
   useEffect(() => {
-    if (!result.data || statuses === lastStatuses.current) return;
-    lastStatuses.current = statuses;
-    onAnalysisChange?.();
-  }, [result.data, statuses, onAnalysisChange]);
+    if (!result.data) return;
+    const previous = lastStatuses.current;
+    const next = new Map(result.data.items.map(item => [item.library_item_id, `${item.analysis_state}:${item.analyzed}`]));
+    const changed = [...next].some(([id, state]) => previous.has(id) && previous.get(id) !== state);
+    lastStatuses.current = next;
+    if (changed) onAnalysisChange?.();
+  }, [result.data, onAnalysisChange]);
   const startAnalysis = async (id: string) => {
     if (!activeCompany || analyzing) return;
     const controller = new AbortController();
@@ -51,7 +55,7 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
     setAnalyzing(id); setActionError(''); setLimit(false);
     try {
       await analyzeContent(activeCompany.id, id, controller.signal);
-      if (!controller.signal.aborted) { revise(v => v + 1); onAnalysisChange?.(); }
+      if (!controller.signal.aborted) revise(v => v + 1);
     } catch (error) {
       if (!controller.signal.aborted) { if (error instanceof PlanLimitError && error.code === 'analysis_limit_reached') { setLimit(true); billing.refresh(); } else setActionError('Analysis could not be started. Try again or check your access in Settings.'); }
     } finally {
@@ -60,7 +64,7 @@ function Content({ onAnalysisChange }: { onAnalysisChange?: () => void }) {
   };
   const completeUnfilteredPage = !filtered && offset === 0 && result.data?.next_offset === null;
   const noAnalysis = completeUnfilteredPage && allItems.length > 0 && allItems.every(item => !item.analyzed);
-  const processing = allItems.some(item => ['queued', 'pending', 'processing', 'running', 'downloading', 'analyzing'].includes(item.analysis_state));
+  const processing = allItems.some(item => activeStates.has(item.analysis_state));
   const failed = allItems.some(item => item.analysis_state === 'failed');
   const quotaReached = billing.state.data && billing.state.data.usage.analyses >= billing.state.data.entitlements.analysis_limit;
   const reset = () => { setSearch(''); setFilters(defaultFilters); setOffset(0); };

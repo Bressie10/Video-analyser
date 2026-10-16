@@ -14,12 +14,13 @@ import { ProfileRefresh } from './company/ProfileRefresh';
 import { IdeasPage } from './ideas/IdeasPage';
 import { IntelligencePage } from './intelligence/IntelligencePage';
 import { CreativeAnalysisPage } from './creativeAnalysis/CreativeAnalysisPage';
+import { ContentAnalysisPage } from './content/ContentAnalysisPage';
 
 import { PrivacyPage } from './pages/PrivacyPage';
 import { TermsPage } from './pages/TermsPage';
 import { DataDeletionPage } from './pages/DataDeletionPage';
 import { AppShell } from './shell/AppShell';
-import { navigate, navigateSettings, settingsSections, useAppPage, useCreativeRef } from './shell/navigation';
+import { navigate, navigateSettings, settingsSections, useAppPage, useCreativeRef, useContentItemId } from './shell/navigation';
 import { WorkspaceOverview } from './shell/WorkspaceOverview';
 import { OnboardingProvider, useOnboarding } from './onboarding/OnboardingProvider';
 import { OnboardingScreen } from './onboarding/OnboardingScreen';
@@ -34,6 +35,7 @@ function OnboardingMount() {
 export function App() {
   const page = useAppPage();
   const creativeRef = useCreativeRef();
+  const contentItemId = useContentItemId();
   useEffect(() => {
     const followSettingsLink = (event: MouseEvent) => {
       if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
@@ -49,8 +51,8 @@ export function App() {
     document.addEventListener('click', followSettingsLink);
     return () => document.removeEventListener('click', followSettingsLink);
   }, []);
-  const previousWorkflow = useRef<Exclude<typeof page, 'settings'>>('overview');
-  if (page !== 'settings') previousWorkflow.current = page;
+  const previousWorkflow = useRef<{ page: Exclude<typeof page, 'settings'>; itemId?: string }>({ page: 'overview' });
+  if (page !== 'settings') previousWorkflow.current = { page, itemId: contentItemId ?? creativeRef ?? undefined };
   const [connected, setConnected] = useState(false);
   const [metaStatus, setMetaStatus] = useState<MetaConnectionStatus>('checking');
   const [historyRevision, refreshHistory] = useState(0);
@@ -70,7 +72,7 @@ export function App() {
   const model = useCompanyUI(connected, () => connect.current());
   return <CompanyShell companyUI={model} allowUnlinkedWorkspace showOnboarding={page === 'overview' && onboarding.mode === 'normal'}
     onCompanyCreated={id => { if (onboarding.mode === 'guided') void onboarding.selectCompany(id); else void onboarding.refresh(); billing.refresh(); }} onAccountLinked={() => { void onboarding.refresh(); billing.refresh(); }}
-    managementPage={page === 'settings'} onManagementChange={open => open ? navigateSettings('workspace') : navigate(previousWorkflow.current)}
+    managementPage={page === 'settings'} onManagementChange={open => open ? navigateSettings('workspace') : navigate(previousWorkflow.current.page, previousWorkflow.current.itemId)}
     layout={(selector, content, switchCompany, manage) => <AppShell page={page} companySelector={selector} setup={onboarding.data && !onboarding.data.complete && onboarding.data.welcome_seen ? { progress: onboarding.data.progress, onResume: () => { navigate('overview'); onboarding.resume(); } } : undefined}>
       <OnboardingScreen page={page} onManage={manage} onSwitchCompany={switchCompany} onConnect={() => connect.current()} />
       <div hidden={page === 'overview' && (onboarding.mode === 'welcome' || onboarding.mode === 'guided' || onboarding.mode === 'complete')}>{content}</div>
@@ -81,6 +83,7 @@ export function App() {
       <div hidden={page !== 'content'}><CompanyContent onAnalysisChange={() => { refreshAnalysisSources(v => v + 1); void onboarding.refresh(); billing.refresh(); }} /></div>
       <div hidden={page !== 'intelligence'}><IntelligencePage /></div>
       {page === 'creative' && creativeRef && <CreativeAnalysisPage creativeRef={creativeRef} />}
+      {page === 'content-detail' && contentItemId && <ContentAnalysisPage itemId={contentItemId} />}
       <div hidden={page !== 'generate'}><GenerateIdea onSetup={onSetup} refreshToken={analysisRevision} onSaved={() => { refreshHistory(v => v + 1); void onboarding.refresh(); billing.refresh(); }} /></div>
       <div hidden={page !== 'ideas'}><IdeasPage refreshToken={historyRevision} /></div>
     </>}

@@ -11,9 +11,9 @@ let server, browser, origin;
 before(async () => { server = await createServer({ resolve: { alias: authAlias }, server: { host: '127.0.0.1', port: 0 }, logLevel: 'error' }); await server.listen(); origin = server.resolvedUrls.local[0]; browser = await chromium.launch(); });
 after(async () => { await browser?.close(); await server?.close(); });
 
-async function app({ accounts = [], items = [], ideas = [], sources = [], contentError = false, role = 'owner' } = {}, page = 'content') {
+async function app({ accounts = [], items = [], ideas = [], sources = [], contentError = false, role = 'owner', paginate = false } = {}, page = 'content') {
   const context = await browser.newContext();
-  const errors = []; let contentReads = 0; const analysisCalls = [];
+  const errors = []; let contentReads = 0; let sourceReads = 0; const analysisCalls = []; const contentUrls = [];
   await context.addInitScript(companyId => localStorage.setItem('video-analyzer.active-company-id', companyId), companyId);
   await context.route('**/api/**', route => {
     const url = new URL(route.request().url()); const path = url.pathname;
@@ -21,9 +21,13 @@ async function app({ accounts = [], items = [], ideas = [], sources = [], conten
     if (path === '/api/companies') return route.fulfill({ json: { companies: [{ company_id: companyId, name: 'Alpha', role, archived: false, accounts: accounts.map((platform, i) => ({ account_id: id(10 + i), display_name: platform, platform })) }] } });
     if (path.endsWith('/content/analyze')) { analysisCalls.push(route.request().postDataJSON()); items = items.map(item => ({ ...item, analysis_state: 'queued' })); return route.fulfill({ status: 202, json: { job_id: id(40) } }); }
     if (path.endsWith('/content')) {
-      if (url.searchParams.get('analyzed_only') === 'true') return route.fulfill({ json: { items: sources, next_offset: null } });
+      if (url.searchParams.get('analyzed_only') === 'true') { sourceReads++; return route.fulfill({ json: { items: sources, next_offset: null } }); }
       contentReads++;
-      return contentError ? route.fulfill({ status: 503, json: { detail: 'PRIVATE PROVIDER ERROR' } }) : route.fulfill({ json: { items, next_offset: null } });
+      contentUrls.push(url);
+      const offset = Number(url.searchParams.get('offset'));
+      return contentError ? route.fulfill({ status: 503, json: { detail: 'PRIVATE PROVIDER ERROR' } }) : route.fulfill({ json: {
+        items: paginate ? items.slice(offset, offset + 20) : items,
+        next_offset: paginate && offset + 20 < items.length ? offset + 20 : null } });
     }
     if (path.endsWith('/ideas')) return route.fulfill({ json: { items: ideas, next_cursor: null } });
     if (path === '/api/meta/test') return route.fulfill({ json: { connected: false } });
@@ -33,7 +37,7 @@ async function app({ accounts = [], items = [], ideas = [], sources = [], conten
   const p = await context.newPage(); p.setDefaultTimeout(5000);
   p.on('pageerror', error => errors.push(error.message));
   await p.goto(`${origin}#${page}`);
-  return { p, errors, analysisCalls, contentReads: () => contentReads,
+  return { p, errors, analysisCalls, contentUrls, contentReads: () => contentReads, sourceReads: () => sourceReads,
     completeAnalysis() { items = items.map(item => ({ ...item, analysis_state: 'completed', analyzed: true })); sources = [...items]; },
     close: () => context.close() };
 }
@@ -59,14 +63,45 @@ test('Content starts existing analysis batch and keeps member controls hidden', 
   } finally { await member.close(); }
 });
 
-test('completed Content analysis refreshes Generate sources on navigation', async () => {
+test('polling keeps the visible filtered page and stops when it unmounts', async () => {
+  const items = Array.from({ length: 21 }, (_, index) => ({ ...content(index === 20 ? 'queued' : 'completed'), library_item_id: id(index + 100) }));
+  const f = await app({ accounts: ['instagram'], items, paginate: true });
+  try {
+    await f.p.getByLabel('Search content').fill('Published');
+    await f.p.waitForResponse(response => new URL(response.url()).pathname.endsWith('/content') && new URL(response.url()).searchParams.get('search') === 'Published');
+    await f.p.getByRole('button', { name: 'Next content' }).click();
+    await f.p.getByText('Page 2').waitFor();
+    const initial = f.contentReads();
+    await f.p.waitForTimeout(2700);
+    assert.ok(f.contentReads() > initial);
+    assert.equal(await f.p.getByText('Page 2').count(), 1);
+    assert.equal(await f.p.getByText('Processing', { exact: true }).count(), 1);
+    assert.equal(f.contentUrls.at(-1).searchParams.get('offset'), '20');
+    assert.equal(f.contentUrls.at(-1).searchParams.get('search'), 'Published');
+    const beforeClose = f.contentReads();
+    await f.p.close();
+    await new Promise(resolve => setTimeout(resolve, 2700));
+    assert.equal(f.contentReads(), beforeClose);
+  } finally { await f.close(); }
+});
+
+test('active Content analysis polls to completion without manual refresh and then stops', async () => {
   const f = await app({ accounts: ['instagram'], items: [content('discovered')] });
   try {
     await f.p.getByRole('button', { name: 'Analyze', exact: true }).click();
     await f.p.getByText('Processing', { exact: true }).waitFor();
+    const initialReads = f.contentReads();
+    const initialSourceReads = f.sourceReads();
+    await f.p.waitForTimeout(2700);
+    assert.ok(f.contentReads() > initialReads);
+    assert.equal(f.sourceReads(), initialSourceReads);
+    assert.equal(await f.p.getByText('Processing', { exact: true }).count(), 1);
     f.completeAnalysis();
-    await f.p.getByRole('button', { name: 'Refresh analysis status' }).click();
-    await f.p.getByText('Analysed', { exact: true }).waitFor();
+    await f.p.getByText('Analysed', { exact: true }).waitFor({ timeout: 7000 });
+    assert.ok(f.contentReads() > initialReads);
+    const stoppedAt = f.contentReads();
+    await f.p.waitForTimeout(2800);
+    assert.equal(f.contentReads(), stoppedAt);
     await f.p.getByRole('navigation', { name: 'Primary' }).getByRole('link', { name: 'Generate' }).click();
     await f.p.getByRole('button', { name: 'Generate idea', exact: true }).waitFor();
     assert.deepEqual(f.errors, []);
